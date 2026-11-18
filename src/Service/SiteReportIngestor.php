@@ -125,17 +125,18 @@ class SiteReportIngestor
         foreach ($extensions as $extension) {
             $sitePackage = $remaining[$extension->name] ?? null;
             unset($remaining[$extension->name]);
+            $version = PackageVersion::normalize($extension->version);
 
             if (null !== $sitePackage) {
                 if ($recordEvents) {
-                    $this->recordPackageChanges($sitePackage, $extension);
+                    $this->recordPackageChanges($sitePackage, $extension, $version);
                 }
-                $sitePackage->update($extension->title, $extension->version, $extension->active, $extension->composerName);
+                $sitePackage->update($extension->title, $version, $extension->active, $extension->composerName);
             } else {
-                $sitePackage = new SitePackage($site, $extension->name, $extension->title, $extension->version, $extension->active, $extension->composerName);
+                $sitePackage = new SitePackage($site, $extension->name, $extension->title, $version, $extension->active, $extension->composerName);
                 $this->entityManager->persist($sitePackage);
                 if ($recordEvents) {
-                    $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $extension->name, null, $extension->version));
+                    $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $extension->name, null, $version));
                 }
             }
 
@@ -154,13 +155,13 @@ class SiteReportIngestor
         }
     }
 
-    private function recordPackageChanges(SitePackage $package, ExtensionReport $extension): void
+    private function recordPackageChanges(SitePackage $package, ExtensionReport $extension, string $version): void
     {
         $site = $package->getSite();
-        $this->recordChange($site, SiteEventType::PackageUpdated, $package->getName(), $package->getVersion(), $extension->version);
+        $this->recordChange($site, SiteEventType::PackageUpdated, $package->getName(), $package->getVersion(), $version);
         if ($package->isActive() !== $extension->active) {
             $type = $extension->active ? SiteEventType::PackageActivated : SiteEventType::PackageDeactivated;
-            $this->entityManager->persist(new SiteEvent($site, $type, $package->getName(), null, $extension->version));
+            $this->entityManager->persist(new SiteEvent($site, $type, $package->getName(), null, $version));
         }
     }
 

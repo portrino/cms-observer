@@ -9,9 +9,11 @@ use App\Entity\Site;
 use App\Entity\SiteEvent;
 use App\Entity\SiteEventType;
 use App\Entity\Typo3ExtensionAdvisory;
+use App\Entity\Typo3TerExtensionVersion;
 use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Security\SiteTokenFactory;
+use App\Service\SitePackageTerEvaluator;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -66,6 +68,30 @@ class SiteHistoryTest extends WebTestCase
         $packages = static::getContainer()->get(SitePackageRepository::class);
         self::assertNull($packages->findOneBySiteAndName($site, 'old_ext'));
         self::assertNotNull($packages->findOneBySiteAndName($site, 'container'));
+    }
+
+    /**
+     * "v7.1.1" is stored and shown as "7.1.1"; with the "v" it counted as older than the same
+     * version from the TER and was always flagged outdated.
+     */
+    public function testAVPrefixedVersionIsStoredWithoutTheV(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist(new Typo3TerExtensionVersion('secure_downloads', '7.1.1', 'Secure Downloads', null, null, 'stable', '13', null, false));
+        $entityManager->flush();
+
+        $this->postReport($client, $token, '13.4.20', [['name' => 'secure_downloads', 'version' => 'v7.1.1']]);
+        // the same version again, now without "v": no "version changed" entry
+        $this->postReport($client, $token, '13.4.20', [['name' => 'secure_downloads', 'version' => '7.1.1']]);
+
+        self::assertResponseStatusCodeSame(202);
+        $package = static::getContainer()->get(SitePackageRepository::class)->findOneBySiteAndName($site, 'secure_downloads');
+        self::assertSame('7.1.1', $package?->getVersion());
+        static::getContainer()->get(SitePackageTerEvaluator::class)->evaluateAll([$package]);
+        self::assertFalse($package->isOutdated());
+        self::assertCount(1, $this->events($site));
     }
 
     public function testReportWithoutExtensionsLeavesThePackagesAlone(): void
