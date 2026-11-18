@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}{{ organization.name }} - CMS Observer{% endblock %}
+
+{% block page_title %}{{ organization.name }}{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('dashboard_organization_edit', {id: organization.id}), 'pencil', 'Edit') }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-body">
+            <table class="table table-sm mb-0">
+                <tbody>
+                    <tr>
+                        <th class="w-25">Website</th>
+                        <td>
+                        {% if organization.website %}
+                            <a href="{{ organization.website }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ organization.website }} {{ icon('external-link') }}</a>
+                        {% else %}
+                            —
+                        {% endif %}
+                        </td>
+                    </tr>
+                    <tr><th>Description</th><td>{{ organization.description ?? '—' }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2 class="h4 mb-3">Projects ({{ organization.sites|length }})</h2>
+    <div class="card">
+        <div class="card-body p-0">
+            {{ include('dashboard/_sites_table.html.twig', {
+                sites: organization.sites,
+                extensionStatusBySite: extensionStatusBySite,
+                extensionSummaryBySite: extensionSummaryBySite,
+                coreMajorStatusBySite: coreMajorStatusBySite,
+                emptyMessage: 'No projects attached to this organization yet.',
+                showOrganization: false,
+            }) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

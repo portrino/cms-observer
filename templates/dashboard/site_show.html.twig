@@ -1,0 +1,341 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}{{ site.name }} - CMS Observer{% endblock %}
+
+{% block page_title %}{{ site.name }}{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('dashboard_site_history', {id: site.id}), 'history', 'History') }}
+    {{ m.topbar_link(path('dashboard_site_edit', {id: site.id}), 'pencil', 'Edit') }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% for token in app.flashes('site_token') %}
+        <div class="alert alert-warning">
+            <strong>Push token — copy it now, it will not be shown again:</strong><br>
+            <code>{{ token }}</code>
+        </div>
+    {% endfor %}
+
+    <p class="text-muted fst-italic mb-3">
+        Last seen: {{ site.lastSeenAt ? site.lastSeenAt|date('Y-m-d H:i') : 'never' }}
+        {% if site.lastSeenAt and site.lastSeenAt < date('-2 days') %}
+            <span class="badge text-bg-warning ms-2">{{ m.icon_warning() }}Stale</span>
+        {% endif %}
+    </p>
+    {% if site.lastRejectedReportAt %}
+        <div class="alert alert-warning py-2 mb-3" role="alert">
+            Rejected report from {{ site.lastRejectedReportDomains|join(', ') }}
+            on {{ site.lastRejectedReportAt|date('Y-m-d H:i') }}: none of its domains matches {{ site.url }}.
+            Another instance (e.g. staging) seems to use this site's token.
+        </div>
+    {% endif %}
+
+    <div class="row gy-3 mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-white">System information</div>
+                <div class="card-body">
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="w-25">Type</th>
+                                <td>{{ m.cms_type_icon(site.type) }} {{ site.type.label }}</td>
+                            </tr>
+                            {% if lastReport %}
+                                <tr>
+                                    <th>Context</th>
+                                    <td>{{ lastReport.payload.applicationContext ?? '—' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Client version</th>
+                                    <td>{{ lastReport.payload.clientVersion ?? '—' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Domains</th>
+                                    <td>
+                                        {% if lastReport.payload.domains ?? [] %}
+                                            {{ lastReport.payload.domains|join(', ') }}
+                                        {% else %}
+                                            <span class="text-muted">not reported, so not checked against the site URL</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th>PHP version</th>
+                                <td>
+                                    {{ site.currentPhpVersion ?? '—' }}
+                                    {{ m.security_badge(site.phpInsecure) }}
+                                    {{ m.outdated_badge(site.phpOutdated, site.phpLatestVersion) }}
+                                    {% if (site.phpInsecure or site.phpOutdated) and site.phpEolUrl %}
+                                        <a href="{{ site.phpEolUrl }}" target="_blank" rel="noopener">(EOL info)</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Database version</th>
+                                <td>
+                                    {% if site.currentDbPlatform %}{{ {mariadb: 'MariaDB', mysql: 'MySQL', postgresql: 'PostgreSQL'}[site.currentDbPlatform] ?? site.currentDbPlatform }} {% endif %}{{ site.currentDbVersion ?? '—' }}
+                                    {{ m.security_badge(site.dbInsecure) }}
+                                    {{ m.outdated_badge(site.dbOutdated, site.dbLatestVersion) }}
+                                    {% if (site.dbInsecure or site.dbOutdated) and site.dbEolUrl %}
+                                        <a href="{{ site.dbEolUrl }}" target="_blank" rel="noopener">(EOL info)</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-white">Project information</div>
+                <div class="card-body">
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            {% if site.organization %}
+                                <tr>
+                                    <th class="w-25">Organization</th>
+                                    <td><a href="{{ path('dashboard_organization_show', {id: site.organization.id}) }}">{{ site.organization.name }}</a></td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th class="w-25">Website</th>
+                                <td class="text-break"><a href="{{ site.url }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ site.url }} {{ icon('external-link') }}</a></td>
+                            </tr>
+                            <tr>
+                                <th>Issue tracker</th>
+                                <td class="text-break">
+                                {% if site.issueTrackerUrl %}
+                                    <a href="{{ site.issueTrackerUrl }}" target="_blank" rel="noopener">{{ site.issueTrackerUrl }}</a>
+                                {% else %}
+                                    —
+                                {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Repository</th>
+                                <td class="text-break">
+                                {% if site.repositoryUrl %}
+                                    <a href="{{ site.repositoryUrl }}" target="_blank" rel="noopener">{{ site.repositoryUrl }}</a>
+                                {% else %}
+                                    —
+                                {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>SLA</th>
+                                <td>{{ m.sla_status_icon(site.slaActive) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="h4 mb-3">Core</h2>
+    <div class="card mb-4">
+    <div class="card-body p-0">
+    <div class="accordion" id="coreAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#coreAccordionBody" aria-expanded="false" aria-controls="coreAccordionBody">
+                    <span class="accordion-title">
+                    <span class="me-2 fw-bold">{{ site.currentCoreVersion ?? '—' }}</span>
+                    {{ m.security_badge(site.coreInsecure) }}
+                    {{ m.outdated_badge(site.coreOutdated, site.coreLatestVersion) }}
+                    {% if newerMajorCoreRelease %}
+                        {{ m.newer_major_badge(site.type.label, newerMajorCoreRelease) }}
+                    {% endif %}
+                    </span>
+                </button>
+            </h3>
+            <div id="coreAccordionBody" class="accordion-collapse collapse" data-bs-parent="#coreAccordion">
+                <div class="accordion-body">
+                {% if newerCoreReleases is empty %}
+                    <p class="text-muted mb-0">No newer core releases known.</p>
+                {% else %}
+                    <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {# newest first, so the first release not known to be insecure is the update target #}
+                        {% set latestRelease = newerCoreReleases|filter(r => r.insecure is not same as(true))|first %}
+                        {% for release in newerCoreReleases %}
+                            {% set notesUrl = site.type.value == 'typo3'
+                                ? 'https://get.typo3.org/release-notes/' ~ release.version
+                                : 'https://wordpress.org/documentation/wordpress-version/version-' ~ release.version|replace({'.': '-'}) ~ '/' %}
+                            <tr class="{{ release.insecure ? 'row-insecure' : (release is same as(latestRelease) ? 'row-latest' : 'row-secure') }}">
+                                <td class="text-nowrap"><span class="version-number">{{ release.version }}</span>{{ m.version_flag(release.insecure, release is same as(latestRelease)) }}</td>
+                                <td class="text-nowrap">{{ release.releaseDate ? release.releaseDate|date('Y-m-d') : '—' }}</td>
+                                <td><a href="{{ notesUrl }}" target="_blank" rel="noopener">Release notes</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <h2 class="h4 mb-3">Packages {{ m.extension_count_badge(extensions|length, site.type.value == 'typo3' ? 'extensions' : 'plugins') }}</h2>
+    <div class="card mb-4">
+    <div class="card-body p-0">
+    <div class="accordion" id="extensionsAccordion">
+    {% for ext in extensions %}
+        {% set details = extensionDetails[ext.id] %}
+        {% set bodyId = 'extAccordionBody' ~ ext.id %}
+        <div class="accordion-item">
+            <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ bodyId }}" aria-expanded="false" aria-controls="{{ bodyId }}">
+                    <span class="accordion-title">
+                    <code class="me-2 fw-bold">{{ ext.name }}</code>
+                    <span class="me-2 fw-bold">{{ ext.version }}</span>
+                    {{ m.security_badge(ext.insecure) }}
+                    {{ m.outdated_badge(ext.outdated, ext.latestVersion) }}
+                    {% if not ext.active %}<span class="badge text-bg-neutral ms-2">Inactive</span>{% endif %}
+                    {% if ext.matchedAdvisory %}
+                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ ext.matchedAdvisory.advisoryId }} ({{ ext.matchedAdvisory.severity }})</span>
+                    {% endif %}
+                    {% if ext.matchedWordpressVulnerability %}
+                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ ext.matchedWordpressVulnerability.cve ?? 'Vulnerability' }} ({{ ext.matchedWordpressVulnerability.cvssRating }})</span>
+                    {% endif %}
+                    {% if details.newerMajorAvailable %}
+                        <span class="badge text-bg-info ms-2">Newer version needs newer {{ site.type.label }}</span>
+                    {% endif %}
+                    </span>
+                </button>
+            </h3>
+            <div id="{{ bodyId }}" class="accordion-collapse collapse" data-bs-parent="#extensionsAccordion">
+                <div class="accordion-body">
+                {% if site.type.value == 'wordpress' %}
+                    <div class="mb-2">
+                        <a href="https://wordpress.org/plugins/{{ ext.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on WordPress.org {{ icon('external-link') }}</a>
+                        <a href="https://plugins.trac.wordpress.org/browser/{{ ext.name }}/" target="_blank" rel="noopener" class="ms-3">Repository</a>
+                    </div>
+                    {% if details.wordpressPluginInfo.description ?? null %}
+                        <p>{{ details.wordpressPluginInfo.description }}</p>
+                    {% endif %}
+                    {% if ext.composerName %}
+                        <p class="text-muted"><code>{{ ext.composerName }}</code></p>
+                    {% endif %}
+                    {% set vulnerability = ext.matchedWordpressVulnerability %}
+                    {% if vulnerability %}
+                        <p class="mb-1">
+                            <a href="{{ vulnerability.url }}" target="_blank" rel="noopener">{{ vulnerability.title }}</a>:
+                            known vulnerability, severity {{ vulnerability.cvssRating }} (CVSS {{ vulnerability.cvssScore }}).
+                            {{ vulnerability.patchedVersions is empty ? 'No fixed version available.' : 'Fixed in ' ~ vulnerability.patchedVersions|join(', ') ~ '.' }}
+                        </p>
+                        {{ m.vulnerability_copyright(vulnerability.copyrightNotices) }}
+                    {% endif %}
+                    {% if details.newerVersions is empty %}
+                        <p class="text-muted mb-0">No newer versions known.</p>
+                    {% else %}
+                        <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Comment</th>
+                                    <th>Date</th>
+                                    <th>Compatibility</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for version in details.newerVersions %}
+                                {% set state = details.versionStates[version.version] %}
+                                {% set isLatest = version.version == details.latestVersion %}
+                                <tr class="{{ state.insecure ? 'row-insecure' : (isLatest ? 'row-latest' : 'row-secure') }}">
+                                    <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(state.insecure, isLatest) }}</td>
+                                    <td>—</td>
+                                    <td class="text-nowrap">{{ version.releaseDate ? version.releaseDate|date('Y-m-d') : '—' }}</td>
+                                    <td class="text-nowrap">{{ version.requiresWpVersion ? m.wordpress_requires_badge(version.requiresWpVersion, state.compatible) : '—' }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="mb-2">
+                        <a href="https://extensions.typo3.org/extension/{{ ext.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on TER {{ icon('external-link') }}</a>
+                        {% if details.packagistUrl %}
+                            <a href="{{ details.packagistUrl }}" target="_blank" rel="noopener" class="ms-3">Packagist</a>
+                        {% endif %}
+                        {% if details.repositoryUrl %}
+                            <a href="{{ details.repositoryUrl }}" target="_blank" rel="noopener" class="ms-3">Repository</a>
+                        {% endif %}
+                        {% if details.manualUrl %}
+                            <a href="{{ details.manualUrl }}" target="_blank" rel="noopener" class="ms-3">Manual</a>
+                        {% endif %}
+                    </div>
+                    {% if details.description %}
+                        <p>{{ details.description }}</p>
+                    {% endif %}
+                    {% if ext.composerName %}
+                        <p class="text-muted"><code>{{ ext.composerName }}</code></p>
+                    {% endif %}
+                    {% if ext.matchedAdvisory %}
+                        <p><a href="{{ ext.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ ext.matchedAdvisory.advisoryId }}</a>: known vulnerability, severity {{ ext.matchedAdvisory.severity }}.</p>
+                    {% endif %}
+                    {% if details.newerVersions is empty %}
+                        <p class="text-muted mb-0">No newer versions known.</p>
+                    {% else %}
+                        <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Comment</th>
+                                    <th>Date</th>
+                                    <th>Compatibility</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {# newest first and already limited to the site's TYPO3 major #}
+                            {% set latestVersion = details.newerVersions|filter(v => v.insecure is not same as(true))|first %}
+                            {% for version in details.newerVersions %}
+                                <tr class="{{ version.insecure ? 'row-insecure' : (version is same as(latestVersion) ? 'row-latest' : 'row-secure') }}">
+                                    <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}</td>
+                                    <td class="text-break">{{ version.uploadComment ?? '—' }}</td>
+                                    <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|date('Y-m-d') : '—' }}</td>
+                                    <td class="text-nowrap">
+                                        {% for major in version.typo3MajorVersions %}
+                                            {{ m.typo3_major_badge(major, typo3SupportStatus[major] ?? null, loop.last ? '' : 'me-1') }}
+                                        {% else %}
+                                            —
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">No extensions reported yet.</p>
+    {% endfor %}
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

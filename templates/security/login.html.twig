@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in - CMS Observer{% endblock %}
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm" style="width: 100%; max-width: 380px;">
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                <img src="{{ asset('images/logo.svg') }}" alt="CMS Observer" height="64">
+            </div>
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            <form method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Email</label>
+                    <input type="email" id="username" name="_username" class="form-control" value="{{ last_username }}" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="_password" class="form-control" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="btn btn-primary w-100">Log in</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

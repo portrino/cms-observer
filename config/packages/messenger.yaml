@@ -1,0 +1,26 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+            failed: 'doctrine://default?queue_name=failed'
+            # sync: 'sync://'
+
+        default_bus: messenger.bus.default
+
+        buses:
+            messenger.bus.default: []
+
+        routing:
+            # Sent synchronously: the only messenger:consume worker that runs here
+            # (see .ddev/crontab) is scoped to the scheduler_default transport for
+            # the #[AsCronTask] sync commands - async is never consumed, so routing
+            # mail there would just queue it forever unread.
+            # Route your messages to the transports
+            # 'App\Message\YourMessage': async

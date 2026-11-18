@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Packages - CMS Observer{% endblock %}
+
+{% block page_title %}Packages (extensions/plugins) across all sites{% endblock %}
+
+{% block page_actions %}
+    {{ m.filter_toggle([query, packageType]|filter(v => v)|length) }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="page-filters collapse d-md-block" id="pageFilters">
+    <form method="get" class="row g-2 mb-3" data-controller="auto-submit" data-turbo-frame="packages-results">
+        <div class="col-auto">
+            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Filter by package name…" aria-label="Search" data-action="input->auto-submit#submitAfterTyping">
+        </div>
+        <div class="col-auto">
+            <select name="type" class="form-select" aria-label="Package type" data-action="change->auto-submit#submit">
+                <option value="">All types</option>
+                {% for type in packageTypes %}
+                    <option value="{{ type.value }}" {{ type == packageType ? 'selected' }}>{{ type.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <noscript class="col-auto">
+            <button type="submit" class="btn btn-tertiary">Filter</button>
+        </noscript>
+    </form>
+    </div>
+
+    {# filters only swap this frame; links in the results (projects, external pages) still open as whole pages #}
+    <turbo-frame id="packages-results" data-turbo-action="advance" target="_top">
+    {% if extensionGroups is empty %}
+        <p class="text-muted">No extensions match.</p>
+    {% else %}
+        <div class="card">
+        <div class="card-body p-0">
+        <div class="accordion" id="extensionsAccordion">
+        {% for key, installs in extensionGroups %}
+            {% set bodyId = 'extGroupBody' ~ loop.index %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ bodyId }}" aria-expanded="false" aria-controls="{{ bodyId }}">
+                        <code class="me-2">{{ key }}</code>
+                        <span class="badge text-bg-neutral">{{ installs|length }}</span>
+                    </button>
+                </h2>
+                <div id="{{ bodyId }}" class="accordion-collapse collapse" data-bs-parent="#extensionsAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                        <table class="table table-sm table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Version</th>
+                                    <th>Updates</th>
+                                    <th>Security</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for ext in installs %}
+                                <tr>
+                                    <td><a href="{{ path('dashboard_site_show', {id: ext.site.id}) }}">{{ ext.site.name }}</a></td>
+                                    <td>{{ ext.version }}</td>
+                                    <td>{{ m.outdated_badge(ext.outdated, ext.latestVersion) }}</td>
+                                    <td>{{ m.security_badge(ext.insecure) }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+        </div>
+        </div>
+    {% endif %}
+    </turbo-frame>
+</div>
+{% endblock %}

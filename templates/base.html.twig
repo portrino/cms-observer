@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" type="image/svg+xml" href="{{ asset('images/logo.svg') }}">
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+
+        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+        {% if frankenphp_hot_reload %}
+        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
+        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+        {% endif %}
+    </head>
+    {% set loggedIn = is_granted('ROLE_USER') %}
+    <body {% if loggedIn %}data-controller="sidebar"{% endif %}>
+        {% if loggedIn %}
+            {% set currentRoute = app.request.attributes.get('_route') %}
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <img src="{{ asset('images/logo.svg') }}" alt="" width="32" height="32">
+                    <span>CMS Observer</span>
+                </div>
+                <nav class="nav flex-column flex-nowrap py-2 sidebar-nav">
+                    <a class="nav-link {{ currentRoute starts with 'dashboard_site' or currentRoute == 'dashboard_index' ? 'active' }}" href="{{ path('dashboard_index') }}">
+                        {{ icon('layout-dashboard') }}
+                        <span>Projects</span>
+                    </a>
+                    <a class="nav-link {{ currentRoute == 'dashboard_extensions' ? 'active' }}" href="{{ path('dashboard_extensions') }}">
+                        {{ icon('package') }}
+                        <span>Packages</span>
+                    </a>
+                    <a class="nav-link {{ currentRoute starts with 'dashboard_organization' ? 'active' }}" href="{{ path('dashboard_organization_index') }}">
+                        {{ icon('building') }}
+                        <span>Organizations</span>
+                    </a>
+                </nav>
+                {# fixed strategy: the menu opens upwards and, in the collapsed sidebar, beyond its right edge #}
+                <div class="sidebar-user dropup">
+                    <a class="sidebar-user-toggle dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="User menu">
+                        <span class="avatar">{{ app.user.initials }}</span>
+                        <span class="sidebar-user-name">{{ app.user.name }}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_profile') }}">{{ icon('user') }} Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_logout') }}" data-turbo-prefetch="false">{{ icon('log-out') }} Log out</a></li>
+                    </ul>
+                </div>
+            </aside>
+            <div class="sidebar-backdrop" data-action="click->sidebar#close"></div>
+            <header class="app-topbar">
+                <button type="button" class="btn btn-sm sidebar-toggle" data-action="sidebar#toggle" aria-label="Toggle sidebar">
+                    {{ icon('panel-left-close') }}
+                </button>
+                {# pages put their title and actions here, so the actions stay in view while scrolling #}
+                <h1 class="topbar-title">{% block page_title %}{% endblock %}</h1>
+                <div class="topbar-actions">{% block page_actions %}{% endblock %}</div>
+            </header>
+            <main class="app-main">
+        {% else %}
+            <div class="container">
+        {% endif %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+                {% block body %}{% endblock %}
+
+        {% if loggedIn %}
+            </main>
+        {% else %}
+            </div>
+        {% endif %}
+    </body>
+</html>

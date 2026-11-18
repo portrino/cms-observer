@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Organizations - CMS Observer{% endblock %}
+
+
+{% block page_title %}Organizations{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('dashboard_organization_new'), 'plus', 'Add Organization') }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Website</th>
+                        <th>Projects</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for organization in organizations %}
+                    <tr>
+                        <td class="text-nowrap"><a href="{{ path('dashboard_organization_show', {id: organization.id}) }}">{{ organization.name }}</a></td>
+                        <td class="text-nowrap">
+                        {% if organization.website %}
+                            <a href="{{ organization.website }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ organization.website }} {{ icon('external-link') }}</a>
+                        {% endif %}
+                        </td>
+                        <td>{{ m.count_badge(organization.sites|length, 'layout-dashboard', 'Projects') }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3">No organizations yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+# Enable stateless CSRF protection for forms and logins/logouts
+framework:
+    form:
+        csrf_protection:
+            token_id: submit
+
+    csrf_protection:
+        stateless_token_ids:
+            - submit
+            - authenticate
+            - logout
+
+when@test:
+    framework:
+        # The real scheme is a double-submit cookie set by client-side JS
+        # (csrf_protection_controller.js) - WebTestCase's client never runs
+        # JS, so it can't be exercised this way. CSRF defends against a real
+        # browser executing attacker-controlled JS, which has no bearing on
+        # an automated HTTP client, so disabling validation for functional
+        # tests is the standard Symfony approach rather than faking the JS
+        # side.
+        #
+        # Only form.csrf_protection (the Form component, e.g. the profile
+        # edit form) - not the top-level csrf_protection.enabled, which
+        # would also remove the csrf_token() Twig function/token manager
+        # entirely and break every template that calls it unconditionally
+        # (e.g. login.html.twig). The login form's own CSRF check is a
+        # separate security.firewalls.main.form_login.enable_csrf setting,
+        # turned off in security.yaml instead.
+        form:
+            csrf_protection:
+                enabled: false

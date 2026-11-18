@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a;">
+        <h1 style="font-size: 1.25rem;">CMS Observer - New Security Findings</h1>
+        <p>{{ findings|length }} new security {{ findings|length == 1 ? 'finding was' : 'findings were' }} detected:</p>
+        <table cellpadding="8" cellspacing="0" border="1" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr style="background: #eef1f5; text-align: left;">
+                    <th>Project</th>
+                    <th>Subject</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for finding in findings %}
+                <tr>
+                    <td><a href="{{ dashboardUrls[finding.siteId] }}">{{ finding.siteName }}</a></td>
+                    <td>{{ finding.subject }}</td>
+                    <td>{{ finding.detail }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {# required attribution of the Wordfence feed, see the plugin vulnerability page #}
+        <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #6c757d;">
+            WordPress plugin vulnerability data provided by Wordfence Intelligence, &copy; Defiant Inc.
+            CVE records &copy; The MITRE Corporation.
+        </p>
+    </body>
+</html>

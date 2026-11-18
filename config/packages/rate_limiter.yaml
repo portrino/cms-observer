@@ -1,0 +1,8 @@
+framework:
+    rate_limiter:
+        # failed code checks on the profile's 2FA pages (set up, new backup codes, disable),
+        # per user - the login's 2FA form is covered by the firewall's login_throttling
+        two_factor_profile:
+            policy: sliding_window
+            limit: 5
+            interval: '15 minutes'

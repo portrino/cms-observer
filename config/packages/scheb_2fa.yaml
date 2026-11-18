@@ -1,0 +1,15 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/8.x/configuration.html
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+    # optional per user (User::isTotpAuthenticationEnabled()), set up on the profile page
+    totp:
+        enabled: true
+        issuer: CMS Observer
+        leeway: 10 # tolerate a few seconds of clock drift on the phone
+        template: security/2fa_form.html.twig
+
+    backup_codes:
+        enabled: true

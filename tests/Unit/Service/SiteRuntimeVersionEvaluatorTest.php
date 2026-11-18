@@ -1,0 +1,127 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Service;
+
+use App\Entity\CmsType;
+use App\Entity\EndOfLifeRelease;
+use App\Entity\Site;
+use App\Repository\EndOfLifeReleaseRepository;
+use App\Service\DbVersionNormalizer;
+use App\Service\SecurityNotifier;
+use App\Service\SiteRuntimeVersionEvaluator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+
+class SiteRuntimeVersionEvaluatorTest extends TestCase
+{
+    /**
+     * @return iterable<string, array{string, bool, ?string, bool, ?string}>
+     */
+    public static function phpVersions(): iterable
+    {
+        // installed, cycle EOL, latest security release, expected insecure, expected finding detail
+        yield 'older than the latest security release' => ['8.4.24', false, '8.4.27', true, 'PHP version is missing security fixes (fixed in 8.4.27).'];
+        yield 'equal to the latest security release' => ['8.4.27', false, '8.4.27', false, null];
+        yield 'newer than the latest security release' => ['8.4.28', false, '8.4.27', false, null];
+        yield 'no security release known' => ['8.4.24', false, null, false, null];
+        yield 'EOL cycle' => ['8.0.30', true, null, true, 'PHP version is now insecure (past end of life).'];
+    }
+
+    #[DataProvider('phpVersions')]
+    public function testPhpSecurityStatus(string $installed, bool $isEol, ?string $securityVersion, bool $expectedInsecure, ?string $expectedFinding): void
+    {
+        $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
+        $site->recordReport('13.4.0', $installed, '10.11.0-MariaDB');
+
+        $release = new EndOfLifeRelease('php', '8.4', $isEol, '8.4.28', 'https://endoflife.date/php');
+        $release->setLatestSecurityVersion($securityVersion);
+
+        $repository = self::createStub(EndOfLifeReleaseRepository::class);
+        $repository->method('findOneByProductAndCycle')->willReturnCallback(
+            static fn (string $product): ?EndOfLifeRelease => 'php' === $product ? $release : null,
+        );
+
+        $notifier = $this->createMock(SecurityNotifier::class);
+        $notifier->expects(null === $expectedFinding ? self::never() : self::once())
+            ->method('addFinding')
+            ->with($site, 'PHP '.$installed, $expectedFinding ?? '');
+
+        new SiteRuntimeVersionEvaluator($repository, $notifier)->evaluate($site);
+
+        self::assertSame($expectedInsecure, $site->isPhpInsecure());
+    }
+
+    /**
+     * @return iterable<string, array{?string, string, string, string}>
+     */
+    public static function dbVersions(): iterable
+    {
+        // reported platform, reported version, expected product, expected plain version
+        yield 'TYPO3 12 label, no platform' => [null, 'MySQL 10.11.19-MariaDB-ubu2204-log', 'mariadb', '10.11.19'];
+        yield 'TYPO3 13 format with platform' => ['mariadb', '10.11.19-MariaDB-ubu2204-log', 'mariadb', '10.11.19'];
+        yield 'MariaDB behind the 5.5.5 prefix' => [null, '5.5.5-10.11.19-MariaDB', 'mariadb', '10.11.19'];
+        yield 'plain MySQL' => [null, '8.0.36', 'mysql', '8.0.36'];
+        yield 'PostgreSQL label, no platform' => [null, 'PostgreSQL 15.2', 'postgresql', '15.2'];
+        yield 'PostgreSQL with platform' => ['postgresql', '15.2 (Debian 15.2-1.pgdg110+1)', 'postgresql', '15.2'];
+        yield 'unparseable' => [null, 'unknown', 'mysql', 'unknown'];
+    }
+
+    #[DataProvider('dbVersions')]
+    public function testDbVersionIsNormalized(?string $platform, string $raw, string $expectedProduct, string $expectedVersion): void
+    {
+        self::assertSame([$expectedProduct, $expectedVersion], DbVersionNormalizer::normalize($platform, $raw));
+    }
+
+    public function testLegacyTypo3V12DbVersionFindsTheMariadbRelease(): void
+    {
+        $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
+        $site->recordReport('12.4.0', '8.2.0', 'MySQL 10.11.19-MariaDB-ubu2204-log');
+
+        $repository = self::createStub(EndOfLifeReleaseRepository::class);
+        $repository->method('findOneByProductAndCycle')->willReturnCallback(
+            static fn (string $product, string $cycle): ?EndOfLifeRelease => 'mariadb' === $product && '10.11' === $cycle
+                ? new EndOfLifeRelease('mariadb', '10.11', false, '10.11.20', 'https://endoflife.date/mariadb')
+                : null,
+        );
+
+        new SiteRuntimeVersionEvaluator($repository, self::createStub(SecurityNotifier::class))->evaluate($site);
+
+        self::assertFalse($site->isDbInsecure());
+        self::assertTrue($site->isDbOutdated());
+        self::assertSame('10.11.20', $site->getDbLatestVersion());
+    }
+
+    /**
+     * @return iterable<string, array{string, string, bool, string}>
+     */
+    public static function postgresqlVersions(): iterable
+    {
+        // reported version, expected cycle, cycle EOL, latest release in the cycle
+        yield 'major-only cycle since 10' => ['16.2', '16', false, '16.16'];
+        yield 'major.minor cycle before 10' => ['9.6.24', '9.6', true, '9.6.24'];
+    }
+
+    #[DataProvider('postgresqlVersions')]
+    public function testPostgresqlIsEvaluatedByItsCycle(string $installed, string $cycle, bool $isEol, string $latest): void
+    {
+        $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
+        $site->recordReport('13.4.0', '8.3.0', $installed, 'postgresql');
+
+        $repository = self::createStub(EndOfLifeReleaseRepository::class);
+        $repository->method('findOneByProductAndCycle')->willReturnCallback(
+            static fn (string $product, string $requestedCycle): ?EndOfLifeRelease => 'postgresql' === $product && $cycle === $requestedCycle
+                ? new EndOfLifeRelease('postgresql', $cycle, $isEol, $latest, 'https://endoflife.date/postgresql')
+                : null,
+        );
+
+        $notifier = $this->createMock(SecurityNotifier::class);
+        $notifier->expects($isEol ? self::once() : self::never())->method('addFinding');
+
+        new SiteRuntimeVersionEvaluator($repository, $notifier)->evaluate($site);
+
+        self::assertSame($isEol, $site->isDbInsecure());
+        self::assertSame($installed !== $latest, $site->isDbOutdated());
+    }
+}

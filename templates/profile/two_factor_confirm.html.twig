@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}{{ title }} - CMS Observer{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('app_profile'), 'arrow-left', 'My Profile') }}
+{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 500px;">
+    <div class="card">
+        <div class="card-body">
+            <p>{{ intro }}</p>
+            {{ form_start(form) }}
+                {{ form_rest(form) }}
+                <button type="submit" class="btn btn-danger">{{ submitLabel }}</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

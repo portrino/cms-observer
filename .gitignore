@@ -1,0 +1,45 @@
+###> symfony/framework-bundle ###
+/.env*.local
+/.env.local.php
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+
+# Editor / OS junk
+*~
+*.bak
+*.swp
+.DS_Store
+.idea/
+
+###> symfonycasts/sass-bundle ###
+/public/assets/
+###< symfonycasts/sass-bundle ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+# composer bin-dir is set to bin/ (default would be vendor/bin/) - these are
+# generated proxies for installed packages' binaries, not project source.
+/bin/*
+!/bin/console
+!/bin/setup
+
+# Playwright e2e (tests/E2E)
+/tests/E2E/node_modules/
+/tests/E2E/playwright-report/
+/tests/E2E/test-results/

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Set up two-factor authentication - CMS Observer{% endblock %}
+
+{% block page_title %}Set up two-factor authentication{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('app_profile'), 'arrow-left', 'My Profile') }}
+{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 500px;">
+    <div class="card">
+        <div class="card-body">
+            <ol class="ps-3">
+                <li class="mb-2">Scan the QR code with an authenticator app (e.g. 1Password, Google Authenticator, Authy).</li>
+                <li class="mb-2">Enter the 6-digit code the app shows to confirm.</li>
+            </ol>
+            <div class="text-center my-3">
+                <img src="{{ qrCode }}" alt="QR code for your authenticator app" width="200" height="200">
+            </div>
+            <p class="small text-muted text-center">
+                Can't scan it? Enter this key manually:<br>
+                <code class="user-select-all">{{ secret|split('', 4)|join(' ') }}</code>
+            </p>
+            {{ form_start(form) }}
+                {{ form_row(form.code, {attr: {inputmode: 'numeric', autofocus: true}}) }}
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('shield-check') }} Enable two-factor authentication</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

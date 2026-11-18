@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Edit {{ site.name }} - CMS Observer{% endblock %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('dashboard_site_show', {id: site.id}), 'arrow-left', 'Back to project') }}
+{% endblock %}
+
+{% block body %}
+{% set confirmationString = site.organization ? site.organization.name ~ '/' ~ site.name : site.name %}
+<div class="container" style="max-width: 500px;">
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form, {attr: {id: 'site-edit-form'}}) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.url) }}
+                {{ form_row(form.type) }}
+                {{ form_row(form.slaActive) }}
+                {{ form_row(form.organization) }}
+                {{ form_row(form.repositoryUrl) }}
+                {{ form_row(form.issueTrackerUrl) }}
+            {{ form_end(form) }}
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-between">
+            <button type="submit" form="site-edit-form" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
+            <button type="button" class="btn btn-outline-danger d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#deleteSiteModal">
+                {{ icon('trash') }} Delete project
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteSiteModal" tabindex="-1" aria-labelledby="deleteSiteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ path('dashboard_site_delete', {id: site.id}) }}"
+                  data-controller="delete-confirmation" data-expected="{{ confirmationString }}">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteSiteModalLabel">Delete this project</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            <li>This operation <strong>CANNOT</strong> be undone.</li>
+                            <li>This operation will permanently delete the <strong>{{ confirmationString }}</strong> project including all referenced data.</li>
+                        </ul>
+                    </div>
+                    <p>Enter the organization and project name exactly as shown: <code>{{ confirmationString }}</code></p>
+                    <div class="mb-0">
+                        <label for="deleteSiteConfirmationInput" class="form-label">Confirmation string</label>
+                        <input type="text" id="deleteSiteConfirmationInput" name="confirmation" class="form-control" required
+                               autocomplete="off" data-delete-confirmation-target="input" data-action="input->delete-confirmation#check">
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete-site-' ~ site.id) }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-1" disabled data-delete-confirmation-target="submit">
+                        {{ icon('trash') }} Delete project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

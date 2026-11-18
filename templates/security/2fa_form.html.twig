@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Two-factor authentication - CMS Observer{% endblock %}
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm" style="width: 100%; max-width: 380px;">
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                <img src="{{ asset('images/logo.svg') }}" alt="CMS Observer" height="64">
+            </div>
+            {% if authenticationError %}
+                <div class="alert alert-danger">{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</div>
+            {% endif %}
+            <form method="post" action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}">
+                <div class="mb-3">
+                    <label for="_auth_code" class="form-label">Authentication code</label>
+                    {# one field for both the 6-digit app code and a backup code like "k7mqp-2xt9r" #}
+                    <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" class="form-control"
+                           autocomplete="one-time-code" autocapitalize="off" spellcheck="false" required autofocus>
+                    <div class="form-text">Enter the code from your authenticator app, or one of your backup codes.</div>
+                </div>
+
+                {% if isCsrfProtectionEnabled %}
+                    <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary w-100">Verify</button>
+            </form>
+            {# no Turbo prefetch: hovering a GET logout link would already log out #}
+            <p class="text-center mt-3 mb-0"><a href="{{ logoutPath }}" data-turbo-prefetch="false">Cancel and log out</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

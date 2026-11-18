@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Add Project - CMS Observer{% endblock %}
+
+{% block page_title %}Add Project{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('dashboard_index'), 'arrow-left', 'All projects') }}
+{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 500px;">
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.url) }}
+                {{ form_row(form.type) }}
+                {{ form_row(form.slaActive) }}
+                {{ form_row(form.organization) }}
+                {{ form_row(form.repositoryUrl) }}
+                {{ form_row(form.issueTrackerUrl) }}
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} Create</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

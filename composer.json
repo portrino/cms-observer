@@ -1,0 +1,184 @@
+{
+    "name": "portrino/cms-observer",
+    "license": "GPL-2.0-or-later",
+    "type": "project",
+    "require": {
+        "php": ">=8.4",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^3.3.4",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.7.6",
+        "dragonmantank/cron-expression": "^3.6.1",
+        "endroid/qr-code": "^6.1",
+        "halaxa/json-machine": "^1.2",
+        "phpdocumentor/reflection-docblock": "^6.0",
+        "phpstan/phpdoc-parser": "^2.4.1",
+        "scheb/2fa-backup-code": "^8.7",
+        "scheb/2fa-bundle": "^8.7",
+        "scheb/2fa-totp": "^8.7",
+        "symfony/asset": "^8.1",
+        "symfony/asset-mapper": "^8.1.11",
+        "symfony/console": "^8.1.11",
+        "symfony/doctrine-messenger": "^8.1.11",
+        "symfony/dotenv": "^8.1",
+        "symfony/expression-language": "^8.1.9",
+        "symfony/flex": "^2.12",
+        "symfony/form": "^8.1.11",
+        "symfony/framework-bundle": "^8.1.11",
+        "symfony/http-client": "^8.1.11",
+        "symfony/intl": "^8.1.10",
+        "symfony/mailer": "^8.1.10",
+        "symfony/mime": "^8.1.10",
+        "symfony/monolog-bundle": "^3.0 || ^4.1",
+        "symfony/notifier": "^8.1.11",
+        "symfony/process": "^8.1.10",
+        "symfony/property-access": "^8.1.11",
+        "symfony/property-info": "^8.1.11",
+        "symfony/rate-limiter": "^8.1",
+        "symfony/runtime": "^8.1.11",
+        "symfony/scheduler": "^8.1.10",
+        "symfony/security-bundle": "^8.1.11",
+        "symfony/serializer": "^8.1.11",
+        "symfony/stimulus-bundle": "^3.7.0",
+        "symfony/string": "^8.1.10",
+        "symfony/translation": "^8.1.11",
+        "symfony/twig-bundle": "^8.1.9",
+        "symfony/ux-turbo": "^3.7.0",
+        "symfony/validator": "^8.1.11",
+        "symfony/web-link": "^8.1",
+        "symfony/yaml": "^8.1.11",
+        "symfonycasts/sass-bundle": "^0.10.0",
+        "twig/extra-bundle": "^2.12 || ^3.29",
+        "twig/twig": "^2.12 || ^3.30"
+    },
+    "require-dev": {
+        "dama/doctrine-test-bundle": "^8.7",
+        "ergebnis/composer-normalize": "^2.56",
+        "friendsofphp/php-cs-fixer": "^3.95.30",
+        "phpstan/phpstan": "^2.3.5",
+        "phpstan/phpstan-deprecation-rules": "^2.0.5",
+        "phpstan/phpstan-doctrine": "^2.1.2",
+        "phpstan/phpstan-strict-rules": "^2.1.1",
+        "phpstan/phpstan-symfony": "^2.1.1",
+        "phpunit/phpunit": "^13.4.6",
+        "rector/rector": "^2.8.4",
+        "roave/security-advisories": "dev-latest",
+        "seld/jsonlint": "^1.12.2",
+        "sensiolabs/security-advisories": "dev-master",
+        "spaze/phpstan-disallowed-calls": "^4.15",
+        "symfony/browser-kit": "^8.1.11",
+        "symfony/css-selector": "^8.1.10",
+        "symfony/debug-bundle": "^8.1",
+        "symfony/maker-bundle": "^1.68",
+        "symfony/stopwatch": "^8.1",
+        "symfony/web-profiler-bundle": "^8.1.11",
+        "tomasvotruba/cognitive-complexity": "^1.3",
+        "tomasvotruba/type-coverage": "^2.5.1",
+        "typo3/coding-standards": "^0.9"
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*",
+        "symfony/polyfill-php83": "*",
+        "symfony/polyfill-php84": "*"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "bin-dir": "bin",
+        "bump-after-update": true,
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "^8.1"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ],
+
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
+        },
+
+        "assets:build": [
+            "@php bin/console importmap:install",
+            "@php bin/console sass:build"
+        ],
+        "assets:compile": "@php bin/console asset-map:compile",
+        "assets:watch": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php bin/console sass:build --watch"
+        ],
+
+        "ci": [
+            "@ci:composer:audit",
+            "@ci:static"
+        ],
+        "ci:composer:audit": "@composer audit --abandoned=ignore --ignore-unreachable",
+        "ci:composer:normalize": "@composer normalize --no-check-lock --dry-run",
+        "ci:composer:psr-verify": "@composer dumpautoload --optimize --strict-psr",
+        "ci:json:lint": "find ./ ! -path '*node_modules/*' -name '*.json' | xargs -r ./bin/jsonlint -q",
+        "ci:php": [
+            "@ci:php:cs-fixer",
+            "@ci:php:lint",
+            "@ci:php:rector",
+            "@ci:php:stan"
+        ],
+        "ci:php:cs-fixer": "./bin/php-cs-fixer fix --config ./build/php-cs-fixer.php -v --dry-run --using-cache no --diff",
+        "ci:php:lint": "find ./bin ./config ./migrations ./public ./src ./tests -name '*.php' -print0 | xargs -r -0 -n 1 -P 4 php -l",
+        "ci:php:rector": "./bin/rector process --ansi --config ./build/rector.php --dry-run --no-progress-bar",
+        "ci:php:stan": "./bin/phpstan analyse -c ./build/phpstan.neon --memory-limit=-1 --no-progress",
+        "ci:static": [
+            "@ci:json:lint",
+            "@ci:php",
+            "@ci:yaml:lint"
+        ],
+        "ci:test": [
+            "@ci:test:functional",
+            "@ci:test:unit"
+        ],
+        "ci:test:functional": "./bin/phpunit -c ./build/phpunit.dist.xml --testsuite functional",
+        "ci:test:unit": "./bin/phpunit -c ./build/phpunit.dist.xml --testsuite unit",
+        "ci:yaml:lint": "find ./ ! -path '*.Build/*' ! -path '*node_modules/*' -regextype egrep -regex '.*.ya?ml$' | xargs -r ./bin/yaml-lint --parse-tags",
+        "fix:php": [
+            "@fix:php:cs"
+        ],
+        "fix:php:cs": "./bin/php-cs-fixer fix --config ./build/php-cs-fixer.php --cache-file ./var/.php-cs-fixer.cache",
+        "fix:php:rector": "./bin/rector process --ansi --config ./build/rector.php --no-progress-bar"
+    }
+}

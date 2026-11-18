@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+# Installs or updates a CMS Observer for production, see docs/installation.md.
+#
+#   bin/setup              first run: asks for the settings, then sets everything up;
+#                          afterwards: updates to the checked-out version
+#   bin/setup --setup      force the first-run steps (e.g. to change the settings)
+#   bin/setup --upgrade    force the update steps (settings come from the environment)
+#
+# Further arguments go to "bin/console app:setup" or "app:upgrade", e.g.
+#   bin/setup --no-interaction --observer-url=https://observer.example.com --database-url=... --mailer-dsn=...
+#   bin/setup --skip-assets
+
+set -eu
+cd "$(dirname "$0")/.."
+
+# before Composer: its scripts and every bin/console call must boot the prod kernel,
+# the dev bundles aren't installed with --no-dev
+APP_ENV=prod
+export APP_ENV
+
+fail() {
+    echo "bin/setup: $*" >&2
+    exit 1
+}
+
+command -v php >/dev/null 2>&1 || fail "PHP is missing, the CMS Observer needs PHP 8.4 or newer."
+php -r 'exit(PHP_VERSION_ID >= 80400 ? 0 : 1);' || fail "PHP $(php -r 'echo PHP_VERSION;') is too old, the CMS Observer needs PHP 8.4 or newer."
+composer=${COMPOSER_BINARY:-composer}
+command -v "$composer" >/dev/null 2>&1 || fail "Composer is missing (https://getcomposer.org), or set COMPOSER_BINARY to its path."
+[ ! -f .env.local.php ] || fail ".env.local.php (from \"composer dump-env\") overrides .env.local; delete it or keep using dump-env instead of bin/setup."
+
+mode=auto
+case "${1:-}" in
+    --setup) mode=setup; shift ;;
+    --upgrade) mode=upgrade; shift ;;
+esac
+if [ "$mode" = auto ]; then
+    # settings in .env.local or, e.g. in a container, in the real environment
+    if [ -f .env.local ] || [ -n "${DATABASE_URL:-}" ]; then mode=upgrade; else mode=setup; fi
+fi
+
+interactive=yes
+for argument in "$@"; do
+    case "$argument" in -n|--no-interaction) interactive=no ;; esac
+done
+
+"$composer" install --no-dev --optimize-autoloader --no-interaction
+
+if [ "$mode" = setup ]; then
+    php bin/console app:setup "$@"
+    php bin/console app:upgrade
+    if [ "$interactive" = yes ]; then
+        echo
+        echo "Create the first login:"
+        php bin/console app:user:create
+    else
+        echo "Create a login with: php bin/console app:user:create"
+    fi
+    echo
+    echo "Last step: run the scheduler every minute, e.g. with this cron job:"
+    echo "* * * * * $(command -v php) $(pwd)/bin/console messenger:consume scheduler_default --time-limit=55 --memory-limit=128M"
+else
+    php bin/console app:upgrade "$@"
+fi

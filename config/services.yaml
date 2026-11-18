@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+# See also https://symfony.com/doc/current/service_container/import.html
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    # Fallback used only if MAILER_FROM_ADDRESS isn't set in .env.local/the environment.
+    cms_observer.default_mailer_from_address: 'no-reply@cms-observer.local'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    App\Service\SecurityNotifier:
+        bind:
+            $fromAddress: '%env(default:cms_observer.default_mailer_from_address:MAILER_FROM_ADDRESS)%'
+
+    # Database-backed sessions (see framework.session.handler_id below) - the
+    # web container's filesystem is ephemeral, so file-based sessions (the
+    # default) get wiped every time it's recreated, logging everyone out.
+    # The DB connection's own data already reliably survives that.
+    #
+    # Uses its own DBAL connection (doctrine.yaml's "session" connection),
+    # not the ORM's default one - PdoSessionHandler's default lock mode opens
+    # a transaction on read() and holds it until the session is written back,
+    # so sharing a connection with the app's own ORM flushes means whichever
+    # of the two tries to begin ITS transaction second fails with "There is
+    # already an active transaction".
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments:
+            $pdoOrDsn: !service
+                class: PDO
+                factory: ['@doctrine.dbal.session_connection', getNativeConnection]
