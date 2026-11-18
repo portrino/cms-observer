@@ -9,8 +9,11 @@ use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\WordpressPluginInfo;
 use App\Entity\WordpressPluginVulnerability;
+use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressPluginInfoRepository;
+use App\Repository\WordpressPluginVersionRepository;
 use App\Repository\WordpressPluginVulnerabilityRepository;
+use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use App\Service\SitePackageWordpressEvaluator;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +32,10 @@ class SitePackageWordpressEvaluatorTest extends TestCase
         $vulnerabilityRepository->method('hasAny')->willReturn(null !== $vulnerabilities);
         $vulnerabilityRepository->method('findBySlug')->willReturn($vulnerabilities ?? []);
 
-        return new SitePackageWordpressEvaluator($pluginInfoRepository, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
+        // without a synced version history the resolver falls back to the plugin info
+        $resolver = new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), self::createStub(WordpressPluginVersionRepository::class), $pluginInfoRepository);
+
+        return new SitePackageWordpressEvaluator($resolver, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
     }
 
     private function createVulnerability(string $toVersion, float $cvssScore, bool $informational = false): WordpressPluginVulnerability

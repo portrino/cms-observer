@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SitePackageRepository;
+use App\Service\PackageUpdate;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SitePackageRepository::class)]
@@ -32,6 +33,13 @@ class SitePackage
 
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $latestVersion = null;
+
+    // a newer version that needs a newer core than the site's, e.g. core "14" with package "13.0.0"
+    #[ORM\Column(length: 32, nullable: true)]
+    private ?string $newerCoreVersion = null;
+
+    #[ORM\Column(length: 32, nullable: true)]
+    private ?string $newerCorePackageVersion = null;
 
     #[ORM\ManyToOne(targetEntity: Typo3ExtensionAdvisory::class)]
     #[ORM\JoinColumn(nullable: true)]
@@ -126,6 +134,24 @@ class SitePackage
         $this->latestVersion = $latestVersion;
     }
 
+    public function applyUpdate(PackageUpdate $update): void
+    {
+        $this->outdated = $update->outdated;
+        $this->latestVersion = true === $update->outdated ? $update->latestCompatibleVersion : null;
+        $this->newerCoreVersion = $update->newerCoreVersion;
+        $this->newerCorePackageVersion = $update->newerCorePackageVersion;
+    }
+
+    public function getNewerCoreVersion(): ?string
+    {
+        return $this->newerCoreVersion;
+    }
+
+    public function getNewerCorePackageVersion(): ?string
+    {
+        return $this->newerCorePackageVersion;
+    }
+
     public function getMatchedAdvisory(): ?Typo3ExtensionAdvisory
     {
         return $this->matchedAdvisory;
@@ -158,6 +184,8 @@ class SitePackage
             // until the next TER sync re-resolves it, so don't keep showing it.
             $this->version = $version;
             $this->setVersionStatus(null, null, null);
+            $this->newerCoreVersion = null;
+            $this->newerCorePackageVersion = null;
         }
     }
 

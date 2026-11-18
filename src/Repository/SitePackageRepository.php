@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\CmsType;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
@@ -84,74 +83,25 @@ class SitePackageRepository extends ServiceEntityRepository
     }
 
     /**
-     * Per-site extension/plugin counts for the sites table listing: how many
-     * are installed, and how many have a newer version available that's
-     * compatible with the site's current core version. TYPO3 sites use TER's
-     * per-version compatibility list (falls back to "any newer version" when
-     * the core major is unknown); WordPress sites use WordpressPluginInfo's
-     * requires/tested range (falls back the same way when either the site's
-     * core version or the plugin's declared range is unknown - never treat
-     * missing data as "incompatible").
+     * Per site: installed packages, those with an update for the site's core (the stored
+     * "outdated", the same rule as the badges, see PackageUpdateResolver) and insecure ones.
      *
      * @param iterable<Site> $sites
      *
      * @return array<int, array{total: int, updatable: int, insecureCount: int}>
      */
-    public function getExtensionSummaryBySite(
-        iterable $sites,
-        Typo3TerExtensionVersionRepository $terVersionRepository,
-        WordpressPluginInfoRepository $wordpressPluginInfoRepository,
-    ): array {
+    public function getExtensionSummaryBySite(iterable $sites): array
+    {
         $summary = [];
-
         foreach ($sites as $site) {
             $packages = $this->findBy(['site' => $site]);
-            $coreVersion = $site->getCurrentCoreVersion();
-
-            $updatable = 0;
-            $insecureCount = 0;
-            foreach ($packages as $package) {
-                if (CmsType::WordPress === $site->getType()) {
-                    if ($this->isWordpressPluginUpdatable($package, $coreVersion, $wordpressPluginInfoRepository)) {
-                        ++$updatable;
-                    }
-                } else {
-                    $coreMajor = null !== $coreVersion ? (int) explode('.', $coreVersion)[0] : null;
-                    $newer = null !== $coreMajor
-                        ? $terVersionRepository->findNewerCompatibleWith($package->getName(), $package->getVersion(), $coreMajor)
-                        : $terVersionRepository->findNewerThan($package->getName(), $package->getVersion());
-
-                    if ([] !== $newer) {
-                        ++$updatable;
-                    }
-                }
-
-                if (true === $package->isInsecure()) {
-                    ++$insecureCount;
-                }
-            }
-
             $summary[(int) $site->getId()] = [
                 'total' => count($packages),
-                'updatable' => $updatable,
-                'insecureCount' => $insecureCount,
+                'updatable' => count(array_filter($packages, static fn (SitePackage $package): bool => true === $package->isOutdated())),
+                'insecureCount' => count(array_filter($packages, static fn (SitePackage $package): bool => true === $package->isInsecure())),
             ];
         }
 
         return $summary;
-    }
-
-    private function isWordpressPluginUpdatable(SitePackage $package, ?string $coreVersion, WordpressPluginInfoRepository $wordpressPluginInfoRepository): bool
-    {
-        $info = $wordpressPluginInfoRepository->findOneBySlug($package->getName());
-        if (null === $info || version_compare($info->getLatestVersion(), $package->getVersion(), '<=')) {
-            return false;
-        }
-
-        if (null !== $coreVersion && false === $info->isCompatibleWith($coreVersion)) {
-            return false;
-        }
-
-        return true;
     }
 }

@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Entity\SitePackage;
 use App\Entity\WordpressPluginVulnerability;
-use App\Repository\WordpressPluginInfoRepository;
 use App\Repository\WordpressPluginVulnerabilityRepository;
 
 /**
@@ -15,8 +14,8 @@ use App\Repository\WordpressPluginVulnerabilityRepository;
  * SitePackageRepository::findByPackageType(PackageType::WordpressPlugin)) -
  * see SitePackageTerEvaluator for TYPO3 extensions.
  *
- * Outdated comes from cached WordPress.org plugin info (WordpressPluginInfo),
- * insecure from synced Wordfence vulnerabilities (WordpressPluginVulnerability),
+ * Outdated comes from the synced wordpress.org versions (PackageUpdateResolver,
+ * only versions installable on the site's WordPress), insecure from synced Wordfence vulnerabilities (WordpressPluginVulnerability),
  * since WordPress.org's plugin info API has no security field. Informational
  * vulnerabilities (no real-world impact) are ignored. Insecure stays null
  * (unknown) until the Wordfence feed was synced at least once.
@@ -26,7 +25,7 @@ class SitePackageWordpressEvaluator
     private bool $vulnerabilityFeedSynced = false;
 
     public function __construct(
-        private readonly WordpressPluginInfoRepository $pluginInfoRepository,
+        private readonly PackageUpdateResolver $updateResolver,
         private readonly WordpressPluginVulnerabilityRepository $vulnerabilityRepository,
         private readonly SecurityNotifier $securityNotifier,
     ) {
@@ -36,9 +35,6 @@ class SitePackageWordpressEvaluator
     {
         $wasInsecure = $package->isInsecure();
 
-        $info = $this->pluginInfoRepository->findOneBySlug($package->getName());
-        $outdated = null !== $info ? version_compare($info->getLatestVersion(), $package->getVersion(), '>') : null;
-
         $vulnerability = null;
         $insecure = null;
         if ($this->isVulnerabilityFeedSynced()) {
@@ -46,7 +42,8 @@ class SitePackageWordpressEvaluator
             $insecure = null !== $vulnerability;
         }
 
-        $package->setVersionStatus($insecure, $outdated, true === $outdated ? $info->getLatestVersion() : null);
+        $package->setVersionStatus($insecure, null, null);
+        $package->applyUpdate($this->updateResolver->forWordpressPlugin($package->getName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
         $package->setMatchedWordpressVulnerability($vulnerability);
 
         if (null !== $vulnerability && true !== $wasInsecure) {

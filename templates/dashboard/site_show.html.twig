@@ -215,9 +215,7 @@
                     {% if ext.matchedWordpressVulnerability %}
                         <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ ext.matchedWordpressVulnerability.cve ?? 'Vulnerability' }} ({{ ext.matchedWordpressVulnerability.cvssRating }})</span>
                     {% endif %}
-                    {% if details.newerMajorAvailable %}
-                        <span class="badge text-bg-info ms-2">Newer version needs newer {{ site.type.label }}</span>
-                    {% endif %}
+                    {{ m.newer_core_package_badge(site.type.label, ext.newerCoreVersion, ext.newerCorePackageVersion) }}
                     </span>
                 </button>
             </h3>

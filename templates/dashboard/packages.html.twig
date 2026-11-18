@@ -64,7 +64,10 @@
                                 <tr>
                                     <td><a href="{{ path('dashboard_site_show', {id: ext.site.id}) }}">{{ ext.site.name }}</a></td>
                                     <td>{{ ext.version }}</td>
-                                    <td>{{ m.outdated_badge(ext.outdated, ext.latestVersion) }}</td>
+                                    <td class="text-nowrap">
+                                        {{ m.outdated_badge(ext.outdated, ext.latestVersion) }}
+                                        {{ m.newer_core_package_badge(ext.site.type.label, ext.newerCoreVersion, ext.newerCorePackageVersion) }}
+                                    </td>
                                     <td>{{ m.security_badge(ext.insecure) }}</td>
                                 </tr>
                             {% endfor %}

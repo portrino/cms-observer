@@ -46,8 +46,6 @@ class DashboardController extends AbstractController
         SitePackageRepository $extensionRepository,
         Typo3CoreReleaseRepository $coreReleaseRepository,
         WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
-        Typo3TerExtensionVersionRepository $terVersionRepository,
-        WordpressPluginInfoRepository $wordpressPluginInfoRepository,
         #[MapQueryString(validationFailedStatusCode: Response::HTTP_NOT_FOUND)] ProjectListQuery $query = new ProjectListQuery(),
     ): Response {
         $search = null !== $query->q && '' !== trim($query->q) ? trim($query->q) : null;
@@ -70,7 +68,7 @@ class DashboardController extends AbstractController
             'securityFilters' => ProjectSecurityFilter::cases(),
             'slaFilters' => ProjectSlaFilter::cases(),
             'extensionStatusBySite' => $extensionStatusBySite,
-            'extensionSummaryBySite' => $extensionRepository->getExtensionSummaryBySite($sites, $terVersionRepository, $wordpressPluginInfoRepository),
+            'extensionSummaryBySite' => $extensionRepository->getExtensionSummaryBySite($sites),
             'coreMajorStatusBySite' => $coreReleaseRepository->getMajorStatusBySite($sites) + $wordpressCoreReleaseRepository->getMajorStatusBySite($sites),
         ]);
     }
@@ -139,13 +137,11 @@ class DashboardController extends AbstractController
                 // like the TER versions: only what installs on the site's WordPress, unknown "requires" stays
                 $newerVersions = [];
                 $versionStates = [];
-                $needsNewerWordpress = false;
                 foreach ($wordpressPluginVersionRepository->findNewerThan($extension->getName(), $extension->getVersion()) as $version) {
                     $compatible = null !== $coreVersion && null !== $version->getRequiresWpVersion()
                         ? version_compare($coreVersion, $version->getRequiresWpVersion(), '>=')
                         : null;
                     if (false === $compatible) {
-                        $needsNewerWordpress = true;
                         continue;
                     }
 
@@ -162,7 +158,6 @@ class DashboardController extends AbstractController
                     'versionStates' => $versionStates,
                     // newest first: the first version without a known vulnerability
                     'latestVersion' => array_find_key($versionStates, static fn (array $state): bool => !$state['insecure']),
-                    'newerMajorAvailable' => $needsNewerWordpress,
                 ];
 
                 continue;
@@ -178,8 +173,6 @@ class DashboardController extends AbstractController
                 'newerVersions' => null !== $coreMajor
                     ? $terVersionRepository->findNewerCompatibleWith($extension->getName(), $extension->getVersion(), $coreMajor)
                     : $terVersionRepository->findNewerThan($extension->getName(), $extension->getVersion()),
-                'newerMajorAvailable' => null !== $coreMajor
-                    && $terVersionRepository->hasNewerVersionForNewerMajor($extension->getName(), $extension->getVersion(), $coreMajor),
             ];
         }
 

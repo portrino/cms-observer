@@ -81,6 +81,14 @@
 {% endmacro %}
 
 {# "TYPO3 14 available (14.3.12)", on phones just the version #}
+{# "TYPO3 14 compatible version (13.0.0)": an update that needs a newer core, so not "Outdated"; on phones just the version #}
+{% macro newer_core_package_badge(typeLabel, coreVersion, packageVersion, class = 'ms-2') %}
+    {%- if coreVersion and packageVersion -%}
+        {%- set text = typeLabel ~ ' ' ~ coreVersion ~ ' compatible version (' ~ packageVersion ~ ')' -%}
+        <span class="badge text-bg-info {{ class }}" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}<span><span class="badge-text">{{ typeLabel }} {{ coreVersion }} compatible version (</span>{{ packageVersion }}<span class="badge-text">)</span></span></span>
+    {%- endif -%}
+{%- endmacro %}
+
 {% macro newer_major_badge(typeLabel, release, class = 'ms-2') %}
     {%- set text = typeLabel ~ ' ' ~ release.major ~ ' available (' ~ release.version ~ ')' -%}
     <span class="badge text-bg-info {{ class }}" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}<span><span class="badge-text">{{ typeLabel }} {{ release.major }} available (</span>{{ release.version }}<span class="badge-text">)</span></span></span>

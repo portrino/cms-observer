@@ -91,31 +91,4 @@ class TerExtensionApiClient
             'manualUrl' => ($meta['external_manual'] ?? '') !== '' ? $meta['external_manual'] : null,
         ];
     }
-
-    /**
-     * @param string[] $extensionKeys
-     *
-     * @return array<string, string> latest version number keyed by extension key
-     */
-    public function getLatestVersions(array $extensionKeys): array
-    {
-        if ([] === $extensionKeys) {
-            return [];
-        }
-
-        $response = $this->httpClient->request('POST', self::BASE_URL.'/extension/versions/latest', [
-            'body' => ['keys' => array_values($extensionKeys)],
-        ]);
-
-        $data = $response->toArray();
-
-        $latest = [];
-        foreach ($data as $key => $version) {
-            if (isset($version['number'])) {
-                $latest[$key] = (string) $version['number'];
-            }
-        }
-
-        return $latest;
-    }
 }

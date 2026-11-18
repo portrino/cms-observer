@@ -9,9 +9,7 @@ use App\Form\OrganizationType;
 use App\Repository\OrganizationRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3CoreReleaseRepository;
-use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressCoreReleaseRepository;
-use App\Repository\WordpressPluginInfoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,13 +55,11 @@ class OrganizationController extends AbstractController
         SitePackageRepository $extensionRepository,
         Typo3CoreReleaseRepository $coreReleaseRepository,
         WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
-        Typo3TerExtensionVersionRepository $terVersionRepository,
-        WordpressPluginInfoRepository $wordpressPluginInfoRepository,
     ): Response {
         return $this->render('dashboard/organization_show.html.twig', [
             'organization' => $organization,
             'extensionStatusBySite' => $extensionRepository->getAggregateStatusBySite(),
-            'extensionSummaryBySite' => $extensionRepository->getExtensionSummaryBySite($organization->getSites(), $terVersionRepository, $wordpressPluginInfoRepository),
+            'extensionSummaryBySite' => $extensionRepository->getExtensionSummaryBySite($organization->getSites()),
             'coreMajorStatusBySite' => $coreReleaseRepository->getMajorStatusBySite($organization->getSites()) + $wordpressCoreReleaseRepository->getMajorStatusBySite($organization->getSites()),
         ]);
     }

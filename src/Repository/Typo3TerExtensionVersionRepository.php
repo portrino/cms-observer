@@ -48,8 +48,7 @@ class Typo3TerExtensionVersionRepository extends ServiceEntityRepository
      * Cached versions of one extension newer than $version AND compatible
      * with $coreMajor (the site's current TYPO3 core major) - a version that
      * only supports a newer core major than the site is running isn't
-     * something the site could actually install, so it's excluded here (see
-     * hasNewerVersionForNewerMajor() for surfacing that separately).
+     * something the site could actually install, so it's excluded here.
      *
      * @return Typo3TerExtensionVersion[]
      */
@@ -64,30 +63,5 @@ class Typo3TerExtensionVersionRepository extends ServiceEntityRepository
         usort($newer, static fn (Typo3TerExtensionVersion $a, Typo3TerExtensionVersion $b): int => version_compare($b->getVersion(), $a->getVersion()));
 
         return $newer;
-    }
-
-    /**
-     * Whether a newer version of this extension exists that supports some
-     * TYPO3 major greater than $coreMajor but not $coreMajor itself - i.e.
-     * an upgrade only reachable by also upgrading core to a newer major.
-     */
-    public function hasNewerVersionForNewerMajor(string $extensionKey, string $version, int $coreMajor): bool
-    {
-        foreach ($this->findBy(['extensionKey' => $extensionKey]) as $v) {
-            if (!version_compare($v->getVersion(), $version, '>')) {
-                continue;
-            }
-
-            $majors = $v->getTypo3MajorVersions();
-            if ([] === $majors || in_array($coreMajor, $majors, true)) {
-                continue;
-            }
-
-            if (max($majors) > $coreMajor) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
