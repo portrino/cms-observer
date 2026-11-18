@@ -48,6 +48,37 @@ class SitePackageTerEvaluatorTest extends TestCase
         self::assertSame('13.1.0', $package->getNewerCorePackageVersion());
     }
 
+    /**
+     * Ready for the next major without an update: the hint shows the installed version,
+     * so the list tells at a glance which packages support it.
+     */
+    public function testAnInstalledVersionSupportingTheNextMajorShowsIt(): void
+    {
+        $package = $this->evaluate('7.1.1', [['7.1.1', '13,14']]);
+
+        self::assertFalse($package->isOutdated());
+        self::assertSame('14', $package->getNewerCoreVersion());
+        self::assertSame('7.1.1', $package->getNewerCorePackageVersion());
+    }
+
+    public function testAnUpdateSupportingBothMajorsIsOutdatedAndShowsTheNextMajor(): void
+    {
+        $package = $this->evaluate('11.4.0', [['11.4.0', '12,13'], ['14.1.2', '13,14']]);
+
+        self::assertTrue($package->isOutdated());
+        self::assertSame('14.1.2', $package->getLatestVersion());
+        self::assertSame('14', $package->getNewerCoreVersion());
+        self::assertSame('14.1.2', $package->getNewerCorePackageVersion());
+    }
+
+    public function testNoHintWithoutAnyVersionForANewerMajor(): void
+    {
+        $package = $this->evaluate('8.3.1', [['8.3.1', '12,13'], ['9.0.0', '13']]);
+
+        self::assertNull($package->getNewerCoreVersion());
+        self::assertNull($package->getNewerCorePackageVersion());
+    }
+
     public function testInsecureComesFromTheExactVersion(): void
     {
         $package = $this->evaluate('8.3.1', [['8.3.1', '13', true], ['9.0.0', '13']]);

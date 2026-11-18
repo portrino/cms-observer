@@ -40,15 +40,20 @@ class PackageUpdateResolver
         $coreMajor = (int) explode('.', $coreVersion)[0];
         $compatible = array_values(array_filter($newer, static fn (Typo3TerExtensionVersion $v): bool => in_array($coreMajor, $v->getTypo3MajorVersions(), true)));
 
-        // the next major any newer version supports, and the newest version supporting it
+        // The next major the installed or a newer version supports, so a list of packages shows at a
+        // glance which ones are ready for a core upgrade: the installed version if it supports it
+        // already, otherwise the newest version that does.
+        $installed = array_find($versions, static fn (Typo3TerExtensionVersion $v): bool => $v->getVersion() === $installedVersion);
         $nextMajor = null;
-        foreach ($newer as $version) {
-            $higherMajors = array_filter($version->getTypo3MajorVersions(), static fn (int $major): bool => $major > $coreMajor);
-            if ([] !== $higherMajors && !in_array($coreMajor, $version->getTypo3MajorVersions(), true)) {
-                $nextMajor = null === $nextMajor ? min($higherMajors) : min($nextMajor, min($higherMajors));
+        foreach (null === $installed ? $newer : [$installed, ...$newer] as $version) {
+            foreach ($version->getTypo3MajorVersions() as $major) {
+                if ($major > $coreMajor) {
+                    $nextMajor = min($nextMajor ?? $major, $major);
+                }
             }
         }
-        $forNextMajor = null === $nextMajor ? null : array_find($newer, static fn (Typo3TerExtensionVersion $v): bool => in_array($nextMajor, $v->getTypo3MajorVersions(), true));
+        $supportsNextMajor = static fn (?Typo3TerExtensionVersion $v): bool => null !== $v && in_array($nextMajor, $v->getTypo3MajorVersions(), true);
+        $forNextMajor = null === $nextMajor ? null : ($supportsNextMajor($installed) ? $installed : array_find($newer, $supportsNextMajor));
 
         return new PackageUpdate(
             [] !== $compatible,
