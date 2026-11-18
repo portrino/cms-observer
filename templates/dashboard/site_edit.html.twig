@@ -14,12 +14,15 @@
 <div class="container" style="max-width: 500px;">
     <div class="card">
         <div class="card-body">
-            {{ form_start(form, {attr: {id: 'site-edit-form'}}) }}
+            {{ form_start(form, {attr: {id: 'site-edit-form', 'data-controller': 'organization-select', 'data-action': 'submit->organization-select#submit'}}) }}
                 {{ form_row(form.name) }}
                 {{ form_row(form.url) }}
                 {{ form_row(form.type) }}
                 {{ form_row(form.slaActive) }}
-                {{ form_row(form.organization) }}
+                {{ form_row(form.organization, {attr: {'data-organization-select-target': 'select', 'data-action': 'organization-select#toggle'}}) }}
+                <div data-organization-select-target="newField">
+                    {{ form_row(form.newOrganization, {attr: {'data-organization-select-target': 'newInput'}}) }}
+                </div>
                 {{ form_row(form.repositoryUrl) }}
                 {{ form_row(form.issueTrackerUrl) }}
             {{ form_end(form) }}

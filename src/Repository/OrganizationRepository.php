@@ -25,4 +25,25 @@ class OrganizationRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['name' => 'ASC']);
     }
+
+    /**
+     * The organization with that name (ignoring case), or a new one, persisted but not flushed.
+     */
+    public function findOrCreateByName(string $name): Organization
+    {
+        $existing = $this->createQueryBuilder('o')
+            ->where('LOWER(o.name) = LOWER(:name)')
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+        if ($existing instanceof Organization) {
+            return $existing;
+        }
+
+        $organization = new Organization($name);
+        $this->getEntityManager()->persist($organization);
+
+        return $organization;
+    }
 }

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\CmsType;
+use App\Entity\Organization;
 use App\Entity\Site;
+use App\Repository\OrganizationRepository;
 use App\Repository\SiteRepository;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +35,64 @@ class DashboardSiteCrudTest extends WebTestCase
 
         $site = static::getContainer()->get(SiteRepository::class)->findOneBy(['name' => 'New Project']);
         self::assertNotNull($site);
+    }
+
+    public function testCreatingASiteWithANewOrganization(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('crud-new-org@example.test', 'Crud New Org', 'password'));
+
+        $client->request('GET', '/projects/new');
+        $client->submitForm('Create', [
+            'site[name]' => 'Project With New Org',
+            'site[url]' => 'https://new-org.test',
+            'site[newOrganization]' => ' Brand New Agency ',
+        ]);
+
+        self::assertResponseRedirects();
+        $site = static::getContainer()->get(SiteRepository::class)->findOneBy(['name' => 'Project With New Org']);
+        self::assertSame('Brand New Agency', $site?->getOrganization()?->getName());
+    }
+
+    public function testANewOrganizationWithAnExistingNameReusesIt(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('crud-reuse-org@example.test', 'Crud Reuse Org', 'password'));
+        $existing = new Organization('Existing Agency');
+        $site = $this->createSite('Reuse Org Site');
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($existing);
+        $entityManager->flush();
+
+        $client->request('GET', '/projects/'.$site->getId().'/edit');
+        $client->submitForm('Save', ['site[newOrganization]' => 'existing agency']);
+
+        self::assertResponseRedirects('/projects/'.$site->getId());
+        $entityManager->clear();
+        self::assertSame($existing->getId(), $entityManager->getRepository(Site::class)->find($site->getId())?->getOrganization()?->getId());
+        self::assertCount(1, static::getContainer()->get(OrganizationRepository::class)->findBy(['name' => 'Existing Agency']));
+    }
+
+    public function testChoosingAnOrganizationAndEnteringANewOneIsRejected(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('crud-both-org@example.test', 'Crud Both Org', 'password'));
+        $organization = new Organization('Chosen Agency');
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($organization);
+        $entityManager->flush();
+
+        $client->request('GET', '/projects/new');
+        $client->submitForm('Create', [
+            'site[name]' => 'Project With Both',
+            'site[url]' => 'https://both.test',
+            'site[organization]' => (string) $organization->getId(),
+            'site[newOrganization]' => 'Another Agency',
+        ]);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.invalid-feedback', 'not both');
+        self::assertNull(static::getContainer()->get(SiteRepository::class)->findOneBy(['name' => 'Project With Both']));
     }
 
     public function testEditingASite(): void

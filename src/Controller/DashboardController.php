@@ -9,12 +9,14 @@ use App\Dto\ProjectSecurityFilter;
 use App\Dto\ProjectSlaFilter;
 use App\Dto\SiteHistoryQuery;
 use App\Entity\CmsType;
+use App\Entity\Organization;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEventType;
 use App\Entity\WordpressPluginVulnerability;
 use App\Form\SiteType;
 use App\Repository\EndOfLifeReleaseRepository;
+use App\Repository\OrganizationRepository;
 use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
@@ -74,7 +76,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/projects/new', name: 'dashboard_site_new')]
-    public function newSite(Request $request, EntityManagerInterface $entityManager, SiteTokenFactory $tokenFactory): Response
+    public function newSite(Request $request, EntityManagerInterface $entityManager, SiteTokenFactory $tokenFactory, OrganizationRepository $organizationRepository): Response
     {
         $form = $this->createForm(SiteType::class);
         $form->handleRequest($request);
@@ -90,7 +92,7 @@ class DashboardController extends AbstractController
                 $data['url'],
                 $tokenHash,
                 $data['slaActive'],
-                $data['organization'],
+                $this->chosenOrganization($data, $organizationRepository),
                 $data['repositoryUrl'],
                 $data['issueTrackerUrl'],
             );
@@ -229,6 +231,7 @@ class DashboardController extends AbstractController
         Site $site,
         Request $request,
         EntityManagerInterface $entityManager,
+        OrganizationRepository $organizationRepository,
     ): Response {
         $form = $this->createForm(SiteType::class, [
             'name' => $site->getName(),
@@ -249,7 +252,7 @@ class DashboardController extends AbstractController
                 $data['type'],
                 $data['url'],
                 $data['slaActive'],
-                $data['organization'],
+                $this->chosenOrganization($data, $organizationRepository),
                 $data['repositoryUrl'],
                 $data['issueTrackerUrl'],
             );
@@ -315,5 +318,20 @@ class DashboardController extends AbstractController
             'packageType' => $packageType,
             'packageTypes' => PackageType::cases(),
         ]);
+    }
+
+    /**
+     * The selected organization, or the one entered as new (SiteType rejects both at once).
+     *
+     * @param array<string, mixed> $data
+     */
+    private function chosenOrganization(array $data, OrganizationRepository $organizationRepository): ?Organization
+    {
+        if ($data['organization'] instanceof Organization) {
+            return $data['organization'];
+        }
+        $newName = trim((string) ($data['newOrganization'] ?? ''));
+
+        return '' === $newName ? null : $organizationRepository->findOrCreateByName($newName);
     }
 }
