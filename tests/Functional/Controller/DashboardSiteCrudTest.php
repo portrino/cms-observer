@@ -9,6 +9,7 @@ use App\Entity\Organization;
 use App\Entity\Site;
 use App\Repository\OrganizationRepository;
 use App\Repository\SiteRepository;
+use App\Security\SiteTokenFactory;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -118,7 +119,7 @@ class DashboardSiteCrudTest extends WebTestCase
         $site = $this->createSite('Delete Me');
 
         $crawler = $client->request('GET', '/projects/'.$site->getId().'/edit');
-        $csrfToken = (string) $crawler->filter('input[name="_token"]')->attr('value');
+        $csrfToken = (string) $crawler->filter('form[action$="/delete"] input[name="_token"]')->attr('value');
 
         $client->request('POST', '/projects/'.$site->getId().'/delete', [
             'confirmation' => 'wrong confirmation',
@@ -135,6 +136,39 @@ class DashboardSiteCrudTest extends WebTestCase
 
         self::assertResponseRedirects('/');
         self::assertNull(static::getContainer()->get(SiteRepository::class)->find($site->getId()));
+    }
+
+    public function testRegeneratingTheTokenReplacesTheOldOne(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('crud-token@example.test', 'Crud Token', 'password'));
+        $site = $this->createSite('Token Site');
+
+        $crawler = $client->request('GET', '/projects/'.$site->getId().'/edit');
+        $client->submit($crawler->filter('form[action$="/regenerate-token"]')->form());
+
+        self::assertResponseRedirects('/projects/'.$site->getId());
+        $crawler = $client->followRedirect();
+        $token = $crawler->filter('.alert-warning code')->text();
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->clear();
+        self::assertSame(
+            static::getContainer()->get(SiteTokenFactory::class)->hash($token),
+            $entityManager->getRepository(Site::class)->find($site->getId())?->getTokenHash(),
+        );
+    }
+
+    public function testRegeneratingTheTokenNeedsAValidCsrfToken(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('crud-token-csrf@example.test', 'Crud Token Csrf', 'password'));
+        $site = $this->createSite('Token Csrf Site');
+
+        $client->request('POST', '/projects/'.$site->getId().'/regenerate-token', ['_token' => 'invalid']);
+
+        self::assertResponseStatusCodeSame(403);
+        self::assertSame(hash('sha256', 'Token Csrf Site'), static::getContainer()->get(SiteRepository::class)->find($site->getId())?->getTokenHash());
     }
 
     private function createSite(string $name): Site

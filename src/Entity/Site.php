@@ -121,6 +121,11 @@ class Site implements UserInterface
         return $this->tokenHash;
     }
 
+    public function replaceTokenHash(string $tokenHash): void
+    {
+        $this->tokenHash = $tokenHash;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;

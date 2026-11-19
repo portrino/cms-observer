@@ -262,6 +262,26 @@ class DashboardController extends AbstractController
         ]);
     }
 
+    #[Route('/projects/{id}/regenerate-token', name: 'dashboard_site_regenerate_token', methods: ['POST'])]
+    public function regenerateToken(
+        Site $site,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SiteTokenFactory $tokenFactory,
+    ): Response {
+        if (!$this->isCsrfTokenValid('regenerate-token-'.$site->getId(), $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        [$token, $tokenHash] = $tokenFactory->generate();
+        $site->replaceTokenHash($tokenHash);
+        $entityManager->flush();
+
+        $this->addFlash('site_token', $token);
+
+        return $this->redirectToRoute('dashboard_site_show', ['id' => $site->getId()]);
+    }
+
     #[Route('/projects/{id}/delete', name: 'dashboard_site_delete', methods: ['POST'])]
     public function deleteSite(
         Site $site,

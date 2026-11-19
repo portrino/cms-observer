@@ -38,7 +38,7 @@ Content-Type: application/json
 | `extensions` | no | installed extensions/plugins. `name` is the TYPO3 extension key or the wordpress.org slug. Without the field the packages stay as they are, an empty list means none are installed |
 
 The token belongs to one project and is shown once when the project is
-created. HTTPS is required.
+created or a new one is generated (see [Projects](configuration.md#projects)). HTTPS is required.
 
 | Response | Meaning |
 |---|---|

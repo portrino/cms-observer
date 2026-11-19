@@ -49,5 +49,14 @@ Projects (sites) are created in the dashboard or on the command line:
 php bin/console app:site:create "<name>" <typo3|wordpress> "<site-url>"
 ```
 
-Both print the site's token once; the client needs it. The site URL must be
+Both print the site's token once; the client needs it. The token is stored
+hashed, so a lost one can't be shown again. Generate a new one in the
+project's edit form or with:
+
+```bash
+php bin/console app:site:list
+php bin/console app:site:regenerate-token <id>
+```
+
+The old token stops working immediately. The site URL must be
 the URL the site really uses, see the [domain check](clients.md#domain-check).
