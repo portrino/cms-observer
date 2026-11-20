@@ -6,6 +6,8 @@ namespace App\Repository;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
+use App\Entity\SiteEvent;
+use App\Entity\SiteEventType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,24 @@ class SiteRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Site::class);
+    }
+
+    /**
+     * Stale sites (see Site::STALE_AFTER) without a "stopped reporting" event since their last
+     * report, i.e. not notified yet. Sites that never reported are left out, like the badge does.
+     *
+     * @return Site[]
+     */
+    public function findStaleNotYetNotified(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.lastSeenAt < :threshold')
+            ->andWhere('NOT EXISTS (SELECT e.id FROM '.SiteEvent::class.' e WHERE e.site = s AND e.type = :type AND e.occurredAt >= s.lastSeenAt)')
+            ->setParameter('threshold', new \DateTimeImmutable(Site::STALE_AFTER))
+            ->setParameter('type', SiteEventType::StoppedReporting)
+            ->orderBy('s.name', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function findOneByTokenHash(string $tokenHash): ?Site

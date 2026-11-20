@@ -74,6 +74,9 @@ class Site implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?array $lastRejectedReportDomains = null;
 
+    /** No report for this long and the site counts as stale (badge, notification) */
+    public const string STALE_AFTER = '-2 days';
+
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $name,
@@ -124,6 +127,11 @@ class Site implements UserInterface
     public function replaceTokenHash(string $tokenHash): void
     {
         $this->tokenHash = $tokenHash;
+    }
+
+    public function isStale(): bool
+    {
+        return null !== $this->lastSeenAt && $this->lastSeenAt < new \DateTimeImmutable(self::STALE_AFTER);
     }
 
     public function getCreatedAt(): \DateTimeImmutable

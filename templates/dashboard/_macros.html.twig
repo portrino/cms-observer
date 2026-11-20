@@ -169,7 +169,7 @@
 
 {% macro stale_badge(lastSeenAt) %}
     {%- import _self as icons -%}
-    {%- if lastSeenAt and lastSeenAt < date('-2 days') -%}
+    {%- if lastSeenAt and lastSeenAt < date(constant('App\\Entity\\Site::STALE_AFTER')) -%}
         <span class="status-icon text-bg-warning ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Last seen: stale (over 2 days ago)">{{ icons.icon_warning() }}</span>
     {%- endif -%}
 {% endmacro %}

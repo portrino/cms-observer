@@ -41,11 +41,11 @@ class SecurityNotifier
     ) {
     }
 
-    public function addFinding(Site $site, string $subject, string $detail): void
+    public function addFinding(Site $site, string $subject, string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
     {
         $this->findings[] = new SecurityFinding($site->getId(), $site->getName(), $subject, $detail);
         // every caller flushes the entity manager after evaluating, which stores this with the new status
-        $this->entityManager->persist(new SiteEvent($site, SiteEventType::BecameInsecure, $subject, null, null, $detail));
+        $this->entityManager->persist(new SiteEvent($site, $type, $subject, null, null, $detail));
     }
 
     public function flush(): void

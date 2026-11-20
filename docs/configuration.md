@@ -10,6 +10,10 @@ collects all new findings, e.g. a new TYPO3 security release affecting twenty
 sites, into a single mail. A finding is only mailed once: when a core, PHP or
 database version or a package becomes insecure, not on every later check.
 
+A project that sends no report for 2 days is mailed too, once per outage: its
+security status is no longer up to date, e.g. because the client or its cron
+job stopped working, or the token was replaced.
+
 The mails link to the projects, so `DEFAULT_URI` must be the Observer's
 public URL.
 
@@ -27,6 +31,7 @@ syncs. Each can also be run by hand, e.g. right after the installation:
 | `app:wordpress:sync-plugins` | every 15 minutes | wordpress.org versions of the reported plugins, 40 per run |
 | `app:wordpress:sync-plugin-vulnerabilities` | daily | the Wordfence vulnerability feed (needs `WORDFENCE_API_KEY`) |
 | `app:sync-endoflife-releases` | daily | PHP, MariaDB, MySQL and PostgreSQL support cycles |
+| `app:check-stale-sites` | hourly | nothing; mails projects that stopped sending reports |
 
 Wordfence rate-limits strictly, so don't run its sync repeatedly by hand.
 
