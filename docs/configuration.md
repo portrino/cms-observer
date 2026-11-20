@@ -46,7 +46,8 @@ Users set up two-factor authentication (TOTP, with backup codes) in their
 profile. The TOTP secrets are encrypted with `TOTP_ENCRYPTION_KEY`; without a
 valid key the profile doesn't offer the setup.
 
-A login session ends after 2 hours of inactivity. "Remember me" on the login
+A login session ends after 2 hours of inactivity; expired sessions are
+removed from the database now and then on a later request. "Remember me" on the login
 form keeps a user logged in for 30 days; changing the password or resetting
 two-factor authentication logs out every remembered browser.
 

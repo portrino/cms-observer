@@ -8,6 +8,8 @@ framework:
         handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
         # 2 hours of inactivity, independent of the server's php.ini; "Remember me" covers longer logins
         gc_maxlifetime: 7200
+        # Debian/Ubuntu ship gc_probability = 0 and only clean session files by cron, never the database
+        gc_probability: 1
 
     #esi: true
     #fragments: true
