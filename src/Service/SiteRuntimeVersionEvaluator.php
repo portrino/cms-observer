@@ -47,7 +47,8 @@ class SiteRuntimeVersionEvaluator
         $missesSecurityFixes = null !== $securityVersion && version_compare($version, $securityVersion, '<');
         $insecure = $release->isEol() || $missesSecurityFixes;
 
-        $outdated = $version !== $release->getLatestVersion();
+        // endoflife.date lags behind new releases, so a newer installed version is not outdated
+        $outdated = version_compare($version, $release->getLatestVersion(), '<');
         $site->setPhpStatus($insecure, $outdated, $outdated ? $release->getLatestVersion() : null, $release->getEolUrl());
 
         if ($insecure && true !== $wasInsecure) {
@@ -75,7 +76,7 @@ class SiteRuntimeVersionEvaluator
             return;
         }
 
-        $outdated = $plainVersion !== $release->getLatestVersion();
+        $outdated = version_compare($plainVersion, $release->getLatestVersion(), '<');
         $site->setDbStatus($release->isEol(), $outdated, $outdated ? $release->getLatestVersion() : null, $release->getEolUrl());
 
         if ($release->isEol() && true !== $wasInsecure) {

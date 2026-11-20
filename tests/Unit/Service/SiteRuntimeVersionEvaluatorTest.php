@@ -54,6 +54,43 @@ class SiteRuntimeVersionEvaluatorTest extends TestCase
     }
 
     /**
+     * @return iterable<string, array{string, bool}>
+     */
+    public static function outdatedVersions(): iterable
+    {
+        // installed version, expected outdated (latest known release: 8.4.27 / 10.11.20)
+        yield 'older than the latest release' => ['older', true];
+        yield 'equal to the latest release' => ['equal', false];
+        yield 'newer than the latest release (endoflife.date lags behind)' => ['newer', false];
+    }
+
+    #[DataProvider('outdatedVersions')]
+    public function testOnlyVersionsOlderThanTheLatestReleaseAreOutdated(string $case, bool $expectedOutdated): void
+    {
+        $php = ['older' => '8.4.26', 'equal' => '8.4.27', 'newer' => '8.4.28'][$case];
+        $db = ['older' => '10.11.19', 'equal' => '10.11.20', 'newer' => '10.11.21'][$case];
+
+        $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
+        $site->recordReport('13.4.0', $php, $db.'-MariaDB', 'mariadb');
+
+        $repository = self::createStub(EndOfLifeReleaseRepository::class);
+        $repository->method('findOneByProductAndCycle')->willReturnCallback(
+            static fn (string $product): ?EndOfLifeRelease => match ($product) {
+                'php' => new EndOfLifeRelease('php', '8.4', false, '8.4.27', 'https://endoflife.date/php'),
+                'mariadb' => new EndOfLifeRelease('mariadb', '10.11', false, '10.11.20', 'https://endoflife.date/mariadb'),
+                default => null,
+            },
+        );
+
+        new SiteRuntimeVersionEvaluator($repository, self::createStub(SecurityNotifier::class))->evaluate($site);
+
+        self::assertSame($expectedOutdated, $site->isPhpOutdated());
+        self::assertSame($expectedOutdated ? '8.4.27' : null, $site->getPhpLatestVersion());
+        self::assertSame($expectedOutdated, $site->isDbOutdated());
+        self::assertSame($expectedOutdated ? '10.11.20' : null, $site->getDbLatestVersion());
+    }
+
+    /**
      * @return iterable<string, array{?string, string, string, string}>
      */
     public static function dbVersions(): iterable
