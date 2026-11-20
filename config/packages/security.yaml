@@ -38,6 +38,12 @@ security:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check
                 enable_csrf: true
+            # opt-in via the login form's checkbox; scheb/2fa only sets the cookie once the 2FA code passed
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000 # 30 days
+                # changing the password or (re)setting 2FA invalidates existing cookies
+                signature_properties: [password, encryptedTotpSecret]
             logout:
                 path: app_logout
                 target: app_login

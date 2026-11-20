@@ -49,6 +49,46 @@ class SecurityControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Projects');
     }
 
+    public function testRememberMeKeepsTheUserLoggedInWithoutASession(): void
+    {
+        $client = $this->createLoginClient();
+        $this->createUser('login-remember@example.test', 'Login Remember', 'correct-password');
+
+        $client->request('GET', '/login');
+        $client->submitForm('Log in', [
+            '_username' => 'login-remember@example.test',
+            '_password' => 'correct-password',
+            '_remember_me' => true,
+        ]);
+
+        $cookie = $client->getCookieJar()->get('REMEMBERME');
+        self::assertNotNull($cookie);
+        self::assertEqualsWithDelta(time() + 30 * 86400, (int) $cookie->getExpiresTime(), 60);
+
+        // a browser restart: the session cookie is gone, the remember-me cookie stays
+        $client->getCookieJar()->clear();
+        $client->getCookieJar()->set($cookie);
+        $client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Projects');
+    }
+
+    public function testLoginWithoutRememberMeSetsNoRememberMeCookie(): void
+    {
+        $client = $this->createLoginClient();
+        $this->createUser('login-no-remember@example.test', 'Login No Remember', 'correct-password');
+
+        $client->request('GET', '/login');
+        $client->submitForm('Log in', [
+            '_username' => 'login-no-remember@example.test',
+            '_password' => 'correct-password',
+        ]);
+
+        self::assertResponseRedirects('/');
+        self::assertNull($client->getCookieJar()->get('REMEMBERME'));
+    }
+
     public function testLoginIsThrottledAfterFiveFailedAttempts(): void
     {
         $client = $this->createLoginClient();

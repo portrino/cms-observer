@@ -99,6 +99,26 @@ class TwoFactorLoginTest extends WebTestCase
         self::assertResponseRedirects('/2fa');
     }
 
+    public function testRememberMeCookieIsOnlySetAfterTheCode(): void
+    {
+        $client = $this->createLoginClient();
+        $secret = $this->createTwoFactorUser('remember-2fa@example.test');
+
+        $client->request('GET', '/login');
+        $client->submitForm('Log in', ['_username' => 'remember-2fa@example.test', '_password' => 'password', '_remember_me' => true]);
+        self::assertNull($client->getCookieJar()->get('REMEMBERME'));
+
+        $this->submitCode($client, self::currentTotpCode($secret));
+        $cookie = $client->getCookieJar()->get('REMEMBERME');
+        self::assertNotNull($cookie);
+
+        // the cookie alone logs in without asking for the code again
+        $client->getCookieJar()->clear();
+        $client->getCookieJar()->set($cookie);
+        $client->request('GET', '/');
+        self::assertResponseIsSuccessful();
+    }
+
     private function createLoginClient(): KernelBrowser
     {
         $client = static::createClient([], ['HTTPS' => 'on']);

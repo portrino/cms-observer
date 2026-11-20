@@ -41,6 +41,10 @@ Users set up two-factor authentication (TOTP, with backup codes) in their
 profile. The TOTP secrets are encrypted with `TOTP_ENCRYPTION_KEY`; without a
 valid key the profile doesn't offer the setup.
 
+A login session ends after 2 hours of inactivity. "Remember me" on the login
+form keeps a user logged in for 30 days; changing the password or resetting
+two-factor authentication logs out every remembered browser.
+
 ## Projects
 
 Projects (sites) are created in the dashboard or on the command line:

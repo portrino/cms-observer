@@ -6,6 +6,8 @@ framework:
     # Database-backed (not the file-based default) - see services.yaml for why.
     session:
         handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        # 2 hours of inactivity, independent of the server's php.ini; "Remember me" covers longer logins
+        gc_maxlifetime: 7200
 
     #esi: true
     #fragments: true
