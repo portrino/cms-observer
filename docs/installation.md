@@ -67,6 +67,14 @@ If the settings come from real environment variables (e.g. in a container)
 instead of `.env.local`, `bin/setup` skips the questions and only updates;
 `bin/setup --setup` forces them.
 
+## Logs
+
+Errors of the web server and of the scheduler's worker go to
+`var/log/prod-YYYY-MM-DD.log`, deprecations to
+`var/log/prod.deprecations-YYYY-MM-DD.log`; both keep the last 14 days. The
+web server and the cron job must be able to write to `var/log`, e.g. run as
+the same user.
+
 ## Updating
 
 Read the release notes of the new version first, and back up the database:
