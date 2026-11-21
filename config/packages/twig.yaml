@@ -1,5 +1,8 @@
 twig:
     file_name_pattern: '*.twig'
+    # @images/logo-mail.png: mails embed their images, they can't load assets
+    paths:
+        '%kernel.project_dir%/assets/images': images
     form_themes:
         - 'bootstrap_5_layout.html.twig'
 

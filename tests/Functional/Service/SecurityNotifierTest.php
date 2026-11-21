@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Service;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
+use App\Entity\SiteEventType;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\SecurityNotifier;
@@ -48,6 +49,32 @@ class SecurityNotifierTest extends KernelTestCase
         self::assertEmailHtmlBodyContains($email, 'PHP version is missing security fixes (fixed in 8.4.27).');
         self::assertEmailHtmlBodyContains($email, 'Site B');
         self::assertEmailHtmlBodyContains($email, '/projects/'.$siteA->getId());
+
+        // the logo is embedded, mail clients can't load it from the Observer
+        self::assertEmailAttachmentCount($email, 1);
+        self::assertEmailHtmlBodyContains($email, 'src="cid:');
+    }
+
+    public function testFindingsAreGroupedByKindAndCountedInTheSubject(): void
+    {
+        $this->createUser('notify-kinds@example.test', 'Notify Kinds', 'password');
+        $site = $this->createSite('Site Kinds');
+
+        $notifier = static::getContainer()->get(SecurityNotifier::class);
+        $notifier->addFinding($site, 'No reports', 'No report since 2026-11-19 14:03.', SiteEventType::StoppedReporting);
+        $notifier->addSystemFinding('Sync app:check-syncs', 'No successful run yet, its data is missing.');
+        $notifier->addFinding($site, 'PHP 8.4.24', 'PHP version is missing security fixes (fixed in 8.4.27).');
+        $notifier->flush();
+
+        $email = self::getMailerMessage();
+        self::assertInstanceOf(Email::class, $email);
+        self::assertEmailHeaderSame($email, 'Subject', '[CMS Observer] 1 new security finding, 1 project stopped reporting, 1 sync overdue');
+
+        // insecure first, whatever order the findings came in
+        $html = (string) $email->getHtmlBody();
+        self::assertLessThan(strpos($html, 'Stopped reporting (1)'), strpos($html, 'Insecure (1)'));
+        self::assertLessThan(strpos($html, 'Syncs overdue (1)'), strpos($html, 'Stopped reporting (1)'));
+        self::assertEmailHtmlBodyContains($email, '/status');
     }
 
     public function testFlushWithoutFindingsSendsNothing(): void

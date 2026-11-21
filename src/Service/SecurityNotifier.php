@@ -44,7 +44,8 @@ class SecurityNotifier
     public function addFinding(Site $site, string $subject, string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
     {
         $url = $this->urlGenerator->generate('dashboard_site_show', ['id' => $site->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-        $this->findings[] = new SecurityFinding($site->getName(), $url, $subject, $detail);
+        $kind = SiteEventType::StoppedReporting === $type ? FindingKind::StoppedReporting : FindingKind::Insecure;
+        $this->findings[] = new SecurityFinding($kind, $site->getName(), $url, $subject, $detail);
         // every caller flushes the entity manager after evaluating, which stores this with the new status
         $this->entityManager->persist(new SiteEvent($site, $type, $subject, null, null, $detail));
     }
@@ -63,7 +64,7 @@ class SecurityNotifier
     public function addSystemFinding(string $subject, string $detail): void
     {
         $url = $this->urlGenerator->generate('app_status', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $this->findings[] = new SecurityFinding('CMS Observer', $url, $subject, $detail);
+        $this->findings[] = new SecurityFinding(FindingKind::SyncOverdue, 'CMS Observer', $url, $subject, $detail);
     }
 
     public function flush(): void
@@ -84,12 +85,23 @@ class SecurityNotifier
             return;
         }
 
+        $groups = [];
+        foreach (FindingKind::cases() as $kind) {
+            $group = array_values(array_filter($findings, static fn (SecurityFinding $finding): bool => $kind === $finding->kind));
+            if ([] !== $group) {
+                $groups[] = ['kind' => $kind, 'findings' => $group];
+            }
+        }
+
         $email = new TemplatedEmail()
             ->from($this->fromAddress)
             ->to(...$recipients)
-            ->subject(sprintf('[CMS Observer] %d new security finding%s', count($findings), 1 === count($findings) ? '' : 's'))
+            ->subject('[CMS Observer] '.implode(', ', array_map(static fn (array $group): string => $group['kind']->count(count($group['findings'])), $groups)))
             ->htmlTemplate('emails/security_findings.html.twig')
-            ->context(['findings' => $findings]);
+            ->context([
+                'groups' => $groups,
+                'dashboardUrl' => $this->urlGenerator->generate('dashboard_index', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            ]);
 
         try {
             $this->mailer->send($email);

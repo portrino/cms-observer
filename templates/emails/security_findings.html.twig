@@ -1,30 +1,70 @@
+{# Mail clients ignore stylesheets and web fonts: tables and inline styles only, colors from assets/styles/app.scss #}
+{% set font = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" %}
 <!DOCTYPE html>
-<html>
-    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a;">
-        <h1 style="font-size: 1.25rem;">CMS Observer - New Security Findings</h1>
-        <p>{{ findings|length }} new security {{ findings|length == 1 ? 'finding was' : 'findings were' }} detected:</p>
-        <table cellpadding="8" cellspacing="0" border="1" style="border-collapse: collapse; width: 100%;">
-            <thead>
-                <tr style="background: #eef1f5; text-align: left;">
-                    <th>Project</th>
-                    <th>Subject</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for finding in findings %}
-                <tr>
-                    <td><a href="{{ finding.url }}">{{ finding.name }}</a></td>
-                    <td>{{ finding.subject }}</td>
-                    <td>{{ finding.detail }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CMS Observer</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #e9ecef; font-family: {{ font }}; color: #1d293d;">
+        {# preview text in the inbox list #}
+        <div style="display: none; max-height: 0; overflow: hidden;">
+            {{ groups|map(group => group.kind.count(group.findings|length))|join(', ') }}
+        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e9ecef;">
+            <tr>
+                <td align="center" style="padding: 24px 12px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px;">
+                        <tr>
+                            <td style="background-color: #1d293d; border-radius: 12px 12px 0 0; border-bottom: 3px solid #e5185e; padding: 14px 24px; color: #ffffff; font-size: 18px; font-weight: 600;">
+                                {# a PNG embedded in the mail: SVG doesn't show in Gmail and Outlook; 64px for sharp retina displays.
+                                   Made from logo.svg: magick -background none -density 384 logo.svg -resize 64x64 -strip PNG32:logo-mail.png #}
+                                <img src="{{ email.image('@images/logo-mail.png') }}" width="32" height="32" alt="" style="display: inline-block; vertical-align: middle; margin-right: 8px; border: 0;">
+                                <span style="vertical-align: middle;">CMS Observer</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #ffffff; border-radius: 0 0 12px 12px; padding: 24px;">
+                                {% for group in groups %}
+                                    {% set accent = group.kind.warning ? '#ffc107' : '#dc3545' %}
+                                    <h2 style="margin: {{ loop.first ? '0' : '28px' }} 0 12px; font-size: 16px; font-weight: 600;">
+                                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 5px; background-color: {{ accent }}; margin-right: 6px;"></span>
+                                        {{ group.kind.heading }} ({{ group.findings|length }})
+                                    </h2>
+                                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                        {% for finding in group.findings %}
+                                            <tr>
+                                                <td style="border-left: 3px solid {{ accent }}; background-color: #f8f9fa; padding: 10px 14px; font-size: 14px; line-height: 1.45;">
+                                                    <a href="{{ finding.url }}" style="color: #1d293d; font-weight: 600; text-decoration: underline;">{{ finding.name }}</a>
+                                                    <span style="color: #6c757d;">&middot; {{ finding.subject }}</span><br>
+                                                    <span style="color: #495057;">{{ finding.detail }}</span>
+                                                </td>
+                                            </tr>
+                                            {% if not loop.last %}<tr><td style="height: 6px; line-height: 6px; font-size: 6px;">&nbsp;</td></tr>{% endif %}
+                                        {% endfor %}
+                                    </table>
+                                {% endfor %}
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 28px;">
+                                    <tr>
+                                        <td style="background-color: #e5185e; border-radius: 6px;">
+                                            <a href="{{ dashboardUrl }}" style="display: inline-block; padding: 10px 18px; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none;">Open the dashboard</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 16px 24px; font-size: 12px; line-height: 1.5; color: #6c757d; text-align: center;">
+                                You get this mail as a user of the CMS Observer. Each finding is mailed once.<br>
+                                {# required attribution of the Wordfence feed, see the plugin vulnerability page #}
+                                WordPress plugin vulnerability data provided by Wordfence Intelligence, &copy; Defiant Inc.
+                                CVE records &copy; The MITRE Corporation.
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </table>
-        {# required attribution of the Wordfence feed, see the plugin vulnerability page #}
-        <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #6c757d;">
-            WordPress plugin vulnerability data provided by Wordfence Intelligence, &copy; Defiant Inc.
-            CVE records &copy; The MITRE Corporation.
-        </p>
     </body>
 </html>
