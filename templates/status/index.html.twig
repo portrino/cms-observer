@@ -49,5 +49,18 @@
             </table>
         </div>
     </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2 class="h6">Test mail setup</h2>
+            <p class="text-muted">
+                Sends a test mail from <code>{{ mailFrom }}</code> via <code>{{ mailTransport }}</code>.
+            </p>
+            {{ form_start(mailTestForm) }}
+                {{ form_row(mailTestForm.recipient) }}
+                <button type="submit" class="btn btn-tertiary">Send test mail</button>
+            {{ form_end(mailTestForm) }}
+        </div>
+    </div>
 </div>
 {% endblock %}

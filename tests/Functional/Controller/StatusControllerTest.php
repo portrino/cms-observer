@@ -35,4 +35,20 @@ class StatusControllerTest extends WebTestCase
         $client->request('GET', '/status');
         self::assertSelectorTextContains('tr:has(code:contains("app:sync-endoflife-releases")) .badge', 'Overdue');
     }
+
+    public function testSendsATestMail(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('mail-test@example.test', 'Mail Test', 'password'));
+
+        $client->request('GET', '/status');
+        self::assertInputValueSame('mail_test[recipient]', 'mail-test@example.test');
+        $client->submitForm('Send test mail', ['mail_test[recipient]' => 'someone@example.test']);
+
+        self::assertEmailCount(1);
+        self::assertEmailAddressContains(self::getMailerMessage(), 'To', 'someone@example.test');
+        self::assertResponseRedirects('/status');
+        $client->followRedirect();
+        self::assertSelectorTextContains('.alert-success', 'accepted the test mail to someone@example.test');
+    }
 }

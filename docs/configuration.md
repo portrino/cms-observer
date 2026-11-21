@@ -17,6 +17,10 @@ job stopped working, or the token was replaced.
 The mails link to the projects, so `DEFAULT_URI` must be the Observer's
 public URL.
 
+To check the mail setup, send a test mail from the **Status** page or with
+`php bin/console app:mail:test <address>`. Both show the sender and the
+transport in use and, if sending fails, the mail server's error.
+
 ## Scheduled syncs
 
 The worker started by the [cron job](installation.md#cron-job) runs these
