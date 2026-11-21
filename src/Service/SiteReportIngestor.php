@@ -87,6 +87,7 @@ class SiteReportIngestor
         $this->entityManager->persist($report);
 
         $site->recordReport($request->coreVersion, $request->phpVersion, $dbVersion, $dbPlatform);
+        $this->evaluateApplicationContext($site, $request->applicationContext);
         $this->coreVersionEvaluator->evaluate($site);
         $this->runtimeVersionEvaluator->evaluate($site);
 
@@ -99,6 +100,18 @@ class SiteReportIngestor
         $this->securityNotifier->flush();
 
         return $report;
+    }
+
+    private function evaluateApplicationContext(Site $site, ?string $context): void
+    {
+        $wasOutside = $site->runsOutsideProductionContext();
+        $site->recordApplicationContext($context);
+
+        if ($site->runsOutsideProductionContext() && !$wasOutside) {
+            $this->securityNotifier->addFinding($site, sprintf('Application context %s', $context), 'The production site runs outside the Production context: error details and debug output can be public.');
+        } elseif ($wasOutside && null !== $context && !$site->runsOutsideProductionContext()) {
+            $this->securityNotifier->recordResolved($site, sprintf('Application context %s', $context), 'The production site runs in the Production context again.');
+        }
     }
 
     private function recordRuntimeChanges(Site $site, SiteReportRequest $request, string $db): void

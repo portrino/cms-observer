@@ -70,6 +70,10 @@ class Site implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastRejectedReportAt = null;
 
+    /** TYPO3 only, e.g. "Production/Live" */
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $applicationContext = null;
+
     /** @var list<string>|null */
     #[ORM\Column(nullable: true)]
     private ?array $lastRejectedReportDomains = null;
@@ -214,7 +218,27 @@ class Site implements UserInterface
      */
     public function hasInfrastructureWarning(): bool
     {
-        return true === $this->phpInsecure || true === $this->phpOutdated || true === $this->dbInsecure || true === $this->dbOutdated;
+        return true === $this->phpInsecure || true === $this->phpOutdated || true === $this->dbInsecure || true === $this->dbOutdated
+            || $this->runsOutsideProductionContext();
+    }
+
+    public function getApplicationContext(): ?string
+    {
+        return $this->applicationContext;
+    }
+
+    public function recordApplicationContext(?string $applicationContext): void
+    {
+        $this->applicationContext = $applicationContext;
+    }
+
+    /**
+     * Reports only come from the production URL (see matchesAnyDomain()), where a Development or
+     * Testing context shows error details and debug output to the public.
+     */
+    public function runsOutsideProductionContext(): bool
+    {
+        return null !== $this->applicationContext && !str_starts_with($this->applicationContext, 'Production');
     }
 
     public function isCoreInsecure(): ?bool

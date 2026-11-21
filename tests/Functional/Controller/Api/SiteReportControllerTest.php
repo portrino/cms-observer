@@ -6,7 +6,9 @@ namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
+use App\Entity\SiteEvent;
 use App\Entity\WordpressPluginVulnerability;
+use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
 use App\Security\SiteTokenFactory;
@@ -216,6 +218,32 @@ class SiteReportControllerTest extends WebTestCase
         ], JSON_THROW_ON_ERROR));
 
         self::assertResponseStatusCodeSame(422);
+    }
+
+    public function testANonProductionContextIsMailedOnceAndItsFixRecorded(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $this->createUser('context@example.test', 'Context', 'password');
+        [$token, $site] = $this->createSite();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Production/Live']);
+        self::assertEmailCount(0);
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Development']);
+        self::assertEmailCount(1);
+        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Application context Development');
+
+        // still Development: already mailed
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Development']);
+        self::assertEmailCount(0);
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Production']);
+        self::assertEmailCount(0);
+
+        $events = static::getContainer()->get(SiteEventRepository::class)->findBy(['site' => $site], ['id' => 'ASC']);
+        $types = array_map(static fn (SiteEvent $event): string => $event->getType()->value, $events);
+        self::assertSame(1, count(array_keys($types, 'became-insecure', true)));
+        self::assertSame(1, count(array_keys($types, 'became-secure', true)));
     }
 
     /**

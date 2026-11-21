@@ -139,7 +139,10 @@
     {%- elseif site.dbOutdated is same as(true) -%}
         {%- set issues = issues|merge(['Outdated database version ' ~ site.currentDbVersion ~ (site.dbLatestVersion ? ' (' ~ site.dbLatestVersion ~ ' available)')]) -%}
     {%- endif -%}
-    {%- if site.phpInsecure is same as(true) or site.dbInsecure is same as(true) -%}
+    {%- if site.runsOutsideProductionContext -%}
+        {%- set issues = issues|merge(['Application context ' ~ site.applicationContext ~ ' on the production URL']) -%}
+    {%- endif -%}
+    {%- if site.phpInsecure is same as(true) or site.dbInsecure is same as(true) or site.runsOutsideProductionContext -%}
         <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ issues|join(', ') }}">{{ icons.icon_warning() }}</span>
     {%- elseif issues is not empty -%}
         <span class="status-icon text-bg-warning ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ issues|join(', ') }}">{{ icons.icon_warning() }}</span>

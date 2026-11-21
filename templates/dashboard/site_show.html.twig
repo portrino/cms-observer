@@ -47,7 +47,12 @@
                             {% if lastReport %}
                                 <tr>
                                     <th>Context</th>
-                                    <td>{{ lastReport.payload.applicationContext ?? '—' }}</td>
+                                    <td>
+                                        {{ lastReport.payload.applicationContext ?? '—' }}
+                                        {% if site.runsOutsideProductionContext %}
+                                            <span class="badge text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Error details and debug output can be public">{{ m.icon_warning() }}<span class="badge-text">Not Production</span></span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Client version</th>
