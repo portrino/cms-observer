@@ -70,7 +70,7 @@ class Site implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastRejectedReportAt = null;
 
-    /** TYPO3 only, e.g. "Production/Live" */
+    /** TYPO3: e.g. "Production/Live", WordPress: wp_get_environment_type(), e.g. "production" */
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $applicationContext = null;
 
@@ -238,7 +238,8 @@ class Site implements UserInterface
      */
     public function runsOutsideProductionContext(): bool
     {
-        return null !== $this->applicationContext && !str_starts_with($this->applicationContext, 'Production');
+        // case-insensitive: WordPress reports its environment type in lowercase
+        return null !== $this->applicationContext && !str_starts_with(strtolower($this->applicationContext), 'production');
     }
 
     public function isCoreInsecure(): ?bool

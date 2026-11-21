@@ -25,10 +25,11 @@ insecure. PHP and the database have an icon of their own and never mark the
 row: on shared hosting the site's maintainers often can't change these
 versions. The security filter lists such projects separately.
 
-The same icon turns red when a TYPO3 site reports an application context that
-doesn't start with `Production`, e.g. `Development`: reports only come from
-the production URL, where such a context can show error details and debug
-output to the public.
+The same icon turns red when a site reports an application context that
+doesn't start with `Production`, e.g. `Development` in TYPO3 or the
+environment type `staging` or `development` in WordPress: reports only come
+from the production URL, where such a context can show error details and
+debug output to the public.
 
 A new finding (something that wasn't insecure before) also triggers the
 [security mail](configuration.md#email) and an entry in the project's history.
