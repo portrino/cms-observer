@@ -13,11 +13,15 @@ test('pages fit the phone width', async ({ page }) => {
 test('the sidebar is an overlay on phones', async ({ page }) => {
     const body = page.locator('body');
     const nav = page.getByRole('link', { name: 'Packages' });
+    const openIcon = page.locator('.sidebar-toggle .sidebar-icon-open');
     await expect(nav).not.toBeInViewport();
+    await expect(openIcon).toBeVisible();
 
     await page.getByRole('button', { name: 'Toggle sidebar' }).click();
     await expect(body).toHaveClass(/sidebar-open/);
     await expect(nav).toBeInViewport();
+    await expect(page.locator('.sidebar-toggle .sidebar-icon-close')).toBeVisible();
+    await expect(openIcon).toBeHidden();
 
     // a tap next to it closes it again
     await page.mouse.click(350, 400);

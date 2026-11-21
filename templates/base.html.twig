@@ -69,7 +69,8 @@
             <div class="sidebar-backdrop" data-action="click->sidebar#close"></div>
             <header class="app-topbar">
                 <button type="button" class="btn btn-sm sidebar-toggle" data-action="sidebar#toggle" aria-label="Toggle sidebar">
-                    {{ icon('panel-left-close') }}
+                    {{ icon('panel-left-close', 'icon sidebar-icon-close') }}
+                    {{ icon('panel-left-open', 'icon sidebar-icon-open') }}
                 </button>
                 {# pages put their title and actions here, so the actions stay in view while scrolling #}
                 <h1 class="topbar-title">{% block page_title %}{% endblock %}</h1>

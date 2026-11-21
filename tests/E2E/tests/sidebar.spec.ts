@@ -2,13 +2,21 @@ import { expect, test } from '../fixtures';
 
 test('sidebar collapse survives a page load', async ({ page }) => {
     const body = page.locator('body');
+    const closeIcon = page.locator('.sidebar-toggle .sidebar-icon-close');
+    const openIcon = page.locator('.sidebar-toggle .sidebar-icon-open');
     await expect(body).not.toHaveClass(/sidebar-collapsed/);
+    await expect(closeIcon).toBeVisible();
+    await expect(openIcon).toBeHidden();
 
     await page.getByRole('button', { name: 'Toggle sidebar' }).click();
     await expect(body).toHaveClass(/sidebar-collapsed/);
+    // the icon shows what the next click does
+    await expect(openIcon).toBeVisible();
+    await expect(closeIcon).toBeHidden();
 
     await page.reload();
     await expect(body).toHaveClass(/sidebar-collapsed/);
+    await expect(openIcon).toBeVisible();
 });
 
 test('the user menu sits at the bottom of the sidebar, also when collapsed', async ({ page }) => {

@@ -316,6 +316,20 @@ $topbar-height: 3.75rem;
     transition: margin-left 0.15s ease-in-out;
 }
 
+.sidebar-toggle {
+    color: $body-color;
+
+    // the icon shows what a click does: close an open sidebar, open a collapsed one
+    .sidebar-icon-open {
+        display: none;
+    }
+
+    &:hover {
+        color: $body-color;
+        background-color: $gray-100;
+    }
+}
+
 body.sidebar-collapsed {
     .sidebar {
         width: $sidebar-width-collapsed;
@@ -337,6 +351,14 @@ body.sidebar-collapsed {
             left: 1.75rem;
             font-size: 0.6rem;
         }
+    }
+
+    .sidebar-toggle .sidebar-icon-close {
+        display: none;
+    }
+
+    .sidebar-toggle .sidebar-icon-open {
+        display: inline-block;
     }
 
     .app-topbar,
@@ -391,6 +413,25 @@ body:has(.sf-toolbar-opened) .sidebar {
     }
 
 
+    // the overlay is closed unless opened on this page, whatever the desktop state
+    .sidebar-toggle .sidebar-icon-close,
+    body.sidebar-collapsed .sidebar-toggle .sidebar-icon-close {
+        display: none;
+    }
+
+    .sidebar-toggle .sidebar-icon-open,
+    body.sidebar-collapsed .sidebar-toggle .sidebar-icon-open {
+        display: inline-block;
+    }
+
+    body.sidebar-open .sidebar-toggle .sidebar-icon-close {
+        display: inline-block;
+    }
+
+    body.sidebar-open .sidebar-toggle .sidebar-icon-open {
+        display: none;
+    }
+
     body.sidebar-open {
         .sidebar {
             transform: none;
@@ -403,15 +444,6 @@ body:has(.sf-toolbar-opened) .sidebar {
             background-color: rgba($black, 0.4);
             z-index: 1025;
         }
-    }
-}
-
-.sidebar-toggle {
-    color: $body-color;
-
-    &:hover {
-        color: $body-color;
-        background-color: $gray-100;
     }
 }
 
