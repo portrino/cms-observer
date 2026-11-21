@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Dto\ExtensionReport;
 use App\Dto\SiteReportRequest;
 use App\Entity\CmsType;
+use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
 use App\Entity\SiteEventType;
@@ -53,16 +54,8 @@ class SiteReportIngestor
             'applicationContext' => $request->applicationContext,
             'domains' => $request->domains,
             'dbPlatform' => $request->dbPlatform,
-            'extensions' => array_map(
-                static fn (ExtensionReport $extension): array => [
-                    'name' => $extension->name,
-                    'title' => $extension->title,
-                    'version' => $extension->version,
-                    'active' => $extension->active,
-                    'composerName' => $extension->composerName,
-                ],
-                $request->extensions ?? [],
-            ),
+            'extensions' => array_map($this->packagePayload(...), $request->extensions ?? []),
+            'themes' => null !== $request->themes ? array_map($this->packagePayload(...), $request->themes) : null,
         ];
 
         // The raw dbVersion (up to ~40 chars on TYPO3 12) is only kept in the payload
@@ -93,7 +86,10 @@ class SiteReportIngestor
 
         // A payload without "extensions" says nothing about the packages, an empty list means none are installed
         if (null !== $request->extensions) {
-            $this->syncPackages($site, $request->extensions, !$isFirstReport);
+            $this->syncPackages($site, $request->extensions, PackageType::fromCmsType($site->getType()), !$isFirstReport);
+        }
+        if (null !== $request->themes && CmsType::WordPress === $site->getType()) {
+            $this->syncPackages($site, $request->themes, PackageType::WordpressTheme, !$isFirstReport);
         }
 
         $this->entityManager->flush();
@@ -128,10 +124,11 @@ class SiteReportIngestor
     /**
      * @param ExtensionReport[] $extensions
      */
-    private function syncPackages(Site $site, array $extensions, bool $recordEvents): void
+    private function syncPackages(Site $site, array $extensions, PackageType $packageType, bool $recordEvents): void
     {
         $remaining = [];
-        foreach ($this->packageRepository->findBy(['site' => $site]) as $package) {
+        // per type: the list of one type says nothing about the packages of another
+        foreach ($this->packageRepository->findBy(['site' => $site, 'packageType' => $packageType]) as $package) {
             $remaining[$package->getName()] = $package;
         }
 
@@ -146,14 +143,14 @@ class SiteReportIngestor
                 }
                 $sitePackage->update($extension->title, $version, $extension->active, $extension->composerName);
             } else {
-                $sitePackage = new SitePackage($site, $extension->name, $extension->title, $version, $extension->active, $extension->composerName);
+                $sitePackage = new SitePackage($site, $extension->name, $extension->title, $version, $extension->active, $extension->composerName, $packageType);
                 $this->entityManager->persist($sitePackage);
                 if ($recordEvents) {
-                    $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $extension->name, null, $version));
+                    $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $this->eventSubject($sitePackage), null, $version));
                 }
             }
 
-            // WordPress plugins are checked against the synced Wordfence data right away
+            // WordPress plugins and themes are checked against the synced Wordfence data right away
             if (CmsType::WordPress === $site->getType()) {
                 $this->wordpressEvaluator->evaluate($sitePackage);
             } else {
@@ -163,7 +160,7 @@ class SiteReportIngestor
 
         // No longer reported means uninstalled; keeping it would keep alerting about software that's gone
         foreach ($remaining as $removed) {
-            $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageRemoved, $removed->getName(), $removed->getVersion()));
+            $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageRemoved, $this->eventSubject($removed), $removed->getVersion()));
             $this->entityManager->remove($removed);
         }
     }
@@ -171,11 +168,31 @@ class SiteReportIngestor
     private function recordPackageChanges(SitePackage $package, ExtensionReport $extension, string $version): void
     {
         $site = $package->getSite();
-        $this->recordChange($site, SiteEventType::PackageUpdated, $package->getName(), $package->getVersion(), $version);
+        $this->recordChange($site, SiteEventType::PackageUpdated, $this->eventSubject($package), $package->getVersion(), $version);
         if ($package->isActive() !== $extension->active) {
             $type = $extension->active ? SiteEventType::PackageActivated : SiteEventType::PackageDeactivated;
-            $this->entityManager->persist(new SiteEvent($site, $type, $package->getName(), null, $version));
+            $this->entityManager->persist(new SiteEvent($site, $type, $this->eventSubject($package), null, $version));
         }
+    }
+
+    /** A theme may share its slug with a plugin, the history tells them apart */
+    private function eventSubject(SitePackage $package): string
+    {
+        return PackageType::WordpressTheme === $package->getPackageType() ? $package->getName().' (theme)' : $package->getName();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function packagePayload(ExtensionReport $extension): array
+    {
+        return [
+            'name' => $extension->name,
+            'title' => $extension->title,
+            'version' => $extension->version,
+            'active' => $extension->active,
+            'composerName' => $extension->composerName,
+        ];
     }
 
     private function recordChange(Site $site, SiteEventType $type, ?string $subject, ?string $old, ?string $new): void

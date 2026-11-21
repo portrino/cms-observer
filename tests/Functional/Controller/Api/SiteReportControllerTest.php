@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\CmsType;
+use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
 use App\Entity\WordpressPluginVulnerability;
@@ -218,6 +219,53 @@ class SiteReportControllerTest extends WebTestCase
         ], JSON_THROW_ON_ERROR));
 
         self::assertResponseStatusCodeSame(422);
+    }
+
+    /**
+     * Clients may be newer than the Observer: a field it doesn't know yet must not fail the push.
+     */
+    public function testUnknownFieldsAreIgnored(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token] = $this->createSite();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'someFutureField' => [['name' => 'x']]]);
+
+        self::assertResponseStatusCodeSame(202);
+    }
+
+    public function testThemesAreStoredApartFromPluginsAndCheckedAgainstThemeVulnerabilities(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $this->createUser('themes@example.test', 'Themes', 'password');
+        [$token, $site] = $this->createSite(CmsType::WordPress);
+
+        // only the theme "astra" is vulnerable, not the plugin of the same slug
+        $vulnerability = new WordpressPluginVulnerability('5c3b5e2a-0000-4000-8000-000000000001', 'astra', PackageType::WordpressTheme);
+        $vulnerability->update('Astra <= 4.0.0 - XSS', [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '4.0.0', 'to_inclusive' => true]], ['4.0.1'], false, 6.4, 'Medium', 'CVE-2026-0001', 'https://www.wordfence.com/threat-intel/vulnerabilities/id/5c3b5e2a', [], null, null);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($vulnerability);
+        $entityManager->flush();
+
+        $plugins = [['name' => 'astra', 'title' => 'Astra Plugin', 'version' => '3.0.0', 'active' => true]];
+        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => $plugins, 'themes' => [['name' => 'astra', 'title' => 'Astra', 'version' => '3.0.0', 'active' => true]]]);
+        self::assertResponseStatusCodeSame(202);
+        self::assertEmailCount(1);
+        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Theme astra 3.0.0');
+
+        $packages = static::getContainer()->get(SitePackageRepository::class);
+        self::assertTrue($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme)?->isInsecure());
+        self::assertFalse($packages->findOneBySiteAndName($site, 'astra')?->isInsecure());
+
+        // an older client without "themes" leaves the stored themes alone
+        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => $plugins]);
+        self::assertNotNull($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme));
+
+        // an empty list removes the themes, not the plugins
+        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => $plugins, 'themes' => []]);
+        self::assertNull($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme));
+        self::assertNotNull($packages->findOneBySiteAndName($site, 'astra'));
+        self::assertNotNull(static::getContainer()->get(SiteEventRepository::class)->findOneBy(['site' => $site, 'subject' => 'astra (theme)']));
     }
 
     public function testANonProductionContextIsMailedOnceAndItsFixRecorded(): void

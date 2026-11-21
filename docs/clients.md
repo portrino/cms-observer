@@ -36,6 +36,7 @@ Content-Type: application/json
 | `clientVersion`, `applicationContext` | no | shown on the project page, e.g. `Production` or `staging` |
 | `domains` | no | all hosts of the instance, lowercase, without scheme and port, see [domain check](#domain-check) |
 | `extensions` | no | installed extensions/plugins. `name` is the TYPO3 extension key or the wordpress.org slug. Without the field the packages stay as they are, an empty list means none are installed |
+| `themes` | no | WordPress only: installed themes in the same format, `name` is the wordpress.org slug (the theme's directory). Without the field the themes stay as they are, an empty list means none are installed |
 
 The token belongs to one project and is shown once when the project is
 created or a new one is generated (see [Projects](configuration.md#projects)). HTTPS is required.

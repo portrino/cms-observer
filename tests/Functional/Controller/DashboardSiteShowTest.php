@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\CmsType;
 use App\Entity\Organization;
+use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\SiteReport;
@@ -111,6 +112,31 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertSelectorNotExists('.version-number:contains("2.0.0")');
         self::assertSelectorTextContains('#extensionsAccordion .accordion-button', 'Outdated (1.2.0 available)');
         self::assertSelectorTextContains('#extensionsAccordion .accordion-button', 'WordPress 6.6 compatible version (2.0.0)');
+    }
+
+    /**
+     * A theme sharing its slug with a plugin: marked as theme, linked to the themes directory,
+     * and the plugin's versions aren't offered as its updates.
+     */
+    public function testAThemeIsShownApartFromAPluginOfTheSameSlug(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('site-show-theme@example.test', 'Site Show Theme', 'password'));
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $site = new Site('WP Theme Site', CmsType::WordPress, 'https://wp-theme.test', 'hash-theme');
+        $site->recordReport('6.5.2', '8.3.0', '10.11.0');
+        $entityManager->persist($site);
+        $entityManager->persist(new SitePackage($site, 'shared-slug', 'Shared Theme', '1.0.0', true, null, PackageType::WordpressTheme));
+        $entityManager->persist(new WordpressPluginVersion('shared-slug', '9.0.0', null, null));
+        $entityManager->flush();
+
+        $client->request('GET', '/projects/'.$site->getId());
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#extensionsAccordion .accordion-button', 'Theme');
+        self::assertSelectorExists('a[href="https://wordpress.org/themes/shared-slug/"]');
+        self::assertSelectorNotExists('.version-number:contains("9.0.0")');
     }
 
     /**

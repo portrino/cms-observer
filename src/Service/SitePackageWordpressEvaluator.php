@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\PackageType;
 use App\Entity\SitePackage;
 use App\Entity\WordpressPluginVulnerability;
 use App\Repository\WordpressPluginVulnerabilityRepository;
@@ -42,14 +43,16 @@ class SitePackageWordpressEvaluator
             $insecure = null !== $vulnerability;
         }
 
+        $isTheme = PackageType::WordpressTheme === $package->getPackageType();
         $package->setVersionStatus($insecure, null, null);
-        $package->applyUpdate($this->updateResolver->forWordpressPlugin($package->getName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
+        // shortcut: themes are only checked for vulnerabilities, no theme versions are synced to rate "outdated"
+        $package->applyUpdate($isTheme ? new PackageUpdate() : $this->updateResolver->forWordpressPlugin($package->getName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
         $package->setMatchedWordpressVulnerability($vulnerability);
 
         if (null !== $vulnerability && true !== $wasInsecure) {
             $this->securityNotifier->addFinding(
                 $package->getSite(),
-                sprintf('Plugin %s %s', $package->getName(), $package->getVersion()),
+                sprintf('%s %s %s', $isTheme ? 'Theme' : 'Plugin', $package->getName(), $package->getVersion()),
                 sprintf(
                     '%s (%s): %s',
                     $vulnerability->getCve() ?? $vulnerability->getTitle(),
@@ -73,7 +76,7 @@ class SitePackageWordpressEvaluator
     private function findMostSevereVulnerability(SitePackage $package): ?WordpressPluginVulnerability
     {
         $matches = array_filter(
-            $this->vulnerabilityRepository->findBySlug($package->getName()),
+            $this->vulnerabilityRepository->findBySlug($package->getName(), $package->getPackageType()),
             static fn (WordpressPluginVulnerability $v): bool => !$v->isInformational() && $v->affects($package->getVersion()),
         );
         usort($matches, static fn (WordpressPluginVulnerability $a, WordpressPluginVulnerability $b): int => ($b->getCvssScore() ?? 0.0) <=> ($a->getCvssScore() ?? 0.0));

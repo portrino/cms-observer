@@ -20,7 +20,7 @@
         {% set extStatus = extensionStatusBySite[site.id] ?? {insecure: null, outdated: null} %}
         {% set extSummary = extensionSummaryBySite[site.id] ?? {total: 0, updatable: 0, insecureCount: 0} %}
         {% set coreStatus = coreMajorStatusBySite[site.id] ?? {outdated: null, latestInMajor: null, newerMajor: null} %}
-        {% set packageLabel = site.type.value == 'typo3' ? 'extensions' : 'plugins' %}
+        {% set packageLabel = site.type.value == 'typo3' ? 'extensions' : 'plugins and themes' %}
         {% set anyInsecure = site.coreInsecure is same as(true) or extStatus.insecure is same as(true) %}
         <tr class="{{ anyInsecure ? 'row-insecure' : '' }}">
             <td class="text-nowrap">

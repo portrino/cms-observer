@@ -9,7 +9,8 @@ use App\Service\PackageUpdate;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SitePackageRepository::class)]
-#[ORM\UniqueConstraint(name: 'site_package_name', columns: ['site_id', 'name'])]
+// a WordPress theme and plugin may share a slug
+#[ORM\UniqueConstraint(name: 'site_package_name', columns: ['site_id', 'package_type', 'name'])]
 class SitePackage
 {
     #[ORM\Id]
@@ -67,8 +68,9 @@ class SitePackage
         private bool $active,
         #[ORM\Column(length: 255, nullable: true)]
         private ?string $composerName = null,
+        ?PackageType $packageType = null,
     ) {
-        $this->packageType = PackageType::fromCmsType($site->getType());
+        $this->packageType = $packageType ?? PackageType::fromCmsType($site->getType());
         $this->updatedAt = new \DateTimeImmutable();
     }
 

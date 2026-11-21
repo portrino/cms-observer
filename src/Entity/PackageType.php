@@ -8,6 +8,7 @@ enum PackageType: string
 {
     case Typo3CmsExtension = 'typo3-cms-extension';
     case WordpressPlugin = 'wordpress-plugin';
+    case WordpressTheme = 'wordpress-theme';
 
     public static function fromCmsType(CmsType $cmsType): self
     {
@@ -22,6 +23,7 @@ enum PackageType: string
         return match ($this) {
             self::Typo3CmsExtension => 'TYPO3 Extension',
             self::WordpressPlugin => 'WordPress Plugin',
+            self::WordpressTheme => 'WordPress Theme',
         };
     }
 }

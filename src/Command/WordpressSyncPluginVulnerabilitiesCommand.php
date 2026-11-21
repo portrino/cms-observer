@@ -65,13 +65,16 @@ class WordpressSyncPluginVulnerabilitiesCommand extends Command
             $io->warning('The Wordfence feed had less than half of the stored records, so none were removed. Check the feed if this repeats.');
         }
 
-        $packages = $this->sitePackageRepository->findByPackageType(PackageType::WordpressPlugin);
+        $packages = [
+            ...$this->sitePackageRepository->findByPackageType(PackageType::WordpressPlugin),
+            ...$this->sitePackageRepository->findByPackageType(PackageType::WordpressTheme),
+        ];
         $this->wordpressEvaluator->evaluateAll($packages);
         $this->entityManager->flush();
         $this->securityNotifier->flush();
 
         $io->success(sprintf(
-            'Synced Wordfence vulnerabilities (%d new, %d updated, %d removed) and re-evaluated %d reported plugins.',
+            'Synced Wordfence vulnerabilities (%d new, %d updated, %d removed) and re-evaluated %d reported plugins and themes.',
             $stats['inserted'],
             $stats['updated'],
             $stats['deleted'],

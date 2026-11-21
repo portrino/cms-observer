@@ -11,6 +11,7 @@ synced at least once, the matching status stays "unknown" (gray), never
 | TYPO3 extensions | [TER](https://extensions.typo3.org/) and the [TYPO3 security advisories](https://typo3.org/help/security-advisories) | the TER marks the exact version insecure or an advisory affects it | the TER has a newer version |
 | WordPress core | [wordpress.org](https://wordpress.org/download/releases/) | wordpress.org marks the version insecure | a newer release exists |
 | WordPress plugins | [Wordfence Intelligence](https://www.wordfence.com/threat-intel/) and [wordpress.org](https://wordpress.org/plugins/) | a Wordfence vulnerability affects the version | wordpress.org has a newer version |
+| WordPress themes | [Wordfence Intelligence](https://www.wordfence.com/threat-intel/) | a Wordfence vulnerability affects the version | not checked yet |
 | PHP | [endoflife.date](https://endoflife.date/php) | the cycle is past end of life or misses a security release | a newer release exists in the cycle |
 | MariaDB, MySQL, PostgreSQL | [endoflife.date](https://endoflife.date/) | the cycle is past end of life | a newer release exists in the cycle |
 

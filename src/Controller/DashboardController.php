@@ -130,9 +130,14 @@ class DashboardController extends AbstractController
         foreach ($extensions as $extension) {
             if ($isWordpress) {
                 $vulnerabilities = array_filter(
-                    $wordpressVulnerabilityRepository->findBySlug($extension->getName()),
+                    $wordpressVulnerabilityRepository->findBySlug($extension->getName(), $extension->getPackageType()),
                     static fn (WordpressPluginVulnerability $v): bool => !$v->isInformational(),
                 );
+                if (PackageType::WordpressTheme === $extension->getPackageType()) {
+                    // no theme versions or info synced, and the plugin data of the same slug isn't this theme's
+                    $extensionDetails[$extension->getId()] = ['wordpressPluginInfo' => null, 'newerVersions' => [], 'versionStates' => [], 'latestVersion' => null];
+                    continue;
+                }
 
                 // like the TER versions: only what installs on the site's WordPress, unknown "requires" stays
                 $newerVersions = [];
@@ -322,7 +327,8 @@ class DashboardController extends AbstractController
         // orders by extension name first, so same-key installs stay contiguous.
         $groups = [];
         foreach ($extensionRepository->search($query, $packageType) as $extension) {
-            $groups[$extension->getName()][] = $extension;
+            // a theme may share its slug with a plugin
+            $groups[$extension->getName().(PackageType::WordpressTheme === $extension->getPackageType() ? ' (theme)' : '')][] = $extension;
         }
 
         return $this->render('dashboard/packages.html.twig', [

@@ -10,6 +10,7 @@ final readonly class SiteReportRequest
 {
     /**
      * @param ExtensionReport[]|null $extensions
+     * @param ExtensionReport[]|null $themes
      */
     public function __construct(
         #[Assert\NotBlank]
@@ -29,6 +30,9 @@ final readonly class SiteReportRequest
         public ?array $domains = null,
         // endoflife.date slug (mariadb, mysql, postgresql), not validated: unknown values must not reject a report
         public ?string $dbPlatform = null,
+        // WordPress only, like extensions: null leaves the stored themes as they are
+        #[Assert\Valid]
+        public ?array $themes = null,
     ) {
     }
 }

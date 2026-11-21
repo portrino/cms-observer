@@ -198,7 +198,7 @@
     </div>
     </div>
 
-    <h2 class="h4 mb-3">Packages {{ m.extension_count_badge(extensions|length, site.type.value == 'typo3' ? 'extensions' : 'plugins') }}</h2>
+    <h2 class="h4 mb-3">Packages {{ m.extension_count_badge(extensions|length, site.type.value == 'typo3' ? 'extensions' : 'plugins and themes') }}</h2>
     <div class="card mb-4">
     <div class="card-body p-0">
     <div class="accordion" id="extensionsAccordion">
@@ -210,6 +210,7 @@
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ bodyId }}" aria-expanded="false" aria-controls="{{ bodyId }}">
                     <span class="accordion-title">
                     <code class="me-2 fw-bold">{{ ext.name }}</code>
+                    {% if ext.packageType.value == 'wordpress-theme' %}<span class="badge text-bg-neutral me-2">Theme</span>{% endif %}
                     <span class="me-2 fw-bold">{{ ext.version }}</span>
                     {{ m.security_badge(ext.insecure) }}
                     {{ m.outdated_badge(ext.outdated, ext.latestVersion) }}
@@ -228,8 +229,9 @@
                 <div class="accordion-body">
                 {% if site.type.value == 'wordpress' %}
                     <div class="mb-2">
-                        <a href="https://wordpress.org/plugins/{{ ext.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on WordPress.org {{ icon('external-link') }}</a>
-                        <a href="https://plugins.trac.wordpress.org/browser/{{ ext.name }}/" target="_blank" rel="noopener" class="ms-3">Repository</a>
+                        {% set wpKind = ext.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
+                        <a href="https://wordpress.org/{{ wpKind }}/{{ ext.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on WordPress.org {{ icon('external-link') }}</a>
+                        <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ ext.name }}/" target="_blank" rel="noopener" class="ms-3">Repository</a>
                     </div>
                     {% if details.wordpressPluginInfo.description ?? null %}
                         <p>{{ details.wordpressPluginInfo.description }}</p>

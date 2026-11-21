@@ -20,9 +20,12 @@ class SitePackageRepository extends ServiceEntityRepository
         parent::__construct($registry, SitePackage::class);
     }
 
-    public function findOneBySiteAndName(Site $site, string $name): ?SitePackage
+    /**
+     * @param PackageType|null $packageType null: the site's extensions or plugins, not its themes
+     */
+    public function findOneBySiteAndName(Site $site, string $name, ?PackageType $packageType = null): ?SitePackage
     {
-        return $this->findOneBy(['site' => $site, 'name' => $name]);
+        return $this->findOneBy(['site' => $site, 'name' => $name, 'packageType' => $packageType ?? PackageType::fromCmsType($site->getType())]);
     }
 
     /**
