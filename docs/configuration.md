@@ -39,10 +39,12 @@ syncs. Each can also be run by hand, e.g. right after the installation:
 | `app:check-stale-sites` | hourly | nothing; mails projects that stopped sending reports |
 | `app:check-syncs` | hourly | nothing; mails syncs that missed their last three runs |
 
-The **Status** page in the sidebar shows when each sync last succeeded. A sync
-that missed its last three runs is overdue: the sidebar shows a badge and a
-mail goes out, once per outage. If the worker itself stopped, no mail can go
-out, only the badge shows it.
+The **Status** page in the sidebar shows when each sync last succeeded and
+last failed, with the error. A sync that missed its last three runs is
+overdue: the sidebar shows a badge and a mail with the last error goes out,
+once per outage. If the worker itself stopped, no mail can go out, only the
+badge shows it. The page also shows the server time and warns when the worker
+runs in another timezone than the web server.
 
 Wordfence rate-limits strictly, so don't run its sync repeatedly by hand. A
 run that hits the limit keeps the last data and counts as failed, so a sync

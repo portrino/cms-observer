@@ -34,12 +34,13 @@ class CheckSyncsCommand extends Command
         $overdue = $this->syncMonitor->takeNewlyOverdue();
 
         foreach ($overdue as $status) {
-            $this->securityNotifier->addSystemFinding(
-                sprintf('Sync %s', $status->getCommand()),
-                null !== $status->getLastSucceededAt()
-                    ? sprintf('No successful run since %s, its data is no longer up to date.', $status->getLastSucceededAt()->format('Y-m-d H:i'))
-                    : 'No successful run yet, its data is missing.',
-            );
+            $detail = null !== $status->getLastSucceededAt()
+                ? sprintf('No successful run since %s, its data is no longer up to date.', $status->getLastSucceededAt()->format('Y-m-d H:i'))
+                : 'No successful run yet, its data is missing.';
+            if (null !== $status->getLastFailedAt()) {
+                $detail .= sprintf(' Last error (%s): %s', $status->getLastFailedAt()->format('Y-m-d H:i'), $status->getLastError());
+            }
+            $this->securityNotifier->addSystemFinding(sprintf('Sync %s', $status->getCommand()), $detail);
         }
 
         $this->entityManager->flush();

@@ -12,6 +12,8 @@ final readonly class SyncState
         public string $schedule,
         public ?\DateTimeImmutable $lastSucceededAt,
         public bool $overdue,
+        public ?\DateTimeImmutable $lastFailedAt = null,
+        public ?string $lastError = null,
     ) {
     }
 }

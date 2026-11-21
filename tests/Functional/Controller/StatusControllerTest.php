@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\SyncStatus;
+use App\Service\SyncMonitor;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -32,8 +33,11 @@ class StatusControllerTest extends WebTestCase
         $client->request('GET', '/');
         self::assertSelectorTextSame('.sidebar-badge', '1');
 
+        static::getContainer()->get(SyncMonitor::class)->recordFailure('app:sync-endoflife-releases', 'Could not resolve host: endoflife.date');
+
         $client->request('GET', '/status');
         self::assertSelectorTextContains('tr:has(code:contains("app:sync-endoflife-releases")) .badge', 'Overdue');
+        self::assertSelectorExists('tr:has(code:contains("app:sync-endoflife-releases")) [title="Could not resolve host: endoflife.date"]');
     }
 
     public function testTellsTheTimezoneAndWhenTheSchedulerLastRan(): void

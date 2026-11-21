@@ -44,6 +44,7 @@
                         <th>Sync</th>
                         <th>Schedule</th>
                         <th>Last success</th>
+                        <th>Last failure</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -59,6 +60,15 @@
                         </td>
                         <td class="text-nowrap"><code>{{ sync.schedule }}</code></td>
                         <td class="text-nowrap">{{ sync.lastSucceededAt ? sync.lastSucceededAt|date('Y-m-d H:i') : 'never' }}</td>
+                        <td class="text-nowrap">
+                            {% if sync.lastFailedAt %}
+                                {{ sync.lastFailedAt|date('Y-m-d H:i') }}
+                                <span class="text-danger ms-1" tabindex="0" role="img" aria-label="{{ sync.lastError }}"
+                                      data-controller="tooltip" data-bs-toggle="tooltip" title="{{ sync.lastError }}">{{ icon('info') }}</span>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
                         <td>
                         {% if sync.overdue %}
                             <span class="badge text-bg-danger">{{ m.icon_warning() }}<span class="badge-text">Overdue</span></span>
@@ -68,7 +78,7 @@
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="4">No scheduled syncs.</td></tr>
+                    <tr><td colspan="5">No scheduled syncs.</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

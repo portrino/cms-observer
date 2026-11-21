@@ -31,6 +31,13 @@ class SyncStatus
     #[ORM\Column(nullable: true)]
     private ?bool $lastRunScheduled = null;
 
+    /** Kept after a later success, so sporadic failures show too */
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastFailedAt = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $lastError = null;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(length: 128)]
@@ -63,6 +70,22 @@ class SyncStatus
         $this->lastRunScheduled = $scheduled;
         $this->timezone = $at->getTimezone()->getName();
         $this->overdueNotifiedAt = null;
+    }
+
+    public function recordFailure(\DateTimeImmutable $at, string $error): void
+    {
+        $this->lastFailedAt = $at;
+        $this->lastError = $error;
+    }
+
+    public function getLastFailedAt(): ?\DateTimeImmutable
+    {
+        return $this->lastFailedAt;
+    }
+
+    public function getLastError(): ?string
+    {
+        return $this->lastError;
     }
 
     public function getLastStartedAt(): ?\DateTimeImmutable

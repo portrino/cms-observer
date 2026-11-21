@@ -79,7 +79,7 @@ class SyncMonitor
         foreach ($this->scheduledCommands() as $command => $expression) {
             $status = $statuses[$command] ?? null;
             $description = $this->commandLoader->has($command) ? $this->commandLoader->get($command)->getDescription() : '';
-            $states[] = new SyncState($command, $description, $expression, $status?->getLastSucceededAt(), $this->isOverdue($expression, $status));
+            $states[] = new SyncState($command, $description, $expression, $status?->getLastSucceededAt(), $this->isOverdue($expression, $status), $status?->getLastFailedAt(), $status?->getLastError());
         }
 
         return $states;
@@ -112,6 +112,17 @@ class SyncMonitor
         }
 
         $this->statusOf($command)->recordSuccess($this->clock->now(), $startedAt, $scheduled);
+        $this->entityManager->flush();
+    }
+
+    public function recordFailure(string $command, string $error): void
+    {
+        // a failed query closes the entity manager, then the failure can't be stored; the log still has it
+        if (!array_key_exists($command, $this->scheduledCommands()) || !$this->entityManager->isOpen()) {
+            return;
+        }
+
+        $this->statusOf($command)->recordFailure($this->clock->now(), $error);
         $this->entityManager->flush();
     }
 
