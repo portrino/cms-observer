@@ -17,11 +17,11 @@
     </thead>
     <tbody>
     {% for site in sites %}
-        {% set extStatus = extensionStatusBySite[site.id] ?? {insecure: null, outdated: null} %}
-        {% set extSummary = extensionSummaryBySite[site.id] ?? {total: 0, updatable: 0, insecureCount: 0} %}
+        {% set packageStatus = packageStatusBySite[site.id] ?? {insecure: null, outdated: null} %}
+        {% set packageSummary = packageSummaryBySite[site.id] ?? {total: 0, updatable: 0, insecureCount: 0} %}
         {% set coreStatus = coreMajorStatusBySite[site.id] ?? {outdated: null, latestInMajor: null, newerMajor: null} %}
         {% set packageLabel = site.type.value == 'typo3' ? 'extensions' : 'plugins and themes' %}
-        {% set anyInsecure = site.coreInsecure is same as(true) or extStatus.insecure is same as(true) %}
+        {% set anyInsecure = site.coreInsecure is same as(true) or packageStatus.insecure is same as(true) %}
         <tr class="{{ anyInsecure ? 'row-insecure' : '' }}">
             <td class="text-nowrap">
                 <small class="fw-bold">
@@ -41,12 +41,12 @@
                 {% endif %}
             </td>
             <td class="text-nowrap">
-                {{ m.extension_count_badge(extSummary.total, packageLabel) }}
-                {{ m.extension_updatable_badge(extSummary.updatable, packageLabel) }}
+                {{ m.package_count_badge(packageSummary.total, packageLabel) }}
+                {{ m.package_updatable_badge(packageSummary.updatable, packageLabel) }}
             </td>
             <td class="text-nowrap">
                 {{ m.core_security_icon(site.coreInsecure) }}
-                {{ m.extensions_security_icon(extStatus.insecure, extSummary.insecureCount, packageLabel) }}
+                {{ m.packages_security_icon(packageStatus.insecure, packageSummary.insecureCount, packageLabel) }}
                 {{ m.infrastructure_status_icon(site) }}
             </td>
             <td>{{ m.sla_status_icon(site.slaActive) }}</td>

@@ -54,8 +54,8 @@
         <div class="card-body p-0">
             {{ include('dashboard/_sites_table.html.twig', {
                 sites: sites,
-                extensionStatusBySite: extensionStatusBySite,
-                extensionSummaryBySite: extensionSummaryBySite,
+                packageStatusBySite: packageStatusBySite,
+                packageSummaryBySite: packageSummaryBySite,
                 coreMajorStatusBySite: coreMajorStatusBySite,
                 emptyMessage: query or filter.type or filter.security or filter.sla ? 'No projects match.' : 'No projects registered yet.',
             }) }}

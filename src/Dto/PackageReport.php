@@ -6,7 +6,7 @@ namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ExtensionReport
+final readonly class PackageReport
 {
     public function __construct(
         #[Assert\NotBlank]

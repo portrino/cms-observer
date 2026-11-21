@@ -9,7 +9,7 @@ test('package filter applies without a submit button', async ({ page }) => {
     const search = page.getByRole('searchbox', { name: 'Search' });
     await search.fill(`no-such-package-${Date.now()}`);
 
-    await expect(page.getByText('No extensions match.')).toBeVisible();
+    await expect(page.getByText('No packages match.')).toBeVisible();
     await expect(page).toHaveURL(/[?&]q=no-such-package-/);
     await expect(search).toBeFocused();
 

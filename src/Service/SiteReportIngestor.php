@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\ExtensionReport;
+use App\Dto\PackageReport;
 use App\Dto\SiteReportRequest;
 use App\Entity\CmsType;
 use App\Entity\PackageType;
@@ -122,9 +122,9 @@ class SiteReportIngestor
     }
 
     /**
-     * @param ExtensionReport[] $extensions
+     * @param PackageReport[] $reportedPackages
      */
-    private function syncPackages(Site $site, array $extensions, PackageType $packageType, bool $recordEvents): void
+    private function syncPackages(Site $site, array $reportedPackages, PackageType $packageType, bool $recordEvents): void
     {
         $remaining = [];
         // per type: the list of one type says nothing about the packages of another
@@ -132,18 +132,18 @@ class SiteReportIngestor
             $remaining[$package->getName()] = $package;
         }
 
-        foreach ($extensions as $extension) {
-            $sitePackage = $remaining[$extension->name] ?? null;
-            unset($remaining[$extension->name]);
-            $version = PackageVersion::normalize($extension->version);
+        foreach ($reportedPackages as $reported) {
+            $sitePackage = $remaining[$reported->name] ?? null;
+            unset($remaining[$reported->name]);
+            $version = PackageVersion::normalize($reported->version);
 
             if (null !== $sitePackage) {
                 if ($recordEvents) {
-                    $this->recordPackageChanges($sitePackage, $extension, $version);
+                    $this->recordPackageChanges($sitePackage, $reported, $version);
                 }
-                $sitePackage->update($extension->title, $version, $extension->active, $extension->composerName);
+                $sitePackage->update($reported->title, $version, $reported->active, $reported->composerName);
             } else {
-                $sitePackage = new SitePackage($site, $extension->name, $extension->title, $version, $extension->active, $extension->composerName, $packageType);
+                $sitePackage = new SitePackage($site, $reported->name, $reported->title, $version, $reported->active, $reported->composerName, $packageType);
                 $this->entityManager->persist($sitePackage);
                 if ($recordEvents) {
                     $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $this->eventSubject($sitePackage), null, $version));
@@ -165,12 +165,12 @@ class SiteReportIngestor
         }
     }
 
-    private function recordPackageChanges(SitePackage $package, ExtensionReport $extension, string $version): void
+    private function recordPackageChanges(SitePackage $package, PackageReport $reported, string $version): void
     {
         $site = $package->getSite();
         $this->recordChange($site, SiteEventType::PackageUpdated, $this->eventSubject($package), $package->getVersion(), $version);
-        if ($package->isActive() !== $extension->active) {
-            $type = $extension->active ? SiteEventType::PackageActivated : SiteEventType::PackageDeactivated;
+        if ($package->isActive() !== $reported->active) {
+            $type = $reported->active ? SiteEventType::PackageActivated : SiteEventType::PackageDeactivated;
             $this->entityManager->persist(new SiteEvent($site, $type, $this->eventSubject($package), null, $version));
         }
     }
@@ -184,14 +184,14 @@ class SiteReportIngestor
     /**
      * @return array<string, mixed>
      */
-    private function packagePayload(ExtensionReport $extension): array
+    private function packagePayload(PackageReport $reported): array
     {
         return [
-            'name' => $extension->name,
-            'title' => $extension->title,
-            'version' => $extension->version,
-            'active' => $extension->active,
-            'composerName' => $extension->composerName,
+            'name' => $reported->name,
+            'title' => $reported->title,
+            'version' => $reported->version,
+            'active' => $reported->active,
+            'composerName' => $reported->composerName,
         ];
     }
 

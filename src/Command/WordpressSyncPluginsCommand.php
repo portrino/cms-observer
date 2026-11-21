@@ -45,7 +45,7 @@ class WordpressSyncPluginsCommand extends Command
         $this->securityNotifier->flush();
 
         $io->success(sprintf(
-            'Synced info for %d plugin slug(s) via WordPress.org and re-evaluated %d reported extensions.',
+            'Synced info for %d plugin slug(s) via WordPress.org and re-evaluated %d reported plugins.',
             $syncedSlugs,
             count($packages),
         ));

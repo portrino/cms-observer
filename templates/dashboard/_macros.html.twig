@@ -114,7 +114,7 @@
     {%- endif -%}
 {% endmacro %}
 
-{% macro extensions_security_icon(anyInsecure, insecureCount, label) %}
+{% macro packages_security_icon(anyInsecure, insecureCount, label) %}
     {%- import _self as icons -%}
     {%- if anyInsecure is same as(true) -%}
         <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Insecure {{ label }}: {{ insecureCount }}">{{ icons.icon_warning() }}</span>
@@ -157,12 +157,12 @@
     <span class="badge badge-count text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ title }}">{{ icon(iconName) }}{{ count }}</span>
 {% endmacro %}
 
-{% macro extension_count_badge(count, label) %}
+{% macro package_count_badge(count, label) %}
     {%- import _self as badges -%}
     {{ badges.count_badge(count, 'package', 'Installed ' ~ label) }}
 {% endmacro %}
 
-{% macro extension_updatable_badge(count, label) %}
+{% macro package_updatable_badge(count, label) %}
     {%- if count > 0 -%}
         <span class="badge badge-count text-bg-info ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ label|capitalize }} with a compatible update available">{{ icon('arrow-up') }}{{ count }}</span>
     {%- else -%}

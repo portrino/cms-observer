@@ -43,20 +43,20 @@ class DashboardController extends AbstractController
     #[Route('/', name: 'dashboard_index')]
     public function index(
         SiteRepository $siteRepository,
-        SitePackageRepository $extensionRepository,
+        SitePackageRepository $packageRepository,
         Typo3CoreReleaseRepository $coreReleaseRepository,
         WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
         #[MapQueryString(validationFailedStatusCode: Response::HTTP_NOT_FOUND)] ProjectListQuery $query = new ProjectListQuery(),
     ): Response {
         $search = null !== $query->q && '' !== trim($query->q) ? trim($query->q) : null;
         $sites = $siteRepository->search($search, $query->type, null !== $query->sla ? ProjectSlaFilter::With === $query->sla : null);
-        $extensionStatusBySite = $extensionRepository->getAggregateStatusBySite();
+        $packageStatusBySite = $packageRepository->getAggregateStatusBySite();
 
         // the security state is aggregated across tables, filtering the loaded sites is enough for a few hundred
         if (null !== $query->security) {
             $sites = array_values(array_filter(
                 $sites,
-                static fn (Site $site): bool => $query->security->matches($site, $extensionStatusBySite[$site->getId()]['insecure'] ?? null),
+                static fn (Site $site): bool => $query->security->matches($site, $packageStatusBySite[$site->getId()]['insecure'] ?? null),
             ));
         }
 
@@ -67,8 +67,8 @@ class DashboardController extends AbstractController
             'cmsTypes' => CmsType::cases(),
             'securityFilters' => ProjectSecurityFilter::cases(),
             'slaFilters' => ProjectSlaFilter::cases(),
-            'extensionStatusBySite' => $extensionStatusBySite,
-            'extensionSummaryBySite' => $extensionRepository->getExtensionSummaryBySite($sites),
+            'packageStatusBySite' => $packageStatusBySite,
+            'packageSummaryBySite' => $packageRepository->getPackageSummaryBySite($sites),
             'coreMajorStatusBySite' => $coreReleaseRepository->getMajorStatusBySite($sites) + $wordpressCoreReleaseRepository->getMajorStatusBySite($sites),
         ]);
     }
@@ -110,7 +110,7 @@ class DashboardController extends AbstractController
     #[Route('/projects/{id}', name: 'dashboard_site_show')]
     public function show(
         Site $site,
-        SitePackageRepository $extensionRepository,
+        SitePackageRepository $packageRepository,
         Typo3CoreReleaseRepository $coreReleaseRepository,
         WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
         Typo3TerExtensionVersionRepository $terVersionRepository,
@@ -121,28 +121,28 @@ class DashboardController extends AbstractController
         WordpressPluginVulnerabilityRepository $wordpressVulnerabilityRepository,
         SiteReportRepository $reportRepository,
     ): Response {
-        $extensions = $extensionRepository->findBy(['site' => $site], ['name' => 'ASC']);
+        $packages = $packageRepository->findBy(['site' => $site], ['name' => 'ASC']);
         $coreVersion = $site->getCurrentCoreVersion();
         $coreMajor = null !== $coreVersion ? (int) explode('.', $coreVersion)[0] : null;
         $isWordpress = CmsType::WordPress === $site->getType();
 
-        $extensionDetails = [];
-        foreach ($extensions as $extension) {
+        $packageDetails = [];
+        foreach ($packages as $package) {
             if ($isWordpress) {
                 $vulnerabilities = array_filter(
-                    $wordpressVulnerabilityRepository->findBySlug($extension->getName(), $extension->getPackageType()),
+                    $wordpressVulnerabilityRepository->findBySlug($package->getName(), $package->getPackageType()),
                     static fn (WordpressPluginVulnerability $v): bool => !$v->isInformational(),
                 );
-                if (PackageType::WordpressTheme === $extension->getPackageType()) {
+                if (PackageType::WordpressTheme === $package->getPackageType()) {
                     // no theme versions or info synced, and the plugin data of the same slug isn't this theme's
-                    $extensionDetails[$extension->getId()] = ['wordpressPluginInfo' => null, 'newerVersions' => [], 'versionStates' => [], 'latestVersion' => null];
+                    $packageDetails[$package->getId()] = ['wordpressPluginInfo' => null, 'newerVersions' => [], 'versionStates' => [], 'latestVersion' => null];
                     continue;
                 }
 
                 // like the TER versions: only what installs on the site's WordPress, unknown "requires" stays
                 $newerVersions = [];
                 $versionStates = [];
-                foreach ($wordpressPluginVersionRepository->findNewerThan($extension->getName(), $extension->getVersion()) as $version) {
+                foreach ($wordpressPluginVersionRepository->findNewerThan($package->getName(), $package->getVersion()) as $version) {
                     $compatible = null !== $coreVersion && null !== $version->getRequiresWpVersion()
                         ? version_compare($coreVersion, $version->getRequiresWpVersion(), '>=')
                         : null;
@@ -157,8 +157,8 @@ class DashboardController extends AbstractController
                     ];
                 }
 
-                $extensionDetails[$extension->getId()] = [
-                    'wordpressPluginInfo' => $wordpressPluginInfoRepository->findOneBySlug($extension->getName()),
+                $packageDetails[$package->getId()] = [
+                    'wordpressPluginInfo' => $wordpressPluginInfoRepository->findOneBySlug($package->getName()),
                     'newerVersions' => $newerVersions,
                     'versionStates' => $versionStates,
                     // newest first: the first version without a known vulnerability
@@ -168,16 +168,16 @@ class DashboardController extends AbstractController
                 continue;
             }
 
-            $cached = $terVersionRepository->findOneByExtensionKeyAndVersion($extension->getName(), $extension->getVersion());
-            $meta = $terMetaRepository->findOneByExtensionKey($extension->getName());
-            $extensionDetails[$extension->getId()] = [
+            $cached = $terVersionRepository->findOneByExtensionKeyAndVersion($package->getName(), $package->getVersion());
+            $meta = $terMetaRepository->findOneByExtensionKey($package->getName());
+            $packageDetails[$package->getId()] = [
                 'description' => $cached?->getDescription(),
                 'packagistUrl' => $meta?->getPackagistUrl(),
                 'repositoryUrl' => $meta?->getRepositoryUrl(),
                 'manualUrl' => $meta?->getManualUrl(),
                 'newerVersions' => null !== $coreMajor
-                    ? $terVersionRepository->findNewerCompatibleWith($extension->getName(), $extension->getVersion(), $coreMajor)
-                    : $terVersionRepository->findNewerThan($extension->getName(), $extension->getVersion()),
+                    ? $terVersionRepository->findNewerCompatibleWith($package->getName(), $package->getVersion(), $coreMajor)
+                    : $terVersionRepository->findNewerThan($package->getName(), $package->getVersion()),
             ];
         }
 
@@ -193,8 +193,8 @@ class DashboardController extends AbstractController
             'site' => $site,
             'lastReport' => $reportRepository->findOneBy(['site' => $site], ['receivedAt' => 'DESC']),
             'typo3SupportStatus' => $typo3SupportStatus,
-            'extensions' => $extensions,
-            'extensionDetails' => $extensionDetails,
+            'packages' => $packages,
+            'packageDetails' => $packageDetails,
             'newerCoreReleases' => $isWordpress
                 ? $wordpressCoreReleaseRepository->findNewerThan($coreVersion)
                 : $coreReleaseRepository->findNewerThan($coreVersion),
@@ -315,24 +315,24 @@ class DashboardController extends AbstractController
         return $this->redirectToRoute('dashboard_index');
     }
 
-    #[Route('/packages', name: 'dashboard_extensions')]
-    public function packages(Request $request, SitePackageRepository $extensionRepository): Response
+    #[Route('/packages', name: 'dashboard_packages')]
+    public function packages(Request $request, SitePackageRepository $packageRepository): Response
     {
         $query = $request->query->get('q');
         $query = is_string($query) && '' !== $query ? $query : null;
 
         $packageType = PackageType::tryFrom((string) $request->query->get('type'));
 
-        // Grouped by extension key for the accordion view - search() already
-        // orders by extension name first, so same-key installs stay contiguous.
+        // Grouped by package name for the accordion view - search() already
+        // orders by name first, so installs of the same package stay contiguous.
         $groups = [];
-        foreach ($extensionRepository->search($query, $packageType) as $extension) {
+        foreach ($packageRepository->search($query, $packageType) as $package) {
             // a theme may share its slug with a plugin
-            $groups[$extension->getName().(PackageType::WordpressTheme === $extension->getPackageType() ? ' (theme)' : '')][] = $extension;
+            $groups[$package->getName().(PackageType::WordpressTheme === $package->getPackageType() ? ' (theme)' : '')][] = $package;
         }
 
         return $this->render('dashboard/packages.html.twig', [
-            'extensionGroups' => $groups,
+            'packageGroups' => $groups,
             'query' => $query,
             'packageType' => $packageType,
             'packageTypes' => PackageType::cases(),

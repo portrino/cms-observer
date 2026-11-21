@@ -110,8 +110,8 @@ class DashboardSiteShowTest extends WebTestCase
         // unknown "requires": shown, it may well run
         self::assertSelectorExists('.version-number:contains("1.2.0")');
         self::assertSelectorNotExists('.version-number:contains("2.0.0")');
-        self::assertSelectorTextContains('#extensionsAccordion .accordion-button', 'Outdated (1.2.0 available)');
-        self::assertSelectorTextContains('#extensionsAccordion .accordion-button', 'WordPress 6.6 compatible version (2.0.0)');
+        self::assertSelectorTextContains('#packagesAccordion .accordion-button', 'Outdated (1.2.0 available)');
+        self::assertSelectorTextContains('#packagesAccordion .accordion-button', 'WordPress 6.6 compatible version (2.0.0)');
     }
 
     /**
@@ -134,7 +134,7 @@ class DashboardSiteShowTest extends WebTestCase
         $client->request('GET', '/projects/'.$site->getId());
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('#extensionsAccordion .accordion-button', 'Theme');
+        self::assertSelectorTextContains('#packagesAccordion .accordion-button', 'Theme');
         self::assertSelectorExists('a[href="https://wordpress.org/themes/shared-slug/"]');
         self::assertSelectorNotExists('.version-number:contains("9.0.0")');
     }

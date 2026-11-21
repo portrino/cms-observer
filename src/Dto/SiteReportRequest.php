@@ -9,8 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class SiteReportRequest
 {
     /**
-     * @param ExtensionReport[]|null $extensions
-     * @param ExtensionReport[]|null $themes
+     * @param PackageReport[]|null $extensions
+     * @param PackageReport[]|null $themes
      */
     public function __construct(
         #[Assert\NotBlank]

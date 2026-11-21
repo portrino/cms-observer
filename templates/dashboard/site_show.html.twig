@@ -198,48 +198,48 @@
     </div>
     </div>
 
-    <h2 class="h4 mb-3">Packages {{ m.extension_count_badge(extensions|length, site.type.value == 'typo3' ? 'extensions' : 'plugins and themes') }}</h2>
+    <h2 class="h4 mb-3">Packages {{ m.package_count_badge(packages|length, site.type.value == 'typo3' ? 'extensions' : 'plugins and themes') }}</h2>
     <div class="card mb-4">
     <div class="card-body p-0">
-    <div class="accordion" id="extensionsAccordion">
-    {% for ext in extensions %}
-        {% set details = extensionDetails[ext.id] %}
-        {% set bodyId = 'extAccordionBody' ~ ext.id %}
+    <div class="accordion" id="packagesAccordion">
+    {% for package in packages %}
+        {% set details = packageDetails[package.id] %}
+        {% set bodyId = 'packageAccordionBody' ~ package.id %}
         <div class="accordion-item">
             <h3 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ bodyId }}" aria-expanded="false" aria-controls="{{ bodyId }}">
                     <span class="accordion-title">
-                    <code class="me-2 fw-bold">{{ ext.name }}</code>
-                    {% if ext.packageType.value == 'wordpress-theme' %}<span class="badge text-bg-neutral me-2">Theme</span>{% endif %}
-                    <span class="me-2 fw-bold">{{ ext.version }}</span>
-                    {{ m.security_badge(ext.insecure) }}
-                    {{ m.outdated_badge(ext.outdated, ext.latestVersion) }}
-                    {% if not ext.active %}<span class="badge text-bg-neutral ms-2">Inactive</span>{% endif %}
-                    {% if ext.matchedAdvisory %}
-                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ ext.matchedAdvisory.advisoryId }} ({{ ext.matchedAdvisory.severity }})</span>
+                    <code class="me-2 fw-bold">{{ package.name }}</code>
+                    {% if package.packageType.value == 'wordpress-theme' %}<span class="badge text-bg-neutral me-2">Theme</span>{% endif %}
+                    <span class="me-2 fw-bold">{{ package.version }}</span>
+                    {{ m.security_badge(package.insecure) }}
+                    {{ m.outdated_badge(package.outdated, package.latestVersion) }}
+                    {% if not package.active %}<span class="badge text-bg-neutral ms-2">Inactive</span>{% endif %}
+                    {% if package.matchedAdvisory %}
+                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ package.matchedAdvisory.advisoryId }} ({{ package.matchedAdvisory.severity }})</span>
                     {% endif %}
-                    {% if ext.matchedWordpressVulnerability %}
-                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ ext.matchedWordpressVulnerability.cve ?? 'Vulnerability' }} ({{ ext.matchedWordpressVulnerability.cvssRating }})</span>
+                    {% if package.matchedWordpressVulnerability %}
+                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ package.matchedWordpressVulnerability.cve ?? 'Vulnerability' }} ({{ package.matchedWordpressVulnerability.cvssRating }})</span>
                     {% endif %}
-                    {{ m.newer_core_package_badge(site.type.label, ext.newerCoreVersion, ext.newerCorePackageVersion, 'badge-next-major') }}
+                    {{ m.newer_core_package_badge(site.type.label, package.newerCoreVersion, package.newerCorePackageVersion, 'badge-next-major') }}
                     </span>
                 </button>
             </h3>
-            <div id="{{ bodyId }}" class="accordion-collapse collapse" data-bs-parent="#extensionsAccordion">
+            <div id="{{ bodyId }}" class="accordion-collapse collapse" data-bs-parent="#packagesAccordion">
                 <div class="accordion-body">
                 {% if site.type.value == 'wordpress' %}
                     <div class="mb-2">
-                        {% set wpKind = ext.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
-                        <a href="https://wordpress.org/{{ wpKind }}/{{ ext.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on WordPress.org {{ icon('external-link') }}</a>
-                        <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ ext.name }}/" target="_blank" rel="noopener" class="ms-3">Repository</a>
+                        {% set wpKind = package.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
+                        <a href="https://wordpress.org/{{ wpKind }}/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on WordPress.org {{ icon('external-link') }}</a>
+                        <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ package.name }}/" target="_blank" rel="noopener" class="ms-3">Repository</a>
                     </div>
                     {% if details.wordpressPluginInfo.description ?? null %}
                         <p>{{ details.wordpressPluginInfo.description }}</p>
                     {% endif %}
-                    {% if ext.composerName %}
-                        <p class="text-muted"><code>{{ ext.composerName }}</code></p>
+                    {% if package.composerName %}
+                        <p class="text-muted"><code>{{ package.composerName }}</code></p>
                     {% endif %}
-                    {% set vulnerability = ext.matchedWordpressVulnerability %}
+                    {% set vulnerability = package.matchedWordpressVulnerability %}
                     {% if vulnerability %}
                         <p class="mb-1">
                             <a href="{{ vulnerability.url }}" target="_blank" rel="noopener">{{ vulnerability.title }}</a>:
@@ -278,7 +278,7 @@
                     {% endif %}
                 {% else %}
                     <div class="mb-2">
-                        <a href="https://extensions.typo3.org/extension/{{ ext.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on TER {{ icon('external-link') }}</a>
+                        <a href="https://extensions.typo3.org/extension/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on TER {{ icon('external-link') }}</a>
                         {% if details.packagistUrl %}
                             <a href="{{ details.packagistUrl }}" target="_blank" rel="noopener" class="ms-3">Packagist</a>
                         {% endif %}
@@ -292,11 +292,11 @@
                     {% if details.description %}
                         <p>{{ details.description }}</p>
                     {% endif %}
-                    {% if ext.composerName %}
-                        <p class="text-muted"><code>{{ ext.composerName }}</code></p>
+                    {% if package.composerName %}
+                        <p class="text-muted"><code>{{ package.composerName }}</code></p>
                     {% endif %}
-                    {% if ext.matchedAdvisory %}
-                        <p><a href="{{ ext.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ ext.matchedAdvisory.advisoryId }}</a>: known vulnerability, severity {{ ext.matchedAdvisory.severity }}.</p>
+                    {% if package.matchedAdvisory %}
+                        <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: known vulnerability, severity {{ package.matchedAdvisory.severity }}.</p>
                     {% endif %}
                     {% if details.newerVersions is empty %}
                         <p class="text-muted mb-0">No newer versions known.</p>
@@ -337,7 +337,7 @@
             </div>
         </div>
     {% else %}
-        <p class="text-muted">No extensions reported yet.</p>
+        <p class="text-muted">No packages reported yet.</p>
     {% endfor %}
     </div>
     </div>

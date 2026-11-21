@@ -93,7 +93,7 @@ class SitePackageRepository extends ServiceEntityRepository
      *
      * @return array<int, array{total: int, updatable: int, insecureCount: int}>
      */
-    public function getExtensionSummaryBySite(iterable $sites): array
+    public function getPackageSummaryBySite(iterable $sites): array
     {
         $summary = [];
         foreach ($sites as $site) {

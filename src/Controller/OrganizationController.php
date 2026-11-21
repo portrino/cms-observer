@@ -52,14 +52,14 @@ class OrganizationController extends AbstractController
     #[Route('/organizations/{id}', name: 'dashboard_organization_show')]
     public function show(
         Organization $organization,
-        SitePackageRepository $extensionRepository,
+        SitePackageRepository $packageRepository,
         Typo3CoreReleaseRepository $coreReleaseRepository,
         WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
     ): Response {
         return $this->render('dashboard/organization_show.html.twig', [
             'organization' => $organization,
-            'extensionStatusBySite' => $extensionRepository->getAggregateStatusBySite(),
-            'extensionSummaryBySite' => $extensionRepository->getExtensionSummaryBySite($organization->getSites()),
+            'packageStatusBySite' => $packageRepository->getAggregateStatusBySite(),
+            'packageSummaryBySite' => $packageRepository->getPackageSummaryBySite($organization->getSites()),
             'coreMajorStatusBySite' => $coreReleaseRepository->getMajorStatusBySite($organization->getSites()) + $wordpressCoreReleaseRepository->getMajorStatusBySite($organization->getSites()),
         ]);
     }

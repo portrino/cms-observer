@@ -36,8 +36,8 @@
         <div class="card-body p-0">
             {{ include('dashboard/_sites_table.html.twig', {
                 sites: organization.sites,
-                extensionStatusBySite: extensionStatusBySite,
-                extensionSummaryBySite: extensionSummaryBySite,
+                packageStatusBySite: packageStatusBySite,
+                packageSummaryBySite: packageSummaryBySite,
                 coreMajorStatusBySite: coreMajorStatusBySite,
                 emptyMessage: 'No projects attached to this organization yet.',
                 showOrganization: false,

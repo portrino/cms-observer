@@ -17,7 +17,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Collects security findings (a site's core/extension became insecure) during
+ * Collects security findings (a site's core or a package became insecure) during
  * one ingestion request or sync command run, then emails every dashboard user
  * a single summary - never one email per finding, so a single new core
  * security release affecting many sites doesn't flood inboxes.
