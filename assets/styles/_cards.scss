@@ -1,0 +1,25 @@
+// Bootstrap only emits $card-box-shadow with $enable-shadows, which would
+// also add dated inset shadows to buttons and form controls.
+.card {
+    box-shadow: var(--bs-card-box-shadow);
+}
+
+// Flush tables/accordions in a padding-less card body: clip them to the
+// card's rounded corners and line edge cells up with the card padding.
+.card-body.p-0 {
+    border-radius: inherit;
+    // auto instead of hidden: still clips, but a too wide table scrolls on phones
+    overflow: auto;
+
+    > .table {
+        margin-bottom: 0;
+
+        > :not(caption) > * > :first-child {
+            padding-left: $card-spacer-x;
+        }
+
+        > :not(caption) > * > :last-child {
+            padding-right: $card-spacer-x;
+        }
+    }
+}

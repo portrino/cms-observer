@@ -1,0 +1,73 @@
+// =============================================================================
+// Own variables
+// Set before Bootstrap's variables, which only fill in what isn't defined yet.
+// Adjust the colors to match the team's sitepackage theme.
+// =============================================================================
+
+$primary: #1d293d !default;
+$secondary: #00d4df !default;
+$tertiary: #e5185e !default;
+$font-family-sans-serif: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-size-base: 0.875rem;
+
+// Layout
+$sidebar-width: 15rem;
+$sidebar-width-collapsed: 4.5rem;
+$topbar-height: 3.75rem;
+
+@import "../bootstrap-src/scss/functions";
+@import "../bootstrap-src/scss/variables";
+
+// =============================================================================
+// Bootstrap overrides
+// After Bootstrap's variables, since they build on them ($black, $gray-*, maps).
+// =============================================================================
+
+// th has no explicit weight by default ($table-th-font-weight: null), so it
+// falls back to the browser's native bold - use Poppins Medium instead.
+$table-th-font-weight: $font-weight-medium;
+
+// Cards have no shadow by default ($card-box-shadow: null) - a subtle one
+// helps them read as surfaces floating on the gray page background, which
+// also makes the border redundant. Rendered by the .card rule in _cards.scss.
+$card-box-shadow: 0 1px 3px rgba($black, 0.06), 0 4px 12px rgba($black, 0.05);
+$card-border-width: 0;
+$card-border-radius: 0.75rem;
+// Bootstrap derives this in _variables.scss, which is imported before, so it would keep the default radius
+// and card headers would stick out of the card's rounder corners
+$card-inner-border-radius: subtract($card-border-radius, $card-border-width);
+$card-spacer-y: 1.25rem;
+$card-spacer-x: 1.5rem;
+
+// Bootstrap has no built-in "tertiary" theme color slot - merging it into the
+// map here, before maps/mixins/components are generated, gives it every
+// automatic utility (.btn-tertiary, .text-bg-tertiary, .border-tertiary, ...)
+// the built-in colors get, not just the bare variable. "neutral" is a plain
+// mid-gray slot for default/no-data badges - $secondary is now the brand
+// cyan, too close to Bootstrap's own $info to read as "neutral" anymore.
+$theme-colors: map-merge($theme-colors, (
+    "tertiary": $tertiary,
+    "neutral": $gray-600,
+));
+
+$body-bg: $gray-200;
+
+// $card-bg/$accordion-bg/$table-bg/$input-bg/$dropdown-bg all default to
+// var(--bs-body-bg) in Bootstrap 5.3 (for dark-mode theming) - without this
+// they'd inherit the gray page background above and become visually
+// indistinguishable from it, or (for tables nested inside a card) from the
+// card itself.
+$card-bg: $white;
+$accordion-bg: $white;
+$table-bg: $white;
+$input-bg: $white;
+$dropdown-bg: $white;
+
+// $form-select-bg/$form-check-input-bg/$input-focus-bg are each defined as
+// "$input-bg !default" *inside* _variables.scss itself, further down the
+// same file - that resolves against $input-bg's original (body-bg) value
+// during that one import, before the override above ever runs, so they
+// don't inherit it and need setting explicitly too.
+$form-select-bg: $white;
+$form-check-input-bg: $white;
+$input-focus-bg: $white;

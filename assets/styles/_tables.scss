@@ -1,0 +1,36 @@
+.table a:not(.btn) {
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// Accent bar on the first cell instead of a full row fill - drawn as a
+// background so it doesn't fight the box-shadow Bootstrap uses for hover.
+// Insecure projects/versions red; in the detail page version tables (like
+// the TER) also secure versions gray and the latest secure one green.
+@each $state, $color in ("insecure": $danger, "secure": $gray-400, "latest": $success) {
+    .row-#{$state} > td:first-child {
+        background-image: linear-gradient(to right, $color 4px, transparent 4px);
+    }
+}
+
+// The latest secure version is also slightly highlighted, like in the TER.
+.row-latest {
+    --bs-table-bg: #{$gray-100};
+}
+
+// Compact release/version tables in the detail page accordions: room between
+// the accent bar and the first column's text.
+.accordion-body .table-sm > :not(caption) > * > :first-child {
+    padding-left: 0.75rem;
+}
+
+// Version numbers in the detail page version tables: fixed slot width and
+// tabular digits, so the Insecure badge / Latest label after them line up.
+.version-number {
+    display: inline-block;
+    min-width: 4.5em;
+    font-variant-numeric: tabular-nums;
+}

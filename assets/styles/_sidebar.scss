@@ -1,0 +1,222 @@
+// Phones first: the sidebar is an overlay, opened by the toggle for one page
+// (see sidebar_controller.js). From md up it's always shown and can be collapsed
+// to its icons, which is remembered.
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: $sidebar-width;
+    background-color: $primary;
+    display: flex;
+    flex-direction: column;
+    z-index: 1030;
+    transform: translateX(-100%);
+    transition: transform 0.15s ease-in-out;
+
+    .sidebar-brand {
+        height: $topbar-height;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0 1rem;
+        font-weight: 600;
+        color: $white;
+        border-bottom: 1px solid rgba($white, 0.1);
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    // only the navigation scrolls, so the user menu stays at the bottom on short screens
+    .sidebar-nav {
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.65rem 1rem;
+        color: rgba($white, 0.75);
+        white-space: nowrap;
+        overflow: hidden;
+        border-left: 3px solid transparent;
+
+        .icon {
+            flex-shrink: 0;
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+
+        &:hover {
+            color: $white;
+            background-color: rgba($white, 0.08);
+        }
+
+        &.active {
+            color: $white;
+            background-color: rgba($white, 0.12);
+            border-left-color: $tertiary;
+            font-weight: 600;
+        }
+    }
+
+    .sidebar-status {
+        padding-bottom: 0.5rem;
+    }
+
+    .sidebar-badge {
+        margin-left: auto;
+    }
+
+    .sidebar-user {
+        border-top: 1px solid rgba($white, 0.1);
+    }
+
+    .sidebar-user-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: rgba($white, 0.85);
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &:hover,
+        &[aria-expanded="true"] {
+            color: $white;
+            background-color: rgba($white, 0.08);
+        }
+
+        // the caret would only crowd the name, the whole row is the button
+        &::after {
+            display: none;
+        }
+
+        .avatar {
+            background-color: $tertiary;
+        }
+    }
+
+    .sidebar-user-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
+// The toggle in the topbar shows what a click does: open a closed sidebar, close an open one
+.sidebar-toggle {
+    color: $body-color;
+
+    &:hover {
+        color: $body-color;
+        background-color: $gray-100;
+    }
+
+    .sidebar-icon-close {
+        display: none;
+    }
+}
+
+body.sidebar-open {
+    .sidebar {
+        transform: none;
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background-color: rgba($black, 0.4);
+        z-index: 1025;
+    }
+
+    .sidebar-toggle {
+        .sidebar-icon-close {
+            display: inline-block;
+        }
+
+        .sidebar-icon-open {
+            display: none;
+        }
+    }
+}
+
+// dev only: the open Symfony web debug toolbar would cover the user menu at the
+// sidebar's bottom; on phones the toolbar wraps to two rows
+body:has(.sf-toolbar-opened) .sidebar {
+    bottom: 72px;
+}
+
+@include media-breakpoint-up(md) {
+    .sidebar {
+        transform: none;
+        transition: width 0.15s ease-in-out;
+    }
+
+    body:has(.sf-toolbar-opened) .sidebar {
+        bottom: 36px;
+    }
+
+    // the overlay's open state only exists on phones, e.g. still set after rotating a tablet
+    body.sidebar-open .sidebar-backdrop {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        .sidebar-icon-close {
+            display: inline-block;
+        }
+
+        .sidebar-icon-open {
+            display: none;
+        }
+    }
+
+    body.sidebar-collapsed {
+        .sidebar {
+            width: $sidebar-width-collapsed;
+
+            .sidebar-brand span,
+            .nav-link span,
+            .sidebar-user-name {
+                display: none;
+            }
+
+            // only the icon is left, the badge marks its corner
+            .nav-link {
+                position: relative;
+            }
+
+            .sidebar-badge {
+                position: absolute;
+                top: 0.25rem;
+                left: 1.75rem;
+                font-size: 0.6rem;
+            }
+        }
+
+        .sidebar-toggle {
+            .sidebar-icon-close {
+                display: none;
+            }
+
+            .sidebar-icon-open {
+                display: inline-block;
+            }
+        }
+
+        .app-topbar,
+        .app-main {
+            margin-left: $sidebar-width-collapsed;
+        }
+    }
+}

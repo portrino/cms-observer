@@ -86,6 +86,11 @@ built (symfonycasts/sass-bundle, into the git-ignored `var/sass/`), and
 never committed: a committed `public/assets/` would also be used in dev and
 hide every local asset change.
 
+- `app.scss` only configures Bootstrap and imports one partial per component
+  or area (`_sidebar.scss`, `_layout.scss`, `_badges.scss`, ...). Write them
+  mobile first: rules for phones, wider screens via `media-breakpoint-up()`.
+  General rules come before their overrides; fix an ordering problem by moving
+  the rule, not with extra specificity.
 - Locally: `ddev composer assets:build` once (e.g. after a pull that touched
   SCSS or `importmap.php`), or `ddev composer assets:watch` while working on
   styles.

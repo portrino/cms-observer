@@ -5,6 +5,8 @@ framework:
             - assets/
         missing_import_mode: strict
         excluded_patterns:
+            # SCSS partials, only imported by app.scss
+            - '*/assets/styles/_*.scss'
             - '*/assets/styles/**/_*.scss'
             # Bootstrap's SCSS source - only imported by app.scss, never served on its own.
             - '*/assets/bootstrap-src/**'

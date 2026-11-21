@@ -1,0 +1,39 @@
+// Inline SVG icons (see IconExtension) size themselves off font-size rather
+// than their own baked-in 24x24 attributes, and need the classic icon-font
+// baseline nudge to line up with adjacent text.
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+}
+
+// A bit larger in buttons, where at text size thin icons like the plus look washed out
+.btn .icon {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+// Round status circles, colored like the badges (see _badges.scss)
+.status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.cms-type-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+
+    .icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+}

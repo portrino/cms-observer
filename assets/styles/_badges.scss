@@ -1,0 +1,57 @@
+// Badges match the 1.5rem .status-icon circles, so count and status columns
+// read with the same weight: single digits become circles, longer labels pills.
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+    border-radius: $border-radius-pill;
+    vertical-align: middle;
+}
+
+// Package count badges in the project list: same width per column, icon left,
+// tabular digits right, so icons and numbers line up across rows.
+.badge.badge-count {
+    // fixed size, so it looks the same in a table cell and next to a heading
+    font-size: $font-size-base * 0.75;
+    min-width: 2.75rem;
+    justify-content: space-between;
+    font-variant-numeric: tabular-nums;
+}
+
+// Pastel badges and status icons, same tint/shade/border Bootstrap uses for
+// its *-subtle colors (also covers the custom tertiary/neutral slots). Status
+// icons keep the saturated color for the glyph itself, so warnings still pop.
+// .badge-solid keeps Bootstrap's saturated badge, for the strongest signal: a
+// concrete vulnerability (advisory/CVE) rather than a status.
+@each $color, $value in $theme-colors {
+    .badge.text-bg-#{$color}:not(.badge-solid) {
+        color: shade-color($value, 60%) !important;
+        background-color: tint-color($value, 80%) !important;
+        border: 1px solid tint-color($value, 60%);
+    }
+
+    .status-icon.text-bg-#{$color} {
+        // plain yellow on its own pastel tint is too faint - use the badge text color
+        color: if($color == "warning", shade-color($value, 60%), $value) !important;
+        background-color: tint-color($value, 80%) !important;
+        border: 1px solid tint-color($value, 60%);
+    }
+}
+
+// phones: status badges show only their icon (and version), see _macros.html.twig.
+// A "down" override as an exception: visually-hidden has no counterpart to undo it from md up.
+@include media-breakpoint-down(md) {
+    .badge-text {
+        @include visually-hidden;
+    }
+
+    // keeps the absolutely positioned hidden text inside the badge; otherwise it escapes
+    // the scrolling table and widens the whole page
+    .badge:has(.badge-text) {
+        position: relative;
+    }
+}
