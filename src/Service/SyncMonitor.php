@@ -85,18 +85,33 @@ class SyncMonitor
         return $states;
     }
 
+    /**
+     * The latest successful sync, i.e. when the scheduler's worker last did its job.
+     */
+    public function lastSuccess(): ?SyncStatus
+    {
+        $latest = null;
+        foreach ($this->repository->findAll() as $status) {
+            if (null !== $status->getLastSucceededAt() && $status->getLastSucceededAt() > $latest?->getLastSucceededAt()) {
+                $latest = $status;
+            }
+        }
+
+        return $latest;
+    }
+
     public function overdueCount(): int
     {
         return count(array_filter($this->states(), static fn (SyncState $state): bool => $state->overdue));
     }
 
-    public function recordSuccess(string $command): void
+    public function recordSuccess(string $command, ?\DateTimeImmutable $startedAt = null, bool $scheduled = false): void
     {
         if (!array_key_exists($command, $this->scheduledCommands())) {
             return;
         }
 
-        $this->statusOf($command)->recordSuccess($this->clock->now());
+        $this->statusOf($command)->recordSuccess($this->clock->now(), $startedAt, $scheduled);
         $this->entityManager->flush();
     }
 

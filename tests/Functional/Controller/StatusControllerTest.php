@@ -36,6 +36,37 @@ class StatusControllerTest extends WebTestCase
         self::assertSelectorTextContains('tr:has(code:contains("app:sync-endoflife-releases")) .badge', 'Overdue');
     }
 
+    public function testTellsTheTimezoneAndWhenTheSchedulerLastRan(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('status-tz@example.test', 'Status Tz', 'password'));
+        $timezone = date_default_timezone_get();
+
+        $client->request('GET', '/status');
+        self::assertSelectorTextContains('.alert-warning', "hasn't run a sync yet");
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $status = new SyncStatus('app:check-syncs', new \DateTimeImmutable('-1 day'));
+        $status->recordSuccess(new \DateTimeImmutable('2026-11-21 14:15:00'), new \DateTimeImmutable('2026-11-21 14:14:00'), true);
+        $entityManager->persist($status);
+        $entityManager->flush();
+
+        $client->request('GET', '/status');
+        self::assertSelectorTextContains('.alert-info', 'Current server time is');
+        self::assertSelectorTextContains('.alert-info', '('.$timezone.', GMT');
+        self::assertSelectorTextContains('.alert-info', 'The last sync was app:check-syncs, started (automatically) on 2026-11-21 at 14:14 and ended on 2026-11-21 at 14:15.');
+
+        // a worker with another timezone, e.g. an unset date.timezone in the CLI's php.ini;
+        // the client rebooted the kernel, which cleared the entity manager
+        $otherTimezone = 'UTC' === $timezone ? 'Europe/Berlin' : 'UTC';
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->find(SyncStatus::class, 'app:check-syncs')?->recordSuccess(new \DateTimeImmutable('2026-11-21 13:30:00', new \DateTimeZone($otherTimezone)));
+        $entityManager->flush();
+
+        $client->request('GET', '/status');
+        self::assertSelectorTextContains('.alert-warning', "the scheduler's worker runs in {$otherTimezone}");
+    }
+
     public function testSendsATestMail(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);

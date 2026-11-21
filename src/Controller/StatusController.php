@@ -35,6 +35,8 @@ class StatusController extends AbstractController
 
         return $this->render('status/index.html.twig', [
             'syncs' => $syncMonitor->states(),
+            'lastSuccess' => $syncMonitor->lastSuccess(),
+            'timezone' => date_default_timezone_get(),
             'mailTestForm' => $form,
             'mailTransport' => $mailTester->getTransport(),
             'mailFrom' => $mailTester->getFromAddress(),

@@ -20,6 +20,17 @@ class SyncStatus
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $overdueNotifiedAt = null;
 
+    /** PHP's timezone in the process that recorded the last success, usually the scheduler's worker */
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $timezone = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastStartedAt = null;
+
+    /** Whether the scheduler's worker ran the last success, not someone on the command line */
+    #[ORM\Column(nullable: true)]
+    private ?bool $lastRunScheduled = null;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(length: 128)]
@@ -45,10 +56,28 @@ class SyncStatus
         return $this->lastSucceededAt ?? $this->trackedSince;
     }
 
-    public function recordSuccess(\DateTimeImmutable $at): void
+    public function recordSuccess(\DateTimeImmutable $at, ?\DateTimeImmutable $startedAt = null, bool $scheduled = false): void
     {
         $this->lastSucceededAt = $at;
+        $this->lastStartedAt = $startedAt;
+        $this->lastRunScheduled = $scheduled;
+        $this->timezone = $at->getTimezone()->getName();
         $this->overdueNotifiedAt = null;
+    }
+
+    public function getLastStartedAt(): ?\DateTimeImmutable
+    {
+        return $this->lastStartedAt;
+    }
+
+    public function isLastRunScheduled(): ?bool
+    {
+        return $this->lastRunScheduled;
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
     }
 
     public function isOverdueNotified(): bool

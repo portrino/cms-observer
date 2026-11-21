@@ -7,6 +7,31 @@
 
 {% block body %}
 <div class="container">
+    {# like the TYPO3 scheduler module: which time the page shows and when the scheduler last did its job #}
+    {% set timezoneMismatch = lastSuccess and lastSuccess.timezone and lastSuccess.timezone != timezone %}
+    <div class="alert {{ lastSuccess is null or timezoneMismatch ? 'alert-warning' : 'alert-info' }}">
+        <h2 class="h6">Scheduler</h2>
+        <p class="mb-2">
+            All times are the server's, as the scheduler runs on the server.
+            Current server time is {{ 'now'|date('Y-m-d H:i T') }} ({{ timezone }}, GMT {{ 'now'|date('P') }}).
+            {% if timezoneMismatch %}
+                But the scheduler's worker runs in <strong>{{ lastSuccess.timezone }}</strong>: times it records are off by
+                the difference, and syncs may show as overdue. Set the same <code>date.timezone</code> in the PHP
+                configuration of the web server and the command line.
+            {% endif %}
+        </p>
+        <p class="mb-0">
+            {% if lastSuccess is null %}
+                The scheduler hasn't run a sync yet: check the cron job that starts its worker, see the installation docs.
+            {% else %}
+                The last sync was <code>{{ lastSuccess.command }}</code>,
+                started {{ lastSuccess.lastRunScheduled ? '(automatically)' : (lastSuccess.lastRunScheduled is same as(false) ? '(manually)') }}
+                {%- if lastSuccess.lastStartedAt %} on {{ lastSuccess.lastStartedAt|date('Y-m-d') }} at {{ lastSuccess.lastStartedAt|date('H:i') }}{% endif %}
+                and ended on {{ lastSuccess.lastSucceededAt|date('Y-m-d') }} at {{ lastSuccess.lastSucceededAt|date('H:i') }}.
+            {% endif %}
+        </p>
+    </div>
+
     <p class="text-muted">
         The scheduled syncs fetch the release and vulnerability data the ratings are based on.
         A sync is overdue when it missed its last three runs.

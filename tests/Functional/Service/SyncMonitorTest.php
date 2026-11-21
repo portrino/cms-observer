@@ -38,7 +38,10 @@ class SyncMonitorTest extends KernelTestCase
 
         static::getContainer()->get(MessageBusInterface::class)->dispatch(new RunCommandMessage('app:check-stale-sites'));
 
-        self::assertNotNull(static::getContainer()->get(SyncStatusRepository::class)->find('app:check-stale-sites')?->getLastSucceededAt());
+        $status = static::getContainer()->get(SyncStatusRepository::class)->find('app:check-stale-sites');
+        self::assertNotNull($status?->getLastSucceededAt());
+        self::assertNotNull($status->getLastStartedAt());
+        self::assertTrue($status->isLastRunScheduled());
     }
 
     public function testAnOverdueSyncIsNotifiedOnceUntilItSucceedsAgain(): void
