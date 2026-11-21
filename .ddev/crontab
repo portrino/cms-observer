@@ -1,1 +1,1 @@
-* * * * * php /var/www/html/bin/console messenger:consume scheduler_default --env=prod --no-debug --time-limit=55 --memory-limit=128M >> /var/www/html/var/log/scheduler.log 2>&1
+* * * * * php /var/www/html/bin/console messenger:consume scheduler_default --env=dev --time-limit=55 --memory-limit=128M >> /var/www/html/var/log/scheduler.log 2>&1

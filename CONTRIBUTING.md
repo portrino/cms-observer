@@ -32,8 +32,8 @@ APP_SECRET=any-random-string
 WORDFENCE_API_KEY=
 ```
 
-These belong into `.env.local` and not into `.env.dev`: the scheduler cron job in DDEV (`.ddev/crontab`) runs with
-`--env=prod`. For the tests create a `.env.test.local` with the same `DATABASE_URL` (the test environment doesn't read
+These belong into `.env.local`, which every environment except test reads. The scheduler cron job in DDEV
+(`.ddev/crontab`) runs with `--env=dev`, so it always uses the current code. For the tests create a `.env.test.local` with the same `DATABASE_URL` (the test environment doesn't read
 `.env.local`, it appends `_test` to the database name).
 
 ```bash
