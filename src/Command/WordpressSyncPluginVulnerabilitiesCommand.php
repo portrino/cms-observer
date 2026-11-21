@@ -55,9 +55,10 @@ class WordpressSyncPluginVulnerabilitiesCommand extends Command
                 throw $e;
             }
 
+            // a failure, so the status page counts the missed run: overdue after three in a row
             $io->warning('Wordfence rate limit hit (HTTP 429), keeping the last synced data until the next run.');
 
-            return Command::SUCCESS;
+            return Command::FAILURE;
         }
 
         if ($stats['deletionSkipped']) {

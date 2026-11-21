@@ -43,7 +43,9 @@ that missed its last three runs is overdue: the sidebar shows a badge and a
 mail goes out, once per outage. If the worker itself stopped, no mail can go
 out, only the badge shows it.
 
-Wordfence rate-limits strictly, so don't run its sync repeatedly by hand.
+Wordfence rate-limits strictly, so don't run its sync repeatedly by hand. A
+run that hits the limit keeps the last data and counts as failed, so a sync
+stuck in the limit shows up as overdue on the status page.
 
 ## Users and two-factor authentication
 
