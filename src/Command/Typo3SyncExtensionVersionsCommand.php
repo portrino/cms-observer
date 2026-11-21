@@ -19,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:typo3:sync-extension-versions',
-    description: 'Resolve extension insecurity/outdatedness for reported extensions via the TER API',
+    description: 'Fetch the TER versions of a batch of reported extensions per run, then re-rate the reported extensions as insecure or outdated',
 )]
 #[AsCronTask('*/15 * * * *')] // every 15m - only MAX_KEYS_PER_RUN keys per run, so it needs frequent ticks to cover every extension
 class Typo3SyncExtensionVersionsCommand extends Command

@@ -14,7 +14,7 @@
             <tbody>
             {% for finding in findings %}
                 <tr>
-                    <td><a href="{{ dashboardUrls[finding.siteId] }}">{{ finding.siteName }}</a></td>
+                    <td><a href="{{ finding.url }}">{{ finding.name }}</a></td>
                     <td>{{ finding.subject }}</td>
                     <td>{{ finding.detail }}</td>
                 </tr>

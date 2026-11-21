@@ -17,7 +17,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:check-stale-sites',
-    description: 'Notify about sites that stopped sending reports',
+    description: 'Mail about projects that sent no report for 2 days, once per outage',
 )]
 #[AsCronTask('7 * * * *')] // hourly - a site is notified once per outage, so a frequent check only shortens the delay
 class CheckStaleSitesCommand extends Command

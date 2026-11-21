@@ -21,7 +21,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:wordpress:sync-plugin-vulnerabilities',
-    description: 'Fetch the Wordfence Intelligence vulnerability feed and cross-reference it against reported WordPress plugin versions',
+    description: 'Fetch the Wordfence Intelligence vulnerability feed (needs WORDFENCE_API_KEY), then re-rate every reported plugin version',
 )]
 #[AsCronTask('43 4 * * *')] // once a day - the feed is complete (~160 MB) and Wordfence rate-limits repeated downloads
 class WordpressSyncPluginVulnerabilitiesCommand extends Command

@@ -19,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:wordpress:sync-plugins',
-    description: 'Resolve plugin outdatedness for reported WordPress plugins via the WordPress.org plugin API',
+    description: 'Fetch the WordPress.org versions of a batch of reported plugins per run, then re-rate the reported plugins as outdated',
 )]
 #[AsCronTask('*/15 * * * *')] // every 15m - only MAX_SLUGS_PER_RUN slugs per run, so it needs frequent ticks to cover every plugin
 class WordpressSyncPluginsCommand extends Command

@@ -42,6 +42,17 @@
                         <span>Organizations</span>
                     </a>
                 </nav>
+                {% set overdueSyncs = overdue_sync_count() %}
+                <nav class="nav flex-column flex-nowrap sidebar-status">
+                    <a class="nav-link {{ currentRoute == 'app_status' ? 'active' }}" href="{{ path('app_status') }}"
+                       {% if overdueSyncs %}title="{{ overdueSyncs }} sync(s) overdue"{% endif %}>
+                        {{ icon('activity') }}
+                        <span>Status</span>
+                        {% if overdueSyncs %}
+                            <b class="sidebar-badge badge rounded-pill text-bg-danger">{{ overdueSyncs }}</b>
+                        {% endif %}
+                    </a>
+                </nav>
                 {# fixed strategy: the menu opens upwards and, in the collapsed sidebar, beyond its right edge #}
                 <div class="sidebar-user dropup">
                     <a class="sidebar-user-toggle dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="User menu">

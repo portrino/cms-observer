@@ -168,8 +168,16 @@ $topbar-height: 3.75rem;
         overflow-y: auto;
     }
 
+    .sidebar-status {
+        padding-bottom: 0.5rem;
+    }
+
     .sidebar-user {
         border-top: 1px solid rgba($white, 0.1);
+    }
+
+    .sidebar-badge {
+        margin-left: auto;
     }
 
     .sidebar-user-toggle {
@@ -317,6 +325,18 @@ body.sidebar-collapsed {
         .sidebar-user-name {
             display: none;
         }
+
+        // only the icon is left, the badge marks its corner
+        .nav-link {
+            position: relative;
+        }
+
+        .sidebar-badge {
+            position: absolute;
+            top: 0.25rem;
+            left: 1.75rem;
+            font-size: 0.6rem;
+        }
     }
 
     .app-topbar,
@@ -352,6 +372,11 @@ body:has(.sf-toolbar-opened) .sidebar {
         .sidebar-user-name {
             display: inline;
         }
+    }
+
+    body.sidebar-collapsed .sidebar .sidebar-badge {
+        position: static;
+        font-size: inherit;
     }
 
     .app-topbar,

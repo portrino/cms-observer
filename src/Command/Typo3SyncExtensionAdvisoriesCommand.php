@@ -19,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:typo3:sync-extension-advisories',
-    description: 'Fetch TYPO3 extension security advisories and cross-reference them against reported extension versions',
+    description: 'Fetch the TYPO3 security advisories for extensions, then re-rate every reported extension version',
 )]
 #[AsCronTask('11 * * * *')] // hourly - this is the security-advisory feed, worth checking often
 class Typo3SyncExtensionAdvisoriesCommand extends Command

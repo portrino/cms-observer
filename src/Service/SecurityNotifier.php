@@ -43,9 +43,19 @@ class SecurityNotifier
 
     public function addFinding(Site $site, string $subject, string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
     {
-        $this->findings[] = new SecurityFinding($site->getId(), $site->getName(), $subject, $detail);
+        $url = $this->urlGenerator->generate('dashboard_site_show', ['id' => $site->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->findings[] = new SecurityFinding($site->getName(), $url, $subject, $detail);
         // every caller flushes the entity manager after evaluating, which stores this with the new status
         $this->entityManager->persist(new SiteEvent($site, $type, $subject, null, null, $detail));
+    }
+
+    /**
+     * A finding about the Observer itself, e.g. an overdue sync, linked to the status page.
+     */
+    public function addSystemFinding(string $subject, string $detail): void
+    {
+        $url = $this->urlGenerator->generate('app_status', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->findings[] = new SecurityFinding('CMS Observer', $url, $subject, $detail);
     }
 
     public function flush(): void
@@ -66,21 +76,12 @@ class SecurityNotifier
             return;
         }
 
-        $dashboardUrls = [];
-        foreach ($findings as $finding) {
-            $dashboardUrls[$finding->siteId] ??= $this->urlGenerator->generate(
-                'dashboard_site_show',
-                ['id' => $finding->siteId],
-                UrlGeneratorInterface::ABSOLUTE_URL,
-            );
-        }
-
         $email = new TemplatedEmail()
             ->from($this->fromAddress)
             ->to(...$recipients)
             ->subject(sprintf('[CMS Observer] %d new security finding%s', count($findings), 1 === count($findings) ? '' : 's'))
             ->htmlTemplate('emails/security_findings.html.twig')
-            ->context(['findings' => $findings, 'dashboardUrls' => $dashboardUrls]);
+            ->context(['findings' => $findings]);
 
         try {
             $this->mailer->send($email);

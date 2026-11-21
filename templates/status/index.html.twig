@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Status - CMS Observer{% endblock %}
+
+{% block page_title %}Status{% endblock %}
+
+{% block body %}
+<div class="container">
+    <p class="text-muted">
+        The scheduled syncs fetch the release and vulnerability data the ratings are based on.
+        A sync is overdue when it missed its last three runs.
+    </p>
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Sync</th>
+                        <th>Schedule</th>
+                        <th>Last success</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for sync in syncs %}
+                    <tr>
+                        <td class="text-nowrap">
+                            <code>{{ sync.command }}</code>
+                            {% if sync.description %}
+                                <span class="text-muted ms-1" tabindex="0" role="img" aria-label="{{ sync.description }}"
+                                      data-controller="tooltip" data-bs-toggle="tooltip" title="{{ sync.description }}">{{ icon('info') }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap"><code>{{ sync.schedule }}</code></td>
+                        <td class="text-nowrap">{{ sync.lastSucceededAt ? sync.lastSucceededAt|date('Y-m-d H:i') : 'never' }}</td>
+                        <td>
+                        {% if sync.overdue %}
+                            <span class="badge text-bg-danger">{{ m.icon_warning() }}<span class="badge-text">Overdue</span></span>
+                        {% else %}
+                            <span class="badge text-bg-success">{{ m.icon_check() }}<span class="badge-text">OK</span></span>
+                        {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4">No scheduled syncs.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

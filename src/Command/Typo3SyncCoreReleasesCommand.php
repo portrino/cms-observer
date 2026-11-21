@@ -19,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:typo3:sync-core-releases',
-    description: 'Fetch TYPO3 core release data from get.typo3.org and store it for security cross-referencing',
+    description: 'Fetch the TYPO3 core releases and their security status from get.typo3.org, then re-rate the TYPO3 version of every project',
 )]
 #[AsCronTask('23 */6 * * *')] // every 6h - catches a new security release the same day it ships
 class Typo3SyncCoreReleasesCommand extends Command

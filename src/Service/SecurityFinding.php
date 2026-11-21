@@ -7,8 +7,8 @@ namespace App\Service;
 final readonly class SecurityFinding
 {
     public function __construct(
-        public int $siteId,
-        public string $siteName,
+        public string $name,
+        public string $url,
         public string $subject,
         public string $detail,
     ) {

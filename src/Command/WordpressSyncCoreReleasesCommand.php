@@ -19,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:wordpress:sync-core-releases',
-    description: 'Fetch WordPress core release data from api.wordpress.org and store it for security cross-referencing',
+    description: 'Fetch the WordPress core releases and which are insecure from api.wordpress.org, then re-rate the WordPress version of every project',
 )]
 #[AsCronTask('37 */6 * * *')] // every 6h - catches a new security release the same day it ships
 class WordpressSyncCoreReleasesCommand extends Command

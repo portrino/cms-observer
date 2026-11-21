@@ -32,6 +32,12 @@ syncs. Each can also be run by hand, e.g. right after the installation:
 | `app:wordpress:sync-plugin-vulnerabilities` | daily | the Wordfence vulnerability feed (needs `WORDFENCE_API_KEY`) |
 | `app:sync-endoflife-releases` | daily | PHP, MariaDB, MySQL and PostgreSQL support cycles |
 | `app:check-stale-sites` | hourly | nothing; mails projects that stopped sending reports |
+| `app:check-syncs` | hourly | nothing; mails syncs that missed their last three runs |
+
+The **Status** page in the sidebar shows when each sync last succeeded. A sync
+that missed its last three runs is overdue: the sidebar shows a badge and a
+mail goes out, once per outage. If the worker itself stopped, no mail can go
+out, only the badge shows it.
 
 Wordfence rate-limits strictly, so don't run its sync repeatedly by hand.
 
