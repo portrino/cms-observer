@@ -234,7 +234,7 @@ class SiteReportControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(202);
     }
 
-    public function testThemesAreStoredApartFromPluginsAndCheckedAgainstThemeVulnerabilities(): void
+    public function testPackagesCarryTheirTypeAndThemesAreCheckedAgainstThemeVulnerabilities(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);
         $this->createUser('themes@example.test', 'Themes', 'password');
@@ -247,8 +247,9 @@ class SiteReportControllerTest extends WebTestCase
         $entityManager->persist($vulnerability);
         $entityManager->flush();
 
-        $plugins = [['name' => 'astra', 'title' => 'Astra Plugin', 'version' => '3.0.0', 'active' => true]];
-        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => $plugins, 'themes' => [['name' => 'astra', 'title' => 'Astra', 'version' => '3.0.0', 'active' => true]]]);
+        $plugin = ['name' => 'astra', 'type' => 'plugin', 'title' => 'Astra Plugin', 'version' => '3.0.0', 'active' => true];
+        $theme = ['name' => 'astra', 'type' => 'theme', 'title' => 'Astra', 'version' => '3.0.0', 'active' => true];
+        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'packages' => [$plugin, $theme]]);
         self::assertResponseStatusCodeSame(202);
         self::assertEmailCount(1);
         self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Theme astra 3.0.0');
@@ -257,15 +258,33 @@ class SiteReportControllerTest extends WebTestCase
         self::assertTrue($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme)?->isInsecure());
         self::assertFalse($packages->findOneBySiteAndName($site, 'astra')?->isInsecure());
 
-        // an older client without "themes" leaves the stored themes alone
-        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => $plugins]);
+        // an older client sends "extensions": its plugins only, the themes stay
+        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => [array_diff_key($plugin, ['type' => true])]]);
         self::assertNotNull($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme));
 
-        // an empty list removes the themes, not the plugins
-        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'extensions' => $plugins, 'themes' => []]);
+        // "packages" is complete for every type: no theme in it means none installed; an unknown type is left out
+        $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'packages' => [$plugin, ['type' => 'block-pattern'] + $plugin]]);
+        self::assertResponseStatusCodeSame(202);
         self::assertNull($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme));
         self::assertNotNull($packages->findOneBySiteAndName($site, 'astra'));
+        self::assertCount(1, $packages->findBy(['site' => $site]));
         self::assertNotNull(static::getContainer()->get(SiteEventRepository::class)->findOneBy(['site' => $site, 'subject' => 'astra (theme)']));
+    }
+
+    public function testTypo3PackagesWithAndWithoutType(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'packages' => [
+            ['name' => 'news', 'type' => 'extension', 'title' => 'News', 'version' => '12.0.0'],
+            ['name' => 'powermail', 'title' => 'Powermail', 'version' => '13.0.0'],
+        ]]);
+
+        self::assertResponseStatusCodeSame(202);
+        $packages = static::getContainer()->get(SitePackageRepository::class);
+        self::assertSame(PackageType::Typo3CmsExtension, $packages->findOneBySiteAndName($site, 'news')?->getPackageType());
+        self::assertNotNull($packages->findOneBySiteAndName($site, 'powermail'));
     }
 
     public function testANonProductionContextIsMailedOnceAndItsFixRecorded(): void

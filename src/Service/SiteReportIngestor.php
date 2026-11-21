@@ -54,8 +54,8 @@ class SiteReportIngestor
             'applicationContext' => $request->applicationContext,
             'domains' => $request->domains,
             'dbPlatform' => $request->dbPlatform,
-            'extensions' => array_map($this->packagePayload(...), $request->extensions ?? []),
-            'themes' => null !== $request->themes ? array_map($this->packagePayload(...), $request->themes) : null,
+            'packages' => null !== $request->packages ? array_map($this->packagePayload(...), $request->packages) : null,
+            'extensions' => null !== $request->extensions ? array_map($this->packagePayload(...), $request->extensions) : null,
         ];
 
         // The raw dbVersion (up to ~40 chars on TYPO3 12) is only kept in the payload
@@ -84,12 +84,22 @@ class SiteReportIngestor
         $this->coreVersionEvaluator->evaluate($site);
         $this->runtimeVersionEvaluator->evaluate($site);
 
-        // A payload without "extensions" says nothing about the packages, an empty list means none are installed
-        if (null !== $request->extensions) {
+        // A payload without packages says nothing about them, an empty list means none are installed
+        if (null !== $request->packages) {
+            $byType = [];
+            foreach ($request->packages as $reported) {
+                $type = PackageType::fromReport($site->getType(), $reported->type);
+                if (null !== $type) { // an unknown type, e.g. from a newer client, is left out
+                    $byType[$type->value][] = $reported;
+                }
+            }
+            // complete for every type of the CMS: a type without entries has none installed
+            foreach (PackageType::allOf($site->getType()) as $type) {
+                $this->syncPackages($site, $byType[$type->value] ?? [], $type, !$isFirstReport);
+            }
+        } elseif (null !== $request->extensions) {
+            // older clients: only the CMS's default type, e.g. WordPress plugins without the themes
             $this->syncPackages($site, $request->extensions, PackageType::fromCmsType($site->getType()), !$isFirstReport);
-        }
-        if (null !== $request->themes && CmsType::WordPress === $site->getType()) {
-            $this->syncPackages($site, $request->themes, PackageType::WordpressTheme, !$isFirstReport);
         }
 
         $this->entityManager->flush();
@@ -192,6 +202,7 @@ class SiteReportIngestor
             'version' => $reported->version,
             'active' => $reported->active,
             'composerName' => $reported->composerName,
+            'type' => $reported->type,
         ];
     }
 

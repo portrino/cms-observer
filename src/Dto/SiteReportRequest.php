@@ -10,7 +10,7 @@ final readonly class SiteReportRequest
 {
     /**
      * @param PackageReport[]|null $extensions
-     * @param PackageReport[]|null $themes
+     * @param PackageReport[]|null $packages
      */
     public function __construct(
         #[Assert\NotBlank]
@@ -20,7 +20,8 @@ final readonly class SiteReportRequest
         #[Assert\NotBlank]
         public string $dbVersion,
         #[Assert\Valid]
-        // null: not reported (packages are left as they are), []: no packages installed
+        // Older clients, kept for good: the packages of the CMS's default type (TYPO3 extensions,
+        // WordPress plugins); null: not reported (left as they are), []: none installed
         public ?array $extensions = null,
         // Optional, so reports from older clients without these fields are still accepted
         public ?string $clientVersion = null,
@@ -30,9 +31,10 @@ final readonly class SiteReportRequest
         public ?array $domains = null,
         // endoflife.date slug (mariadb, mysql, postgresql), not validated: unknown values must not reject a report
         public ?string $dbPlatform = null,
-        // WordPress only, like extensions: null leaves the stored themes as they are
+        // Replaces "extensions", which older clients still send: every package of every type, each
+        // with its "type"; null leaves the stored packages as they are, [] means none are installed
         #[Assert\Valid]
-        public ?array $themes = null,
+        public ?array $packages = null,
     ) {
     }
 }

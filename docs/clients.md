@@ -23,8 +23,8 @@ Content-Type: application/json
   "clientVersion": "1.1.0",
   "applicationContext": "Production",
   "domains": ["www.example.com"],
-  "extensions": [
-    {"name": "news", "title": "News", "version": "12.3.1", "active": true, "composerName": "georgringer/news"}
+  "packages": [
+    {"name": "news", "type": "extension", "title": "News", "version": "12.3.1", "active": true, "composerName": "georgringer/news"}
   ]
 }
 ```
@@ -35,8 +35,8 @@ Content-Type: application/json
 | `dbPlatform` | no | `mariadb`, `mysql` or `postgresql`; without it the platform is guessed from `dbVersion` |
 | `clientVersion`, `applicationContext` | no | shown on the project page, e.g. `Production` or `staging` |
 | `domains` | no | all hosts of the instance, lowercase, without scheme and port, see [domain check](#domain-check) |
-| `extensions` | no | installed extensions/plugins. `name` is the TYPO3 extension key or the wordpress.org slug. Without the field the packages stay as they are, an empty list means none are installed |
-| `themes` | no | WordPress only: installed themes in the same format, `name` is the wordpress.org slug (the theme's directory). Without the field the themes stay as they are, an empty list means none are installed |
+| `packages` | no | all installed packages. `type` is `extension` (TYPO3), `plugin` or `theme` (WordPress), without it the CMS's default (`extension`, `plugin`); entries of an unknown type are left out. `name` is the TYPO3 extension key or the wordpress.org slug (for a theme its directory). The list is complete for every type: a WordPress site without themes in it has none. Without the field the packages stay as they are |
+| `extensions` | no | sent by older clients instead of `packages`, still accepted: the packages of the default type only, so WordPress themes stay as they are |
 
 The token belongs to one project and is shown once when the project is
 created or a new one is generated (see [Projects](configuration.md#projects)). HTTPS is required.

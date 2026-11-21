@@ -17,6 +17,8 @@ final readonly class PackageReport
         public string $version,
         public bool $active = true,
         public ?string $composerName = null,
+        // "extension", "plugin" or "theme", see PackageType::fromReport(); not validated, a newer type mustn't reject the report
+        public ?string $type = null,
     ) {
     }
 }
