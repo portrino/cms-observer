@@ -9,6 +9,7 @@ use App\Entity\WordpressPluginVersion;
 use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressPluginInfoRepository;
 use App\Repository\WordpressPluginVersionRepository;
+use App\Repository\WordpressThemeInfoRepository;
 
 /**
  * The one rule for "is there an update?": a package is outdated only when a newer
@@ -21,6 +22,7 @@ class PackageUpdateResolver
         private readonly Typo3TerExtensionVersionRepository $terVersionRepository,
         private readonly WordpressPluginVersionRepository $wordpressPluginVersionRepository,
         private readonly WordpressPluginInfoRepository $wordpressPluginInfoRepository,
+        private readonly WordpressThemeInfoRepository $wordpressThemeInfoRepository,
     ) {
     }
 
@@ -93,5 +95,27 @@ class PackageUpdateResolver
             $needsNewerCore[0][1] ?? null,
             $needsNewerCore[0][0] ?? null,
         );
+    }
+
+    /**
+     * Only the latest version is synced for themes: outdated when it's newer and runs on the
+     * site's WordPress, otherwise a hint at the WordPress it needs.
+     */
+    public function forWordpressTheme(string $slug, string $installedVersion, ?string $coreVersion): PackageUpdate
+    {
+        $info = $this->wordpressThemeInfoRepository->findOneBySlug($slug);
+        if (null === $info) {
+            return new PackageUpdate(); // not synced yet or unknown to WordPress.org, e.g. a premium theme
+        }
+        if (!version_compare($info->getLatestVersion(), $installedVersion, '>')) {
+            return new PackageUpdate(false);
+        }
+
+        $requires = $info->getRequiresWpVersion();
+        if (null === $coreVersion || null === $requires || version_compare($coreVersion, $requires, '>=')) {
+            return new PackageUpdate(true, $info->getLatestVersion());
+        }
+
+        return new PackageUpdate(false, null, $requires, $info->getLatestVersion());
     }
 }

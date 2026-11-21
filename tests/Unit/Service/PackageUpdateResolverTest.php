@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Service;
 
 use App\Entity\WordpressPluginInfo;
 use App\Entity\WordpressPluginVersion;
+use App\Entity\WordpressThemeInfo;
 use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressPluginInfoRepository;
 use App\Repository\WordpressPluginVersionRepository;
+use App\Repository\WordpressThemeInfoRepository;
 use App\Service\PackageUpdate;
 use App\Service\PackageUpdateResolver;
 use PHPUnit\Framework\TestCase;
@@ -50,6 +52,28 @@ class PackageUpdateResolverTest extends TestCase
         self::assertEquals(new PackageUpdate(true, '2.0.0'), $this->resolveWordpress(null, [['2.0.0', '6.6']]));
     }
 
+    public function testRatesAThemeByItsLatestVersion(): void
+    {
+        $info = new WordpressThemeInfo('example-theme', '2.0.0', '6.6');
+
+        // installed 1.0.0
+        self::assertEquals(new PackageUpdate(true, '2.0.0'), $this->resolveTheme('6.7.1', $info));
+        self::assertEquals(new PackageUpdate(false, null, '6.6', '2.0.0'), $this->resolveTheme('6.4.3', $info));
+        self::assertEquals(new PackageUpdate(true, '2.0.0'), $this->resolveTheme('6.4.3', new WordpressThemeInfo('example-theme', '2.0.0', null)));
+        self::assertEquals(new PackageUpdate(false), $this->resolveTheme('6.7.1', new WordpressThemeInfo('example-theme', '1.0.0', null)));
+        // unknown to WordPress.org, e.g. a premium theme
+        self::assertEquals(new PackageUpdate(), $this->resolveTheme('6.7.1', null));
+    }
+
+    private function resolveTheme(?string $coreVersion, ?WordpressThemeInfo $info): PackageUpdate
+    {
+        $themeInfoRepository = self::createStub(WordpressThemeInfoRepository::class);
+        $themeInfoRepository->method('findOneBySlug')->willReturn($info);
+
+        return new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), self::createStub(WordpressPluginVersionRepository::class), self::createStub(WordpressPluginInfoRepository::class), $themeInfoRepository)
+            ->forWordpressTheme('example-theme', '1.0.0', $coreVersion);
+    }
+
     /**
      * @param list<array{0: string, 1: ?string}> $versions newest first, version and "requires"
      */
@@ -63,7 +87,7 @@ class PackageUpdateResolverTest extends TestCase
         $infoRepository = self::createStub(WordpressPluginInfoRepository::class);
         $infoRepository->method('findOneBySlug')->willReturn($info);
 
-        return new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), $versionRepository, $infoRepository)
+        return new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), $versionRepository, $infoRepository, self::createStub(WordpressThemeInfoRepository::class))
             ->forWordpressPlugin('example-plugin', '1.0.0', $coreVersion);
     }
 }

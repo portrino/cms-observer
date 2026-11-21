@@ -34,6 +34,7 @@ class WordpressApiClient
 {
     private const string STABLE_CHECK_URL = 'https://api.wordpress.org/core/stable-check/1.0/';
     private const string PLUGIN_INFO_URL = 'https://api.wordpress.org/plugins/info/1.2/';
+    private const string THEME_INFO_URL = 'https://api.wordpress.org/themes/info/1.2/';
     private const string PLUGIN_SVN_BASE_URL = 'https://plugins.svn.wordpress.org';
     private const string CORE_SVN_TAGS_URL = 'https://core.svn.wordpress.org/tags/';
     private const string USER_AGENT = 'cms-observer (+https://github.com/portrino/cms-observer)';
@@ -91,6 +92,41 @@ class WordpressApiClient
             'requires' => ($data['requires'] ?? '') !== '' ? (string) $data['requires'] : null,
             'tested' => ($data['tested'] ?? '') !== '' ? (string) $data['tested'] : null,
             'description' => '' !== $rawDescription ? $this->toPlainText((string) $rawDescription) : null,
+        ];
+    }
+
+    /**
+     * @return array{version: string, requires: ?string}|null null if the slug is unknown to WordPress.org, e.g. a premium theme
+     */
+    public function getThemeInfo(string $slug): ?array
+    {
+        $response = $this->request('GET', self::THEME_INFO_URL, [
+            'query' => [
+                'action' => 'theme_information',
+                'request' => ['slug' => $slug],
+            ],
+        ]);
+
+        if (404 === $response->getStatusCode()) {
+            return null;
+        }
+
+        try {
+            $data = $response->toArray();
+        } catch (ClientExceptionInterface) {
+            return null;
+        }
+
+        if (!isset($data['version'])) {
+            return null;
+        }
+
+        // themes without the header report false here
+        $requires = $data['requires'] ?? null;
+
+        return [
+            'version' => (string) $data['version'],
+            'requires' => is_string($requires) && '' !== $requires ? $requires : null,
         ];
     }
 

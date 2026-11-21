@@ -45,8 +45,10 @@ class SitePackageWordpressEvaluator
 
         $isTheme = PackageType::WordpressTheme === $package->getPackageType();
         $package->setVersionStatus($insecure, null, null);
-        // shortcut: themes are only checked for vulnerabilities, no theme versions are synced to rate "outdated"
-        $package->applyUpdate($isTheme ? new PackageUpdate() : $this->updateResolver->forWordpressPlugin($package->getName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
+        $coreVersion = $package->getSite()->getCurrentCoreVersion();
+        $package->applyUpdate($isTheme
+            ? $this->updateResolver->forWordpressTheme($package->getName(), $package->getVersion(), $coreVersion)
+            : $this->updateResolver->forWordpressPlugin($package->getName(), $package->getVersion(), $coreVersion));
         $package->setMatchedWordpressVulnerability($vulnerability);
 
         if (null !== $vulnerability && true !== $wasInsecure) {

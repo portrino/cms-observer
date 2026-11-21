@@ -13,6 +13,7 @@ use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressPluginInfoRepository;
 use App\Repository\WordpressPluginVersionRepository;
 use App\Repository\WordpressPluginVulnerabilityRepository;
+use App\Repository\WordpressThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use App\Service\SitePackageWordpressEvaluator;
@@ -33,7 +34,7 @@ class SitePackageWordpressEvaluatorTest extends TestCase
         $vulnerabilityRepository->method('findBySlug')->willReturn($vulnerabilities ?? []);
 
         // without a synced version history the resolver falls back to the plugin info
-        $resolver = new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), self::createStub(WordpressPluginVersionRepository::class), $pluginInfoRepository);
+        $resolver = new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), self::createStub(WordpressPluginVersionRepository::class), $pluginInfoRepository, self::createStub(WordpressThemeInfoRepository::class));
 
         return new SitePackageWordpressEvaluator($resolver, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
     }

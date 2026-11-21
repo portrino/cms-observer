@@ -11,6 +11,7 @@ use App\Entity\Typo3TerExtensionVersion;
 use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressPluginInfoRepository;
 use App\Repository\WordpressPluginVersionRepository;
+use App\Repository\WordpressThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use App\Service\SitePackageTerEvaluator;
@@ -112,7 +113,7 @@ class SitePackageTerEvaluatorTest extends TestCase
             static fn (string $key, string $version): ?Typo3TerExtensionVersion => array_find($entities, static fn (Typo3TerExtensionVersion $v): bool => $v->getVersion() === $version),
         );
 
-        $resolver = new PackageUpdateResolver($versionRepository, self::createStub(WordpressPluginVersionRepository::class), self::createStub(WordpressPluginInfoRepository::class));
+        $resolver = new PackageUpdateResolver($versionRepository, self::createStub(WordpressPluginVersionRepository::class), self::createStub(WordpressPluginInfoRepository::class), self::createStub(WordpressThemeInfoRepository::class));
         new SitePackageTerEvaluator($versionRepository, $resolver, self::createStub(SecurityNotifier::class))->evaluateAll([$package]);
 
         return $package;
