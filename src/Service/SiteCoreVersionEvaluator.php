@@ -59,6 +59,8 @@ class SiteCoreVersionEvaluator
                 sprintf('%s core %s', $site->getType()->label(), $version),
                 'Core version is now insecure (unmaintained or superseded by a security release).',
             );
+        } elseif (!$release->isInsecure() && true === $wasInsecure) {
+            $this->securityNotifier->recordResolved($site, sprintf('%s core %s', $site->getType()->label(), $version), 'Core version is secure again.');
         }
     }
 

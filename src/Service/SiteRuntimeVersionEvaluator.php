@@ -55,6 +55,8 @@ class SiteRuntimeVersionEvaluator
             $this->securityNotifier->addFinding($site, sprintf('PHP %s', $version), $release->isEol()
                 ? 'PHP version is now insecure (past end of life).'
                 : sprintf('PHP version is missing security fixes (fixed in %s).', $securityVersion));
+        } elseif (!$insecure && true === $wasInsecure) {
+            $this->securityNotifier->recordResolved($site, sprintf('PHP %s', $version), 'PHP version is secure again.');
         }
     }
 
@@ -81,6 +83,8 @@ class SiteRuntimeVersionEvaluator
 
         if ($release->isEol() && true !== $wasInsecure) {
             $this->securityNotifier->addFinding($site, sprintf('Database %s', $version), 'Database version is now insecure (past end of life).');
+        } elseif (!$release->isEol() && true === $wasInsecure) {
+            $this->securityNotifier->recordResolved($site, sprintf('Database %s', $version), 'Database version is secure again.');
         }
     }
 

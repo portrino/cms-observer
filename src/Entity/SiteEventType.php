@@ -18,6 +18,7 @@ enum SiteEventType: string
     case PackageDeactivated = 'package-deactivated';
     case ReportRejected = 'report-rejected';
     case BecameInsecure = 'became-insecure';
+    case BecameSecure = 'became-secure';
     case StoppedReporting = 'stopped-reporting';
 
     public function label(): string
@@ -35,6 +36,7 @@ enum SiteEventType: string
             self::PackageDeactivated => 'Package deactivated',
             self::ReportRejected => 'Report rejected',
             self::BecameInsecure => 'Became insecure',
+            self::BecameSecure => 'Became secure',
             self::StoppedReporting => 'Stopped reporting',
         };
     }

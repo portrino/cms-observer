@@ -50,6 +50,14 @@ class SecurityNotifier
     }
 
     /**
+     * Records in the history that a finding is resolved. Not mailed: only new problems need attention.
+     */
+    public function recordResolved(Site $site, string $subject, string $detail): void
+    {
+        $this->entityManager->persist(new SiteEvent($site, SiteEventType::BecameSecure, $subject, null, null, $detail));
+    }
+
+    /**
      * A finding about the Observer itself, e.g. an overdue sync, linked to the status page.
      */
     public function addSystemFinding(string $subject, string $detail): void

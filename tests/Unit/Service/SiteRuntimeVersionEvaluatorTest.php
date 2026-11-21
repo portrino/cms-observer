@@ -53,6 +53,35 @@ class SiteRuntimeVersionEvaluatorTest extends TestCase
         self::assertSame($expectedInsecure, $site->isPhpInsecure());
     }
 
+    public function testAnUpdateOutOfAnInsecureVersionIsRecordedAsResolvedButNotMailed(): void
+    {
+        $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
+        $release = new EndOfLifeRelease('php', '8.4', false, '8.4.28', 'https://endoflife.date/php');
+        $release->setLatestSecurityVersion('8.4.27');
+
+        $repository = self::createStub(EndOfLifeReleaseRepository::class);
+        $repository->method('findOneByProductAndCycle')->willReturnCallback(
+            static fn (string $product): ?EndOfLifeRelease => 'php' === $product ? $release : null,
+        );
+
+        $site->recordReport('13.4.0', '8.4.24', '10.11.0-MariaDB');
+        new SiteRuntimeVersionEvaluator($repository, self::createStub(SecurityNotifier::class))->evaluate($site);
+        self::assertTrue($site->isPhpInsecure());
+
+        $notifier = $this->createMock(SecurityNotifier::class);
+        $notifier->expects(self::never())->method('addFinding');
+        $notifier->expects(self::once())->method('recordResolved')->with($site, 'PHP 8.4.28', 'PHP version is secure again.');
+
+        $site->recordReport('13.4.0', '8.4.28', '10.11.0-MariaDB');
+        new SiteRuntimeVersionEvaluator($repository, $notifier)->evaluate($site);
+        self::assertFalse($site->isPhpInsecure());
+
+        // already secure: nothing to record on the next evaluation
+        $quietNotifier = $this->createMock(SecurityNotifier::class);
+        $quietNotifier->expects(self::never())->method('recordResolved');
+        new SiteRuntimeVersionEvaluator($repository, $quietNotifier)->evaluate($site);
+    }
+
     /**
      * @return iterable<string, array{string, bool}>
      */

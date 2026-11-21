@@ -54,6 +54,8 @@
                                 <td class="text-nowrap">
                                     {% if event.type.value == 'became-insecure' %}
                                         <span class="badge text-bg-danger">{{ event.type.label }}</span>
+                                    {% elseif event.type.value == 'became-secure' %}
+                                        <span class="badge text-bg-success">{{ event.type.label }}</span>
                                     {% elseif event.type.value in ['report-rejected', 'stopped-reporting'] %}
                                         <span class="badge text-bg-warning">{{ event.type.label }}</span>
                                     {% else %}
