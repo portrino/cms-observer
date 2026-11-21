@@ -39,7 +39,7 @@ settings, checks them and writes `.env.local`:
 | Mailer DSN | `MAILER_DSN` | e.g. `smtp://user:pass@smtp.example.com:587` |
 | Sender address | `MAILER_FROM_ADDRESS` | defaults to `no-reply@<host of the URL>` |
 | Wordfence API key | `WORDFENCE_API_KEY` | optional, free key from wordfence.com → Account → Integrations; without it WordPress plugins aren't checked for vulnerabilities |
-| (generated) | `APP_SECRET`, `TOTP_ENCRYPTION_KEY` | back up `TOTP_ENCRYPTION_KEY`: without it every two-factor login has to be reset |
+| (generated) | `APP_SECRET`, `TOTP_ENCRYPTION_KEY` | back up `TOTP_ENCRYPTION_KEY`: without it every two-factor login has to be reset. `app:upgrade` stops if `APP_SECRET` is empty: it signs the "Remember me" logins |
 
 Then it creates the database schema, builds the assets, asks for the first
 login and prints the cron job to add:

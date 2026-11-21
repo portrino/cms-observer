@@ -33,6 +33,17 @@ class UpgradeCommandTest extends TestCase
         ], $this->runUpgrade(['--skip-assets' => true]));
     }
 
+    public function testStopsBeforeAnyStepWithoutAnAppSecret(): void
+    {
+        $runner = $this->createMock(ConsoleRunner::class);
+        $runner->expects(self::never())->method('run');
+
+        $tester = new CommandTester(new UpgradeCommand($runner, sys_get_temp_dir(), ''));
+
+        self::assertSame(Command::FAILURE, $tester->execute([]));
+        self::assertStringContainsString('APP_SECRET is empty', $tester->getDisplay());
+    }
+
     /**
      * @param array<string, bool> $options
      *
@@ -46,7 +57,7 @@ class UpgradeCommandTest extends TestCase
             $commands[] = implode(' ', $arguments);
         });
 
-        $tester = new CommandTester(new UpgradeCommand($runner, sys_get_temp_dir()));
+        $tester = new CommandTester(new UpgradeCommand($runner, sys_get_temp_dir(), 'a-secret'));
         self::assertSame(Command::SUCCESS, $tester->execute($options));
 
         return $commands;

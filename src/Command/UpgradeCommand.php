@@ -25,6 +25,9 @@ class UpgradeCommand extends Command
         private readonly ConsoleRunner $consoleRunner,
         #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
+        // signs the "Remember me" cookies; without it every page fails with a 500
+        #[Autowire(env: 'APP_SECRET')]
+        private readonly string $appSecret,
     ) {
         parent::__construct();
     }
@@ -38,6 +41,13 @@ class UpgradeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->title(sprintf('Upgrading the CMS Observer%s', null !== ($version = $this->checkedOutVersion()) ? ' to '.$version : ''));
+
+        // fail before anything changes, so a deployment stops instead of going live broken
+        if ('' === trim($this->appSecret)) {
+            $io->error('APP_SECRET is empty. Set it in .env.local, e.g. to the output of "openssl rand -hex 32" (bin/setup generates it on the first run).');
+
+            return Command::FAILURE;
+        }
 
         $steps = [
             'Database' => [['doctrine:database:create', '--if-not-exists'], ['doctrine:migrations:migrate', '--no-interaction', '--allow-no-migration']],
