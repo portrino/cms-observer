@@ -38,6 +38,7 @@ settings, checks them and writes `.env.local`:
 | Database URL | `DATABASE_URL` | e.g. `mysql://user:pass@127.0.0.1:3306/observer`; the server version is detected and added, the database is created if it doesn't exist |
 | Mailer DSN | `MAILER_DSN` | e.g. `smtp://user:pass@smtp.example.com:587` |
 | Sender address | `MAILER_FROM_ADDRESS` | defaults to `no-reply@<host of the URL>` |
+| Timezone | `APP_TIMEZONE` | e.g. `Europe/Berlin`, defaults to PHP's; used by the web server and the scheduler's worker alike, whose `php.ini` often differ |
 | Wordfence API key | `WORDFENCE_API_KEY` | optional, free key from wordfence.com → Account → Integrations; without it WordPress plugins aren't checked for vulnerabilities |
 | (generated) | `APP_SECRET`, `TOTP_ENCRYPTION_KEY` | back up `TOTP_ENCRYPTION_KEY`: without it every two-factor login has to be reset. `app:upgrade` stops if `APP_SECRET` is empty: it signs the "Remember me" logins |
 

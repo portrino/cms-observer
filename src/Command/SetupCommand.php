@@ -41,6 +41,7 @@ class SetupCommand extends Command
             ->addOption('mailer-dsn', null, InputOption::VALUE_REQUIRED, 'Mailer DSN, e.g. smtp://user:pass@smtp.example.com:587')
             ->addOption('mailer-from', null, InputOption::VALUE_REQUIRED, 'Sender address of the security mails')
             ->addOption('wordfence-api-key', null, InputOption::VALUE_REQUIRED, 'Wordfence Intelligence API key (optional)')
+            ->addOption('timezone', null, InputOption::VALUE_REQUIRED, 'Timezone of the times the Observer records and shows, e.g. Europe/Berlin')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Overwrite an existing .env.local (its secrets are kept)');
     }
 
@@ -75,6 +76,13 @@ class SetupCommand extends Command
             return $address;
         });
         $wordfenceApiKey = (string) $io->ask('Wordfence Intelligence API key (optional, checks WordPress plugins for vulnerabilities)', $this->option($input, 'wordfence-api-key') ?? $existing['WORDFENCE_API_KEY'] ?? '');
+        $timezone = $this->askRequired($io, 'Timezone of the times the Observer records and shows', $this->option($input, 'timezone') ?? $existing['APP_TIMEZONE'] ?? date_default_timezone_get(), static function (string $timezone): string {
+            if (!in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+                throw new \RuntimeException('Enter a timezone like Europe/Berlin.');
+            }
+
+            return $timezone;
+        });
 
         $this->envFileWriter->write($this->envFilePath, [
             'APP_ENV' => 'prod',
@@ -86,6 +94,8 @@ class SetupCommand extends Command
             'MAILER_DSN' => $mailerDsn,
             'MAILER_FROM_ADDRESS' => $mailerFrom,
             'WORDFENCE_API_KEY' => trim($wordfenceApiKey),
+            // the same for the web server and the scheduler's worker, whatever their php.ini says
+            'APP_TIMEZONE' => $timezone,
         ]);
 
         $io->success(sprintf('Wrote %s.', $this->envFilePath));
