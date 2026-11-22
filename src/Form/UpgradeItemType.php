@@ -31,17 +31,18 @@ class UpgradeItemType extends AbstractType
             ->add('label', TextType::class, ['constraints' => [new Assert\NotBlank(), new Assert\Length(max: 255)]])
             ->add('minHours', NumberType::class, $hours)
             ->add('maxHours', NumberType::class, $hours)
-            ->add('todo', TextType::class, ['required' => false])
             ->add('notes', TextareaType::class, ['required' => false, 'attr' => ['rows' => 1]])
             ->add('assignee', TextType::class, ['required' => false]);
 
         if (true === $options['package']) {
             $builder
-                ->add('package', TextType::class, ['required' => false])
+                // the package key, e.g. to match the row with a later report; the label shows the composer name
+                ->add('package', HiddenType::class)
                 ->add('packageType', HiddenType::class)
                 ->add('installedVersion', TextType::class, ['required' => false])
                 ->add('targetVersion', TextType::class, ['required' => false])
                 ->add('status', ChoiceType::class, [
+                    'label' => 'To-do',
                     'choices' => array_combine(
                         array_map(static fn (UpgradeItemStatus $status): string => $status->label(), UpgradeItemStatus::cases()),
                         array_map(static fn (UpgradeItemStatus $status): string => $status->value, UpgradeItemStatus::cases()),

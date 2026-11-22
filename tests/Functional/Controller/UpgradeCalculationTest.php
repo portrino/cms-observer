@@ -43,6 +43,7 @@ class UpgradeCalculationTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
         self::assertResponseIsSuccessful();
+        self::assertInputValueSame('upgrade_calculation_version[packages][0][label]', 'georgringer/news');
         self::assertInputValueSame('upgrade_calculation_version[packages][0][package]', 'news');
         self::assertInputValueSame('upgrade_calculation_version[packages][0][targetVersion]', '14.0.0');
         self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '');
@@ -210,7 +211,7 @@ class UpgradeCalculationTest extends WebTestCase
         $site = new Site('Upgrade Project', CmsType::Typo3, 'https://upgrade.test', 'hash-upgrade');
         $site->recordReport('13.4.20', '8.3.14', '10.11.19-MariaDB');
         $this->entityManager->persist($site);
-        $this->entityManager->persist(new SitePackage($site, 'news', 'News', '12.3.1', true));
+        $this->entityManager->persist(new SitePackage($site, 'news', 'News', '12.3.1', true, 'georgringer/news'));
         $this->entityManager->persist(new Typo3CoreRelease('14.0.0', new \DateTimeImmutable(), Typo3ReleaseType::Regular, '14.0.0', true, null, false));
         foreach (['12.3.1' => '12, 13', '14.0.0' => '13, 14'] as $version => $majors) {
             $this->entityManager->persist(new Typo3TerExtensionVersion('news', $version, 'News', null, null, 'stable', $majors, null, false));

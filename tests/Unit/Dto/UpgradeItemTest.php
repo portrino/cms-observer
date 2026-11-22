@@ -14,7 +14,7 @@ class UpgradeItemTest extends TestCase
 {
     public function testRoundTripsThroughTheStoredArray(): void
     {
-        $item = new UpgradeItem(UpgradeSection::Packages, 'News', 'news', PackageType::Typo3CmsExtension, '12.3.1', '13.0.0', UpgradeItemStatus::UpdateFirst, 'Update', 0.25, 0.5, 'See changelog', 'RB');
+        $item = new UpgradeItem(UpgradeSection::Packages, 'News', 'news', PackageType::Typo3CmsExtension, '12.3.1', '13.0.0', UpgradeItemStatus::UpdateFirst, 0.25, 0.5, 'See changelog', 'RB');
 
         self::assertEquals($item, UpgradeItem::fromArray($item->toArray()));
     }

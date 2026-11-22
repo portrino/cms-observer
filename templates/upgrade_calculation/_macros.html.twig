@@ -11,9 +11,9 @@
     {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
     <tr data-form-collection-row>
         <td class="upgrade-col-label">
-            {{ form_widget(entry.label, sm) }}{{ form_errors(entry.label) }}
+            {{ form_widget(entry.label, {attr: {class: 'form-control form-control-sm', placeholder: package ? 'vendor/package' : ''}}) }}{{ form_errors(entry.label) }}
             {% if package %}
-                {{ form_widget(entry.package, {attr: {class: 'form-control form-control-sm mt-1 font-monospace', placeholder: 'Package'}}) }}
+                {{ form_widget(entry.package) }}
                 {{ form_widget(entry.packageType) }}
             {% endif %}
         </td>
@@ -22,7 +22,6 @@
             <td class="upgrade-col-version">{{ form_widget(entry.targetVersion, sm) }}</td>
             <td class="upgrade-col-status">{{ form_widget(entry.status, {attr: {class: 'form-select form-select-sm'}}) }}</td>
         {% endif %}
-        <td class="upgrade-col-text">{{ form_widget(entry.todo, sm) }}</td>
         <td class="upgrade-col-hours">{{ form_widget(entry.minHours, sm) }}{{ form_errors(entry.minHours) }}</td>
         <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
         <td class="upgrade-col-notes">{{ form_widget(entry.notes, sm) }}</td>

@@ -44,7 +44,7 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
             $key = $package->getName();
             $installed = $package->getVersion();
             $item = static fn (UpgradeSection $section, UpgradeItemStatus $status, ?string $target = null): UpgradeItem => new UpgradeItem(
-                $section, $package->getTitle(), $key, $package->getPackageType(), $installed, $target, $status,
+                $section, $package->getComposerName() ?? $key, $key, $package->getPackageType(), $installed, $target, $status,
             );
 
             $terVersions = $this->terVersionRepository->findBy(['extensionKey' => $key]);

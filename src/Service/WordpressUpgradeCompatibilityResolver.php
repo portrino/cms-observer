@@ -39,7 +39,7 @@ final class WordpressUpgradeCompatibilityResolver implements UpgradeCompatibilit
         $items = [];
         foreach ($this->packageRepository->findBy(['site' => $site], ['name' => 'ASC']) as $package) {
             $items[] = new UpgradeItem(
-                UpgradeSection::Packages, $package->getTitle(), $package->getName(), $package->getPackageType(), $package->getVersion(), null, UpgradeItemStatus::Manual,
+                UpgradeSection::Packages, $package->getName(), $package->getName(), $package->getPackageType(), $package->getVersion(), null, UpgradeItemStatus::Manual,
             );
         }
 

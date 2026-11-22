@@ -42,8 +42,7 @@
                                 <thead>
                                     <tr>
                                         <th>{{ package ? 'Package' : 'Position' }}</th>
-                                        {% if package %}<th>Installed</th><th>Target</th><th>Status</th>{% endif %}
-                                        <th>To-do</th>
+                                        {% if package %}<th>Installed</th><th>Target</th><th>To-do</th>{% endif %}
                                         <th class="text-end">Hours</th>
                                         <th>Notes</th>
                                         <th>By</th>
@@ -52,13 +51,12 @@
                                 <tbody>
                                     {% for item in items %}
                                         <tr>
-                                            <td>{{ item.label }}{% if package and item.package and item.package != item.label %}<br><code class="small">{{ item.package }}</code>{% endif %}</td>
+                                            <td>{{ item.label }}</td>
                                             {% if package %}
                                                 <td><code>{{ item.installedVersion }}</code></td>
                                                 <td><code>{{ item.targetVersion }}</code></td>
                                                 <td>{% if item.status %}<span class="badge text-bg-{{ item.status.color }}">{{ item.status.label }}</span>{% endif %}</td>
                                             {% endif %}
-                                            <td>{{ item.todo }}</td>
                                             <td class="text-end text-nowrap">{{ item.minHours is null and item.maxHours is null ? '' : u.hours({min: item.minHours ?? 0, max: item.maxHours ?? item.minHours ?? 0}) }}</td>
                                             <td class="upgrade-notes">{{ item.notes|nl2br }}</td>
                                             <td>{{ item.assignee }}</td>
@@ -66,7 +64,7 @@
                                     {% endfor %}
                                 </tbody>
                                 <tfoot>
-                                    <tr><th colspan="{{ package ? 5 : 2 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</th><th colspan="2"></th></tr>
+                                    <tr><th colspan="{{ package ? 4 : 1 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</th><th colspan="2"></th></tr>
                                 </tfoot>
                             </table>
                         </div>

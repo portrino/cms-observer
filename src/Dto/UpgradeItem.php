@@ -22,7 +22,6 @@ final readonly class UpgradeItem
         public ?string $installedVersion = null,
         public ?string $targetVersion = null,
         public ?UpgradeItemStatus $status = null,
-        public ?string $todo = null,
         public ?float $minHours = null,
         public ?float $maxHours = null,
         public ?string $notes = null,
@@ -50,7 +49,6 @@ final readonly class UpgradeItem
             null !== $package || isset($data['status'])
                 ? UpgradeItemStatus::tryFrom((string) ($data['status'] ?? '')) ?? UpgradeItemStatus::Manual
                 : null,
-            $string('todo'),
             $hours('minHours'),
             $hours('maxHours'),
             $string('notes'),
@@ -71,7 +69,6 @@ final readonly class UpgradeItem
             'installedVersion' => $this->installedVersion,
             'targetVersion' => $this->targetVersion,
             'status' => $this->status?->value,
-            'todo' => $this->todo,
             'minHours' => $this->minHours,
             'maxHours' => $this->maxHours,
             'notes' => $this->notes,
