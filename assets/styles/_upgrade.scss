@@ -35,6 +35,11 @@
         padding-right: 0;
     }
 
+    // the handle needs no card padding before it (same selector as in _cards.scss, so this later rule wins)
+    .card-body.p-0 > & > :not(caption) > * > .upgrade-col-handle {
+        padding-left: 0.25rem;
+    }
+
     .upgrade-handle {
         cursor: grab;
         color: var(--bs-secondary-color);
