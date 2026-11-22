@@ -36,6 +36,9 @@ class Typo3CoreRelease
         // end of the paid extended support (ELTS) of the release's major
         #[ORM\Column(nullable: true)]
         private ?\DateTimeImmutable $eltsUntil = null,
+        // release of the major's LTS version (e.g. 13.4.0), the end of its sprint releases
+        #[ORM\Column(nullable: true)]
+        private ?\DateTimeImmutable $ltsReleaseDate = null,
     ) {
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -48,6 +51,7 @@ class Typo3CoreRelease
         ?\DateTimeImmutable $maintainedUntil,
         bool $insecure,
         ?\DateTimeImmutable $eltsUntil = null,
+        ?\DateTimeImmutable $ltsReleaseDate = null,
     ): void {
         $this->releaseDate = $releaseDate;
         $this->type = $type;
@@ -56,6 +60,7 @@ class Typo3CoreRelease
         $this->maintainedUntil = $maintainedUntil;
         $this->insecure = $insecure;
         $this->eltsUntil = $eltsUntil;
+        $this->ltsReleaseDate = $ltsReleaseDate;
         $this->updatedAt = new \DateTimeImmutable();
     }
 
@@ -114,6 +119,11 @@ class Typo3CoreRelease
     public function getEltsUntil(): ?\DateTimeImmutable
     {
         return $this->eltsUntil;
+    }
+
+    public function getLtsReleaseDate(): ?\DateTimeImmutable
+    {
+        return $this->ltsReleaseDate;
     }
 
     public function isInsecure(): bool

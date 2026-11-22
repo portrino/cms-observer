@@ -48,7 +48,7 @@
                     <div class="card-body">
                         {% if supportPhases is not empty %}
                             {{ u.support_text(site.type.label, supportPhases, calculation.fromMajor) }}
-                            <div class="my-3">{{ u.support_chart(site.type.label, supportPhases, supportChart) }}</div>
+                            <div class="my-3">{{ u.support_chart(site.type.label, supportChart) }}</div>
                         {% endif %}
                         {% if version.timeline %}<div class="upgrade-markdown">{{ version.timeline|markdown_to_html }}</div>{% endif %}
                     </div>

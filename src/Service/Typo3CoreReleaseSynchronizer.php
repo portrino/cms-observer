@@ -40,7 +40,7 @@ class Typo3CoreReleaseSynchronizer
         foreach ($releases as $version => $data) {
             $existing = $this->repository->findOneByVersion($version);
             if (null !== $existing) {
-                $existing->update($data['releaseDate'], $data['type'], $data['latestVersion'], $data['isActive'], $data['maintainedUntil'], $data['insecure'], $data['eltsUntil']);
+                $existing->update($data['releaseDate'], $data['type'], $data['latestVersion'], $data['isActive'], $data['maintainedUntil'], $data['insecure'], $data['eltsUntil'], $data['ltsReleaseDate']);
             } else {
                 $this->entityManager->persist(new Typo3CoreRelease(
                     $version,
@@ -51,6 +51,7 @@ class Typo3CoreReleaseSynchronizer
                     $data['maintainedUntil'],
                     $data['insecure'],
                     $data['eltsUntil'],
+                    $data['ltsReleaseDate'],
                 ));
             }
         }
@@ -77,7 +78,7 @@ class Typo3CoreReleaseSynchronizer
      * rule that out even though it never actually happens here (every line
      * has a decimal point).
      *
-     * @return array<int|string, array{maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable}>
+     * @return array<int|string, array{maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable}>
      */
     private function fetchMajors(): array
     {
@@ -93,6 +94,8 @@ class Typo3CoreReleaseSynchronizer
             $majors[$key] = [
                 'maintainedUntil' => isset($major['maintained_until']) ? new \DateTimeImmutable((string) $major['maintained_until']) : null,
                 'eltsUntil' => isset($major['elts_until']) ? new \DateTimeImmutable((string) $major['elts_until']) : null,
+                // the major's release_date is the one of its LTS version
+                'ltsReleaseDate' => isset($major['release_date']) ? new \DateTimeImmutable((string) $major['release_date']) : null,
             ];
         }
 
@@ -100,10 +103,10 @@ class Typo3CoreReleaseSynchronizer
     }
 
     /**
-     * @param array<int, array<string, mixed>>                                                               $rawReleases
-     * @param array<int|string, array{maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable}> $majors
+     * @param array<int, array<string, mixed>>                                                                                                    $rawReleases
+     * @param array<int|string, array{maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable}> $majors
      *
-     * @return array<string, array{releaseDate: \DateTimeImmutable, type: Typo3ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, insecure: bool}>
+     * @return array<string, array{releaseDate: \DateTimeImmutable, type: Typo3ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}>
      */
     private function parseReleases(array $rawReleases, array $majors): array
     {
@@ -135,6 +138,7 @@ class Typo3CoreReleaseSynchronizer
                 'isActive' => $isActive,
                 'maintainedUntil' => $maintainedUntil,
                 'eltsUntil' => $majorData['eltsUntil'] ?? null,
+                'ltsReleaseDate' => $majorData['ltsReleaseDate'] ?? null,
                 'insecure' => false,
                 'line' => $line,
             ];
@@ -156,7 +160,7 @@ class Typo3CoreReleaseSynchronizer
     }
 
     /**
-     * @param array<string, array{releaseDate: \DateTimeImmutable, type: Typo3ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, insecure: bool}> $releases
+     * @param array<string, array{releaseDate: \DateTimeImmutable, type: Typo3ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}> $releases
      */
     private function flagInsecureReleases(array &$releases): void
     {

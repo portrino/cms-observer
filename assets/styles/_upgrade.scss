@@ -130,14 +130,32 @@
     stroke: var(--bs-border-color);
 }
 
+// phase colors after the roadmap of typo3.com
+$roadmap-extended: #f8b36b; // light orange
+
+.upgrade-roadmap-development {
+    fill: $gray-400;
+    background-color: $gray-400;
+}
+
+.upgrade-roadmap-tick {
+    stroke: #8b3a1f;
+    stroke-width: 3;
+}
+
 .upgrade-roadmap-regular {
     fill: $success;
     background-color: $success;
 }
 
+.upgrade-roadmap-priority {
+    fill: tint-color($success, 50%);
+    background-color: tint-color($success, 50%);
+}
+
 .upgrade-roadmap-extended {
-    fill: $warning;
-    background-color: $warning;
+    fill: $roadmap-extended;
+    background-color: $roadmap-extended;
 }
 
 .upgrade-roadmap-today {

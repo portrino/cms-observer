@@ -230,6 +230,9 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorTextContains('#upgradeTimeline', 'From January 2028 on, core updates need a paid extended support (ELTS) license, available until December 2030.');
         self::assertSelectorTextContains('#upgradeTimeline', 'TYPO3 14 receives free core updates until June 2029.');
         self::assertSelectorExists('#upgradeTimeline svg rect.upgrade-roadmap-extended');
+        self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-development title', 'until 2024-10-15', 'sprint releases until the LTS');
+        self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-regular title', 'until 2026-07-01', 'priority bugfixes: the last 1.5 years');
+        self::assertSelectorExists('#upgradeTimeline svg line.upgrade-roadmap-tick');
         self::assertSelectorTextContains('#upgradeTimeline', 'Scheduled for March');
 
         $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
@@ -315,7 +318,8 @@ class UpgradeCalculationTest extends WebTestCase
         $site->recordReport('13.4.20', '8.3.14', '10.11.19-MariaDB');
         $this->entityManager->persist($site);
         $this->entityManager->persist(new SitePackage($site, 'news', 'News', '12.3.1', true, 'georgringer/news'));
-        $this->entityManager->persist(new Typo3CoreRelease('13.4.20', new \DateTimeImmutable('2025-11-11'), Typo3ReleaseType::Regular, '13.4.20', true, new \DateTimeImmutable('2027-12-31'), false, new \DateTimeImmutable('2030-12-31')));
+        $this->entityManager->persist(new Typo3CoreRelease('13.4.20', new \DateTimeImmutable('2025-11-11'), Typo3ReleaseType::Regular, '13.4.20', true, new \DateTimeImmutable('2027-12-31'), false, new \DateTimeImmutable('2030-12-31'), new \DateTimeImmutable('2024-10-15')));
+        $this->entityManager->persist(new Typo3CoreRelease('13.0.0', new \DateTimeImmutable('2024-01-30'), Typo3ReleaseType::Regular, '13.4.20', true, new \DateTimeImmutable('2027-12-31'), false, new \DateTimeImmutable('2030-12-31'), new \DateTimeImmutable('2024-10-15')));
         $this->entityManager->persist(new Typo3CoreRelease('14.0.0', new \DateTimeImmutable('2025-11-25'), Typo3ReleaseType::Regular, '14.0.0', true, new \DateTimeImmutable('2029-06-30'), false, new \DateTimeImmutable('2032-06-30')));
         foreach (['12.3.1' => '12, 13', '14.0.0' => '13, 14'] as $version => $majors) {
             $this->entityManager->persist(new Typo3TerExtensionVersion('news', $version, 'News', null, null, 'stable', $majors, null, false));

@@ -89,23 +89,42 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
 
     public function supportPhases(int $fromMajor, int $targetMajor): array
     {
-        $byMajor = [];
+        $releasesByMajor = [];
         foreach ($this->coreReleaseRepository->findAll() as $release) {
-            $major = $release->getMajor();
-            if ($major < $fromMajor || $major > $targetMajor || null === $release->getMaintainedUntil()) {
+            if ($release->getMajor() >= $fromMajor && $release->getMajor() <= $targetMajor && null !== $release->getMaintainedUntil()) {
+                $releasesByMajor[$release->getMajor()][] = $release;
+            }
+        }
+        ksort($releasesByMajor);
+
+        $phases = [];
+        foreach ($releasesByMajor as $major => $releases) {
+            usort($releases, static fn (Typo3CoreRelease $a, Typo3CoreRelease $b): int => $a->getReleaseDate() <=> $b->getReleaseDate());
+            $any = $releases[0];
+            $maintainedUntil = $any->getMaintainedUntil();
+            if (null === $maintainedUntil) {
                 continue;
             }
-            $known = $byMajor[$major] ?? null;
-            $byMajor[$major] = new UpgradeSupportPhase(
+            $lts = $any->getLtsReleaseDate();
+            // TYPO3's priority bugfix phase: the last 1.5 years of the free updates
+            $prioritySince = $maintainedUntil->modify('-18 months');
+
+            $phases[] = new UpgradeSupportPhase(
                 $major,
-                null === $known || $release->getReleaseDate() < $known->start ? $release->getReleaseDate() : $known->start,
-                $release->getMaintainedUntil(),
-                $release->getEltsUntil() ?? $known?->extendedUntil,
+                $releases[0]->getReleaseDate(),
+                $maintainedUntil,
+                $any->getEltsUntil(),
+                $lts,
+                null !== $lts && $prioritySince < $lts ? $lts : $prioritySince,
+                // sprint releases: the x.y.0 versions before the LTS one
+                array_values(array_map(
+                    static fn (Typo3CoreRelease $r): \DateTimeImmutable => $r->getReleaseDate(),
+                    array_filter($releases, static fn (Typo3CoreRelease $r): bool => str_ends_with($r->getVersion(), '.0') && (null === $lts || $r->getReleaseDate() < $lts)),
+                )),
             );
         }
-        ksort($byMajor);
 
-        return array_values($byMajor);
+        return $phases;
     }
 
     /** For reports without composer names, e.g. from older clients: "georgringer/news" from TER's Packagist link */
