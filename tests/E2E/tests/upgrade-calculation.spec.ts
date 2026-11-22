@@ -106,4 +106,19 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(page.locator('#upgradeTotals')).toContainText('Optional, incl. project management');
     await expect(page.locator('#upgrade-packages')).toContainText('news');
     await expect(page.locator('#upgrade-packages td.table-warning')).toContainText('See the changelog of 13.0');
+
+    // printed like paper: white, no page padding, cards without frame, the changelog as a table
+    await page.emulateMedia({ media: 'print' });
+    const printed = await page.evaluate(() => {
+        const card = getComputedStyle(document.querySelector('#upgradeTotals').closest('.card'));
+        return {
+            body: getComputedStyle(document.body).backgroundColor,
+            main: getComputedStyle(document.querySelector('.app-main')).padding,
+            card: [card.boxShadow, card.borderTopLeftRadius, card.borderTopWidth],
+            changelog: getComputedStyle(document.querySelector('#upgradeChangelog')).display,
+            sidebar: getComputedStyle(document.querySelector('.sidebar')).display,
+        };
+    });
+    expect(printed).toEqual({ body: 'rgb(255, 255, 255)', main: '0px', card: ['none', '0px', '0px'], changelog: 'table', sidebar: 'none' });
+    await page.emulateMedia({ media: 'screen' });
 });
