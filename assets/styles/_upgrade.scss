@@ -35,9 +35,14 @@
         padding-right: 0;
     }
 
-    // the handle needs no card padding before it (same selector as in _cards.scss, so this later rule wins)
+    // the handle needs no card padding before it, and the actions line up with "Add row" in
+    // the card header (same selector as in _cards.scss, so these later rules win)
     .card-body.p-0 > & > :not(caption) > * > .upgrade-col-handle {
         padding-left: 0.25rem;
+    }
+
+    .card-body.p-0 > & > :not(caption) > * > .upgrade-col-actions {
+        padding-right: $card-cap-padding-x;
     }
 
     .upgrade-handle {
