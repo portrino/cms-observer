@@ -214,6 +214,28 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '100.00');
     }
 
+    public function testShowsTheTimelineOfTheUpgrade(): void
+    {
+        $site = $this->typo3Site();
+        $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        $this->client->submit($crawler->selectButton('Save as new version')->form([
+            'upgrade_calculation_version[timeline]' => 'Scheduled for March',
+            'upgrade_calculation_version[hourlyRate]' => '100',
+            'upgrade_calculation_version[managementPercent]' => '10',
+            'upgrade_calculation_version[author]' => 'PM',
+        ]));
+        $this->client->followRedirect();
+
+        self::assertSelectorTextContains('#upgradeTimeline', 'TYPO3 13 receives free core updates until December 2027.');
+        self::assertSelectorTextContains('#upgradeTimeline', 'From January 2028 on, core updates need a paid extended support (ELTS) license, available until December 2030.');
+        self::assertSelectorTextContains('#upgradeTimeline', 'TYPO3 14 receives free core updates until June 2029.');
+        self::assertSelectorExists('#upgradeTimeline svg rect.upgrade-roadmap-extended');
+        self::assertSelectorTextContains('#upgradeTimeline', 'Scheduled for March');
+
+        $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        self::assertSelectorTextSame('textarea[name="upgrade_calculation_version[timeline]"]', '', 'the schedule belongs to the other calculation');
+    }
+
     public function testUnknownTargetIsNotFound(): void
     {
         $site = $this->typo3Site();
@@ -237,6 +259,15 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertInputValueSame('upgrade_calculation_version[packages][0][package]', 'akismet');
         self::assertSelectorExists('select[name="upgrade_calculation_version[packages][0][status]"] option[value="manual"][selected]');
+
+        $crawler = $this->client->getCrawler();
+        $this->client->submit($crawler->selectButton('Save as new version')->form([
+            'upgrade_calculation_version[hourlyRate]' => '100',
+            'upgrade_calculation_version[managementPercent]' => '10',
+            'upgrade_calculation_version[author]' => 'PM',
+        ]));
+        $this->client->followRedirect();
+        self::assertSelectorNotExists('#upgradeTimeline', 'no support cycles for WordPress, and no notes');
     }
 
     public function testDeletingAProjectDeletesItsCalculations(): void
@@ -262,7 +293,8 @@ class UpgradeCalculationTest extends WebTestCase
         $site->recordReport('13.4.20', '8.3.14', '10.11.19-MariaDB');
         $this->entityManager->persist($site);
         $this->entityManager->persist(new SitePackage($site, 'news', 'News', '12.3.1', true, 'georgringer/news'));
-        $this->entityManager->persist(new Typo3CoreRelease('14.0.0', new \DateTimeImmutable(), Typo3ReleaseType::Regular, '14.0.0', true, null, false));
+        $this->entityManager->persist(new Typo3CoreRelease('13.4.20', new \DateTimeImmutable('2025-11-11'), Typo3ReleaseType::Regular, '13.4.20', true, new \DateTimeImmutable('2027-12-31'), false, new \DateTimeImmutable('2030-12-31')));
+        $this->entityManager->persist(new Typo3CoreRelease('14.0.0', new \DateTimeImmutable('2025-11-25'), Typo3ReleaseType::Regular, '14.0.0', true, new \DateTimeImmutable('2029-06-30'), false, new \DateTimeImmutable('2032-06-30')));
         foreach (['12.3.1' => '12, 13', '14.0.0' => '13, 14'] as $version => $majors) {
             $this->entityManager->persist(new Typo3TerExtensionVersion('news', $version, 'News', null, null, 'stable', $majors, null, false));
         }

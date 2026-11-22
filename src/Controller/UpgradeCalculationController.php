@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\UpgradeSupportChart;
 use App\Entity\Site;
 use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeCalculationVersion;
@@ -55,7 +56,10 @@ class UpgradeCalculationController extends AbstractController
         }
 
         $previous = $repository->findOneBy(['site' => $site], ['createdAt' => 'DESC', 'id' => 'DESC'])?->getLatestVersion();
-        $form = $this->createForm(UpgradeCalculationVersionType::class, UpgradeCalculationVersionType::dataFrom($this->drafter->draft($site, $target), $previous, $settingsRepository->get()));
+        $data = UpgradeCalculationVersionType::dataFrom($this->drafter->draft($site, $target), $previous, $settingsRepository->get());
+        // the schedule belongs to the previous upgrade, not to this one
+        $data['timeline'] = null;
+        $form = $this->createForm(UpgradeCalculationVersionType::class, $data);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $calculation = new UpgradeCalculation($site, (int) $site->getCurrentCoreVersion(), $target);
@@ -76,6 +80,7 @@ class UpgradeCalculationController extends AbstractController
     public function show(UpgradeCalculation $calculation, #[MapQueryParameter] ?int $version = null): Response
     {
         $version = $this->findVersion($calculation, $version);
+        $phases = $this->drafter->supportPhases($calculation);
 
         return $this->render('upgrade_calculation/show.html.twig', [
             'site' => $calculation->getSite(),
@@ -83,6 +88,8 @@ class UpgradeCalculationController extends AbstractController
             'version' => $version,
             'sections' => UpgradeSection::cases(),
             'totals' => new UpgradeTotals($version->getItems(), $version->getManagementPercent()),
+            'supportPhases' => $phases,
+            'supportChart' => [] !== $phases ? UpgradeSupportChart::of($phases, new \DateTimeImmutable()) : null,
         ]);
     }
 
@@ -120,6 +127,7 @@ class UpgradeCalculationController extends AbstractController
             $data['remarks'] ?? null,
             (bool) $data['final'],
             UpgradeCalculationVersionType::itemsFrom($data),
+            $data['timeline'] ?? null,
         );
         $this->entityManager->persist($version);
         $this->entityManager->flush();

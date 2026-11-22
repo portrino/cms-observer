@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\UpgradeItem;
+use App\Dto\UpgradeSupportPhase;
 use App\Entity\Site;
 use App\Entity\Typo3CoreRelease;
 use App\Entity\Typo3TerExtensionVersion;
@@ -84,6 +85,27 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
         }
 
         return $items;
+    }
+
+    public function supportPhases(int $fromMajor, int $targetMajor): array
+    {
+        $byMajor = [];
+        foreach ($this->coreReleaseRepository->findAll() as $release) {
+            $major = $release->getMajor();
+            if ($major < $fromMajor || $major > $targetMajor || null === $release->getMaintainedUntil()) {
+                continue;
+            }
+            $known = $byMajor[$major] ?? null;
+            $byMajor[$major] = new UpgradeSupportPhase(
+                $major,
+                null === $known || $release->getReleaseDate() < $known->start ? $release->getReleaseDate() : $known->start,
+                $release->getMaintainedUntil(),
+                $release->getEltsUntil() ?? $known?->extendedUntil,
+            );
+        }
+        ksort($byMajor);
+
+        return array_values($byMajor);
     }
 
     /** For reports without composer names, e.g. from older clients: "georgringer/news" from TER's Packagist link */

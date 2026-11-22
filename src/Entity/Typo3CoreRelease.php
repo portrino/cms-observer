@@ -33,6 +33,9 @@ class Typo3CoreRelease
         private ?\DateTimeImmutable $maintainedUntil,
         #[ORM\Column]
         private bool $insecure,
+        // end of the paid extended support (ELTS) of the release's major
+        #[ORM\Column(nullable: true)]
+        private ?\DateTimeImmutable $eltsUntil = null,
     ) {
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -44,6 +47,7 @@ class Typo3CoreRelease
         bool $isActive,
         ?\DateTimeImmutable $maintainedUntil,
         bool $insecure,
+        ?\DateTimeImmutable $eltsUntil = null,
     ): void {
         $this->releaseDate = $releaseDate;
         $this->type = $type;
@@ -51,6 +55,7 @@ class Typo3CoreRelease
         $this->isActive = $isActive;
         $this->maintainedUntil = $maintainedUntil;
         $this->insecure = $insecure;
+        $this->eltsUntil = $eltsUntil;
         $this->updatedAt = new \DateTimeImmutable();
     }
 
@@ -104,6 +109,11 @@ class Typo3CoreRelease
     public function getMaintainedUntil(): ?\DateTimeImmutable
     {
         return $this->maintainedUntil;
+    }
+
+    public function getEltsUntil(): ?\DateTimeImmutable
+    {
+        return $this->eltsUntil;
     }
 
     public function isInsecure(): bool

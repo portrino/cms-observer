@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\UpgradeItem;
+use App\Dto\UpgradeSupportPhase;
 use App\Entity\Site;
+use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeSection;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
@@ -48,6 +50,14 @@ final class UpgradeCalculationDrafter
             ...array_map(static fn (string $label): UpgradeItem => new UpgradeItem(UpgradeSection::Positions, $label), self::POSITIONS),
             ...$this->resolver($site)->packageItems($site, $targetMajor),
         ];
+    }
+
+    /**
+     * @return list<UpgradeSupportPhase>
+     */
+    public function supportPhases(UpgradeCalculation $calculation): array
+    {
+        return $this->resolver($calculation->getSite())->supportPhases($calculation->getFromMajor(), $calculation->getTargetMajor());
     }
 
     private function resolver(Site $site): UpgradeCompatibilityResolver

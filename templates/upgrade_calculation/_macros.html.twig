@@ -62,3 +62,41 @@
         </td>
     </tr>
 {% endmacro %}
+
+{# What the support phases mean for the upgrade, in words #}
+{% macro support_text(cms, phases, fromMajor) %}
+    {% for phase in phases %}
+        <p class="mb-1">
+            {{ cms }} {{ phase.major }} receives free core updates until {{ phase.maintainedUntil|date('F Y') }}.
+            {% if phase.extendedUntil and phase.major == fromMajor %}
+                From {{ phase.maintainedUntil|date_modify('+1 day')|date('F Y') }} on, core updates need a paid extended support (ELTS) license, available until {{ phase.extendedUntil|date('F Y') }}.
+            {% endif %}
+        </p>
+    {% endfor %}
+{% endmacro %}
+
+{# Bars of the support phases on a time axis (geometry from UpgradeSupportChart), like the roadmap of typo3.org #}
+{% macro support_chart(cms, phases, chart) %}
+    <svg class="upgrade-roadmap" viewBox="0 0 {{ constant('App\\Dto\\UpgradeSupportChart::WIDTH') }} {{ chart.height }}" role="img" aria-label="Support phases of {{ cms }} {{ chart.rows|map(r => r.major)|join(', ') }}">
+        {% for year in chart.years %}
+            <line class="upgrade-roadmap-grid" x1="{{ year.x }}" x2="{{ year.x }}" y1="0" y2="{{ chart.height - 20 }}"/>
+            <text class="upgrade-roadmap-year" x="{{ year.x }}" y="{{ chart.height - 4 }}" text-anchor="middle">{{ year.year }}</text>
+        {% endfor %}
+        {% for row in chart.rows %}
+            {% set phase = phases[loop.index0] %}
+            <text class="upgrade-roadmap-label" x="0" y="{{ row.y + 15 }}">{{ cms }} {{ row.major }}</text>
+            <rect class="upgrade-roadmap-regular" x="{{ row.x }}" y="{{ row.y }}" width="{{ row.regularWidth }}" height="20"><title>Free core updates until {{ phase.maintainedUntil|date('Y-m-d') }}</title></rect>
+            {% if row.extendedWidth > 0 %}
+                <rect class="upgrade-roadmap-extended" x="{{ row.x + row.regularWidth }}" y="{{ row.y }}" width="{{ row.extendedWidth }}" height="20"><title>ELTS until {{ phase.extendedUntil|date('Y-m-d') }}</title></rect>
+            {% endif %}
+        {% endfor %}
+        {% if chart.today is not null %}
+            <line class="upgrade-roadmap-today" x1="{{ chart.today }}" x2="{{ chart.today }}" y1="0" y2="{{ chart.height - 20 }}"/>
+        {% endif %}
+    </svg>
+    <p class="small text-muted mb-0">
+        <span class="upgrade-roadmap-key upgrade-roadmap-regular"></span> Free core updates
+        <span class="upgrade-roadmap-key upgrade-roadmap-extended ms-3"></span> Paid extended support (ELTS)
+        <span class="upgrade-roadmap-key upgrade-roadmap-today-key ms-3"></span> Today
+    </p>
+{% endmacro %}

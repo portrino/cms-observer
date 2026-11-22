@@ -44,6 +44,12 @@
             </div>
         </div>
 
+        <div class="card mb-3">
+            <div class="card-body">
+                {{ form_row(form.timeline, {row_attr: {class: 'mb-0'}}) }}
+            </div>
+        </div>
+
         {% for section in ['positions', 'packages', 'own-packages', 'optional'] %}
             {% set collection = form[section] %}
             {% set package = section in ['packages', 'own-packages'] %}

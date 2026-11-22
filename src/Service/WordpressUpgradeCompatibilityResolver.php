@@ -45,4 +45,10 @@ final class WordpressUpgradeCompatibilityResolver implements UpgradeCompatibilit
 
         return $items;
     }
+
+    // WordPress has no support cycles per major, only the latest version gets updates
+    public function supportPhases(int $fromMajor, int $targetMajor): array
+    {
+        return [];
+    }
 }

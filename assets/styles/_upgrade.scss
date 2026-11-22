@@ -110,3 +110,48 @@
         color: var(--bs-#{$level}-text-emphasis);
     }
 }
+
+// Support phases of an upgrade calculation's timeline
+.upgrade-roadmap {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-size: 0.8rem;
+    print-color-adjust: exact;
+}
+
+.upgrade-roadmap-label,
+.upgrade-roadmap-year {
+    fill: var(--bs-body-color);
+}
+
+.upgrade-roadmap-grid {
+    stroke: var(--bs-border-color);
+}
+
+.upgrade-roadmap-regular {
+    fill: $success;
+    background-color: $success;
+}
+
+.upgrade-roadmap-extended {
+    fill: $warning;
+    background-color: $warning;
+}
+
+.upgrade-roadmap-today {
+    stroke: $danger;
+    stroke-width: 2;
+}
+
+.upgrade-roadmap-today-key {
+    background-color: $danger;
+}
+
+.upgrade-roadmap-key {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    vertical-align: middle;
+    print-color-adjust: exact;
+}

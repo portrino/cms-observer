@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\UpgradeItem;
+use App\Dto\UpgradeSupportPhase;
 use App\Entity\Site;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -28,4 +29,12 @@ interface UpgradeCompatibilityResolver
      * @return list<UpgradeItem>
      */
     public function packageItems(Site $site, int $targetMajor): array;
+
+    /**
+     * Support phases of the majors from the current one to the target, oldest first;
+     * none for a CMS without support cycles.
+     *
+     * @return list<UpgradeSupportPhase>
+     */
+    public function supportPhases(int $fromMajor, int $targetMajor): array;
 }

@@ -42,6 +42,19 @@
                 </div>
             </div>
 
+            {% if supportPhases is not empty or version.timeline %}
+                <div class="card mb-3" id="upgradeTimeline">
+                    <div class="card-header bg-white"><h2 class="h6 mb-0">Timeline</h2></div>
+                    <div class="card-body">
+                        {% if supportPhases is not empty %}
+                            {{ u.support_text(site.type.label, supportPhases, calculation.fromMajor) }}
+                            <div class="my-3">{{ u.support_chart(site.type.label, supportPhases, supportChart) }}</div>
+                        {% endif %}
+                        {% if version.timeline %}<p class="mb-0">{{ version.timeline|nl2br }}</p>{% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
             {% for section in sections %}
                 {% set items = version.items(section) %}
                 {% if items is not empty %}

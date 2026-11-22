@@ -49,6 +49,9 @@ class UpgradeCalculationVersion
         #[ORM\Column]
         private readonly bool $final,
         array $items,
+        // the PM's notes on the schedule, shown with the support phases
+        #[ORM\Column(type: Types::TEXT, nullable: true)]
+        private readonly ?string $timeline = null,
     ) {
         $this->createdAt = new \DateTimeImmutable();
         $this->items = array_map(static fn (UpgradeItem $item): array => $item->toArray(), $items);
@@ -93,6 +96,11 @@ class UpgradeCalculationVersion
     public function getRemarks(): ?string
     {
         return $this->remarks;
+    }
+
+    public function getTimeline(): ?string
+    {
+        return $this->timeline;
     }
 
     public function isFinal(): bool

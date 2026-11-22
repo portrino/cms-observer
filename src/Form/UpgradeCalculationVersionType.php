@@ -59,6 +59,12 @@ class UpgradeCalculationVersionType extends AbstractType
                 'attr' => ['step' => '1', 'min' => '0', 'max' => '100'],
                 'constraints' => [new Assert\NotNull(), new Assert\Range(min: 0, max: 100)],
             ])
+            ->add('timeline', TextareaType::class, [
+                'label' => 'Timeline notes',
+                'required' => false,
+                'help' => 'E.g. when the upgrade is scheduled.',
+                'attr' => ['rows' => 3],
+            ])
             ->add('remarks', TextareaType::class, [
                 'required' => false,
                 'help' => 'Shown below the totals, e.g. "License costs not included".',
@@ -95,6 +101,7 @@ class UpgradeCalculationVersionType extends AbstractType
             'hourlyRate' => $previous?->getHourlyRate() ?? $defaults?->getDefaultHourlyRate(),
             'managementPercent' => $previous?->getManagementPercent() ?? $defaults?->getDefaultManagementPercent(),
             'remarks' => $previous?->getRemarks(),
+            'timeline' => $previous?->getTimeline(),
             'final' => false,
         ];
         foreach (UpgradeSection::cases() as $section) {
