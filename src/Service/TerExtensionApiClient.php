@@ -45,7 +45,7 @@ class TerExtensionApiClient
                 continue;
             }
 
-            $typo3Versions = $version['typo3_versions'] ?? [];
+            $typo3Versions = self::majorsFromConstraint($version['dependencies']['typo3'] ?? null) ?? $version['typo3_versions'] ?? [];
 
             $history[] = [
                 'version' => (string) $version['number'],
@@ -60,6 +60,26 @@ class TerExtensionApiClient
         }
 
         return $history;
+    }
+
+    /**
+     * The TYPO3 majors a ">=11.5.0 <=14.99.99" dependency covers, e.g. [11, 12, 13, 14].
+     * TER's own "typo3_versions" often lacks the highest major (seen for embedassets
+     * 1.4.0: [11, 12, 13] with <=14.99.99) or is empty, so the constraint wins.
+     *
+     * @return list<int>|null null if the constraint isn't a readable min/max range
+     */
+    public static function majorsFromConstraint(mixed $constraint): ?array
+    {
+        if (!is_string($constraint)
+            || 1 !== preg_match('/>=\s*(\d+)\./', $constraint, $min)
+            || 1 !== preg_match('/<=\s*(\d+)\./', $constraint, $max)
+            || (int) $max[1] < (int) $min[1]
+        ) {
+            return null;
+        }
+
+        return range((int) $min[1], (int) $max[1]);
     }
 
     /**
