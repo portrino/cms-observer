@@ -14,6 +14,10 @@ enum UpgradeItemStatus: string
     case Update = 'update';
     /** no version supports the target core */
     case Blocker = 'blocker';
+    /** set by hand: the package gets replaced by another one, e.g. without a compatible version */
+    case Replace = 'replace';
+    /** set by hand: the package is no longer needed */
+    case Remove = 'remove';
     /** no data to judge, e.g. a package not in the CMS's registry or a dev branch */
     case Manual = 'manual';
 
@@ -24,6 +28,8 @@ enum UpgradeItemStatus: string
             self::UpdateFirst => 'Update before core',
             self::Update => 'Update with core',
             self::Blocker => 'Show-stopper',
+            self::Replace => 'Replace',
+            self::Remove => 'Remove',
             self::Manual => 'Check manually',
         };
     }
@@ -36,6 +42,8 @@ enum UpgradeItemStatus: string
             self::UpdateFirst => 'info',
             self::Update => 'primary',
             self::Blocker => 'danger',
+            self::Replace => 'secondary',
+            self::Remove => 'neutral',
             self::Manual => 'warning',
         };
     }

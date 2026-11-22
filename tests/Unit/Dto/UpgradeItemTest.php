@@ -19,6 +19,14 @@ class UpgradeItemTest extends TestCase
         self::assertEquals($item, UpgradeItem::fromArray($item->toArray()));
     }
 
+    public function testEveryStatusHasALabelAndColor(): void
+    {
+        foreach (UpgradeItemStatus::cases() as $status) {
+            self::assertSame($status, UpgradeItem::fromArray(['package' => 'news', 'status' => $status->value])->status);
+            self::assertNotSame('', $status->label().$status->color());
+        }
+    }
+
     public function testUnknownValuesOfOlderOrNewerVersionsFallBack(): void
     {
         $item = UpgradeItem::fromArray(['section' => 'future-section', 'package' => 'news', 'status' => 'future-status', 'minHours' => 'n/a']);
