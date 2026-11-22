@@ -6,7 +6,7 @@
 
 {% block title %}{{ upgrade }} - {{ site.name }} - CMS Observer{% endblock %}
 
-{% block page_title %}Upgrade {{ upgrade }}{% endblock %}
+{% block page_title %}Upgrade {{ upgrade }} <span class="topbar-subtitle">{{ site.name }}</span>{% endblock %}
 
 {% block page_actions %}
     {{ m.topbar_link(path('upgrade_calculation_index', {id: site.id}), 'arrow-left', 'All calculations') }}

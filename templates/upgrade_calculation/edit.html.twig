@@ -4,7 +4,7 @@
 
 {% block title %}{{ title }} - {{ site.name }} - CMS Observer{% endblock %}
 
-{% block page_title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }} <span class="topbar-subtitle">{{ site.name }}</span>{% endblock %}
 
 {% block page_actions %}
     {{ m.topbar_link(cancelUrl, 'arrow-left', 'Cancel') }}
@@ -99,6 +99,11 @@
             </div>
         </div>
     {{ form_end(form) }}
+
+    {# toolbar icons of the Markdown editors (markdown_editor_controller.js) #}
+    <template id="markdown-editor-icons">
+        {% for name in ['bold', 'italic', 'list', 'list-ordered', 'link', 'eye'] %}<span data-icon="{{ name }}">{{ icon(name) }}</span>{% endfor %}
+    </template>
 
     {# one dialog for the notes of every row, also of rows added later #}
     <div class="modal fade upgrade-note-dialog" tabindex="-1" aria-labelledby="noteDialogTitle" aria-hidden="true" data-note-editor-target="dialog">

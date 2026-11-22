@@ -79,6 +79,17 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await editor.press('Enter');
     await dialog.getByRole('button', { name: 'Bold' }).click();
     await page.keyboard.type('See the changelog of 13.0');
+    // the preview ends with its own button, then the editor takes input again
+    const previewButton = dialog.getByRole('button', { name: 'Preview' });
+    await expect(previewButton.locator('svg')).toBeVisible();
+    await previewButton.click();
+    await expect(dialog.locator('.editor-preview-active strong')).toHaveText('See the changelog of 13.0');
+    await previewButton.click();
+    await editor.click();
+    await page.keyboard.press('End');
+    await page.keyboard.type('!');
+    await expect(editor).toContainText('13.0**!', { useInnerText: true });
+    await page.keyboard.press('Backspace');
     const textareaBackground = () => editor.evaluate((element) => getComputedStyle(element).backgroundColor);
     const uncolored = await textareaBackground();
     await dialog.getByLabel('Color').selectOption('warning');

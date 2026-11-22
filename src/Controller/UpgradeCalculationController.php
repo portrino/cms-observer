@@ -70,7 +70,7 @@ class UpgradeCalculationController extends AbstractController
 
         return $this->render('upgrade_calculation/edit.html.twig', [
             'site' => $site,
-            'title' => sprintf('New calculation: %s %d', $site->getType()->label(), $target),
+            'title' => sprintf('New calculation: Upgrade %s %d → %d', $site->getType()->label(), (int) $site->getCurrentCoreVersion(), $target),
             'form' => $form,
             'cancelUrl' => $this->generateUrl('upgrade_calculation_index', ['id' => $site->getId()]),
         ]);
@@ -105,7 +105,7 @@ class UpgradeCalculationController extends AbstractController
 
         return $this->render('upgrade_calculation/edit.html.twig', [
             'site' => $calculation->getSite(),
-            'title' => sprintf('Edit calculation: %s %d', $calculation->getSite()->getType()->label(), $calculation->getTargetMajor()),
+            'title' => sprintf('Edit calculation: Upgrade %s %d → %d', $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor()),
             'based_on' => $base,
             'form' => $form,
             'cancelUrl' => $this->generateUrl('upgrade_calculation_show', ['id' => $calculation->getId(), 'version' => $base->getId()]),

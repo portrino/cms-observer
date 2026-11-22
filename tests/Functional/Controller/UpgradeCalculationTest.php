@@ -76,6 +76,7 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorTextContains('#upgradeTotals', 'Third-party packages');
         self::assertSelectorTextContains('#upgradeChangelog', 'First draft');
         self::assertSelectorTextContains('#upgradeVersions', 'JD');
+        self::assertSelectorTextSame('.topbar-title', 'Upgrade TYPO3 13 → 14 Upgrade Project', 'names the upgrade and the project');
 
         $version = $this->calculationOf($site)->getLatestVersion();
         self::assertNotNull($version);
@@ -92,6 +93,7 @@ class UpgradeCalculationTest extends WebTestCase
         $first = $calculation->getLatestVersion();
 
         $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/edit');
+        self::assertSelectorTextSame('.topbar-title', 'Edit calculation: Upgrade TYPO3 13 → 14 Upgrade Project');
         self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '100.00');
         self::assertSelectorTextContains('#upgradePricing .accordion-button.collapsed', '100.00 EUR/h, project management 10 %');
         $this->client->submit($crawler->selectButton('Save as new version')->form([
