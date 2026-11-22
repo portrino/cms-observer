@@ -59,8 +59,8 @@ class UpgradeCalculationVersionType extends AbstractType
                 'attr' => ['step' => '1', 'min' => '0', 'max' => '100'],
                 'constraints' => [new Assert\NotNull(), new Assert\Range(min: 0, max: 100)],
             ])
-            ->add('timeline', TextareaType::class, [
-                'label' => 'Timeline notes',
+            ->add('headerNotes', TextareaType::class, [
+                'label' => 'Calculation notes',
                 'required' => false,
                 'help' => 'E.g. when the upgrade is scheduled. Markdown, e.g. **bold** or lists.',
                 'attr' => ['rows' => 3, 'data-controller' => 'markdown-editor'],
@@ -101,7 +101,7 @@ class UpgradeCalculationVersionType extends AbstractType
             'hourlyRate' => $previous?->getHourlyRate() ?? $defaults?->getDefaultHourlyRate(),
             'managementPercent' => $previous?->getManagementPercent() ?? $defaults?->getDefaultManagementPercent(),
             'remarks' => $previous?->getRemarks(),
-            'timeline' => $previous?->getTimeline(),
+            'headerNotes' => $previous?->getHeaderNotes(),
             'final' => false,
         ];
         foreach (UpgradeSection::cases() as $section) {

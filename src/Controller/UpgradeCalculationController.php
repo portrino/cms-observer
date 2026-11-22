@@ -57,8 +57,8 @@ class UpgradeCalculationController extends AbstractController
 
         $previous = $repository->findOneBy(['site' => $site], ['createdAt' => 'DESC', 'id' => 'DESC'])?->getLatestVersion();
         $data = UpgradeCalculationVersionType::dataFrom($this->drafter->draft($site, $target), $previous, $settingsRepository->get());
-        // the schedule belongs to the previous upgrade, not to this one
-        $data['timeline'] = null;
+        // the notes, e.g. the schedule, belong to the previous upgrade, not to this one
+        $data['headerNotes'] = null;
         $form = $this->createForm(UpgradeCalculationVersionType::class, $data);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -127,7 +127,7 @@ class UpgradeCalculationController extends AbstractController
             $data['remarks'] ?? null,
             (bool) $data['final'],
             UpgradeCalculationVersionType::itemsFrom($data),
-            $data['timeline'] ?? null,
+            $data['headerNotes'] ?? null,
         );
         $this->entityManager->persist($version);
         $this->entityManager->flush();

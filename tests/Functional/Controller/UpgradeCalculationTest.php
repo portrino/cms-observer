@@ -221,7 +221,7 @@ class UpgradeCalculationTest extends WebTestCase
         $site = $this->typo3Site();
         $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
         $this->client->submit($crawler->selectButton('Save as new version')->form([
-            'upgrade_calculation_version[timeline]' => 'Scheduled for March',
+            'upgrade_calculation_version[headerNotes]' => 'Scheduled for March',
             'upgrade_calculation_version[hourlyRate]' => '100',
             'upgrade_calculation_version[managementPercent]' => '10',
             'upgrade_calculation_version[author]' => 'PM',
@@ -235,10 +235,10 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-development title', 'until 2024-10-15', 'sprint releases until the LTS');
         self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-regular title', 'until 2026-07-01', 'priority bugfixes: the last 1.5 years');
         self::assertSelectorExists('#upgradeTimeline svg line.upgrade-roadmap-tick');
-        self::assertSelectorTextContains('#upgradeTimeline', 'Scheduled for March');
+        self::assertSelectorTextContains('#upgradeHeaderNotes', 'Scheduled for March', 'in the head, below the changelog');
 
         $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
-        self::assertSelectorTextSame('textarea[name="upgrade_calculation_version[timeline]"]', '', 'the schedule belongs to the other calculation');
+        self::assertSelectorTextSame('textarea[name="upgrade_calculation_version[headerNotes]"]', '', 'the schedule belongs to the other calculation');
     }
 
     public function testNotesAreRenderedAsSafeMarkdown(): void
@@ -294,7 +294,7 @@ class UpgradeCalculationTest extends WebTestCase
             'upgrade_calculation_version[author]' => 'PM',
         ]));
         $this->client->followRedirect();
-        self::assertSelectorNotExists('#upgradeTimeline', 'no support cycles for WordPress, and no notes');
+        self::assertSelectorNotExists('#upgradeTimeline', 'no support cycles for WordPress');
     }
 
     public function testDeletingAProjectDeletesItsCalculations(): void

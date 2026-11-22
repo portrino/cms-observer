@@ -39,10 +39,11 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    {% if version.headerNotes %}<div class="upgrade-markdown mt-3" id="upgradeHeaderNotes">{{ version.headerNotes|markdown_to_html }}</div>{% endif %}
                 </div>
             </div>
 
-            {% if supportPhases is not empty or version.timeline %}
+            {% if supportPhases is not empty %}
                 <div class="card mb-3" id="upgradeTimeline">
                     <div class="card-header bg-white"><h2 class="h6 mb-0">Timeline</h2></div>
                     <div class="card-body">
@@ -50,7 +51,6 @@
                             {{ u.support_text(site.type.label, supportPhases, calculation.fromMajor) }}
                             <div class="my-3">{{ u.support_chart(site.type.label, supportChart) }}</div>
                         {% endif %}
-                        {% if version.timeline %}<div class="upgrade-markdown">{{ version.timeline|markdown_to_html }}</div>{% endif %}
                     </div>
                 </div>
             {% endif %}

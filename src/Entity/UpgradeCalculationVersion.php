@@ -49,9 +49,9 @@ class UpgradeCalculationVersion
         #[ORM\Column]
         private readonly bool $final,
         array $items,
-        // the PM's notes on the schedule, shown with the support phases
+        // free notes in the head of the calculation, e.g. when the upgrade is scheduled
         #[ORM\Column(type: Types::TEXT, nullable: true)]
-        private readonly ?string $timeline = null,
+        private readonly ?string $headerNotes = null,
     ) {
         $this->createdAt = new \DateTimeImmutable();
         $this->items = array_map(static fn (UpgradeItem $item): array => $item->toArray(), $items);
@@ -98,9 +98,9 @@ class UpgradeCalculationVersion
         return $this->remarks;
     }
 
-    public function getTimeline(): ?string
+    public function getHeaderNotes(): ?string
     {
-        return $this->timeline;
+        return $this->headerNotes;
     }
 
     public function isFinal(): bool
