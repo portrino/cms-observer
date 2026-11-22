@@ -68,8 +68,8 @@ class UpgradeCalculationTest extends WebTestCase
 
         self::assertSelectorTextContains('#upgradeTotals', '7.00 h', 'sums with the maximum effort');
         self::assertSelectorTextContains('#upgradeTotals', '700,00 EUR');
-        self::assertSelectorTextContains('#upgrade-packages .no-print', '1.00–2.00 h', 'the range of a row as a hint on screen');
-        self::assertSelectorTextSame('#upgrade-packages .print-only', '2.00 h');
+        self::assertSelectorTextContains('#upgrade-packages td span.no-print', '1.00–2.00 h', 'the range of a row as a hint on screen');
+        self::assertSelectorTextSame('#upgrade-packages td span.print-only', '2.00 h');
         self::assertSelectorTextContains('#upgrade-packages td.table-warning', 'Breaking changes, see changelog');
         self::assertSelectorTextContains('#upgrade-packages td.table-info', '14.0.0', 'a target for both majors is highlighted');
         self::assertSelectorTextContains('#upgradeBeforehand', '2.00 h');

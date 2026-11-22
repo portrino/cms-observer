@@ -124,5 +124,6 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(page.locator('#upgradeProject')).toBeVisible();
     await expect(page.locator('#upgradeProject')).toContainText(project.name);
     await expect(page.getByText(/^\s*Version of /)).toBeHidden();
+    await expect(page.locator('#upgrade-packages').getByRole('columnheader', { name: 'By' })).toBeHidden();
     await page.emulateMedia({ media: 'screen' });
 });

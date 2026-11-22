@@ -56,7 +56,8 @@
                                         {% if package %}<th>Installed</th><th>Target</th><th>To-do</th>{% endif %}
                                         <th class="text-end">Hours</th>
                                         <th>Notes</th>
-                                        <th>By</th>
+                                        {# who does it: internal planning, not for the customer #}
+                                        <th class="no-print">By</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -70,12 +71,12 @@
                                             {% endif %}
                                             <td class="text-end text-nowrap">{{ u.row_hours(item.minHours, item.maxHours) }}</td>
                                             <td class="upgrade-notes {{ item.noteLevel ? 'table-' ~ item.noteLevel.value }}">{{ item.notes|nl2br }}</td>
-                                            <td>{{ item.assignee }}</td>
+                                            <td class="no-print">{{ item.assignee }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
                                 <tfoot>
-                                    <tr><th colspan="{{ package ? 4 : 1 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</th><th colspan="2"></th></tr>
+                                    <tr><th colspan="{{ package ? 4 : 1 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</th><th></th><th class="no-print"></th></tr>
                                 </tfoot>
                             </table>
                         </div>
