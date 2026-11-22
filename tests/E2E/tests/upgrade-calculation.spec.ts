@@ -64,6 +64,11 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await page.getByLabel('Hourly rate (EUR)').fill('100');
     await page.getByLabel('Project management (%)').fill('10');
     await page.getByLabel('Your name or initials').fill('E2E');
+    // pricing applies to the whole calculation: it comes before all sections
+    const pricing = await page.locator('#upgradePricing').boundingBox();
+    const firstSection = await page.locator('#upgrade-positions').boundingBox();
+    expect(pricing!.y, 'pricing above the positions').toBeLessThan(firstSection!.y);
+
     // "Final version?" sits right of the save button, on its line
     const final = await page.getByLabel('Final version?').boundingBox();
     const save = await page.getByRole('button', { name: 'Save as new version' }).boundingBox();

@@ -18,6 +18,32 @@
 
     {{ form_start(form, {attr: {id: 'upgrade-calculation-form'}}) }}
         {{ form_errors(form) }}
+        {# taken over from the previous version: collapsed unless still to fill in or invalid #}
+        {% set pricing = [form.hourlyRate, form.managementPercent] %}
+        {% set pricingOpen = form.hourlyRate.vars.value is empty or pricing|filter(field => not field.vars.valid) is not empty %}
+        <div class="accordion mb-3" id="upgradePricing">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button {{ pricingOpen ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#upgradePricingBody" aria-expanded="{{ pricingOpen ? 'true' : 'false' }}" aria-controls="upgradePricingBody">
+                        <span class="accordion-title">
+                            <span class="fw-bold">Pricing</span>
+                            {% if not pricingOpen %}
+                                <span class="text-muted">{{ form.hourlyRate.vars.value }} EUR/h, project management {{ form.managementPercent.vars.value }} %</span>
+                            {% endif %}
+                        </span>
+                    </button>
+                </h2>
+                <div id="upgradePricingBody" class="accordion-collapse collapse {{ pricingOpen ? 'show' }}">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">{{ form_row(form.hourlyRate, {row_attr: {class: 'mb-0'}}) }}</div>
+                            <div class="col-md-3">{{ form_row(form.managementPercent, {row_attr: {class: 'mb-0'}}) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% for section in ['positions', 'packages', 'own-packages', 'optional'] %}
             {% set collection = form[section] %}
             {% set package = section in ['packages', 'own-packages'] %}
@@ -51,32 +77,6 @@
             </div>
             {% do collection.setRendered %}
         {% endfor %}
-
-        {# taken over from the previous version: collapsed unless still to fill in or invalid #}
-        {% set pricing = [form.hourlyRate, form.managementPercent] %}
-        {% set pricingOpen = form.hourlyRate.vars.value is empty or pricing|filter(field => not field.vars.valid) is not empty %}
-        <div class="accordion mb-3" id="upgradePricing">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button {{ pricingOpen ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#upgradePricingBody" aria-expanded="{{ pricingOpen ? 'true' : 'false' }}" aria-controls="upgradePricingBody">
-                        <span class="accordion-title">
-                            <span class="fw-bold">Pricing</span>
-                            {% if not pricingOpen %}
-                                <span class="text-muted">{{ form.hourlyRate.vars.value }} EUR/h, project management {{ form.managementPercent.vars.value }} %</span>
-                            {% endif %}
-                        </span>
-                    </button>
-                </h2>
-                <div id="upgradePricingBody" class="accordion-collapse collapse {{ pricingOpen ? 'show' }}">
-                    <div class="accordion-body">
-                        <div class="row g-3">
-                            <div class="col-md-3">{{ form_row(form.hourlyRate, {row_attr: {class: 'mb-0'}}) }}</div>
-                            <div class="col-md-3">{{ form_row(form.managementPercent, {row_attr: {class: 'mb-0'}}) }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="card mb-3">
             <div class="card-body">
