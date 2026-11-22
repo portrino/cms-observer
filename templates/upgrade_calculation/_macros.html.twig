@@ -1,9 +1,23 @@
+{# Sums and prices are calculated with the maximum effort, like the agency always did #}
 {% macro hours(range) -%}
-    {{ range.min == range.max ? range.min|number_format(2) : range.min|number_format(2) ~ '–' ~ range.max|number_format(2) }} h
+    {{ range.max|number_format(2) }} h
 {%- endmacro %}
 
 {% macro price(range, rate) -%}
-    {{ (range.min * rate) == (range.max * rate) ? (range.min * rate)|number_format(2, ',', '.') : (range.min * rate)|number_format(2, ',', '.') ~ ' – ' ~ (range.max * rate)|number_format(2, ',', '.') }} EUR
+    {{ (range.max * rate)|number_format(2, ',', '.') }} EUR
+{%- endmacro %}
+
+{# A row's effort: the range on screen, as a hint that it was hard to estimate; printed only the maximum #}
+{% macro row_hours(min, max) -%}
+    {%- if min is not null or max is not null -%}
+        {%- set max = max ?? min -%}
+        {%- set min = min ?? max -%}
+        {%- if min != max -%}
+            <span class="no-print">{{ min|number_format(2) }}–{{ max|number_format(2) }} h</span><span class="print-only">{{ max|number_format(2) }} h</span>
+        {%- else -%}
+            {{ max|number_format(2) }} h
+        {%- endif -%}
+    {%- endif -%}
 {%- endmacro %}
 
 {# The first line of a row's notes in its color; opens the note dialog #}

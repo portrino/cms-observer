@@ -66,7 +66,7 @@
                                                 <td class="{{ item.status and item.status.value == 'update-first' ? 'table-info' }}"><code>{{ item.targetVersion }}</code></td>
                                                 <td>{% if item.status %}<span class="badge text-bg-{{ item.status.color }}">{{ item.status.label }}</span>{% endif %}</td>
                                             {% endif %}
-                                            <td class="text-end text-nowrap">{{ item.minHours is null and item.maxHours is null ? '' : u.hours({min: item.minHours ?? 0, max: item.maxHours ?? item.minHours ?? 0}) }}</td>
+                                            <td class="text-end text-nowrap">{{ u.row_hours(item.minHours, item.maxHours) }}</td>
                                             <td class="upgrade-notes {{ item.noteLevel ? 'table-' ~ item.noteLevel.value }}">{{ item.notes|nl2br }}</td>
                                             <td>{{ item.assignee }}</td>
                                         </tr>
