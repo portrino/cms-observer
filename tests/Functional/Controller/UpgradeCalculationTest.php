@@ -191,6 +191,27 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSame(['PHP version upgrade', 'Testing, code reviews and deployments', 'Core upgrade'], $labels);
     }
 
+    public function testRateComesFromTheProjectsLastCalculationElseFromTheSettings(): void
+    {
+        $crawler = $this->client->request('GET', '/settings');
+        self::assertSelectorExists('.sidebar-user a[href="/settings"]', 'in the user menu');
+        $this->client->submit($crawler->selectButton('Save')->form([
+            'agency_settings[defaultHourlyRate]' => '95',
+            'agency_settings[defaultManagementPercent]' => '12',
+        ]));
+        self::assertResponseRedirects('/settings');
+
+        $site = $this->typo3Site();
+        $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '95.00');
+        self::assertInputValueSame('upgrade_calculation_version[managementPercent]', '12');
+        self::assertSelectorExists('#upgradePricing .accordion-button.collapsed', 'prefilled pricing is collapsed');
+
+        $this->createCalculation($site, 'JD');
+        $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '100.00');
+    }
+
     public function testUnknownTargetIsNotFound(): void
     {
         $site = $this->typo3Site();

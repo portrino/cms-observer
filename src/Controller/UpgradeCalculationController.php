@@ -9,6 +9,7 @@ use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeCalculationVersion;
 use App\Entity\UpgradeSection;
 use App\Form\UpgradeCalculationVersionType;
+use App\Repository\AgencySettingsRepository;
 use App\Repository\UpgradeCalculationRepository;
 use App\Service\UpgradeCalculationDrafter;
 use App\Service\UpgradeTotals;
@@ -42,13 +43,19 @@ class UpgradeCalculationController extends AbstractController
     }
 
     #[Route('/projects/{id}/calculations/new', name: 'upgrade_calculation_new', methods: ['GET', 'POST'])]
-    public function new(Site $site, Request $request, #[MapQueryParameter] int $target): Response
-    {
+    public function new(
+        Site $site,
+        Request $request,
+        UpgradeCalculationRepository $repository,
+        AgencySettingsRepository $settingsRepository,
+        #[MapQueryParameter] int $target,
+    ): Response {
         if (!in_array($target, $this->drafter->targetMajors($site), true)) {
             throw $this->createNotFoundException('No upgrade to this major is possible.');
         }
 
-        $form = $this->createForm(UpgradeCalculationVersionType::class, UpgradeCalculationVersionType::dataFrom($this->drafter->draft($site, $target)));
+        $previous = $repository->findOneBy(['site' => $site], ['createdAt' => 'DESC', 'id' => 'DESC'])?->getLatestVersion();
+        $form = $this->createForm(UpgradeCalculationVersionType::class, UpgradeCalculationVersionType::dataFrom($this->drafter->draft($site, $target), $previous, $settingsRepository->get()));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $calculation = new UpgradeCalculation($site, (int) $site->getCurrentCoreVersion(), $target);

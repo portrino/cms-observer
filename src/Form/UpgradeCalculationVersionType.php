@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Dto\UpgradeItem;
+use App\Entity\AgencySettings;
 use App\Entity\UpgradeCalculationVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
@@ -81,17 +82,18 @@ class UpgradeCalculationVersionType extends AbstractType
     }
 
     /**
-     * Form data to start from: a previous version, or new rows without rate (no defaults in code).
+     * Form data to start from. Rate, management share and remarks come from $previous,
+     * e.g. the project's last calculation, else from the agency's defaults (none in code).
      *
      * @param list<UpgradeItem> $items
      *
      * @return array<string, mixed>
      */
-    public static function dataFrom(array $items, ?UpgradeCalculationVersion $previous = null): array
+    public static function dataFrom(array $items, ?UpgradeCalculationVersion $previous = null, ?AgencySettings $defaults = null): array
     {
         $data = [
-            'hourlyRate' => $previous?->getHourlyRate(),
-            'managementPercent' => $previous?->getManagementPercent(),
+            'hourlyRate' => $previous?->getHourlyRate() ?? $defaults?->getDefaultHourlyRate(),
+            'managementPercent' => $previous?->getManagementPercent() ?? $defaults?->getDefaultManagementPercent(),
             'remarks' => $previous?->getRemarks(),
             'final' => false,
         ];

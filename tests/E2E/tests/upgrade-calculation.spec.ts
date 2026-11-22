@@ -61,6 +61,10 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
         expect(Math.round(remove!.x + remove!.width), `remove button of ${section}`).toBe(Math.round(addRow!.x + addRow!.width));
     }
 
+    // collapsed when the dev DB has default rates in the settings
+    if (await page.locator('#upgradePricing .accordion-button.collapsed').count()) {
+        await page.locator('#upgradePricing .accordion-button').click();
+    }
     await page.getByLabel('Hourly rate (EUR)').fill('100');
     await page.getByLabel('Project management (%)').fill('10');
     await page.getByLabel('Your name or initials').fill('E2E');
