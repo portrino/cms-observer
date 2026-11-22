@@ -28,6 +28,11 @@
         width: 100%;
     }
 
+    // keep the colors of notes and targets
+    .table {
+        print-color-adjust: exact;
+    }
+
     .card {
         break-inside: avoid;
     }

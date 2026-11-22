@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Dto\UpgradeItem;
+use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
 use App\Service\UpgradeTotals;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +20,7 @@ class UpgradeTotalsTest extends TestCase
             new UpgradeItem(UpgradeSection::Positions, 'PHP', minHours: 2, maxHours: 2),
             new UpgradeItem(UpgradeSection::Positions, 'Without hours'),
             new UpgradeItem(UpgradeSection::Packages, 'solr', minHours: 4, maxHours: 8),
-            new UpgradeItem(UpgradeSection::Packages, 'powermail', minHours: 2, maxHours: 3.25),
+            new UpgradeItem(UpgradeSection::Packages, 'powermail', status: UpgradeItemStatus::UpdateFirst, minHours: 2, maxHours: 3.25),
             new UpgradeItem(UpgradeSection::OwnPackages, 'site_package', minHours: 7.5, maxHours: 11.5),
             new UpgradeItem(UpgradeSection::Positions, 'Testing', minHours: 2, maxHours: 2),
             new UpgradeItem(UpgradeSection::Optional, 'Content blocks', minHours: 8, maxHours: 8),
@@ -30,6 +31,7 @@ class UpgradeTotalsTest extends TestCase
         self::assertSame(['min' => 24.5, 'max' => 34.75], $totals->required);
         self::assertSame(['min' => 1.0, 'max' => 1.0], $totals->optionalManagement);
         self::assertSame(['min' => 9.0, 'max' => 9.0], $totals->optional);
+        self::assertSame(['min' => 2.0, 'max' => 3.25], $totals->beforehand, 'counted in the required work, shown separately');
     }
 
     public function testManagementIgnoresFloatNoiseWhenRoundingUp(): void

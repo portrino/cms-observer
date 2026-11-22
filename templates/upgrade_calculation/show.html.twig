@@ -28,6 +28,15 @@
                         {% if version != calculation.latestVersion %}<span class="badge text-bg-warning no-print">Older version</span>{% endif %}
                     </p>
                     {% if version.note %}<p class="text-muted mb-0">{{ version.note|nl2br }}</p>{% endif %}
+                    {# the changelog head of the printed calculation: this version and all before it #}
+                    <table class="table table-sm mb-0 mt-3 print-only" id="upgradeChangelog">
+                        <thead><tr><th>Date</th><th>By</th><th>Change</th></tr></thead>
+                        <tbody>
+                            {% for other in calculation.versions|reverse|filter(other => other.createdAt <= version.createdAt) %}
+                                <tr><td class="text-nowrap">{{ other.createdAt|date('Y-m-d H:i') }}</td><td>{{ other.author }}</td><td>{{ other.note }}{% if other.final %} <span class="badge text-bg-success">Final</span>{% endif %}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -54,11 +63,11 @@
                                             <td>{{ item.label }}</td>
                                             {% if package %}
                                                 <td><code>{{ item.installedVersion }}</code></td>
-                                                <td><code>{{ item.targetVersion }}</code></td>
+                                                <td class="{{ item.status and item.status.value == 'update-first' ? 'table-info' }}"><code>{{ item.targetVersion }}</code></td>
                                                 <td>{% if item.status %}<span class="badge text-bg-{{ item.status.color }}">{{ item.status.label }}</span>{% endif %}</td>
                                             {% endif %}
                                             <td class="text-end text-nowrap">{{ item.minHours is null and item.maxHours is null ? '' : u.hours({min: item.minHours ?? 0, max: item.maxHours ?? item.minHours ?? 0}) }}</td>
-                                            <td class="upgrade-notes">{{ item.notes|nl2br }}</td>
+                                            <td class="upgrade-notes {{ item.noteLevel ? 'table-' ~ item.noteLevel.value }}">{{ item.notes|nl2br }}</td>
                                             <td>{{ item.assignee }}</td>
                                         </tr>
                                     {% endfor %}
@@ -79,8 +88,14 @@
                             <tr><th></th><th class="text-end">Hours</th><th class="text-end">Price ({{ rate|number_format(2, ',', '.') }} EUR/h)</th></tr>
                         </thead>
                         <tbody>
+                            {% for section in sections|filter(section => section.value != 'optional' and version.items(section) is not empty) %}
+                                <tr><td>{{ section.label }}</td><td class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</td><td class="text-end text-nowrap">{{ u.price(totals.sections[section.value], rate) }}</td></tr>
+                            {% endfor %}
                             <tr><td>Project management ({{ version.managementPercent }} %)</td><td class="text-end text-nowrap">{{ u.hours(totals.requiredManagement) }}</td><td class="text-end text-nowrap">{{ u.price(totals.requiredManagement, rate) }}</td></tr>
                             <tr class="fw-bold"><td>Total</td><td class="text-end text-nowrap">{{ u.hours(totals.required) }}</td><td class="text-end text-nowrap">{{ u.price(totals.required, rate) }}</td></tr>
+                            {% if totals.beforehand.max > 0 %}
+                                <tr class="text-muted" id="upgradeBeforehand"><td>of which possible before the upgrade, e.g. in maintenance</td><td class="text-end text-nowrap">{{ u.hours(totals.beforehand) }}</td><td class="text-end text-nowrap">{{ u.price(totals.beforehand, rate) }}</td></tr>
+                            {% endif %}
                             {% if totals.optional.max > 0 %}
                                 <tr><td>Optional, incl. project management</td><td class="text-end text-nowrap">{{ u.hours(totals.optional) }}</td><td class="text-end text-nowrap">{{ u.price(totals.optional, rate) }}</td></tr>
                             {% endif %}

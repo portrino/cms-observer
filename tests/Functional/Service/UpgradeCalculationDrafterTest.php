@@ -13,6 +13,7 @@ use App\Entity\Typo3ReleaseType;
 use App\Entity\Typo3TerExtensionMeta;
 use App\Entity\Typo3TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
+use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
 use App\Service\UpgradeCalculationDrafter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -72,6 +73,16 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         ], $packages);
         self::assertSame('vendor/compatible', $labels['compatible'], 'composer name from TER without one in the report');
         self::assertSame('blocker', $labels['blocker'], 'the key without any composer name');
+
+        $levels = [];
+        foreach ($items as $item) {
+            if (null !== $item->package) {
+                $levels[$item->package] = $item->noteLevel;
+            }
+        }
+        self::assertSame(UpgradeNoteLevel::Success, $levels['compatible']);
+        self::assertSame(UpgradeNoteLevel::Danger, $levels['blocker']);
+        self::assertNull($levels['update_first'], 'whether migrations are needed only the developer knows');
     }
 
     public function testTargetsAreTheKnownMajorsAboveTheCurrentOne(): void

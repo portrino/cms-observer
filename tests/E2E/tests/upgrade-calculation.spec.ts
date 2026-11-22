@@ -64,6 +64,18 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await page.getByLabel('Hourly rate (EUR)').fill('100');
     await page.getByLabel('Project management (%)').fill('10');
     await page.getByLabel('Your name or initials').fill('E2E');
+    // notes are edited in a dialog, the row shows their first line in their color
+    const packageRow = page.locator('#upgrade-packages tbody tr').first();
+    await packageRow.getByRole('button', { name: 'Edit notes' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Notes' });
+    await dialog.getByLabel('Notes').fill('Breaking changes\nSee the changelog of 13.0');
+    await dialog.getByLabel('Color').selectOption('warning');
+    await dialog.getByRole('button', { name: 'Apply' }).click();
+    await expect(dialog).toBeHidden();
+    const preview = packageRow.getByRole('button', { name: 'Edit notes' });
+    await expect(preview).toHaveText('Breaking changes');
+    await expect(preview).toHaveClass(/upgrade-note-warning/);
+
     // pricing applies to the whole calculation: it comes before all sections
     const pricing = await page.locator('#upgradePricing').boundingBox();
     const firstSection = await page.locator('#upgrade-positions').boundingBox();
@@ -85,4 +97,5 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(page.locator('#upgrade-optional')).toContainText('Content blocks migration');
     await expect(page.locator('#upgradeTotals')).toContainText('Optional, incl. project management');
     await expect(page.locator('#upgrade-packages')).toContainText('news');
+    await expect(page.locator('#upgrade-packages td.table-warning')).toContainText('See the changelog of 13.0');
 });

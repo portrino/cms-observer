@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\UpgradeItemStatus;
+use App\Entity\UpgradeNoteLevel;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,7 +31,16 @@ class UpgradeItemType extends AbstractType
             ->add('label', TextType::class, ['constraints' => [new Assert\NotBlank(), new Assert\Length(max: 255)]])
             ->add('minHours', NumberType::class, $hours)
             ->add('maxHours', NumberType::class, $hours)
-            ->add('notes', TextareaType::class, ['required' => false, 'attr' => ['rows' => 1]])
+            // edited in a dialog (note-editor controller), the row shows a preview
+            ->add('notes', HiddenType::class, ['required' => false])
+            ->add('noteLevel', ChoiceType::class, [
+                'required' => false,
+                'placeholder' => 'No color',
+                'choices' => array_combine(
+                    array_map(static fn (UpgradeNoteLevel $level): string => $level->label(), UpgradeNoteLevel::cases()),
+                    array_map(static fn (UpgradeNoteLevel $level): string => $level->value, UpgradeNoteLevel::cases()),
+                ),
+            ])
             ->add('assignee', TextType::class, ['required' => false])
             // order of the rows after moving them in the browser; not stored, the row order is
             ->add('position', HiddenType::class, ['required' => false]);

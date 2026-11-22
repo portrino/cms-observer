@@ -56,6 +56,7 @@ class UpgradeCalculationTest extends WebTestCase
             'upgrade_calculation_version[packages][0][minHours]' => '1',
             'upgrade_calculation_version[packages][0][maxHours]' => '2',
             'upgrade_calculation_version[packages][0][notes]' => 'Breaking changes, see changelog',
+            'upgrade_calculation_version[packages][0][noteLevel]' => 'warning',
             'upgrade_calculation_version[hourlyRate]' => '100',
             'upgrade_calculation_version[managementPercent]' => '10',
             'upgrade_calculation_version[author]' => 'JD',
@@ -67,7 +68,11 @@ class UpgradeCalculationTest extends WebTestCase
 
         self::assertSelectorTextContains('#upgradeTotals', '6.00–7.00 h');
         self::assertSelectorTextContains('#upgradeTotals', '600,00 – 700,00 EUR');
-        self::assertSelectorTextContains('#upgrade-packages', 'Breaking changes, see changelog');
+        self::assertSelectorTextContains('#upgrade-packages td.table-warning', 'Breaking changes, see changelog');
+        self::assertSelectorTextContains('#upgrade-packages td.table-info', '14.0.0', 'a target for both majors is highlighted');
+        self::assertSelectorTextContains('#upgradeBeforehand', '1.00–2.00 h');
+        self::assertSelectorTextContains('#upgradeTotals', 'Third-party packages');
+        self::assertSelectorTextContains('#upgradeChangelog', 'First draft');
         self::assertSelectorTextContains('#upgradeVersions', 'JD');
 
         $version = $this->calculationOf($site)->getLatestVersion();

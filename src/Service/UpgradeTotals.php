@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\UpgradeItem;
+use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
 
 /**
@@ -23,6 +24,8 @@ final readonly class UpgradeTotals
     public array $optionalManagement;
     /** @var array{min: float, max: float} */
     public array $optional;
+    /** @var array{min: float, max: float} part of the required work possible before the upgrade, e.g. in maintenance */
+    public array $beforehand;
 
     /**
      * @param list<UpgradeItem> $items
@@ -42,6 +45,12 @@ final readonly class UpgradeTotals
         $work = self::sum(...array_values(array_diff_key($sections, [UpgradeSection::Optional->value => true])));
         $this->requiredManagement = $this->management($work);
         $this->required = self::sum($work, $this->requiredManagement);
+
+        $beforehand = array_filter($items, static fn (UpgradeItem $item): bool => UpgradeItemStatus::UpdateFirst === $item->status && UpgradeSection::Optional !== $item->section);
+        $this->beforehand = [
+            'min' => array_sum(array_map(static fn (UpgradeItem $item): float => $item->minHours ?? 0.0, $beforehand)),
+            'max' => array_sum(array_map(static fn (UpgradeItem $item): float => $item->maxHours ?? 0.0, $beforehand)),
+        ];
 
         $optionalWork = $sections[UpgradeSection::Optional->value];
         $this->optionalManagement = $this->management($optionalWork);

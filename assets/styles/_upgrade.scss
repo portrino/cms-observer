@@ -55,6 +55,40 @@
         opacity: 0.5;
     }
 
+    // first line of a row's notes, opens the note dialog
+    .upgrade-note {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        background-color: $white;
+    }
+
+    .upgrade-note-text {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .upgrade-note-empty {
+        color: var(--bs-secondary-color);
+    }
+
+    @each $level in success, warning, danger {
+        .upgrade-note-#{$level} {
+            border-color: var(--bs-#{$level}-border-subtle);
+            background-color: var(--bs-#{$level}-bg-subtle);
+            color: var(--bs-#{$level}-text-emphasis);
+        }
+    }
+
+    // a version that covers the current and the next major: can be updated before the upgrade
+    tr:has(option[value="update-first"]:checked) .upgrade-col-target .form-control {
+        border-color: var(--bs-info-border-subtle);
+        background-color: var(--bs-info-bg-subtle);
+    }
+
     // the same place in every section, at the right edge
     .upgrade-col-actions {
         width: 1%;

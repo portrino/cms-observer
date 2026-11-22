@@ -6,6 +6,14 @@
     {{ (range.min * rate) == (range.max * rate) ? (range.min * rate)|number_format(2, ',', '.') : (range.min * rate)|number_format(2, ',', '.') ~ ' – ' ~ (range.max * rate)|number_format(2, ',', '.') }} EUR
 {%- endmacro %}
 
+{# The first line of a row's notes in its color; opens the note dialog #}
+{% macro note_preview(text, level) %}
+    {% set firstLine = (text ?? '')|split("\n")|map(line => line|trim)|filter(line => line)|first %}
+    <button type="button" class="btn btn-sm upgrade-note {{ level ? 'upgrade-note-' ~ level }} {{ firstLine ? '' : 'upgrade-note-empty' }}" data-action="note-editor#open" data-note-field="preview" aria-label="Edit notes">
+        <span class="upgrade-note-text">{{ firstLine ?: 'Add note' }}</span>
+    </button>
+{% endmacro %}
+
 {# One editable row of a calculation form; also renders the prototype for new rows #}
 {% macro form_row(entry, package) %}
     {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
@@ -24,12 +32,16 @@
         </td>
         {% if package %}
             <td class="upgrade-col-version">{{ form_widget(entry.installedVersion, sm) }}</td>
-            <td class="upgrade-col-version">{{ form_widget(entry.targetVersion, sm) }}</td>
+            <td class="upgrade-col-version upgrade-col-target">{{ form_widget(entry.targetVersion, sm) }}</td>
             <td class="upgrade-col-status">{{ form_widget(entry.status, {attr: {class: 'form-select form-select-sm'}}) }}</td>
         {% endif %}
         <td class="upgrade-col-hours">{{ form_widget(entry.minHours, sm) }}{{ form_errors(entry.minHours) }}</td>
         <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
-        <td class="upgrade-col-notes">{{ form_widget(entry.notes, sm) }}</td>
+        <td class="upgrade-col-notes" data-note-editor-target="cell">
+            {{ form_widget(entry.notes, {attr: {'data-note-field': 'text'}}) }}
+            {{ form_widget(entry.noteLevel, {attr: {class: 'd-none', 'data-note-field': 'level', 'aria-hidden': 'true', tabindex: '-1'}}) }}
+            {{ _self.note_preview(entry.notes.vars.value, entry.noteLevel.vars.value) }}
+        </td>
         <td class="upgrade-col-text">{{ form_widget(entry.assignee, sm) }}</td>
         <td class="upgrade-col-actions">
             <button type="button" class="btn btn-sm btn-outline-neutral" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button>

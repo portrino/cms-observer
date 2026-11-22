@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Dto;
 use App\Dto\UpgradeItem;
 use App\Entity\PackageType;
 use App\Entity\UpgradeItemStatus;
+use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +15,7 @@ class UpgradeItemTest extends TestCase
 {
     public function testRoundTripsThroughTheStoredArray(): void
     {
-        $item = new UpgradeItem(UpgradeSection::Packages, 'News', 'news', PackageType::Typo3CmsExtension, '12.3.1', '13.0.0', UpgradeItemStatus::UpdateFirst, 0.25, 0.5, 'See changelog', 'RB');
+        $item = new UpgradeItem(UpgradeSection::Packages, 'News', 'news', PackageType::Typo3CmsExtension, '12.3.1', '13.0.0', UpgradeItemStatus::UpdateFirst, 0.25, 0.5, 'See changelog', 'RB', UpgradeNoteLevel::Warning);
 
         self::assertEquals($item, UpgradeItem::fromArray($item->toArray()));
     }

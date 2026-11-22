@@ -6,6 +6,7 @@ namespace App\Dto;
 
 use App\Entity\PackageType;
 use App\Entity\UpgradeItemStatus;
+use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
 
 /**
@@ -26,6 +27,7 @@ final readonly class UpgradeItem
         public ?float $maxHours = null,
         public ?string $notes = null,
         public ?string $assignee = null,
+        public ?UpgradeNoteLevel $noteLevel = null,
     ) {
     }
 
@@ -53,6 +55,7 @@ final readonly class UpgradeItem
             $hours('maxHours'),
             $string('notes'),
             $string('assignee'),
+            UpgradeNoteLevel::tryFrom((string) ($data['noteLevel'] ?? '')),
         );
     }
 
@@ -73,6 +76,7 @@ final readonly class UpgradeItem
             'maxHours' => $this->maxHours,
             'notes' => $this->notes,
             'assignee' => $this->assignee,
+            'noteLevel' => $this->noteLevel?->value,
         ];
     }
 }

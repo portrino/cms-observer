@@ -9,6 +9,7 @@ use App\Entity\Site;
 use App\Entity\Typo3CoreRelease;
 use App\Entity\Typo3TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
+use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3CoreReleaseRepository;
@@ -47,7 +48,7 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
             $installed = $package->getVersion();
             $label = $package->getComposerName() ?? $this->composerNameFromTer($key) ?? $key;
             $item = static fn (UpgradeSection $section, UpgradeItemStatus $status, ?string $target = null): UpgradeItem => new UpgradeItem(
-                $section, $label, $key, $package->getPackageType(), $installed, $target, $status,
+                $section, $label, $key, $package->getPackageType(), $installed, $target, $status, noteLevel: UpgradeNoteLevel::forStatus($status),
             );
 
             $terVersions = $this->terVersionRepository->findBy(['extensionKey' => $key]);
