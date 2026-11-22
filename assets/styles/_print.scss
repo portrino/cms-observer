@@ -1,0 +1,38 @@
+// Printing a page, e.g. to save an upgrade calculation as PDF: content only
+.print-only {
+    display: none;
+}
+
+@media print {
+    .sidebar,
+    .sidebar-backdrop,
+    .app-topbar,
+    .alert,
+    .no-print {
+        display: none;
+    }
+
+    .print-only {
+        display: block;
+    }
+
+    .app-main,
+    body.sidebar-collapsed .app-main {
+        margin-left: 0;
+        padding: 0;
+        transition: none;
+    }
+
+    .row > * {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .card {
+        break-inside: avoid;
+    }
+
+    .table-responsive {
+        overflow: visible;
+    }
+}

@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+
+{% block title %}Upgrade calculations of {{ site.name }} - CMS Observer{% endblock %}
+
+{% block page_title %}Upgrade calculations of {{ site.name }}{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('dashboard_site_show', {id: site.id}), 'arrow-left', 'Back to project') }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card mb-3">
+        <div class="card-body">
+            {% if targetMajors is empty %}
+                <p class="text-muted mb-0">No newer {{ site.type.label }} major is known for this project{{ site.currentCoreVersion ? '' : ' yet: it has not reported' }}.</p>
+            {% else %}
+                <form method="get" action="{{ path('upgrade_calculation_new', {id: site.id}) }}" class="row g-2 align-items-center">
+                    <label class="col-auto" for="target">New calculation from {{ site.type.label }} {{ site.currentCoreVersion }} to</label>
+                    <div class="col-auto">
+                        <select name="target" id="target" class="form-select">
+                            {% for major in targetMajors %}
+                                <option value="{{ major }}">{{ site.type.label }} {{ major }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} Start</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if calculations is empty %}
+        <p class="text-muted">No calculations yet.</p>
+    {% else %}
+        <div class="card">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0" id="upgradeCalculations">
+                    <thead>
+                        <tr>
+                            <th>Upgrade</th>
+                            <th>Last saved</th>
+                            <th>By</th>
+                            <th>Versions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for calculation in calculations %}
+                            {% set latest = calculation.latestVersion %}
+                            <tr>
+                                <td><a href="{{ path('upgrade_calculation_show', {id: calculation.id}) }}">{{ site.type.label }} {{ calculation.fromMajor }} → {{ calculation.targetMajor }}</a>
+                                    {% if latest.final %}<span class="badge text-bg-success">Final</span>{% endif %}</td>
+                                <td class="text-nowrap">{{ latest.createdAt|date('Y-m-d H:i') }}</td>
+                                <td>{{ latest.author }}</td>
+                                <td>{{ calculation.versions|length }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

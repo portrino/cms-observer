@@ -7,6 +7,7 @@
 
 {% block page_actions %}
     {{ m.topbar_link(path('dashboard_site_history', {id: site.id}), 'history', 'History') }}
+    {{ m.topbar_link(path('upgrade_calculation_index', {id: site.id}), 'calculator', 'Upgrade calculations') }}
     {{ m.topbar_link(path('dashboard_site_edit', {id: site.id}), 'pencil', 'Edit') }}
 {% endblock %}
 

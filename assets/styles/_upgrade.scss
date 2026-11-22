@@ -1,0 +1,37 @@
+// Upgrade calculations: the editable and read-only row tables
+.upgrade-table {
+    td {
+        vertical-align: top;
+    }
+
+    .upgrade-col-label {
+        min-width: 14rem;
+    }
+
+    // wide enough to read on phones too, the table scrolls sideways instead
+    .upgrade-col-version {
+        min-width: 7rem;
+    }
+
+    .upgrade-col-status {
+        min-width: 11rem;
+    }
+
+    .upgrade-col-text {
+        min-width: 9rem;
+    }
+
+    .upgrade-col-hours {
+        width: 5.5rem;
+        min-width: 5.5rem;
+    }
+
+    .upgrade-col-notes {
+        min-width: 16rem;
+    }
+
+    .upgrade-notes {
+        min-width: 12rem;
+        white-space: normal;
+    }
+}

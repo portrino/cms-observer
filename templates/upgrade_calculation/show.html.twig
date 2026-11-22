@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+{% import 'dashboard/_macros.html.twig' as m %}
+{% import 'upgrade_calculation/_macros.html.twig' as u %}
+
+{% set upgrade = site.type.label ~ ' ' ~ calculation.fromMajor ~ ' → ' ~ calculation.targetMajor %}
+
+{% block title %}{{ upgrade }} - {{ site.name }} - CMS Observer{% endblock %}
+
+{% block page_title %}Upgrade {{ upgrade }}{% endblock %}
+
+{% block page_actions %}
+    {{ m.topbar_link(path('upgrade_calculation_index', {id: site.id}), 'arrow-left', 'All calculations') }}
+    <button type="button" class="btn btn-tertiary d-inline-flex align-items-center gap-1" data-controller="print" data-action="print#print" aria-label="Print or save as PDF">{{ icon('printer') }}<span class="d-none d-md-inline">Print / PDF</span></button>
+    {{ m.topbar_link(path('upgrade_calculation_edit', {id: calculation.id, version: version.id}), 'pencil', 'Edit') }}
+{% endblock %}
+
+{% block body %}
+{% set rate = version.hourlyRate %}
+<div class="container-fluid upgrade-calculation">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h5 print-only">Upgrade {{ upgrade }}: {{ site.name }}</h2>
+                    <p class="mb-1">
+                        Version of {{ version.createdAt|date('Y-m-d H:i') }} by {{ version.author }}
+                        {% if version.final %}<span class="badge text-bg-success">Final</span>{% endif %}
+                        {% if version != calculation.latestVersion %}<span class="badge text-bg-warning no-print">Older version</span>{% endif %}
+                    </p>
+                    {% if version.note %}<p class="text-muted mb-0">{{ version.note|nl2br }}</p>{% endif %}
+                </div>
+            </div>
+
+            {% for section in sections %}
+                {% set items = version.items(section) %}
+                {% if items is not empty %}
+                    {% set package = section.hasPackages %}
+                    <div class="card mb-3">
+                        <div class="card-header bg-white"><h2 class="h6 mb-0">{{ section.label }}</h2></div>
+                        <div class="card-body p-0 table-responsive">
+                            <table class="table table-sm mb-0 upgrade-table" id="upgrade-{{ section.value }}">
+                                <thead>
+                                    <tr>
+                                        <th>{{ package ? 'Package' : 'Position' }}</th>
+                                        {% if package %}<th>Installed</th><th>Target</th><th>Status</th>{% endif %}
+                                        <th>To-do</th>
+                                        <th class="text-end">Hours</th>
+                                        <th>Notes</th>
+                                        <th>By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items %}
+                                        <tr>
+                                            <td>{{ item.label }}{% if package and item.package and item.package != item.label %}<br><code class="small">{{ item.package }}</code>{% endif %}</td>
+                                            {% if package %}
+                                                <td><code>{{ item.installedVersion }}</code></td>
+                                                <td><code>{{ item.targetVersion }}</code></td>
+                                                <td>{% if item.status %}<span class="badge text-bg-{{ item.status.color }}">{{ item.status.label }}</span>{% endif %}</td>
+                                            {% endif %}
+                                            <td>{{ item.todo }}</td>
+                                            <td class="text-end text-nowrap">{{ item.minHours is null and item.maxHours is null ? '' : u.hours({min: item.minHours ?? 0, max: item.maxHours ?? item.minHours ?? 0}) }}</td>
+                                            <td class="upgrade-notes">{{ item.notes|nl2br }}</td>
+                                            <td>{{ item.assignee }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr><th colspan="{{ package ? 5 : 2 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</th><th colspan="2"></th></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="card mb-3">
+                <div class="card-body p-0">
+                    <table class="table mb-0" id="upgradeTotals">
+                        <thead>
+                            <tr><th></th><th class="text-end">Hours</th><th class="text-end">Price ({{ rate|number_format(2, ',', '.') }} EUR/h)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Project management ({{ version.managementPercent }} %)</td><td class="text-end text-nowrap">{{ u.hours(totals.requiredManagement) }}</td><td class="text-end text-nowrap">{{ u.price(totals.requiredManagement, rate) }}</td></tr>
+                            <tr class="fw-bold"><td>Total</td><td class="text-end text-nowrap">{{ u.hours(totals.required) }}</td><td class="text-end text-nowrap">{{ u.price(totals.required, rate) }}</td></tr>
+                            {% if totals.optional.max > 0 %}
+                                <tr><td>Optional, incl. project management</td><td class="text-end text-nowrap">{{ u.hours(totals.optional) }}</td><td class="text-end text-nowrap">{{ u.price(totals.optional, rate) }}</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if version.remarks %}<div class="card-footer bg-white text-muted">{{ version.remarks|nl2br }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-3 no-print">
+            <div class="card">
+                <div class="card-header bg-white"><h2 class="h6 mb-0">Versions</h2></div>
+                <ul class="list-group list-group-flush" id="upgradeVersions">
+                    {% for other in calculation.versions %}
+                        <a href="{{ path('upgrade_calculation_show', {id: calculation.id, version: other.id}) }}" class="list-group-item list-group-item-action {{ other == version ? 'active' }}">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ other.createdAt|date('Y-m-d H:i') }}</span>
+                                {% if other.final %}<span class="badge text-bg-success">Final</span>{% endif %}
+                            </div>
+                            <div class="small">{{ other.author }}</div>
+                            {% if other.note %}<div class="small text-truncate">{{ other.note }}</div>{% endif %}
+                        </a>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
