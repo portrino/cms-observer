@@ -236,6 +236,28 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorTextSame('textarea[name="upgrade_calculation_version[timeline]"]', '', 'the schedule belongs to the other calculation');
     }
 
+    public function testNotesAreRenderedAsSafeMarkdown(): void
+    {
+        $site = $this->typo3Site();
+        $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        $this->client->submit($crawler->selectButton('Save as new version')->form([
+            'upgrade_calculation_version[packages][0][notes]' => "**Breaking**\n- one\n- two\n<script>alert(1)</script>\n\n[x](javascript:alert(1)) [ok](https://typo3.org)",
+            'upgrade_calculation_version[remarks]' => "License costs\nnot included",
+            'upgrade_calculation_version[hourlyRate]' => '100',
+            'upgrade_calculation_version[managementPercent]' => '10',
+            'upgrade_calculation_version[author]' => 'PM',
+        ]));
+        $crawler = $this->client->followRedirect();
+
+        $notes = $crawler->filter('#upgrade-packages td.upgrade-notes')->html();
+        self::assertStringContainsString('<strong>Breaking</strong>', $notes);
+        self::assertStringContainsString('<li>two</li>', $notes);
+        self::assertStringNotContainsString('<script>', $notes, 'HTML is escaped');
+        self::assertStringNotContainsString('href="javascript:', $notes, 'unsafe links are removed');
+        self::assertStringContainsString('<a href="https://typo3.org">ok</a>', $notes);
+        self::assertStringContainsString("License costs<br>\nnot included", $crawler->filter('.upgrade-calculation .card-footer')->html(), 'a line break stays one');
+    }
+
     public function testUnknownTargetIsNotFound(): void
     {
         $site = $this->typo3Site();

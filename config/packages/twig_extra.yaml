@@ -1,0 +1,8 @@
+twig_extra:
+    commonmark:
+        # Markdown of notes ends up in PDFs for customers: no raw HTML, no javascript: links
+        html_input: escape
+        allow_unsafe_links: false
+        # a line break in a note is meant as one, like in the textarea
+        renderer:
+            soft_break: "<br>\n"

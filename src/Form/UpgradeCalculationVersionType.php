@@ -62,13 +62,13 @@ class UpgradeCalculationVersionType extends AbstractType
             ->add('timeline', TextareaType::class, [
                 'label' => 'Timeline notes',
                 'required' => false,
-                'help' => 'E.g. when the upgrade is scheduled.',
-                'attr' => ['rows' => 3],
+                'help' => 'E.g. when the upgrade is scheduled. Markdown, e.g. **bold** or lists.',
+                'attr' => ['rows' => 3, 'data-controller' => 'markdown-editor'],
             ])
             ->add('remarks', TextareaType::class, [
                 'required' => false,
-                'help' => 'Shown below the totals, e.g. "License costs not included".',
-                'attr' => ['rows' => 2],
+                'help' => 'Shown below the totals, e.g. "License costs not included". Markdown, e.g. **bold** or lists.',
+                'attr' => ['rows' => 2, 'data-controller' => 'markdown-editor'],
             ])
             ->add('author', TextType::class, [
                 'label' => 'Your name or initials',

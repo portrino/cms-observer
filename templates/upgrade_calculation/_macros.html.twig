@@ -22,7 +22,8 @@
 
 {# The first line of a row's notes in its color; opens the note dialog #}
 {% macro note_preview(text, level) %}
-    {% set firstLine = (text ?? '')|split("\n")|map(line => line|trim)|filter(line => line)|first %}
+    {# first line without Markdown marks, like note_editor_controller.js #}
+    {% set firstLine = ((text ?? '')|split("\n")|map(line => line|trim)|filter(line => line)|first ?: '')|markdown_to_html|striptags|trim %}
     <button type="button" class="btn btn-sm upgrade-note {{ level ? 'upgrade-note-' ~ level }} {{ firstLine ? '' : 'upgrade-note-empty' }}" data-action="note-editor#open" data-note-field="preview" aria-label="Edit notes">
         <span class="upgrade-note-text">{{ firstLine ?: 'Add note' }}</span>
     </button>

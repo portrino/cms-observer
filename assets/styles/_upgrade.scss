@@ -104,7 +104,8 @@
 
 // The note dialog shows the chosen color on its textarea, like the row's preview
 @each $level in success, warning, danger {
-    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) textarea {
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) textarea,
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) .CodeMirror {
         border-color: var(--bs-#{$level}-border-subtle);
         background-color: var(--bs-#{$level}-bg-subtle);
         color: var(--bs-#{$level}-text-emphasis);
@@ -154,4 +155,16 @@
     height: 0.75rem;
     vertical-align: middle;
     print-color-adjust: exact;
+}
+
+// Rendered Markdown of notes, timeline and remarks: no margin below the last block
+.upgrade-markdown {
+    > :last-child {
+        margin-bottom: 0;
+    }
+
+    ul,
+    ol {
+        padding-left: 1.25rem;
+    }
 }

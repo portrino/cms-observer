@@ -72,11 +72,17 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     const packageRow = page.locator('#upgrade-packages tbody tr').first();
     await packageRow.getByRole('button', { name: 'Edit notes' }).click();
     const dialog = page.getByRole('dialog', { name: 'Notes' });
-    await dialog.getByLabel('Notes').fill('Breaking changes\nSee the changelog of 13.0');
-    const textareaBackground = () => dialog.getByLabel('Notes').evaluate((textarea) => getComputedStyle(textarea).backgroundColor);
+    // a Markdown editor: typed like a user, with the bold button of its toolbar
+    const editor = dialog.locator('.CodeMirror');
+    await editor.click();
+    await page.keyboard.type('Breaking changes');
+    await editor.press('Enter');
+    await dialog.getByRole('button', { name: 'Bold' }).click();
+    await page.keyboard.type('See the changelog of 13.0');
+    const textareaBackground = () => editor.evaluate((element) => getComputedStyle(element).backgroundColor);
     const uncolored = await textareaBackground();
     await dialog.getByLabel('Color').selectOption('warning');
-    expect(await textareaBackground(), 'textarea takes the chosen color').not.toBe(uncolored);
+    expect(await textareaBackground(), 'the editor takes the chosen color').not.toBe(uncolored);
     expect(await dialog.getByLabel('Color').evaluate((select) => getComputedStyle(select).backgroundColor), 'the dropdown stays neutral').toBe(uncolored);
     await dialog.getByRole('button', { name: 'Apply' }).click();
     await expect(dialog).toBeHidden();
@@ -105,7 +111,7 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(page.locator('#upgrade-optional')).toContainText('Content blocks migration');
     await expect(page.locator('#upgradeTotals')).toContainText('Optional, incl. project management');
     await expect(page.locator('#upgrade-packages')).toContainText('news');
-    await expect(page.locator('#upgrade-packages td.table-warning')).toContainText('See the changelog of 13.0');
+    await expect(page.locator('#upgrade-packages td.table-warning strong')).toHaveText('See the changelog of 13.0');
 
     // printed like paper: white, no page padding, cards without frame, the changelog as a table
     await page.emulateMedia({ media: 'print' });

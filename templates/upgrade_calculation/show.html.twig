@@ -50,7 +50,7 @@
                             {{ u.support_text(site.type.label, supportPhases, calculation.fromMajor) }}
                             <div class="my-3">{{ u.support_chart(site.type.label, supportPhases, supportChart) }}</div>
                         {% endif %}
-                        {% if version.timeline %}<p class="mb-0">{{ version.timeline|nl2br }}</p>{% endif %}
+                        {% if version.timeline %}<div class="upgrade-markdown">{{ version.timeline|markdown_to_html }}</div>{% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -83,7 +83,7 @@
                                                 <td>{% if item.status %}<span class="badge text-bg-{{ item.status.color }}">{{ item.status.label }}</span>{% endif %}</td>
                                             {% endif %}
                                             <td class="text-end text-nowrap">{{ u.row_hours(item.minHours, item.maxHours) }}</td>
-                                            <td class="upgrade-notes {{ item.noteLevel ? 'table-' ~ item.noteLevel.value }}">{{ item.notes|nl2br }}</td>
+                                            <td class="upgrade-notes upgrade-markdown {{ item.noteLevel ? 'table-' ~ item.noteLevel.value }}">{{ item.notes ? item.notes|markdown_to_html }}</td>
                                             <td class="no-print">{{ item.assignee }}</td>
                                         </tr>
                                     {% endfor %}
@@ -118,7 +118,7 @@
                         </tbody>
                     </table>
                 </div>
-                {% if version.remarks %}<div class="card-footer bg-white text-muted">{{ version.remarks|nl2br }}</div>{% endif %}
+                {% if version.remarks %}<div class="card-footer bg-white text-muted upgrade-markdown">{{ version.remarks|markdown_to_html }}</div>{% endif %}
             </div>
         </div>
 
