@@ -26,6 +26,7 @@ class Typo3TerExtensionMetaRepository extends ServiceEntityRepository
     /**
      * Every extension key that's already had at least one sync run - lets
      * the synchronizer prioritize never-synced keys over already-known ones.
+     * Least recently fetched first, so refreshes rotate through all keys.
      *
      * @return string[]
      */
@@ -34,6 +35,7 @@ class Typo3TerExtensionMetaRepository extends ServiceEntityRepository
         return array_column(
             $this->createQueryBuilder('m')
                 ->select('m.extensionKey')
+                ->orderBy('m.fetchedAt', 'ASC')
                 ->getQuery()
                 ->getScalarResult(),
             'extensionKey',

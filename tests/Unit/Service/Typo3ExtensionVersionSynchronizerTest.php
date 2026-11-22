@@ -65,4 +65,39 @@ class Typo3ExtensionVersionSynchronizerTest extends TestCase
             self::assertContains($key, $processedKeys, sprintf('Never-synced key "%s" should have been processed this run.', $key));
         }
     }
+
+    // Regression: known keys were refreshed in package order, so the same 20
+    // came first every run and the rest never got new TER releases.
+    public function testKnownKeysAreRefreshedLeastRecentlyFetchedFirst(): void
+    {
+        $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
+        $keys = array_map(static fn (int $i): string => sprintf('known_%02d', $i), range(1, 25));
+        $leastRecentlyFetchedFirst = [...array_slice($keys, 20), ...array_slice($keys, 0, 20)];
+
+        $sitePackageRepository = self::createStub(SitePackageRepository::class);
+        $sitePackageRepository->method('findByPackageType')->willReturn(array_map(
+            static fn (string $key): SitePackage => new SitePackage($site, $key, $key, '1.0.0', true),
+            $keys,
+        ));
+        $metaRepository = self::createStub(Typo3TerExtensionMetaRepository::class);
+        $metaRepository->method('findAllExtensionKeys')->willReturn($leastRecentlyFetchedFirst);
+
+        $processedKeys = [];
+        $apiClient = self::createStub(TerExtensionApiClient::class);
+        $apiClient->method('getVersionHistory')->willReturnCallback(static function (string $key) use (&$processedKeys): array {
+            $processedKeys[] = $key;
+
+            return [];
+        });
+
+        new Typo3ExtensionVersionSynchronizer(
+            $apiClient,
+            $sitePackageRepository,
+            self::createStub(Typo3TerExtensionVersionRepository::class),
+            $metaRepository,
+            self::createStub(EntityManagerInterface::class),
+        )->sync();
+
+        self::assertSame(array_slice($leastRecentlyFetchedFirst, 0, 20), $processedKeys);
+    }
 }

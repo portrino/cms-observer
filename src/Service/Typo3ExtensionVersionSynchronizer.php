@@ -53,9 +53,9 @@ class Typo3ExtensionVersionSynchronizer
         // Never-synced keys first, so a key beyond MAX_KEYS_PER_RUN isn't stuck
         // behind the same already-known keys every single run - only once
         // every key has at least one data point does this start refreshing
-        // already-known ones for new TER releases.
+        // already-known ones for new TER releases, least recently fetched first.
         $alreadySynced = array_fill_keys($this->metaRepository->findAllExtensionKeys(), true);
-        $orderedKeys = array_merge(array_diff_key($keys, $alreadySynced), array_intersect_key($keys, $alreadySynced));
+        $orderedKeys = array_merge(array_diff_key($keys, $alreadySynced), array_intersect_key($alreadySynced, $keys));
 
         $synced = 0;
         foreach (array_slice(array_keys($orderedKeys), 0, self::MAX_KEYS_PER_RUN) as $key) {
