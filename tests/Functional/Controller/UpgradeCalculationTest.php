@@ -107,6 +107,9 @@ class UpgradeCalculationTest extends WebTestCase
         $this->entityManager->clear();
         $calculation = $this->entityManager->find(UpgradeCalculation::class, $calculation->getId());
         self::assertCount(2, $calculation->getVersions());
+
+        $this->client->request('GET', '/projects/'.$site->getId().'/calculations');
+        self::assertSelectorTextSame('#upgradeCalculations .badge-count[title="Saved versions"]', '2');
         [$latest, $old] = $calculation->getVersions();
         self::assertSame(['PM', 90.0, true], [$latest->getAuthor(), $latest->getHourlyRate(), $latest->isFinal()]);
         self::assertSame(['JD', 100.0, false], [$old->getAuthor(), $old->getHourlyRate(), $old->isFinal()]);

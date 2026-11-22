@@ -55,7 +55,7 @@
                                     {% if latest.final %}<span class="badge text-bg-success">Final</span>{% endif %}</td>
                                 <td class="text-nowrap">{{ latest.createdAt|date('Y-m-d H:i') }}</td>
                                 <td>{{ latest.author }}</td>
-                                <td>{{ calculation.versions|length }}</td>
+                                <td>{{ m.count_badge(calculation.versions|length, 'receipt-text', 'Saved versions') }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
