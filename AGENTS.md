@@ -118,6 +118,13 @@ on every run. A new environment variable belongs into `app:setup`, a new
 build or update step into `app:upgrade`, both into `docs/installation.md`.
 Operators install tagged releases (`git checkout <version>`), never `main`.
 
+## Decisions
+
+Decisions that are hard to reverse, span the Observer and its clients,
+or drop a proposed feature are recorded as ADRs in `docs/adr/` (format
+and rules in ADR-0001). Read them before proposing a feature they turned
+down; never edit an accepted ADR, supersede it with a new one.
+
 ## Git workflow
 
 - Branches: `feature/<ticket>-<slug>` off `main`. PRs go through GitHub.

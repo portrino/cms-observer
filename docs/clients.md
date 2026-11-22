@@ -51,6 +51,13 @@ created or a new one is generated (see [Projects](configuration.md#projects)). H
 The API stays compatible: new fields are added as optional, existing ones are
 never renamed or removed, so sites can update their client late.
 
+## Compatibility
+
+Update the Observer before the clients. A client release that needs a
+newer Observer names the minimum version in its changelog; an older
+Observer ignores the new fields, so that data is missing until it is
+updated (see [ADR-0002](adr/0002-no-observer-version-check-in-clients.md)).
+
 ## Domain check
 
 Production and staging of a site often share a database dump, and with it a
