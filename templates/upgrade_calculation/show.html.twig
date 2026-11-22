@@ -21,13 +21,15 @@
         <div class="col-lg-9">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h2 class="h5 print-only">Upgrade {{ upgrade }}: {{ site.name }}</h2>
-                    <p class="mb-1">
+                    {# printed: title and project instead of this version, which the changelog below lists #}
+                    <h2 class="h5 print-only">Upgrade {{ upgrade }}</h2>
+                    <p class="print-only mb-0" id="upgradeProject">Project: {{ site.organization ? site.organization.name ~ ' / ' }}{{ site.name }} ({{ site.url }})</p>
+                    <p class="mb-1 no-print">
                         Version of {{ version.createdAt|date('Y-m-d H:i') }} by {{ version.author }}
                         {% if version.final %}<span class="badge text-bg-success">Final</span>{% endif %}
                         {% if version != calculation.latestVersion %}<span class="badge text-bg-warning no-print">Older version</span>{% endif %}
                     </p>
-                    {% if version.note %}<p class="text-muted mb-0">{{ version.note|nl2br }}</p>{% endif %}
+                    {% if version.note %}<p class="text-muted mb-0 no-print">{{ version.note|nl2br }}</p>{% endif %}
                     {# the changelog head of the printed calculation: this version and all before it #}
                     <table class="table table-sm mb-0 mt-3 print-only" id="upgradeChangelog">
                         <thead><tr><th>Date</th><th>By</th><th>Change</th></tr></thead>

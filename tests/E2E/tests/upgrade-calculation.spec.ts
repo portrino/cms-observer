@@ -120,5 +120,9 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
         };
     });
     expect(printed).toEqual({ body: 'rgb(255, 255, 255)', main: '0px', card: ['none', '0px', '0px'], changelog: 'table', sidebar: 'none' });
+    // the head names the project; the version is only listed in the changelog
+    await expect(page.locator('#upgradeProject')).toBeVisible();
+    await expect(page.locator('#upgradeProject')).toContainText(project.name);
+    await expect(page.getByText(/^\s*Version of /)).toBeHidden();
     await page.emulateMedia({ media: 'screen' });
 });
