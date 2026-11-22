@@ -41,6 +41,18 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await optionalRows.nth(0).locator('input[name$="[maxHours]"]').fill('8');
     await optionalRows.nth(1).getByRole('button', { name: 'Remove row' }).click();
 
+    // at 1600 px with the sidebar open, no section scrolls sideways, and the row actions
+    // line up with "Add row" in the card header
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    for (const section of ['positions', 'packages', 'optional']) {
+        const card = page.locator('#upgrade-calculation-form .card').filter({ has: page.locator(`#upgrade-${section}`) });
+        const overflow = await card.locator('.table-responsive').evaluate((body) => body.scrollWidth - body.clientWidth);
+        expect(overflow, `sideways scrolling of ${section}`).toBe(0);
+        const addRow = await card.getByRole('button', { name: 'Add row' }).boundingBox();
+        const remove = await card.getByRole('button', { name: 'Remove row' }).first().boundingBox();
+        expect(Math.round(remove!.x + remove!.width), `remove button of ${section}`).toBe(Math.round(addRow!.x + addRow!.width));
+    }
+
     await page.getByLabel('Hourly rate (EUR)').fill('100');
     await page.getByLabel('Project management (%)').fill('10');
     await page.getByLabel('Your name or initials').fill('E2E');
