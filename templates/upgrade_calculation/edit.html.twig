@@ -16,7 +16,7 @@
         <p class="text-muted">Based on the version of {{ based_on.createdAt|date('Y-m-d H:i') }} by {{ based_on.author }}. Saving creates a new version, this one stays as it is.</p>
     {% endif %}
 
-    {{ form_start(form, {attr: {id: 'upgrade-calculation-form'}}) }}
+    {{ form_start(form, {attr: {id: 'upgrade-calculation-form', 'data-controller': 'upgrade-sums', 'data-action': 'input->upgrade-sums#update form-collection:changed->upgrade-sums#update'}}) }}
         {{ form_errors(form) }}
         {# taken over from the previous version: collapsed unless still to fill in or invalid #}
         {% set pricing = [form.hourlyRate, form.managementPercent] %}

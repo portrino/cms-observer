@@ -52,7 +52,12 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         $items = static::getContainer()->get(UpgradeCalculationDrafter::class)->draft($site, 14);
 
         $positions = array_filter($items, static fn (UpgradeItem $item): bool => UpgradeSection::Positions === $item->section);
-        self::assertCount(3, $positions);
+        self::assertSame(
+            ['Core upgrade', 'PHP version upgrade', 'Third-party packages', 'Custom packages', 'Testing, code reviews and deployments'],
+            array_map(static fn (UpgradeItem $item): string => $item->label, array_values($positions)),
+            'the order of the Excel template, with the package sections as positions',
+        );
+        self::assertSame(UpgradeSection::Packages, array_values($positions)[2]->sumOf);
         self::assertNull(array_values($positions)[0]->maxHours);
 
         $packages = $labels = [];

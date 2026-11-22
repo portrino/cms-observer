@@ -30,16 +30,20 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await page.reload();
 
     const positions = page.locator('#upgrade-positions tbody tr');
-    await expect(positions).toHaveCount(3);
+    // Core, PHP, Third-party packages, Custom packages, Testing; the package sums can't be removed
+    const label = (row) => positions.nth(row).locator('input[name$="[label]"]');
+    await expect(positions).toHaveCount(5);
+    await expect(positions.nth(2).getByRole('button', { name: 'Remove row' })).toHaveCount(0);
     await positions.nth(1).getByRole('button', { name: 'Remove row' }).click();
-    await expect(positions).toHaveCount(2);
-    // by keyboard, then back by dragging
-    await positions.nth(1).getByRole('button', { name: /Move row/ }).press('ArrowUp');
-    await expect(positions.nth(0).locator('input[name$="[label]"]')).toHaveValue(/^Testing/);
-    await positions.nth(0).getByRole('button', { name: /Move row/ }).dragTo(positions.nth(1), { targetPosition: { x: 10, y: 30 } });
-    await expect(positions.nth(0).locator('input[name$="[label]"]')).toHaveValue('Core upgrade');
-    await positions.nth(1).getByRole('button', { name: /Move row/ }).dragTo(positions.nth(0), { targetPosition: { x: 10, y: 2 } });
-    await expect(positions.nth(0).locator('input[name$="[label]"]')).toHaveValue(/^Testing/);
+    await expect(positions).toHaveCount(4);
+    // by keyboard, then back and to the top by dragging
+    await positions.nth(3).getByRole('button', { name: /Move row/ }).press('ArrowUp');
+    await expect(label(2)).toHaveValue(/^Testing/);
+    await positions.nth(2).getByRole('button', { name: /Move row/ }).dragTo(positions.nth(3), { targetPosition: { x: 10, y: 30 } });
+    await expect(label(3)).toHaveValue(/^Testing/);
+    await positions.nth(3).getByRole('button', { name: /Move row/ }).dragTo(positions.nth(0), { targetPosition: { x: 10, y: 2 } });
+    await expect(label(0)).toHaveValue(/^Testing/);
+    await expect(label(2)).toHaveValue('Third-party packages');
 
     const optional = page.locator('#upgrade-calculation-form .card').filter({ has: page.locator('#upgrade-optional') });
     await optional.getByRole('button', { name: 'Add row' }).click();
@@ -101,6 +105,11 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(preview).toHaveText('Breaking changes');
     await expect(preview).toHaveClass(/upgrade-note-warning/);
 
+    // the package sums among the positions follow the hours of their section
+    await packageRow.locator('input[name$="[maxHours]"]').fill('3');
+    await expect(page.getByLabel('Max hours of Third-party packages')).toHaveValue('3.00');
+    await expect(page.getByLabel('Min hours of Third-party packages')).toHaveValue('3.00');
+
     // pricing applies to the whole calculation: it comes before all sections
     const pricing = await page.locator('#upgradePricing').boundingBox();
     const firstSection = await page.locator('#upgrade-positions').boundingBox();
@@ -117,7 +126,7 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
 
     await page.getByRole('button', { name: 'Save as new version' }).click();
 
-    await expect(page.locator('#upgrade-positions tbody tr')).toHaveCount(2);
+    await expect(page.locator('#upgrade-positions tbody tr')).toHaveCount(4);
     await expect(page.locator('#upgrade-positions tbody tr').first()).toContainText('Testing');
     await expect(page.locator('#upgrade-optional')).toContainText('Content blocks migration');
     await expect(page.locator('#upgradeTotals')).toContainText('Optional, incl. project management');

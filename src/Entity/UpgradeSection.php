@@ -16,7 +16,7 @@ enum UpgradeSection: string
         return match ($this) {
             self::Positions => 'Positions',
             self::Packages => 'Third-party packages',
-            self::OwnPackages => 'Own packages',
+            self::OwnPackages => 'Custom packages',
             self::Optional => 'Optional',
         };
     }

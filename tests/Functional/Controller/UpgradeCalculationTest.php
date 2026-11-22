@@ -73,7 +73,8 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorTextContains('#upgrade-packages td.table-warning', 'Breaking changes, see changelog');
         self::assertSelectorTextContains('#upgrade-packages td.table-info', '14.0.0', 'a target for both majors is highlighted');
         self::assertSelectorTextContains('#upgradeBeforehand', '2.00 h');
-        self::assertSelectorTextContains('#upgradeTotals', 'Third-party packages');
+        self::assertSelectorTextContains('#upgrade-positions tr.upgrade-sum-row', 'Third-party packages', 'the package section among the positions');
+        self::assertSelectorTextContains('#upgrade-positions tr.upgrade-sum-row', '200,00 EUR');
         self::assertSelectorTextContains('#upgradeChangelog', 'First draft');
         self::assertSelectorTextContains('#upgradeVersions', 'JD');
         self::assertSelectorTextSame('.topbar-title', 'Upgrade TYPO3 13 → 14 Upgrade Project', 'names the upgrade and the project');
@@ -182,9 +183,11 @@ class UpgradeCalculationTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
         $this->client->submit($crawler->selectButton('Save as new version')->form([
-            'upgrade_calculation_version[positions][0][position]' => '2',
+            'upgrade_calculation_version[positions][0][position]' => '4',
             'upgrade_calculation_version[positions][1][position]' => '0',
             'upgrade_calculation_version[positions][2][position]' => '1',
+            'upgrade_calculation_version[positions][3][position]' => '2',
+            'upgrade_calculation_version[positions][4][position]' => '3',
             'upgrade_calculation_version[hourlyRate]' => '100',
             'upgrade_calculation_version[managementPercent]' => '10',
             'upgrade_calculation_version[author]' => 'JD',
@@ -192,7 +195,7 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertResponseRedirects();
 
         $labels = array_map(static fn (UpgradeItem $item): string => $item->label, $this->calculationOf($site)?->getLatestVersion()?->getItems(UpgradeSection::Positions) ?? []);
-        self::assertSame(['PHP version upgrade', 'Testing, code reviews and deployments', 'Core upgrade'], $labels);
+        self::assertSame(['PHP version upgrade', 'Third-party packages', 'Custom packages', 'Testing, code reviews and deployments', 'Core upgrade'], $labels);
     }
 
     public function testRateComesFromTheProjectsLastCalculationElseFromTheSettings(): void

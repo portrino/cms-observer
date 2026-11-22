@@ -89,6 +89,16 @@
         background-color: var(--bs-info-bg-subtle);
     }
 
+    // positions standing for a package section's hours
+    .upgrade-sum-row > td {
+        background-color: var(--bs-tertiary-bg);
+    }
+
+    // their fixed label and hours line up with the text of the inputs in other rows
+    .upgrade-sum-row .form-control-plaintext {
+        padding-left: calc(#{$input-padding-x-sm} + #{$input-border-width});
+    }
+
     // the same place in every section, at the right edge
     .upgrade-col-actions {
         width: 1%;

@@ -113,7 +113,7 @@ class UpgradeCalculationVersion
      */
     public function getItems(?UpgradeSection $section = null): array
     {
-        $items = array_map(UpgradeItem::fromArray(...), $this->items);
+        $items = UpgradeItem::withSectionSums(array_map(UpgradeItem::fromArray(...), $this->items));
 
         return null === $section ? $items : array_values(array_filter($items, static fn (UpgradeItem $item): bool => $item->section === $section));
     }

@@ -37,4 +37,22 @@ class UpgradeItemTest extends TestCase
         self::assertSame(UpgradeItemStatus::Manual, $item->status);
         self::assertNull($item->minHours);
     }
+
+    public function testEveryPackageSectionKeepsItsSumAmongThePositions(): void
+    {
+        $items = UpgradeItem::withSectionSums([
+            new UpgradeItem(UpgradeSection::Positions, 'Core upgrade'),
+            UpgradeItem::sumOf(UpgradeSection::OwnPackages),
+            new UpgradeItem(UpgradeSection::Packages, 'news', 'news'),
+        ]);
+
+        self::assertSame([null, UpgradeSection::OwnPackages, UpgradeSection::Packages, null], array_map(static fn (UpgradeItem $item): ?UpgradeSection => $item->sumOf, $items), 'a missing sum is added after the positions');
+    }
+
+    public function testASumTakesNoHoursOrLabelFromTheForm(): void
+    {
+        $item = UpgradeItem::fromArray(['section' => 'positions', 'sumOf' => 'packages', 'label' => 'Changed', 'minHours' => 3, 'maxHours' => 5, 'notes' => 'Kept']);
+
+        self::assertSame(['Third-party packages', null, null, 'Kept'], [$item->label, $item->minHours, $item->maxHours, $item->notes]);
+    }
 }

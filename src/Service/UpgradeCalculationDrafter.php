@@ -21,6 +21,8 @@ final class UpgradeCalculationDrafter
     private const array POSITIONS = [
         'Core upgrade',
         'PHP version upgrade',
+        UpgradeSection::Packages,
+        UpgradeSection::OwnPackages,
         'Testing, code reviews and deployments',
     ];
 
@@ -47,7 +49,10 @@ final class UpgradeCalculationDrafter
     public function draft(Site $site, int $targetMajor): array
     {
         return [
-            ...array_map(static fn (string $label): UpgradeItem => new UpgradeItem(UpgradeSection::Positions, $label), self::POSITIONS),
+            // the order of the agency's Excel template; package sections as their sums
+            ...array_map(static fn (string|UpgradeSection $position): UpgradeItem => $position instanceof UpgradeSection
+                ? UpgradeItem::sumOf($position)
+                : new UpgradeItem(UpgradeSection::Positions, $position), self::POSITIONS),
             ...$this->resolver($site)->packageItems($site, $targetMajor),
         ];
     }

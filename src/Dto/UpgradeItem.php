@@ -28,7 +28,36 @@ final readonly class UpgradeItem
         public ?string $notes = null,
         public ?string $assignee = null,
         public ?UpgradeNoteLevel $noteLevel = null,
+        // a position that stands for the hours of a package section, placed among the positions
+        public ?UpgradeSection $sumOf = null,
     ) {
+    }
+
+    public static function sumOf(UpgradeSection $section): self
+    {
+        return new self(UpgradeSection::Positions, $section->label(), sumOf: $section);
+    }
+
+    /**
+     * Every package section has its sum among the positions: missing ones, e.g. in versions
+     * from before them or removed from a submitted form, are added after the positions.
+     *
+     * @param list<self> $items
+     *
+     * @return list<self>
+     */
+    public static function withSectionSums(array $items): array
+    {
+        $missing = array_filter(UpgradeSection::cases(), static fn (UpgradeSection $section): bool => $section->hasPackages()
+            && [] === array_filter($items, static fn (self $item): bool => $item->sumOf === $section));
+        $positions = array_filter($items, static fn (self $item): bool => UpgradeSection::Positions === $item->section);
+        $after = [] === $positions ? 0 : array_key_last($positions) + 1;
+
+        return [
+            ...array_slice($items, 0, $after),
+            ...array_map(self::sumOf(...), array_values($missing)),
+            ...array_slice($items, $after),
+        ];
     }
 
     /**
@@ -39,6 +68,13 @@ final readonly class UpgradeItem
         $string = static fn (string $key): ?string => isset($data[$key]) && '' !== (string) $data[$key] ? (string) $data[$key] : null;
         $hours = static fn (string $key): ?float => isset($data[$key]) && is_numeric($data[$key]) ? (float) $data[$key] : null;
         $package = $string('package');
+
+        $sumOf = UpgradeSection::tryFrom((string) ($data['sumOf'] ?? ''));
+        if (null !== $sumOf && $sumOf->hasPackages()) {
+            // its label and hours come from the section, whatever was submitted
+            return new self(UpgradeSection::Positions, $sumOf->label(), notes: $string('notes'), assignee: $string('assignee'),
+                noteLevel: UpgradeNoteLevel::tryFrom((string) ($data['noteLevel'] ?? '')), sumOf: $sumOf);
+        }
 
         return new self(
             UpgradeSection::tryFrom((string) ($data['section'] ?? '')) ?? UpgradeSection::Positions,
@@ -77,6 +113,7 @@ final readonly class UpgradeItem
             'notes' => $this->notes,
             'assignee' => $this->assignee,
             'noteLevel' => $this->noteLevel?->value,
+            'sumOf' => $this->sumOf?->value,
         ];
     }
 }

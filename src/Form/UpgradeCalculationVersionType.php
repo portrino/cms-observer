@@ -135,7 +135,7 @@ class UpgradeCalculationVersionType extends AbstractType
             }
         }
 
-        return $items;
+        return UpgradeItem::withSectionSums($items);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

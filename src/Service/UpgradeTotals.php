@@ -16,6 +16,8 @@ final readonly class UpgradeTotals
 {
     /** @var array<string, array{min: float, max: float}> section value => hours */
     public array $sections;
+    /** @var array{min: float, max: float} all required work before project management */
+    public array $work;
     /** @var array{min: float, max: float} */
     public array $requiredManagement;
     /** @var array{min: float, max: float} */
@@ -43,6 +45,7 @@ final readonly class UpgradeTotals
         $this->sections = $sections;
 
         $work = self::sum(...array_values(array_diff_key($sections, [UpgradeSection::Optional->value => true])));
+        $this->work = $work;
         $this->requiredManagement = $this->management($work);
         $this->required = self::sum($work, $this->requiredManagement);
 

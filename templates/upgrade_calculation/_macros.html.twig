@@ -32,14 +32,21 @@
 {# One editable row of a calculation form; also renders the prototype for new rows #}
 {% macro form_row(entry, package) %}
     {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
-    <tr data-form-collection-row>
+    {# a position standing for a package section: label and hours come from that section, it can't be removed #}
+    {% set sumOf = entry.sumOf is defined ? entry.sumOf.vars.value : null %}
+    <tr data-form-collection-row {% if sumOf %}class="upgrade-sum-row"{% endif %}>
         <td class="upgrade-col-handle">
             <button type="button" class="btn btn-sm upgrade-handle" aria-label="Move row: drag, or use the arrow keys"
                     data-action="pointerdown->form-collection#grab keydown->form-collection#key">{{ icon('grip-vertical') }}</button>
             {{ form_widget(entry.position, {attr: {'data-form-collection-target': 'position'}}) }}
+            {{ form_widget(entry.sumOf) }}
         </td>
         <td class="upgrade-col-label">
-            {{ form_widget(entry.label, {attr: {class: 'form-control form-control-sm', placeholder: package ? 'vendor/package' : ''}}) }}{{ form_errors(entry.label) }}
+            {% if sumOf %}
+                {{ form_widget(entry.label, {attr: {class: 'form-control-plaintext form-control-sm fw-semibold', readonly: 'readonly', tabindex: '-1'}}) }}
+            {% else %}
+                {{ form_widget(entry.label, {attr: {class: 'form-control form-control-sm', placeholder: package ? 'vendor/package' : ''}}) }}{{ form_errors(entry.label) }}
+            {% endif %}
             {% if package %}
                 {{ form_widget(entry.package) }}
                 {{ form_widget(entry.packageType) }}
@@ -50,8 +57,14 @@
             <td class="upgrade-col-version upgrade-col-target">{{ form_widget(entry.targetVersion, sm) }}</td>
             <td class="upgrade-col-status">{{ form_widget(entry.status, {attr: {class: 'form-select form-select-sm'}}) }}</td>
         {% endif %}
-        <td class="upgrade-col-hours">{{ form_widget(entry.minHours, sm) }}{{ form_errors(entry.minHours) }}</td>
-        <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
+        {% if sumOf %}
+            {% for bound in ['min', 'max'] %}
+                <td class="upgrade-col-hours">{{ form_widget(entry[bound ~ 'Hours'], {attr: {class: 'form-control-plaintext form-control-sm', readonly: 'readonly', tabindex: '-1', 'data-upgrade-sums-target': 'sum', 'data-sum-of': sumOf, 'data-bound': bound, 'aria-label': bound|capitalize ~ ' hours of ' ~ entry.label.vars.value}}) }}</td>
+            {% endfor %}
+        {% else %}
+            <td class="upgrade-col-hours">{{ form_widget(entry.minHours, sm) }}{{ form_errors(entry.minHours) }}</td>
+            <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
+        {% endif %}
         <td class="upgrade-col-notes" data-note-editor-target="cell">
             {{ form_widget(entry.notes, {attr: {'data-note-field': 'text'}}) }}
             {{ form_widget(entry.noteLevel, {attr: {class: 'd-none', 'data-note-field': 'level', 'aria-hidden': 'true', tabindex: '-1'}}) }}
@@ -59,7 +72,9 @@
         </td>
         <td class="upgrade-col-text">{{ form_widget(entry.assignee, sm) }}</td>
         <td class="upgrade-col-actions">
-            <button type="button" class="btn btn-sm btn-outline-neutral" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button>
+            {% if not sumOf %}
+                <button type="button" class="btn btn-sm btn-outline-neutral" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button>
+            {% endif %}
         </td>
     </tr>
 {% endmacro %}

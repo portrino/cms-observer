@@ -59,6 +59,8 @@
                 {% set items = version.items(section) %}
                 {% if items is not empty %}
                     {% set package = section.hasPackages %}
+                    {# positions are the Excel template's summary: with the package sections as their sums, and prices #}
+                    {% set summary = section.value == 'positions' %}
                     <div class="card mb-3">
                         <div class="card-header bg-white"><h2 class="h6 mb-0">{{ section.label }}</h2></div>
                         <div class="card-body p-0 table-responsive">
@@ -68,6 +70,7 @@
                                         <th>{{ package ? 'Package' : 'Position' }}</th>
                                         {% if package %}<th>Installed</th><th>Target</th><th>To-do</th>{% endif %}
                                         <th class="text-end">Hours</th>
+                                        {% if summary %}<th class="text-end">Price</th>{% endif %}
                                         <th>Notes</th>
                                         {# who does it: internal planning, not for the customer #}
                                         <th class="no-print">By</th>
@@ -75,21 +78,24 @@
                                 </thead>
                                 <tbody>
                                     {% for item in items %}
-                                        <tr>
+                                        {% set sum = item.sumOf ? totals.sections[item.sumOf.value] : null %}
+                                        <tr {% if sum %}class="upgrade-sum-row"{% endif %}>
                                             <td>{{ item.label }}</td>
                                             {% if package %}
                                                 <td><code>{{ item.installedVersion }}</code></td>
                                                 <td class="{{ item.status and item.status.value == 'update-first' ? 'table-info' }}"><code>{{ item.targetVersion }}</code></td>
                                                 <td>{% if item.status %}<span class="badge text-bg-{{ item.status.color }}">{{ item.status.label }}</span>{% endif %}</td>
                                             {% endif %}
-                                            <td class="text-end text-nowrap">{{ u.row_hours(item.minHours, item.maxHours) }}</td>
+                                            <td class="text-end text-nowrap">{{ sum ? u.row_hours(sum.min, sum.max) : u.row_hours(item.minHours, item.maxHours) }}</td>
+                                            {% if summary %}<td class="text-end text-nowrap">{{ sum or item.maxHours is not null or item.minHours is not null ? u.price({max: sum ? sum.max : (item.maxHours ?? item.minHours)}, rate) }}</td>{% endif %}
                                             <td class="upgrade-notes upgrade-markdown {{ item.noteLevel ? 'table-' ~ item.noteLevel.value }}">{{ item.notes ? item.notes|markdown_to_html }}</td>
                                             <td class="no-print">{{ item.assignee }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
                                 <tfoot>
-                                    <tr><th colspan="{{ package ? 4 : 1 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</th><th></th><th class="no-print"></th></tr>
+                                    {% set sectionSum = summary ? totals.work : totals.sections[section.value] %}
+                                    <tr><th colspan="{{ package ? 4 : 1 }}">Sum</th><th class="text-end text-nowrap">{{ u.hours(sectionSum) }}</th>{% if summary %}<th class="text-end text-nowrap">{{ u.price(sectionSum, rate) }}</th>{% endif %}<th></th><th class="no-print"></th></tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -104,9 +110,7 @@
                             <tr><th></th><th class="text-end">Hours</th><th class="text-end">Price ({{ rate|number_format(2, ',', '.') }} EUR/h)</th></tr>
                         </thead>
                         <tbody>
-                            {% for section in sections|filter(section => section.value != 'optional' and version.items(section) is not empty) %}
-                                <tr><td>{{ section.label }}</td><td class="text-end text-nowrap">{{ u.hours(totals.sections[section.value]) }}</td><td class="text-end text-nowrap">{{ u.price(totals.sections[section.value], rate) }}</td></tr>
-                            {% endfor %}
+                            <tr><td>Positions</td><td class="text-end text-nowrap">{{ u.hours(totals.work) }}</td><td class="text-end text-nowrap">{{ u.price(totals.work, rate) }}</td></tr>
                             <tr><td>Project management ({{ version.managementPercent }} %)</td><td class="text-end text-nowrap">{{ u.hours(totals.requiredManagement) }}</td><td class="text-end text-nowrap">{{ u.price(totals.requiredManagement, rate) }}</td></tr>
                             <tr class="fw-bold"><td>Total</td><td class="text-end text-nowrap">{{ u.hours(totals.required) }}</td><td class="text-end text-nowrap">{{ u.price(totals.required, rate) }}</td></tr>
                             {% if totals.beforehand.max > 0 %}

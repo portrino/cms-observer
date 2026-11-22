@@ -83,5 +83,7 @@ export default class extends Controller {
 
     renumber() {
         this.positionTargets.forEach((input, position) => { input.value = position; });
+        // rows were added, removed or moved, e.g. for the section sums
+        this.dispatch('changed');
     }
 }

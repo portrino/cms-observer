@@ -43,7 +43,9 @@ class UpgradeItemType extends AbstractType
             ])
             ->add('assignee', TextType::class, ['required' => false])
             // order of the rows after moving them in the browser; not stored, the row order is
-            ->add('position', HiddenType::class, ['required' => false]);
+            ->add('position', HiddenType::class, ['required' => false])
+            // set on the positions that stand for a package section's hours
+            ->add('sumOf', HiddenType::class, ['required' => false]);
 
         if (true === $options['package']) {
             $builder
