@@ -30,6 +30,7 @@
                     <table class="table table-sm mb-0 upgrade-table" id="upgrade-{{ section }}">
                         <thead>
                             <tr>
+                                <th class="upgrade-col-handle"><span class="visually-hidden">Order</span></th>
                                 <th>{{ package ? 'Package' : 'Position' }}</th>
                                 {% if package %}<th>Installed</th><th>Target</th><th>To-do</th>{% endif %}
                                 <th>Min h</th>
@@ -39,7 +40,7 @@
                                 <th class="upgrade-col-actions"><span class="visually-hidden">Actions</span></th>
                             </tr>
                         </thead>
-                        <tbody data-form-collection-target="rows">
+                        <tbody data-form-collection-target="rows" data-action="dragstart->form-collection#dragStart dragover->form-collection#dragOver drop->form-collection#drop dragend->form-collection#dragEnd">
                             {% for entry in collection %}
                                 {{ u.form_row(entry, package) }}
                             {% endfor %}

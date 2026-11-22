@@ -10,6 +10,11 @@
 {% macro form_row(entry, package) %}
     {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
     <tr data-form-collection-row>
+        <td class="upgrade-col-handle">
+            <button type="button" class="btn btn-sm upgrade-handle" aria-label="Move row: drag, or use the arrow keys"
+                    data-action="pointerdown->form-collection#grab keydown->form-collection#key">{{ icon('grip-vertical') }}</button>
+            {{ form_widget(entry.position, {attr: {'data-form-collection-target': 'position'}}) }}
+        </td>
         <td class="upgrade-col-label">
             {{ form_widget(entry.label, {attr: {class: 'form-control form-control-sm', placeholder: package ? 'vendor/package' : ''}}) }}{{ form_errors(entry.label) }}
             {% if package %}
@@ -27,9 +32,6 @@
         <td class="upgrade-col-notes">{{ form_widget(entry.notes, sm) }}</td>
         <td class="upgrade-col-text">{{ form_widget(entry.assignee, sm) }}</td>
         <td class="upgrade-col-actions">
-            {{ form_widget(entry.position, {attr: {'data-form-collection-target': 'position'}}) }}
-            <button type="button" class="btn btn-sm btn-outline-secondary" data-action="form-collection#moveUp" aria-label="Move up">{{ icon('arrow-up') }}</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" data-action="form-collection#moveDown" aria-label="Move down">{{ icon('arrow-down') }}</button>
             <button type="button" class="btn btn-sm btn-tertiary" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button>
         </td>
     </tr>

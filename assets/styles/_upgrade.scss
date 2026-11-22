@@ -10,11 +10,11 @@
 
     // wide enough to read on phones too, the table scrolls sideways instead
     .upgrade-col-version {
-        min-width: 7rem;
+        min-width: 6rem;
     }
 
     .upgrade-col-status {
-        min-width: 11rem;
+        min-width: 10rem;
     }
 
     .upgrade-col-text {
@@ -27,7 +27,22 @@
     }
 
     .upgrade-col-notes {
-        min-width: 16rem;
+        min-width: 12rem;
+    }
+
+    .upgrade-col-handle {
+        width: 1%;
+        padding-right: 0;
+    }
+
+    .upgrade-handle {
+        cursor: grab;
+        color: var(--bs-secondary-color);
+    }
+
+    // the row being dragged
+    .upgrade-dragging {
+        opacity: 0.5;
     }
 
     // the same place in every section, at the right edge

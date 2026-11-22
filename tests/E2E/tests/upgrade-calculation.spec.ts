@@ -25,14 +25,19 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(positions).toHaveCount(3);
     await positions.nth(1).getByRole('button', { name: 'Remove row' }).click();
     await expect(positions).toHaveCount(2);
-    await positions.nth(1).getByRole('button', { name: 'Move up' }).click();
-    await expect(positions.nth(0).locator('input').first()).toHaveValue(/^Testing/);
+    // by keyboard, then back by dragging
+    await positions.nth(1).getByRole('button', { name: /Move row/ }).press('ArrowUp');
+    await expect(positions.nth(0).locator('input[name$="[label]"]')).toHaveValue(/^Testing/);
+    await positions.nth(0).getByRole('button', { name: /Move row/ }).dragTo(positions.nth(1), { targetPosition: { x: 10, y: 30 } });
+    await expect(positions.nth(0).locator('input[name$="[label]"]')).toHaveValue('Core upgrade');
+    await positions.nth(1).getByRole('button', { name: /Move row/ }).dragTo(positions.nth(0), { targetPosition: { x: 10, y: 2 } });
+    await expect(positions.nth(0).locator('input[name$="[label]"]')).toHaveValue(/^Testing/);
 
     const optional = page.locator('#upgrade-calculation-form .card').filter({ has: page.locator('#upgrade-optional') });
     await optional.getByRole('button', { name: 'Add row' }).click();
     await optional.getByRole('button', { name: 'Add row' }).click();
     const optionalRows = page.locator('#upgrade-optional tbody tr');
-    await optionalRows.nth(0).locator('input').first().fill('Content blocks migration');
+    await optionalRows.nth(0).locator('input[name$="[label]"]').fill('Content blocks migration');
     await optionalRows.nth(0).locator('input[name$="[maxHours]"]').fill('8');
     await optionalRows.nth(1).getByRole('button', { name: 'Remove row' }).click();
 
