@@ -73,7 +73,11 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await packageRow.getByRole('button', { name: 'Edit notes' }).click();
     const dialog = page.getByRole('dialog', { name: 'Notes' });
     await dialog.getByLabel('Notes').fill('Breaking changes\nSee the changelog of 13.0');
+    const textareaBackground = () => dialog.getByLabel('Notes').evaluate((textarea) => getComputedStyle(textarea).backgroundColor);
+    const uncolored = await textareaBackground();
     await dialog.getByLabel('Color').selectOption('warning');
+    expect(await textareaBackground(), 'textarea takes the chosen color').not.toBe(uncolored);
+    expect(await dialog.getByLabel('Color').evaluate((select) => getComputedStyle(select).backgroundColor), 'the dropdown stays neutral').toBe(uncolored);
     await dialog.getByRole('button', { name: 'Apply' }).click();
     await expect(dialog).toBeHidden();
     const preview = packageRow.getByRole('button', { name: 'Edit notes' });

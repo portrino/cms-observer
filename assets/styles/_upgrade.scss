@@ -101,3 +101,12 @@
         white-space: normal;
     }
 }
+
+// The note dialog shows the chosen color on its textarea, like the row's preview
+@each $level in success, warning, danger {
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) textarea {
+        border-color: var(--bs-#{$level}-border-subtle);
+        background-color: var(--bs-#{$level}-bg-subtle);
+        color: var(--bs-#{$level}-text-emphasis);
+    }
+}
