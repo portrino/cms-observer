@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller;
 
+use App\Dto\UpgradeItem;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
@@ -162,6 +163,25 @@ class UpgradeCalculationTest extends WebTestCase
         $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
 
         self::assertStringContainsString('<option value="manual" selected>', $crawler->filter('#upgrade-packages + template')->html());
+    }
+
+    public function testRowsAreSavedInTheirMovedOrder(): void
+    {
+        $site = $this->typo3Site();
+
+        $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        $this->client->submit($crawler->selectButton('Save as new version')->form([
+            'upgrade_calculation_version[positions][0][position]' => '2',
+            'upgrade_calculation_version[positions][1][position]' => '0',
+            'upgrade_calculation_version[positions][2][position]' => '1',
+            'upgrade_calculation_version[hourlyRate]' => '100',
+            'upgrade_calculation_version[managementPercent]' => '10',
+            'upgrade_calculation_version[author]' => 'JD',
+        ]));
+        self::assertResponseRedirects();
+
+        $labels = array_map(static fn (UpgradeItem $item): string => $item->label, $this->calculationOf($site)?->getLatestVersion()?->getItems(UpgradeSection::Positions) ?? []);
+        self::assertSame(['PHP version upgrade', 'Testing, code reviews and deployments', 'Core upgrade'], $labels);
     }
 
     public function testUnknownTargetIsNotFound(): void

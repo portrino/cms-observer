@@ -26,6 +26,11 @@
         <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
         <td class="upgrade-col-notes">{{ form_widget(entry.notes, sm) }}</td>
         <td class="upgrade-col-text">{{ form_widget(entry.assignee, sm) }}</td>
-        <td><button type="button" class="btn btn-sm btn-tertiary" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button></td>
+        <td class="upgrade-col-actions">
+            {{ form_widget(entry.position, {attr: {'data-form-collection-target': 'position'}}) }}
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-action="form-collection#moveUp" aria-label="Move up">{{ icon('arrow-up') }}</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-action="form-collection#moveDown" aria-label="Move down">{{ icon('arrow-down') }}</button>
+            <button type="button" class="btn btn-sm btn-tertiary" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button>
+        </td>
     </tr>
 {% endmacro %}

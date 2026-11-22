@@ -30,6 +30,13 @@
         min-width: 16rem;
     }
 
+    // the same place in every section, at the right edge
+    .upgrade-col-actions {
+        width: 1%;
+        text-align: right;
+        white-space: nowrap;
+    }
+
     .upgrade-notes {
         min-width: 12rem;
         white-space: normal;

@@ -15,7 +15,9 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     });
     expect(response.status()).toBe(202);
 
-    await page.goto(`${project.url}/calculations`);
+    await page.goto(project.url);
+    await page.getByRole('button', { name: 'More actions' }).click();
+    await page.getByRole('link', { name: 'Upgrade calculations' }).click();
     await page.getByLabel(/New calculation from TYPO3/).selectOption('14');
     await page.getByRole('button', { name: 'Start' }).click();
 
@@ -23,6 +25,8 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(positions).toHaveCount(3);
     await positions.nth(1).getByRole('button', { name: 'Remove row' }).click();
     await expect(positions).toHaveCount(2);
+    await positions.nth(1).getByRole('button', { name: 'Move up' }).click();
+    await expect(positions.nth(0).locator('input').first()).toHaveValue(/^Testing/);
 
     const optional = page.locator('#upgrade-calculation-form .card').filter({ has: page.locator('#upgrade-optional') });
     await optional.getByRole('button', { name: 'Add row' }).click();
@@ -38,6 +42,7 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await page.getByRole('button', { name: 'Save as new version' }).click();
 
     await expect(page.locator('#upgrade-positions tbody tr')).toHaveCount(2);
+    await expect(page.locator('#upgrade-positions tbody tr').first()).toContainText('Testing');
     await expect(page.locator('#upgrade-optional')).toContainText('Content blocks migration');
     await expect(page.locator('#upgradeTotals')).toContainText('Optional, incl. project management');
     await expect(page.locator('#upgrade-packages')).toContainText('news');

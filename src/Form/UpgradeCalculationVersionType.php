@@ -112,7 +112,11 @@ class UpgradeCalculationVersionType extends AbstractType
     {
         $items = [];
         foreach (UpgradeSection::cases() as $section) {
-            foreach ($data[$section->value] ?? [] as $row) {
+            $rows = array_values($data[$section->value] ?? []);
+            // stable: rows without a position, e.g. without JavaScript, keep their order
+            uksort($rows, static fn (int $a, int $b): int => [(int) ($rows[$a]['position'] ?? $a), $a] <=> [(int) ($rows[$b]['position'] ?? $b), $b]);
+            foreach ($rows as $row) {
+                unset($row['position']);
                 // a single effort is both min and max, or the totals would show e.g. "4–0 h"
                 $row['minHours'] ??= $row['maxHours'] ?? null;
                 $row['maxHours'] ??= $row['minHours'];

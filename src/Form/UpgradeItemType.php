@@ -32,7 +32,9 @@ class UpgradeItemType extends AbstractType
             ->add('minHours', NumberType::class, $hours)
             ->add('maxHours', NumberType::class, $hours)
             ->add('notes', TextareaType::class, ['required' => false, 'attr' => ['rows' => 1]])
-            ->add('assignee', TextType::class, ['required' => false]);
+            ->add('assignee', TextType::class, ['required' => false])
+            // order of the rows after moving them in the browser; not stored, the row order is
+            ->add('position', HiddenType::class, ['required' => false]);
 
         if (true === $options['package']) {
             $builder
