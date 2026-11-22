@@ -12,6 +12,7 @@ use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3CoreReleaseRepository;
+use App\Repository\Typo3TerExtensionMetaRepository;
 use App\Repository\Typo3TerExtensionVersionRepository;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
@@ -25,6 +26,7 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
         private readonly SitePackageRepository $packageRepository,
         private readonly Typo3CoreReleaseRepository $coreReleaseRepository,
         private readonly Typo3TerExtensionVersionRepository $terVersionRepository,
+        private readonly Typo3TerExtensionMetaRepository $terMetaRepository,
     ) {
     }
 
@@ -43,8 +45,9 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
         foreach ($this->packageRepository->findBy(['site' => $site], ['name' => 'ASC']) as $package) {
             $key = $package->getName();
             $installed = $package->getVersion();
+            $label = $package->getComposerName() ?? $this->composerNameFromTer($key) ?? $key;
             $item = static fn (UpgradeSection $section, UpgradeItemStatus $status, ?string $target = null): UpgradeItem => new UpgradeItem(
-                $section, $package->getComposerName() ?? $key, $key, $package->getPackageType(), $installed, $target, $status,
+                $section, $label, $key, $package->getPackageType(), $installed, $target, $status,
             );
 
             $terVersions = $this->terVersionRepository->findBy(['extensionKey' => $key]);
@@ -80,5 +83,13 @@ final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityRes
         }
 
         return $items;
+    }
+
+    /** For reports without composer names, e.g. from older clients: "georgringer/news" from TER's Packagist link */
+    private function composerNameFromTer(string $key): ?string
+    {
+        $url = $this->terMetaRepository->findOneByExtensionKey($key)?->getPackagistUrl();
+
+        return null !== $url && 1 === preg_match('~/packages/([^/]+/[^/?#]+)~', $url, $match) ? $match[1] : null;
     }
 }

@@ -10,6 +10,7 @@ use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Typo3CoreRelease;
 use App\Entity\Typo3ReleaseType;
+use App\Entity\Typo3TerExtensionMeta;
 use App\Entity\Typo3TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
@@ -44,6 +45,7 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         $this->terVersions('blocker', ['1.0.0' => '12, 13', '1.1.0' => '13']);
         $this->terVersions('no_data', ['1.0.0' => '13', '2.0.0' => null]);
         $this->terVersions('dev_branch', ['1.0.0' => '13']);
+        $this->entityManager->persist(new Typo3TerExtensionMeta('compatible', 'https://packagist.org/packages/vendor/compatible', null, null));
         $this->entityManager->flush();
 
         $items = static::getContainer()->get(UpgradeCalculationDrafter::class)->draft($site, 14);
@@ -52,10 +54,11 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         self::assertCount(3, $positions);
         self::assertNull(array_values($positions)[0]->maxHours);
 
-        $packages = [];
+        $packages = $labels = [];
         foreach ($items as $item) {
             if (null !== $item->package) {
                 $packages[$item->package] = [$item->section, $item->status, $item->targetVersion];
+                $labels[$item->package] = $item->label;
             }
         }
         self::assertSame([
@@ -67,6 +70,8 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
             'update' => [UpgradeSection::Packages, UpgradeItemStatus::Update, '2.0.0'],
             'update_first' => [UpgradeSection::Packages, UpgradeItemStatus::UpdateFirst, '1.1.0'],
         ], $packages);
+        self::assertSame('vendor/compatible', $labels['compatible'], 'composer name from TER without one in the report');
+        self::assertSame('blocker', $labels['blocker'], 'the key without any composer name');
     }
 
     public function testTargetsAreTheKnownMajorsAboveTheCurrentOne(): void
