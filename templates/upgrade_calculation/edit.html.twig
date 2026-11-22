@@ -24,7 +24,7 @@
             <div class="card mb-3" data-controller="form-collection" data-form-collection-index-value="{{ collection|length > 0 ? max(collection|keys) + 1 : 0 }}">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h2 class="h6 mb-0">{{ collection.vars.label }}</h2>
-                    <button type="button" class="btn btn-sm btn-tertiary d-inline-flex align-items-center gap-1" data-action="form-collection#add">{{ icon('plus') }} Add row</button>
+                    <button type="button" class="btn btn-sm btn-outline-neutral d-inline-flex align-items-center gap-1" data-action="form-collection#add">{{ icon('plus') }} Add row</button>
                 </div>
                 <div class="card-body p-0 table-responsive">
                     <table class="table table-sm mb-0 upgrade-table" id="upgrade-{{ section }}">
