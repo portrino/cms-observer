@@ -6,7 +6,8 @@ namespace App\Dto;
 
 /**
  * Geometry of the support phase bars in an SVG 1000 units wide: labels on the left,
- * one row per major, a grid line per new year and a line for today.
+ * one row per major with the newest on top like the roadmap of typo3.com, a grid line
+ * per new year and a line for today.
  */
 final readonly class UpgradeSupportChart
 {
@@ -44,7 +45,7 @@ final readonly class UpgradeSupportChart
                 'x' => $start,
                 'regularWidth' => max(1, $maintained - $start),
                 'extendedWidth' => null !== $phase->extendedUntil ? max(1, $x($phase->extendedUntil->getTimestamp()) - $maintained) : 0,
-                'y' => 8 + $i * self::ROW,
+                'y' => 8 + (count($phases) - 1 - $i) * self::ROW,
             ];
         }
 

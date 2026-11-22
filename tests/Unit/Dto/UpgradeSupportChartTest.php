@@ -22,6 +22,7 @@ class UpgradeSupportChartTest extends TestCase
         self::assertSame(990, $v13['x'] + $v13['regularWidth'] + $v13['extendedWidth'], 'the latest end is the right edge');
         self::assertSame($v13['x'] + $v13['regularWidth'], $v14['x'], 'v14 starts where v13 leaves free updates');
         self::assertSame(0, $v14['extendedWidth'], 'no extended support known');
+        self::assertSame([38, 8], [$v13['y'], $v14['y']], 'the newest major on top, the current one at the bottom');
         self::assertSame($v14['x'], $chart->today);
         self::assertSame([2025, 2026, 2027, 2028], array_column($chart->years, 'year'));
         self::assertSame(100, $chart->height);
