@@ -75,6 +75,7 @@ class UpgradeCalculationVersionType extends AbstractType
             ])
             ->add('final', CheckboxType::class, [
                 'label' => 'Final version?',
+                'help' => 'Marks the version sent to the customer. Later versions are still possible.',
                 'required' => false,
             ]);
     }

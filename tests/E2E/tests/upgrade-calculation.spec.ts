@@ -69,6 +69,9 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     const save = await page.getByRole('button', { name: 'Save as new version' }).boundingBox();
     expect(Math.abs((final!.y + final!.height / 2) - (save!.y + save!.height / 2))).toBeLessThan(4);
     expect(final!.x).toBeGreaterThan(save!.x + save!.width);
+    const hint = await page.getByText('Marks the version sent to the customer').boundingBox();
+    expect(hint!.x, 'hint right of the checkbox').toBeGreaterThan(final!.x + final!.width);
+    expect(Math.abs((hint!.y + hint!.height / 2) - (save!.y + save!.height / 2)), 'hint on the line of the save button').toBeLessThan(6);
 
     await page.getByRole('button', { name: 'Save as new version' }).click();
 
