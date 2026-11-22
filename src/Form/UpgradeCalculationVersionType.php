@@ -67,13 +67,14 @@ class UpgradeCalculationVersionType extends AbstractType
                 'label' => 'Your name or initials',
                 'constraints' => [new Assert\NotBlank(), new Assert\Length(max: 100)],
             ])
-            ->add('note', TextareaType::class, [
+            ->add('note', TextType::class, [
                 'label' => 'What changed',
                 'required' => false,
-                'attr' => ['rows' => 2],
+                'attr' => ['placeholder' => 'e.g. Estimated the package updates'],
+                'constraints' => [new Assert\Length(max: 255)],
             ])
             ->add('final', CheckboxType::class, [
-                'label' => 'Final version',
+                'label' => 'Final version?',
                 'required' => false,
             ]);
     }

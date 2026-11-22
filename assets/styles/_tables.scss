@@ -1,3 +1,9 @@
+// Containing block for absolutely positioned content such as .visually-hidden
+// header labels: without it they escape the sideways scrolling and widen the page.
+.table-responsive {
+    position: relative;
+}
+
 .table a:not(.btn) {
     text-decoration: none;
 

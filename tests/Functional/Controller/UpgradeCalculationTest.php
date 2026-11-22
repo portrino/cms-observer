@@ -48,6 +48,7 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertInputValueSame('upgrade_calculation_version[packages][0][package]', 'news');
         self::assertInputValueSame('upgrade_calculation_version[packages][0][targetVersion]', '14.0.0');
         self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '');
+        self::assertSelectorNotExists('#upgradePricing .accordion-button.collapsed', 'pricing is open while still to fill in');
 
         $form = $crawler->selectButton('Save as new version')->form([
             'upgrade_calculation_version[positions][0][minHours]' => '4',
@@ -85,6 +86,7 @@ class UpgradeCalculationTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/edit');
         self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '100.00');
+        self::assertSelectorTextContains('#upgradePricing .accordion-button.collapsed', '100.00 EUR/h, project management 10 %');
         $this->client->submit($crawler->selectButton('Save as new version')->form([
             'upgrade_calculation_version[hourlyRate]' => '90',
             'upgrade_calculation_version[author]' => 'PM',

@@ -20,6 +20,14 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await page.getByRole('link', { name: 'Upgrade calculations' }).click();
     await page.getByLabel(/New calculation from TYPO3/).selectOption('14');
     await page.getByRole('button', { name: 'Start' }).click();
+    await page.waitForURL(/calculations\/new/);
+
+    // on a phone only the tables scroll sideways, not the page
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 'page overflow on a phone').toBe(0);
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.reload();
 
     const positions = page.locator('#upgrade-positions tbody tr');
     await expect(positions).toHaveCount(3);
@@ -56,6 +64,12 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await page.getByLabel('Hourly rate (EUR)').fill('100');
     await page.getByLabel('Project management (%)').fill('10');
     await page.getByLabel('Your name or initials').fill('E2E');
+    // "Final version?" sits right of the save button, on its line
+    const final = await page.getByLabel('Final version?').boundingBox();
+    const save = await page.getByRole('button', { name: 'Save as new version' }).boundingBox();
+    expect(Math.abs((final!.y + final!.height / 2) - (save!.y + save!.height / 2))).toBeLessThan(4);
+    expect(final!.x).toBeGreaterThan(save!.x + save!.width);
+
     await page.getByRole('button', { name: 'Save as new version' }).click();
 
     await expect(page.locator('#upgrade-positions tbody tr')).toHaveCount(2);

@@ -52,19 +52,43 @@
             {% do collection.setRendered %}
         {% endfor %}
 
+        {# taken over from the previous version: collapsed unless still to fill in or invalid #}
+        {% set pricing = [form.hourlyRate, form.managementPercent] %}
+        {% set pricingOpen = form.hourlyRate.vars.value is empty or pricing|filter(field => not field.vars.valid) is not empty %}
+        <div class="accordion mb-3" id="upgradePricing">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button {{ pricingOpen ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#upgradePricingBody" aria-expanded="{{ pricingOpen ? 'true' : 'false' }}" aria-controls="upgradePricingBody">
+                        <span class="accordion-title">
+                            <span class="fw-bold">Pricing</span>
+                            {% if not pricingOpen %}
+                                <span class="text-muted">{{ form.hourlyRate.vars.value }} EUR/h, project management {{ form.managementPercent.vars.value }} %</span>
+                            {% endif %}
+                        </span>
+                    </button>
+                </h2>
+                <div id="upgradePricingBody" class="accordion-collapse collapse {{ pricingOpen ? 'show' }}">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">{{ form_row(form.hourlyRate, {row_attr: {class: 'mb-0'}}) }}</div>
+                            <div class="col-md-3">{{ form_row(form.managementPercent, {row_attr: {class: 'mb-0'}}) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card mb-3">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">{{ form_row(form.hourlyRate) }}</div>
-                    <div class="col-md-3">{{ form_row(form.managementPercent) }}</div>
-                    <div class="col-md-6">{{ form_row(form.remarks) }}</div>
+                {{ form_row(form.remarks) }}
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">{{ form_row(form.author, {row_attr: {class: 'mb-0'}}) }}</div>
+                    <div class="col-md">{{ form_row(form.note, {row_attr: {class: 'mb-0'}}) }}</div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">{{ form_row(form.author) }}</div>
-                    <div class="col-md-6">{{ form_row(form.note) }}</div>
-                    <div class="col-md-3 pt-md-4">{{ form_row(form.final) }}</div>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save as new version</button>
+                    {{ form_row(form.final, {row_attr: {class: 'mb-0'}}) }}
                 </div>
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save as new version</button>
             </div>
         </div>
     {{ form_end(form) }}
