@@ -101,6 +101,23 @@ ddev npm install --prefix tests/E2E
 ddev playwright test
 ```
 
+## Translations
+
+Texts of the interface and the mails are translation keys, e.g.
+`project.add`, in `translations/messages+intl-icu.en.xlf` and `.de.xlf`
+(ICU message format for parameters and plurals). Validator messages are in
+`translations/validators.*.xlf`, keyed by their English text.
+
+- Add every new key to both files; a test fails if a language misses one.
+- `GermanPagesTest` opens the main pages in German and fails on a key that
+  shows up untranslated; add a new page there.
+- Enums shown to users implement `TranslatableInterface`; their `label()`
+  stays English for the console and logs.
+- Something saved, e.g. a history entry, keeps its translation key and
+  parameters, so it is shown in the reader's language later.
+- German texts avoid addressing the reader ("Als neue Version speichern");
+  common technical terms like Extension, Plugin or ELTS stay English.
+
 ## Submit a pull request
 
 After completing your work, **open a pull request** and provide a description of your changes. Ideally, your PR should
