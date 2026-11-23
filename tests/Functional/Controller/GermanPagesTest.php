@@ -37,6 +37,7 @@ class GermanPagesTest extends WebTestCase
         yield 'organizations' => ['/organizations', 'Organisation hinzufügen'];
         yield 'organization' => ['/organizations/{organization}', 'Beschreibung'];
         yield 'edit organization' => ['/organizations/{organization}/edit', 'Organisation bearbeiten'];
+        yield 'status' => ['/status', 'Mailversand testen'];
         yield 'new organization' => ['/organizations/new', 'Alle Organisationen'];
     }
 
@@ -62,7 +63,7 @@ class GermanPagesTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $html = (string) $client->getResponse()->getContent();
         self::assertStringContainsString($text, $html);
-        self::assertDoesNotMatchRegularExpression('/\b(?:common|nav|project|package|badge|organization|history|event|calculation)\.[a-z_.-]+\b(?!\.)/', $html, 'untranslated key');
+        self::assertDoesNotMatchRegularExpression('/\b(?:common|nav|project|package|badge|organization|history|event|calculation|status|sync)\.[a-z_.-]+\b(?!\.)/', $html, 'untranslated key');
     }
 
     public function testEveryMessageIsValidIcu(): void

@@ -838,6 +838,106 @@
         <source>event.detail.packages</source>
         <target>{count, plural, one {# package} other {# packages}}</target>
       </trans-unit>
+      <trans-unit id="status.server_time" resname="status.server_time">
+        <source>status.server_time</source>
+        <target>All times are the server's, as the scheduler runs on the server. Current server time is {now} ({timezone}, GMT {offset}).</target>
+      </trans-unit>
+      <trans-unit id="status.timezone_mismatch" resname="status.timezone_mismatch">
+        <source>status.timezone_mismatch</source>
+        <target>But the scheduler's worker runs in {timezone}: times it records are off by the difference, and syncs may show as overdue. Set the same &lt;code&gt;date.timezone&lt;/code&gt; in the PHP configuration of the web server and the command line.</target>
+      </trans-unit>
+      <trans-unit id="status.never_ran" resname="status.never_ran">
+        <source>status.never_ran</source>
+        <target>The scheduler hasn't run a sync yet: check the cron job that starts its worker, see the installation docs.</target>
+      </trans-unit>
+      <trans-unit id="status.last_sync" resname="status.last_sync">
+        <source>status.last_sync</source>
+        <target>The last sync was {command}, started {how, select, scheduled {(automatically)} manual {(manually)} other {}}{started, select, unknown {} other { on {started} at {startedTime}}} and ended on {ended} at {endedTime}.</target>
+      </trans-unit>
+      <trans-unit id="status.intro" resname="status.intro">
+        <source>status.intro</source>
+        <target>The scheduled syncs fetch the release and vulnerability data the ratings are based on. A sync is overdue when it missed its last three runs.</target>
+      </trans-unit>
+      <trans-unit id="status.schedule" resname="status.schedule">
+        <source>status.schedule</source>
+        <target>Schedule</target>
+      </trans-unit>
+      <trans-unit id="status.last_success" resname="status.last_success">
+        <source>status.last_success</source>
+        <target>Last success</target>
+      </trans-unit>
+      <trans-unit id="status.last_failure" resname="status.last_failure">
+        <source>status.last_failure</source>
+        <target>Last failure</target>
+      </trans-unit>
+      <trans-unit id="status.overdue" resname="status.overdue">
+        <source>status.overdue</source>
+        <target>Overdue</target>
+      </trans-unit>
+      <trans-unit id="status.no_syncs" resname="status.no_syncs">
+        <source>status.no_syncs</source>
+        <target>No scheduled syncs.</target>
+      </trans-unit>
+      <trans-unit id="status.mail_test" resname="status.mail_test">
+        <source>status.mail_test</source>
+        <target>Test mail setup</target>
+      </trans-unit>
+      <trans-unit id="status.mail_test_hint" resname="status.mail_test_hint">
+        <source>status.mail_test_hint</source>
+        <target>Sends a test mail from {from} via {transport}.</target>
+      </trans-unit>
+      <trans-unit id="status.mail_test_send" resname="status.mail_test_send">
+        <source>status.mail_test_send</source>
+        <target>Send test mail</target>
+      </trans-unit>
+      <trans-unit id="status.recipient" resname="status.recipient">
+        <source>status.recipient</source>
+        <target>Recipient</target>
+      </trans-unit>
+      <trans-unit id="status.mail_sent" resname="status.mail_sent">
+        <source>status.mail_sent</source>
+        <target>The mail server accepted the test mail to {recipient}. Check that it arrives, also in the spam folder.</target>
+      </trans-unit>
+      <trans-unit id="status.mail_failed" resname="status.mail_failed">
+        <source>status.mail_failed</source>
+        <target>The test mail could not be sent: {error}</target>
+      </trans-unit>
+      <trans-unit id="sync.app:check-syncs" resname="sync.app:check-syncs">
+        <source>sync.app:check-syncs</source>
+        <target>Mail about scheduled syncs that missed their last three runs, once per outage</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-plugin-vulnerabilities" resname="sync.app:wordpress:sync-plugin-vulnerabilities">
+        <source>sync.app:wordpress:sync-plugin-vulnerabilities</source>
+        <target>Fetch the Wordfence Intelligence vulnerability feed (needs WORDFENCE_API_KEY), then re-rate every reported plugin version</target>
+      </trans-unit>
+      <trans-unit id="sync.app:typo3:sync-core-releases" resname="sync.app:typo3:sync-core-releases">
+        <source>sync.app:typo3:sync-core-releases</source>
+        <target>Fetch the TYPO3 core releases and their security status from get.typo3.org, then re-rate the TYPO3 version of every project</target>
+      </trans-unit>
+      <trans-unit id="sync.app:sync-endoflife-releases" resname="sync.app:sync-endoflife-releases">
+        <source>sync.app:sync-endoflife-releases</source>
+        <target>Fetch the support cycles of PHP, MariaDB, MySQL, PostgreSQL and TYPO3 from endoflife.date, then re-rate the PHP and database version of every project</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-core-releases" resname="sync.app:wordpress:sync-core-releases">
+        <source>sync.app:wordpress:sync-core-releases</source>
+        <target>Fetch the WordPress core releases and which are insecure from api.wordpress.org, then re-rate the WordPress version of every project</target>
+      </trans-unit>
+      <trans-unit id="sync.app:typo3:sync-extension-advisories" resname="sync.app:typo3:sync-extension-advisories">
+        <source>sync.app:typo3:sync-extension-advisories</source>
+        <target>Fetch the TYPO3 security advisories for extensions, then re-rate every reported extension version</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-themes" resname="sync.app:wordpress:sync-themes">
+        <source>sync.app:wordpress:sync-themes</source>
+        <target>Fetch the latest WordPress.org version of every reported theme, then re-rate the reported themes as outdated</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-plugins" resname="sync.app:wordpress:sync-plugins">
+        <source>sync.app:wordpress:sync-plugins</source>
+        <target>Fetch the WordPress.org versions of a batch of reported plugins per run, then re-rate the reported plugins as outdated</target>
+      </trans-unit>
+      <trans-unit id="sync.app:typo3:sync-extension-versions" resname="sync.app:typo3:sync-extension-versions">
+        <source>sync.app:typo3:sync-extension-versions</source>
+        <target>Fetch the TER versions of a batch of reported extensions per run, then re-rate the reported extensions as insecure or outdated</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
