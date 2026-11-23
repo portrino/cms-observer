@@ -11,8 +11,14 @@
 {% block page_actions %}
     {{ m.topbar_link(path('upgrade_calculation_index', {id: site.id}), 'arrow-left', 'All calculations') }}
     <button type="button" class="btn btn-tertiary d-inline-flex align-items-center gap-1" data-controller="print" data-action="print#print" aria-label="Print or save as PDF">{{ icon('printer') }}<span class="d-none d-md-inline">Print / PDF</span></button>
-    {{ m.topbar_link(path('upgrade_calculation_refresh', {id: calculation.id, version: version.id}), 'refresh-cw', 'Refresh from report') }}
-    {{ m.topbar_link(path('upgrade_calculation_edit', {id: calculation.id, version: version.id}), 'pencil', 'Edit') }}
+    {# refreshing is editing with the latest report's packages, so it's an option of "Edit" #}
+    <div class="btn-group">
+        {{ m.topbar_link(path('upgrade_calculation_edit', {id: calculation.id, version: version.id}), 'pencil', 'Edit') }}
+        <button type="button" class="btn btn-tertiary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More ways to edit"></button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('upgrade_calculation_refresh', {id: calculation.id, version: version.id}) }}">{{ icon('refresh-cw') }} Refresh from report</a></li>
+        </ul>
+    </div>
 {% endblock %}
 
 {% block body %}

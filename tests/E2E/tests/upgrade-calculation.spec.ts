@@ -133,6 +133,15 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     await expect(page.locator('#upgrade-packages')).toContainText('news');
     await expect(page.locator('#upgrade-packages td.table-warning strong')).toHaveText('See the changelog of 13.0');
 
+    // refreshing is an option of the edit button
+    await page.getByRole('button', { name: 'More ways to edit' }).click();
+    await expect(page.getByRole('link', { name: 'Refresh from report' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    const edit = await page.getByRole('link', { name: 'Edit', exact: true }).boundingBox();
+    const toggle = await page.getByRole('button', { name: 'More ways to edit' }).boundingBox();
+    // Bootstrap's button group overlaps the borders by 1px
+    expect(Math.abs(toggle!.x - (edit!.x + edit!.width)), 'split button: the toggle sits right next to "Edit"').toBeLessThanOrEqual(1);
+
     // printed like paper: white, no page padding, cards without frame, the changelog as a table
     await page.emulateMedia({ media: 'print' });
     const printed = await page.evaluate(() => {
