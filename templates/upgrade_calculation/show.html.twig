@@ -142,6 +142,11 @@
                         </a>
                     {% endfor %}
                 </ul>
+                {% if version != calculation.versions|last %}
+                    <div class="card-footer bg-white">
+                        <a href="{{ path('upgrade_calculation_compare', {id: calculation.id, to: version.id}) }}" class="d-inline-flex align-items-center gap-1">{{ icon('history') }} Compare with previous</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

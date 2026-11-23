@@ -110,6 +110,15 @@ class UpgradeCalculationTest extends WebTestCase
 
         $this->client->request('GET', '/projects/'.$site->getId().'/calculations');
         self::assertSelectorTextSame('#upgradeCalculations .badge-count[title="Saved versions"]', '2');
+
+        $this->client->request('GET', '/calculations/'.$calculation->getId());
+        $this->client->clickLink('Compare with previous');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#compareSettings', 'Hourly rate (EUR): 100.00 → 90.00');
+        self::assertSelectorTextContains('#compareSettings', 'Final version: no → yes');
+
+        $this->client->request('GET', '/calculations/'.$calculation->getId().'/compare?to='.$first?->getId());
+        self::assertResponseStatusCodeSame(404, 'the first version has no previous one');
         [$latest, $old] = $calculation->getVersions();
         self::assertSame(['PM', 90.0, true], [$latest->getAuthor(), $latest->getHourlyRate(), $latest->isFinal()]);
         self::assertSame(['JD', 100.0, false], [$old->getAuthor(), $old->getHourlyRate(), $old->isFinal()]);

@@ -15,6 +15,7 @@ use App\Repository\UpgradeCalculationRepository;
 use App\Service\UpgradeCalculationDrafter;
 use App\Service\UpgradeCalculationRefresher;
 use App\Service\UpgradeTotals;
+use App\Service\UpgradeVersionComparison;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -91,6 +92,27 @@ class UpgradeCalculationController extends AbstractController
             'totals' => new UpgradeTotals($version->getItems(), $version->getManagementPercent()),
             'supportPhases' => $phases,
             'supportChart' => [] !== $phases ? UpgradeSupportChart::of($phases, new \DateTimeImmutable()) : null,
+        ]);
+    }
+
+    /** Two versions, by default the given or latest one and the one before it */
+    #[Route('/calculations/{id}/compare', name: 'upgrade_calculation_compare', methods: ['GET'])]
+    public function compare(UpgradeCalculation $calculation, #[MapQueryParameter] ?int $from = null, #[MapQueryParameter] ?int $to = null): Response
+    {
+        $new = $this->findVersion($calculation, $to);
+        $versions = $calculation->getVersions();
+        // newest first: the previous version follows the new one
+        $previous = $versions[(int) array_search($new, $versions, true) + 1] ?? null;
+        $old = null !== $from ? $this->findVersion($calculation, $from) : $previous;
+        if (null === $old) {
+            throw $this->createNotFoundException('The first version has nothing to compare with.');
+        }
+
+        return $this->render('upgrade_calculation/compare.html.twig', [
+            'site' => $calculation->getSite(),
+            'calculation' => $calculation,
+            'comparison' => new UpgradeVersionComparison($old, $new),
+            'sections' => UpgradeSection::cases(),
         ]);
     }
 
