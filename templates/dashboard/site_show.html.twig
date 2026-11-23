@@ -6,12 +6,12 @@
 {% block page_title %}{{ site.name }}{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('dashboard_site_history', {id: site.id}), 'history', 'History') }}
-    {{ m.topbar_link(path('dashboard_site_edit', {id: site.id}), 'pencil', 'Edit') }}
+    {{ m.topbar_link(path('dashboard_site_history', {id: site.id}), 'history', 'project.history'|trans) }}
+    {{ m.topbar_link(path('dashboard_site_edit', {id: site.id}), 'pencil', 'common.edit'|trans) }}
     <div class="dropdown">
-        <button type="button" class="btn btn-tertiary" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More actions">{{ icon('ellipsis-vertical') }}</button>
+        <button type="button" class="btn btn-tertiary" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ 'common.more_actions'|trans }}">{{ icon('ellipsis-vertical') }}</button>
         <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('upgrade_calculation_index', {id: site.id}) }}">{{ icon('calculator') }} Upgrade calculations</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('upgrade_calculation_index', {id: site.id}) }}">{{ icon('calculator') }} {{ 'calculation.plural'|trans }}</a></li>
         </ul>
     </div>
 {% endblock %}
@@ -20,80 +20,78 @@
 <div class="container">
     {% for token in app.flashes('site_token') %}
         <div class="alert alert-warning">
-            <strong>Push token — copy it now, it will not be shown again:</strong><br>
+            <strong>{{ 'project.token_shown_once'|trans }}</strong><br>
             <code>{{ token }}</code>
         </div>
     {% endfor %}
 
     <p class="text-muted fst-italic mb-3">
-        Last seen: {{ site.lastSeenAt ? site.lastSeenAt|date('Y-m-d H:i') : 'never' }}
+        {{ 'project.last_seen'|trans }}: {{ site.lastSeenAt ? site.lastSeenAt|format_datetime('medium', 'short') : 'project.never'|trans }}
         {% if site.stale %}
-            <span class="badge text-bg-warning ms-2">{{ m.icon_warning() }}Stale</span>
+            <span class="badge text-bg-warning ms-2">{{ m.icon_warning() }}{{ 'badge.stale_short'|trans }}</span>
         {% endif %}
     </p>
     {% if site.lastRejectedReportAt %}
         <div class="alert alert-warning py-2 mb-3" role="alert">
-            Rejected report from {{ site.lastRejectedReportDomains|join(', ') }}
-            on {{ site.lastRejectedReportAt|date('Y-m-d H:i') }}: none of its domains matches {{ site.url }}.
-            Another instance (e.g. staging) seems to use this site's token.
+            {{ 'project.rejected_report'|trans({domains: site.lastRejectedReportDomains|join(', '), date: site.lastRejectedReportAt|format_datetime('medium', 'short'), url: site.url}) }}
         </div>
     {% endif %}
 
     <div class="row gy-3 mb-4">
         <div class="col-md-6">
             <div class="card h-100">
-                <div class="card-header bg-white">System information</div>
+                <div class="card-header bg-white">{{ 'project.system_info'|trans }}</div>
                 <div class="card-body">
                     <table class="table table-sm mb-0">
                         <tbody>
                             <tr>
-                                <th class="w-25">Type</th>
+                                <th class="w-25">{{ 'common.type'|trans }}</th>
                                 <td>{{ m.cms_type_icon(site.type) }} {{ site.type.label }}</td>
                             </tr>
                             {% if lastReport %}
                                 <tr>
-                                    <th>Context</th>
+                                    <th>{{ 'project.context'|trans }}</th>
                                     <td>
                                         {{ lastReport.payload.applicationContext ?? '—' }}
                                         {% if site.runsOutsideProductionContext %}
-                                            <span class="badge text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Error details and debug output can be public">{{ m.icon_warning() }}<span class="badge-text">Not Production</span></span>
+                                            <span class="badge text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'project.not_production_hint'|trans }}">{{ m.icon_warning() }}<span class="badge-text">{{ 'project.not_production'|trans }}</span></span>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Client version</th>
+                                    <th>{{ 'project.client_version'|trans }}</th>
                                     <td>{{ lastReport.payload.clientVersion ?? '—' }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Domains</th>
+                                    <th>{{ 'project.domains'|trans }}</th>
                                     <td>
                                         {% if lastReport.payload.domains ?? [] %}
                                             {{ lastReport.payload.domains|join(', ') }}
                                         {% else %}
-                                            <span class="text-muted">not reported, so not checked against the site URL</span>
+                                            <span class="text-muted">{{ 'project.domains_not_reported'|trans }}</span>
                                         {% endif %}
                                     </td>
                                 </tr>
                             {% endif %}
                             <tr>
-                                <th>PHP version</th>
+                                <th>{{ 'project.php_version'|trans }}</th>
                                 <td>
                                     {{ site.currentPhpVersion ?? '—' }}
                                     {{ m.security_badge(site.phpInsecure) }}
                                     {{ m.outdated_badge(site.phpOutdated, site.phpLatestVersion) }}
                                     {% if (site.phpInsecure or site.phpOutdated) and site.phpEolUrl %}
-                                        <a href="{{ site.phpEolUrl }}" target="_blank" rel="noopener">(EOL info)</a>
+                                        <a href="{{ site.phpEolUrl }}" target="_blank" rel="noopener">({{ 'project.eol_info'|trans }})</a>
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
-                                <th>Database version</th>
+                                <th>{{ 'project.db_version'|trans }}</th>
                                 <td>
                                     {% if site.currentDbPlatform %}{{ {mariadb: 'MariaDB', mysql: 'MySQL', postgresql: 'PostgreSQL'}[site.currentDbPlatform] ?? site.currentDbPlatform }} {% endif %}{{ site.currentDbVersion ?? '—' }}
                                     {{ m.security_badge(site.dbInsecure) }}
                                     {{ m.outdated_badge(site.dbOutdated, site.dbLatestVersion) }}
                                     {% if (site.dbInsecure or site.dbOutdated) and site.dbEolUrl %}
-                                        <a href="{{ site.dbEolUrl }}" target="_blank" rel="noopener">(EOL info)</a>
+                                        <a href="{{ site.dbEolUrl }}" target="_blank" rel="noopener">({{ 'project.eol_info'|trans }})</a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -104,22 +102,22 @@
         </div>
         <div class="col-md-6">
             <div class="card h-100">
-                <div class="card-header bg-white">Project information</div>
+                <div class="card-header bg-white">{{ 'project.project_info'|trans }}</div>
                 <div class="card-body">
                     <table class="table table-sm mb-0">
                         <tbody>
                             {% if site.organization %}
                                 <tr>
-                                    <th class="w-25">Organization</th>
+                                    <th class="w-25">{{ 'organization.label'|trans }}</th>
                                     <td><a href="{{ path('dashboard_organization_show', {id: site.organization.id}) }}">{{ site.organization.name }}</a></td>
                                 </tr>
                             {% endif %}
                             <tr>
-                                <th class="w-25">Website</th>
+                                <th class="w-25">{{ 'common.website'|trans }}</th>
                                 <td class="text-break"><a href="{{ site.url }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ site.url }} {{ icon('external-link') }}</a></td>
                             </tr>
                             <tr>
-                                <th>Issue tracker</th>
+                                <th>{{ 'project.issue_tracker'|trans }}</th>
                                 <td class="text-break">
                                 {% if site.issueTrackerUrl %}
                                     <a href="{{ site.issueTrackerUrl }}" target="_blank" rel="noopener">{{ site.issueTrackerUrl }}</a>
@@ -129,7 +127,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Repository</th>
+                                <th>{{ 'project.repository'|trans }}</th>
                                 <td class="text-break">
                                 {% if site.repositoryUrl %}
                                     <a href="{{ site.repositoryUrl }}" target="_blank" rel="noopener">{{ site.repositoryUrl }}</a>
@@ -169,15 +167,15 @@
             <div id="coreAccordionBody" class="accordion-collapse collapse" data-bs-parent="#coreAccordion">
                 <div class="accordion-body">
                 {% if newerCoreReleases is empty %}
-                    <p class="text-muted mb-0">No newer core releases known.</p>
+                    <p class="text-muted mb-0">{{ 'project.no_newer_core'|trans }}</p>
                 {% else %}
                     <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Version</th>
-                                <th>Date</th>
-                                <th>Notes</th>
+                                <th>{{ 'common.version'|trans }}</th>
+                                <th>{{ 'common.date'|trans }}</th>
+                                <th>{{ 'project.notes'|trans }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -189,8 +187,8 @@
                                 : 'https://wordpress.org/documentation/wordpress-version/version-' ~ release.version|replace({'.': '-'}) ~ '/' %}
                             <tr class="{{ release.insecure ? 'row-insecure' : (release is same as(latestRelease) ? 'row-latest' : 'row-secure') }}">
                                 <td class="text-nowrap"><span class="version-number">{{ release.version }}</span>{{ m.version_flag(release.insecure, release is same as(latestRelease)) }}</td>
-                                <td class="text-nowrap">{{ release.releaseDate ? release.releaseDate|date('Y-m-d') : '—' }}</td>
-                                <td><a href="{{ notesUrl }}" target="_blank" rel="noopener">Release notes</a></td>
+                                <td class="text-nowrap">{{ release.releaseDate ? release.releaseDate|format_date('medium') : '—' }}</td>
+                                <td><a href="{{ notesUrl }}" target="_blank" rel="noopener">{{ 'project.release_notes'|trans }}</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -204,7 +202,7 @@
     </div>
     </div>
 
-    <h2 class="h4 mb-3">Packages {{ m.package_count_badge(packages|length, site.type.value == 'typo3' ? 'extensions' : 'plugins and themes') }}</h2>
+    <h2 class="h4 mb-3">{{ 'nav.packages'|trans }} {{ m.package_count_badge(packages|length, site.type.value == 'typo3' ? 'package.label.extensions'|trans : 'package.label.plugins_themes'|trans) }}</h2>
     <div class="card mb-4">
     <div class="card-body p-0">
     <div class="accordion" id="packagesAccordion">
@@ -220,12 +218,12 @@
                     <span class="me-2 fw-bold">{{ package.version }}</span>
                     {{ m.security_badge(package.insecure) }}
                     {{ m.outdated_badge(package.outdated, package.latestVersion) }}
-                    {% if not package.active %}<span class="badge text-bg-neutral ms-2">Inactive</span>{% endif %}
+                    {% if not package.active %}<span class="badge text-bg-neutral ms-2">{{ 'package.inactive'|trans }}</span>{% endif %}
                     {% if package.matchedAdvisory %}
                         <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ package.matchedAdvisory.advisoryId }} ({{ package.matchedAdvisory.severity }})</span>
                     {% endif %}
                     {% if package.matchedWordpressVulnerability %}
-                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ package.matchedWordpressVulnerability.cve ?? 'Vulnerability' }} ({{ package.matchedWordpressVulnerability.cvssRating }})</span>
+                        <span class="badge badge-solid text-bg-danger ms-2">{{ m.icon_warning() }}{{ package.matchedWordpressVulnerability.cve ?? 'package.vulnerability'|trans }} ({{ package.matchedWordpressVulnerability.cvssRating }})</span>
                     {% endif %}
                     {{ m.newer_core_package_badge(site.type.label, package.newerCoreVersion, package.newerCorePackageVersion, 'badge-next-major') }}
                     </span>
@@ -236,8 +234,8 @@
                 {% if site.type.value == 'wordpress' %}
                     <div class="mb-2">
                         {% set wpKind = package.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
-                        <a href="https://wordpress.org/{{ wpKind }}/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on WordPress.org {{ icon('external-link') }}</a>
-                        <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ package.name }}/" target="_blank" rel="noopener" class="ms-3">Repository</a>
+                        <a href="https://wordpress.org/{{ wpKind }}/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'WordPress.org'}) }} {{ icon('external-link') }}</a>
+                        <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ package.name }}/" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
                     </div>
                     {% if details.wordpressPluginInfo.description ?? null %}
                         <p>{{ details.wordpressPluginInfo.description }}</p>
@@ -249,22 +247,22 @@
                     {% if vulnerability %}
                         <p class="mb-1">
                             <a href="{{ vulnerability.url }}" target="_blank" rel="noopener">{{ vulnerability.title }}</a>:
-                            known vulnerability, severity {{ vulnerability.cvssRating }} (CVSS {{ vulnerability.cvssScore }}).
-                            {{ vulnerability.patchedVersions is empty ? 'No fixed version available.' : 'Fixed in ' ~ vulnerability.patchedVersions|join(', ') ~ '.' }}
+                            {{ 'package.known_vulnerability'|trans({severity: vulnerability.cvssRating}) }} (CVSS {{ vulnerability.cvssScore }}).
+                            {{ vulnerability.patchedVersions is empty ? 'package.no_fix'|trans : 'package.fixed_in'|trans({versions: vulnerability.patchedVersions|join(', ')}) }}
                         </p>
                         {{ m.vulnerability_copyright(vulnerability.copyrightNotices) }}
                     {% endif %}
                     {% if details.newerVersions is empty %}
-                        <p class="text-muted mb-0">No newer versions known.</p>
+                        <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
                     {% else %}
                         <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Version</th>
-                                    <th>Comment</th>
-                                    <th>Date</th>
-                                    <th>Compatibility</th>
+                                    <th>{{ 'common.version'|trans }}</th>
+                                    <th>{{ 'package.comment'|trans }}</th>
+                                    <th>{{ 'common.date'|trans }}</th>
+                                    <th>{{ 'package.compatibility'|trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -274,7 +272,7 @@
                                 <tr class="{{ state.insecure ? 'row-insecure' : (isLatest ? 'row-latest' : 'row-secure') }}">
                                     <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(state.insecure, isLatest) }}</td>
                                     <td>—</td>
-                                    <td class="text-nowrap">{{ version.releaseDate ? version.releaseDate|date('Y-m-d') : '—' }}</td>
+                                    <td class="text-nowrap">{{ version.releaseDate ? version.releaseDate|format_date('medium') : '—' }}</td>
                                     <td class="text-nowrap">{{ version.requiresWpVersion ? m.wordpress_requires_badge(version.requiresWpVersion, state.compatible) : '—' }}</td>
                                 </tr>
                             {% endfor %}
@@ -284,15 +282,15 @@
                     {% endif %}
                 {% else %}
                     <div class="mb-2">
-                        <a href="https://extensions.typo3.org/extension/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">View on TER {{ icon('external-link') }}</a>
+                        <a href="https://extensions.typo3.org/extension/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'TER'}) }} {{ icon('external-link') }}</a>
                         {% if details.packagistUrl %}
                             <a href="{{ details.packagistUrl }}" target="_blank" rel="noopener" class="ms-3">Packagist</a>
                         {% endif %}
                         {% if details.repositoryUrl %}
-                            <a href="{{ details.repositoryUrl }}" target="_blank" rel="noopener" class="ms-3">Repository</a>
+                            <a href="{{ details.repositoryUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
                         {% endif %}
                         {% if details.manualUrl %}
-                            <a href="{{ details.manualUrl }}" target="_blank" rel="noopener" class="ms-3">Manual</a>
+                            <a href="{{ details.manualUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'package.manual'|trans }}</a>
                         {% endif %}
                     </div>
                     {% if details.description %}
@@ -302,19 +300,19 @@
                         <p class="text-muted"><code>{{ package.composerName }}</code></p>
                     {% endif %}
                     {% if package.matchedAdvisory %}
-                        <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: known vulnerability, severity {{ package.matchedAdvisory.severity }}.</p>
+                        <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: {{ 'package.known_vulnerability'|trans({severity: package.matchedAdvisory.severity}) }}.</p>
                     {% endif %}
                     {% if details.newerVersions is empty %}
-                        <p class="text-muted mb-0">No newer versions known.</p>
+                        <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
                     {% else %}
                         <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Version</th>
-                                    <th>Comment</th>
-                                    <th>Date</th>
-                                    <th>Compatibility</th>
+                                    <th>{{ 'common.version'|trans }}</th>
+                                    <th>{{ 'package.comment'|trans }}</th>
+                                    <th>{{ 'common.date'|trans }}</th>
+                                    <th>{{ 'package.compatibility'|trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -324,7 +322,7 @@
                                 <tr class="{{ version.insecure ? 'row-insecure' : (version is same as(latestVersion) ? 'row-latest' : 'row-secure') }}">
                                     <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}</td>
                                     <td class="text-break">{{ version.uploadComment ?? '—' }}</td>
-                                    <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|date('Y-m-d') : '—' }}</td>
+                                    <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|format_date('medium') : '—' }}</td>
                                     <td class="text-nowrap">
                                         {% for major in version.typo3MajorVersions %}
                                             {{ m.typo3_major_badge(major, typo3SupportStatus[major] ?? null, loop.last ? '' : 'me-1') }}
@@ -343,7 +341,7 @@
             </div>
         </div>
     {% else %}
-        <p class="text-muted">No packages reported yet.</p>
+        <p class="text-muted">{{ 'package.none_reported'|trans }}</p>
     {% endfor %}
     </div>
     </div>

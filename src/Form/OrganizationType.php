@@ -22,12 +22,15 @@ class OrganizationType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
+                'label' => 'common.name',
                 'constraints' => [new NotBlank()],
             ])
             ->add('description', TextareaType::class, [
+                'label' => 'organization.description',
                 'required' => false,
             ])
             ->add('website', UrlType::class, [
+                'label' => 'common.website',
                 'required' => false,
                 'constraints' => [new Url()],
             ]);

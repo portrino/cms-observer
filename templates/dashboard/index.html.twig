@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Projects - CMS Observer{% endblock %}
+{% block title %}{{ 'nav.projects'|trans }} - CMS Observer{% endblock %}
 
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block page_title %}Projects{% endblock %}
+{% block page_title %}{{ 'nav.projects'|trans }}{% endblock %}
 
 {% block page_actions %}
     {{ m.filter_toggle([query, filter.type, filter.security, filter.sla]|filter(v => v)|length) }}
-    {{ m.topbar_link(path('dashboard_site_new'), 'plus', 'Add Project') }}
+    {{ m.topbar_link(path('dashboard_site_new'), 'plus', 'project.add'|trans) }}
 {% endblock %}
 
 {% block body %}
@@ -16,34 +16,34 @@
     <div class="page-filters collapse d-md-block" id="pageFilters">
     <form method="get" class="row g-2 mb-3" data-controller="auto-submit" data-turbo-frame="projects-results">
         <div class="col-auto">
-            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search name, URL, organization…" aria-label="Search" data-action="input->auto-submit#submitAfterTyping">
+            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="{{ 'project.search'|trans }}" aria-label="{{ 'common.search'|trans }}" data-action="input->auto-submit#submitAfterTyping">
         </div>
         <div class="col-auto">
-            <select name="type" class="form-select" aria-label="Type" data-action="change->auto-submit#submit">
-                <option value="">All types</option>
+            <select name="type" class="form-select" aria-label="{{ 'common.type'|trans }}" data-action="change->auto-submit#submit">
+                <option value="">{{ 'common.all_types'|trans }}</option>
                 {% for cmsType in cmsTypes %}
                     <option value="{{ cmsType.value }}" {{ cmsType == filter.type ? 'selected' }}>{{ cmsType.label }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="col-auto">
-            <select name="security" class="form-select" aria-label="Security" data-action="change->auto-submit#submit">
-                <option value="">Any security status</option>
+            <select name="security" class="form-select" aria-label="{{ 'common.security'|trans }}" data-action="change->auto-submit#submit">
+                <option value="">{{ 'project.any_security'|trans }}</option>
                 {% for securityFilter in securityFilters %}
-                    <option value="{{ securityFilter.value }}" {{ securityFilter == filter.security ? 'selected' }}>{{ securityFilter.label }}</option>
+                    <option value="{{ securityFilter.value }}" {{ securityFilter == filter.security ? 'selected' }}>{{ securityFilter|trans }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="col-auto">
             <select name="sla" class="form-select" aria-label="SLA" data-action="change->auto-submit#submit">
-                <option value="">With and without SLA</option>
+                <option value="">{{ 'project.any_sla'|trans }}</option>
                 {% for slaFilter in slaFilters %}
-                    <option value="{{ slaFilter.value }}" {{ slaFilter == filter.sla ? 'selected' }}>{{ slaFilter.label }}</option>
+                    <option value="{{ slaFilter.value }}" {{ slaFilter == filter.sla ? 'selected' }}>{{ slaFilter|trans }}</option>
                 {% endfor %}
             </select>
         </div>
         <noscript class="col-auto">
-            <button type="submit" class="btn btn-tertiary">Filter</button>
+            <button type="submit" class="btn btn-tertiary">{{ 'common.filter'|trans }}</button>
         </noscript>
     </form>
     </div>
@@ -57,7 +57,7 @@
                 packageStatusBySite: packageStatusBySite,
                 packageSummaryBySite: packageSummaryBySite,
                 coreMajorStatusBySite: coreMajorStatusBySite,
-                emptyMessage: query or filter.type or filter.security or filter.sla ? 'No projects match.' : 'No projects registered yet.',
+                emptyMessage: query or filter.type or filter.security or filter.sla ? 'project.none_match'|trans : 'project.none_yet'|trans,
             }) }}
         </div>
     </div>

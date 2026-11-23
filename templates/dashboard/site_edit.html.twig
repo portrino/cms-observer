@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block title %}Edit {{ site.name }} - CMS Observer{% endblock %}
+{% block title %}{{ 'common.edit_named'|trans({name: site.name}) }} - CMS Observer{% endblock %}
 
-{% block page_title %}Edit Project{% endblock %}
+{% block page_title %}{{ 'project.edit'|trans }}{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('dashboard_site_show', {id: site.id}), 'arrow-left', 'Back to project') }}
+    {{ m.topbar_link(path('dashboard_site_show', {id: site.id}), 'arrow-left', 'project.back'|trans) }}
 {% endblock %}
 
 {% block body %}
@@ -28,21 +28,21 @@
             {{ form_end(form) }}
         </div>
         <div class="card-footer bg-white d-flex justify-content-between">
-            <button type="submit" form="site-edit-form" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
+            <button type="submit" form="site-edit-form" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} {{ 'common.save'|trans }}</button>
             <button type="button" class="btn btn-outline-danger d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#deleteSiteModal">
-                {{ icon('trash') }} Delete project
+                {{ icon('trash') }} {{ 'project.delete'|trans }}
             </button>
         </div>
     </div>
 
     <div class="card mt-3">
         <div class="card-body">
-            <h2 class="h6">Push token</h2>
-            <p class="text-muted mb-0">The token is stored hashed and can't be shown again. If it got lost, generate a new one.</p>
+            <h2 class="h6">{{ 'project.push_token'|trans }}</h2>
+            <p class="text-muted mb-0">{{ 'project.token_hashed'|trans }}</p>
         </div>
         <div class="card-footer bg-white">
             <button type="button" class="btn btn-outline-danger d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#regenerateTokenModal">
-                {{ icon('key-round') }} Generate new token
+                {{ icon('key-round') }} {{ 'project.token_generate'|trans }}
             </button>
         </div>
     </div>
@@ -53,21 +53,20 @@
         <div class="modal-content">
             <form method="post" action="{{ path('dashboard_site_regenerate_token', {id: site.id}) }}">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="regenerateTokenModalLabel">Generate a new push token</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="regenerateTokenModalLabel">{{ 'project.token_generate_title'|trans }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'common.close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-warning mb-0">
-                        The current token stops working immediately. The site's reports are rejected
-                        until the new token is entered in its client.
+                        {{ 'project.token_warning'|trans }}
                     </div>
                     <input type="hidden" name="_token" value="{{ csrf_token('regenerate-token-' ~ site.id) }}">
                 </div>
                 <div class="modal-footer justify-content-start">
                     <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-1">
-                        {{ icon('key-round') }} Generate new token
+                        {{ icon('key-round') }} {{ 'project.token_generate'|trans }}
                     </button>
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">{{ 'common.cancel'|trans }}</button>
                 </div>
             </form>
         </div>
@@ -80,19 +79,19 @@
             <form method="post" action="{{ path('dashboard_site_delete', {id: site.id}) }}"
                   data-controller="delete-confirmation" data-expected="{{ confirmationString }}">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="deleteSiteModalLabel">Delete this project</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="deleteSiteModalLabel">{{ 'project.delete_title'|trans }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'common.close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-danger">
                         <ul class="mb-0">
-                            <li>This operation <strong>CANNOT</strong> be undone.</li>
-                            <li>This operation will permanently delete the <strong>{{ confirmationString }}</strong> project including all referenced data.</li>
+                            <li>{{ 'project.delete_irreversible'|trans|raw }}</li>
+                            <li>{{ 'project.delete_all_data'|trans({name: '<strong>' ~ confirmationString|e ~ '</strong>'})|raw }}</li>
                         </ul>
                     </div>
-                    <p>Enter the organization and project name exactly as shown: <code>{{ confirmationString }}</code></p>
+                    <p>{{ 'project.delete_enter'|trans }} <code>{{ confirmationString }}</code></p>
                     <div class="mb-0">
-                        <label for="deleteSiteConfirmationInput" class="form-label">Confirmation string</label>
+                        <label for="deleteSiteConfirmationInput" class="form-label">{{ 'project.delete_confirmation'|trans }}</label>
                         <input type="text" id="deleteSiteConfirmationInput" name="confirmation" class="form-control" required
                                autocomplete="off" data-delete-confirmation-target="input" data-action="input->delete-confirmation#check">
                     </div>
@@ -100,9 +99,9 @@
                 </div>
                 <div class="modal-footer justify-content-start">
                     <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-1" disabled data-delete-confirmation-target="submit">
-                        {{ icon('trash') }} Delete project
+                        {{ icon('trash') }} {{ 'project.delete'|trans }}
                     </button>
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">{{ 'common.cancel'|trans }}</button>
                 </div>
             </form>
         </div>

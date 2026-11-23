@@ -5,7 +5,7 @@
 
 {# Phones only: opens the page's collapsed .page-filters row #}
 {% macro filter_toggle(activeCount) %}
-    <button type="button" class="btn btn-tertiary d-inline-flex d-md-none align-items-center gap-1" data-bs-toggle="collapse" data-bs-target="#pageFilters" aria-expanded="false" aria-controls="pageFilters" aria-label="Filters">
+    <button type="button" class="btn btn-tertiary d-inline-flex d-md-none align-items-center gap-1" data-bs-toggle="collapse" data-bs-target="#pageFilters" aria-expanded="false" aria-controls="pageFilters" aria-label="{{ 'common.filters'|trans }}">
         {{- icon('filter') -}}
         {%- if activeCount > 0 %}<span class="badge filter-count text-bg-light">{{ activeCount }}</span>{% endif -%}
     </button>
@@ -16,9 +16,9 @@
 {% macro security_badge(insecure) %}
     {%- import _self as icons -%}
     {%- if insecure is same as(true) -%}
-        <span class="badge text-bg-danger ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="Insecure">{{ icons.icon_warning() }}<span class="badge-text">Insecure</span></span>
+        <span class="badge text-bg-danger ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.insecure'|trans }}">{{ icons.icon_warning() }}<span class="badge-text">{{ 'badge.insecure'|trans }}</span></span>
     {%- elseif insecure is same as(false) -%}
-        <span class="badge text-bg-success ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="Secure">{{ icons.icon_check() }}<span class="badge-text">Secure</span></span>
+        <span class="badge text-bg-success ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.secure'|trans }}">{{ icons.icon_check() }}<span class="badge-text">{{ 'badge.secure'|trans }}</span></span>
     {%- endif -%}
 {% endmacro %}
 
@@ -27,9 +27,9 @@
 {% macro version_flag(insecure, latest) %}
     {%- import _self as icons -%}
     {%- if insecure is same as(true) -%}
-        <span class="badge text-bg-danger ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="Insecure">{{ icons.icon_warning() }}<span class="badge-text">Insecure</span></span>
+        <span class="badge text-bg-danger ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.insecure'|trans }}">{{ icons.icon_warning() }}<span class="badge-text">{{ 'badge.insecure'|trans }}</span></span>
     {%- elseif latest -%}
-        <strong class="ms-2">Latest</strong>
+        <strong class="ms-2">{{ 'badge.latest'|trans }}</strong>
     {%- endif -%}
 {% endmacro %}
 
@@ -37,9 +37,9 @@
    green regular support, orange ELTS only, gray no support (or unknown). #}
 {% macro typo3_major_badge(major, status, class = '') %}
     {%- set styles = {
-        supported: ['success', 'supported'],
-        extended: ['warning', 'ELTS only'],
-        unsupported: ['neutral', 'no longer supported'],
+        supported: ['success', 'badge.typo3.supported'|trans],
+        extended: ['warning', 'badge.typo3.elts_only'|trans],
+        unsupported: ['neutral', 'badge.typo3.unsupported'|trans],
     } -%}
     {%- set style = styles[status] ?? ['neutral', null] -%}
     <span class="badge text-bg-{{ style[0] }} {{ class }}"
@@ -48,18 +48,18 @@
 
 {# Minimum WordPress version of a plugin version, colored by whether the site's WordPress meets it. #}
 {% macro wordpress_requires_badge(requires, compatible) %}
-    {%- set style = compatible is same as(true) ? ['success', 'runs on the installed WordPress']
-        : (compatible is same as(false) ? ['warning', 'needs a newer WordPress'] : ['neutral', null]) -%}
+    {%- set style = compatible is same as(true) ? ['success', 'badge.wp.compatible'|trans]
+        : (compatible is same as(false) ? ['warning', 'badge.wp.needs_newer'|trans] : ['neutral', null]) -%}
     <span class="badge text-bg-{{ style[0] }}"
-        {%- if style[1] %} data-controller="tooltip" data-bs-toggle="tooltip" title="Requires WordPress {{ requires }}: {{ style[1] }}"{% endif %}>{{ requires }}+</span>
+        {%- if style[1] %} data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.wp.requires'|trans({version: requires}) }}: {{ style[1] }}"{% endif %}>{{ requires }}+</span>
 {%- endmacro %}
 
 {# Wordfence/MITRE license terms: their copyright notices (and a link to the record) must accompany the data. #}
 {% macro vulnerability_copyright(notices) %}
     <p class="small text-muted">
-        Vulnerability data:
+        {{ 'badge.vulnerability_data'|trans }}:
         {% for notice in notices -%}
-            {{ notice.notice }}{% if notice.licenseUrl %} (<a href="{{ notice.licenseUrl }}" target="_blank" rel="noopener">license</a>){% endif %}{% if not loop.last %} · {% endif %}
+            {{ notice.notice }}{% if notice.licenseUrl %} (<a href="{{ notice.licenseUrl }}" target="_blank" rel="noopener">{{ 'badge.license'|trans }}</a>){% endif %}{% if not loop.last %} · {% endif %}
         {%- endfor %}
     </p>
 {% endmacro %}
@@ -67,16 +67,16 @@
 {% macro outdated_badge(outdated, latestVersion) %}
     {%- import _self as icons -%}
     {%- if outdated is same as(true) -%}
-        {%- set text = 'Outdated' ~ (latestVersion ? ' (' ~ latestVersion ~ ' available)') -%}
+        {%- set text = latestVersion ? 'badge.outdated_available'|trans({version: latestVersion}) : 'badge.outdated'|trans -%}
         <span class="badge text-bg-warning ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}
             {%- if latestVersion -%}
-                <span><span class="badge-text">Outdated (</span>{{ latestVersion }}<span class="badge-text"> available)</span></span>
+                <span><span class="badge-text">{{ 'badge.outdated'|trans }} (</span>{{ latestVersion }}<span class="badge-text"> {{ 'badge.available_word'|trans }})</span></span>
             {%- else -%}
-                <span class="badge-text">Outdated</span>
+                <span class="badge-text">{{ 'badge.outdated'|trans }}</span>
             {%- endif -%}
         </span>
     {%- elseif outdated is same as(false) -%}
-        <span class="badge text-bg-success ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="Up to date">{{ icons.icon_check() }}<span class="badge-text">Up to date</span></span>
+        <span class="badge text-bg-success ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.up_to_date'|trans }}">{{ icons.icon_check() }}<span class="badge-text">{{ 'badge.up_to_date'|trans }}</span></span>
     {%- endif -%}
 {% endmacro %}
 
@@ -84,14 +84,14 @@
 {# "TYPO3 14 compatible version (13.0.0)": an update that needs a newer core, so not "Outdated"; on phones just the version #}
 {% macro newer_core_package_badge(typeLabel, coreVersion, packageVersion, class = 'ms-2') %}
     {%- if coreVersion and packageVersion -%}
-        {%- set text = typeLabel ~ ' ' ~ coreVersion ~ ' compatible version (' ~ packageVersion ~ ')' -%}
-        <span class="badge text-bg-info {{ class }}" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}<span><span class="badge-text">{{ typeLabel }} {{ coreVersion }} compatible version (</span>{{ packageVersion }}<span class="badge-text">)</span></span></span>
+        {%- set text = 'badge.newer_core_package'|trans({cms: typeLabel ~ ' ' ~ coreVersion, version: packageVersion}) -%}
+        <span class="badge text-bg-info {{ class }}" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}<span><span class="badge-text">{{ 'badge.compatible_with'|trans({cms: typeLabel ~ ' ' ~ coreVersion}) }} (</span>{{ packageVersion }}<span class="badge-text">)</span></span></span>
     {%- endif -%}
 {%- endmacro %}
 
 {% macro newer_major_badge(typeLabel, release, class = 'ms-2') %}
-    {%- set text = typeLabel ~ ' ' ~ release.major ~ ' available (' ~ release.version ~ ')' -%}
-    <span class="badge text-bg-info {{ class }}" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}<span><span class="badge-text">{{ typeLabel }} {{ release.major }} available (</span>{{ release.version }}<span class="badge-text">)</span></span></span>
+    {%- set text = 'badge.newer_major'|trans({cms: typeLabel ~ ' ' ~ release.major, version: release.version}) -%}
+    <span class="badge text-bg-info {{ class }}" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ text }}">{{ icon('arrow-up') }}<span><span class="badge-text">{{ 'badge.available'|trans({cms: typeLabel ~ ' ' ~ release.major}) }} (</span>{{ release.version }}<span class="badge-text">)</span></span></span>
 {%- endmacro %}
 
 {# Compact icon-only badges for the dense site list - text_badge/outdated_badge
@@ -106,22 +106,22 @@
 {% macro core_security_icon(insecure) %}
     {%- import _self as icons -%}
     {%- if insecure is same as(true) -%}
-        <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Insecure core version">{{ icons.icon_warning() }}</span>
+        <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.core.insecure'|trans }}">{{ icons.icon_warning() }}</span>
     {%- elseif insecure is same as(false) -%}
-        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Secure core version">{{ icons.icon_check() }}</span>
+        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.core.secure'|trans }}">{{ icons.icon_check() }}</span>
     {%- else -%}
-        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Unknown core version">{{ icons.icon_dash() }}</span>
+        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.core.unknown'|trans }}">{{ icons.icon_dash() }}</span>
     {%- endif -%}
 {% endmacro %}
 
 {% macro packages_security_icon(anyInsecure, insecureCount, label) %}
     {%- import _self as icons -%}
     {%- if anyInsecure is same as(true) -%}
-        <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Insecure {{ label }}: {{ insecureCount }}">{{ icons.icon_warning() }}</span>
+        <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.packages.insecure'|trans({label: label, count: insecureCount}) }}">{{ icons.icon_warning() }}</span>
     {%- elseif anyInsecure is same as(false) -%}
-        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ label|capitalize }}: secure">{{ icons.icon_check() }}</span>
+        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ label|capitalize }}: {{ 'badge.packages.secure'|trans }}">{{ icons.icon_check() }}</span>
     {%- else -%}
-        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ label|capitalize }}: unknown">{{ icons.icon_dash() }}</span>
+        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ label|capitalize }}: {{ 'badge.packages.unknown'|trans }}">{{ icons.icon_dash() }}</span>
     {%- endif -%}
 {% endmacro %}
 
@@ -130,26 +130,26 @@
     {%- import _self as icons -%}
     {%- set issues = [] -%}
     {%- if site.phpInsecure is same as(true) -%}
-        {%- set issues = issues|merge(['Insecure PHP version ' ~ site.currentPhpVersion]) -%}
+        {%- set issues = issues|merge(['badge.infra.php_insecure'|trans({version: site.currentPhpVersion})]) -%}
     {%- elseif site.phpOutdated is same as(true) -%}
-        {%- set issues = issues|merge(['Outdated PHP version ' ~ site.currentPhpVersion ~ (site.phpLatestVersion ? ' (' ~ site.phpLatestVersion ~ ' available)')]) -%}
+        {%- set issues = issues|merge(['badge.infra.php_outdated'|trans({version: site.currentPhpVersion, latest: site.phpLatestVersion ?? 'empty'})]) -%}
     {%- endif -%}
     {%- if site.dbInsecure is same as(true) -%}
-        {%- set issues = issues|merge(['Insecure database version ' ~ site.currentDbVersion]) -%}
+        {%- set issues = issues|merge(['badge.infra.db_insecure'|trans({version: site.currentDbVersion})]) -%}
     {%- elseif site.dbOutdated is same as(true) -%}
-        {%- set issues = issues|merge(['Outdated database version ' ~ site.currentDbVersion ~ (site.dbLatestVersion ? ' (' ~ site.dbLatestVersion ~ ' available)')]) -%}
+        {%- set issues = issues|merge(['badge.infra.db_outdated'|trans({version: site.currentDbVersion, latest: site.dbLatestVersion ?? 'empty'})]) -%}
     {%- endif -%}
     {%- if site.runsOutsideProductionContext -%}
-        {%- set issues = issues|merge(['Application context ' ~ site.applicationContext ~ ' on the production URL']) -%}
+        {%- set issues = issues|merge(['badge.infra.context'|trans({context: site.applicationContext})]) -%}
     {%- endif -%}
     {%- if site.phpInsecure is same as(true) or site.dbInsecure is same as(true) or site.runsOutsideProductionContext -%}
         <span class="status-icon text-bg-danger ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ issues|join(', ') }}">{{ icons.icon_warning() }}</span>
     {%- elseif issues is not empty -%}
         <span class="status-icon text-bg-warning ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ issues|join(', ') }}">{{ icons.icon_warning() }}</span>
     {%- elseif site.phpInsecure is not null or site.dbInsecure is not null -%}
-        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="PHP and database: up to date">{{ icons.icon_check() }}</span>
+        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.infra.ok'|trans }}">{{ icons.icon_check() }}</span>
     {%- else -%}
-        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="PHP and database: unknown">{{ icons.icon_dash() }}</span>
+        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.infra.unknown'|trans }}">{{ icons.icon_dash() }}</span>
     {%- endif -%}
 {% endmacro %}
 
@@ -159,30 +159,30 @@
 
 {% macro package_count_badge(count, label) %}
     {%- import _self as badges -%}
-    {{ badges.count_badge(count, 'package', 'Installed ' ~ label) }}
+    {{ badges.count_badge(count, 'package', 'badge.installed'|trans({label: label})) }}
 {% endmacro %}
 
 {% macro package_updatable_badge(count, label) %}
     {%- if count > 0 -%}
-        <span class="badge badge-count text-bg-info ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ label|capitalize }} with a compatible update available">{{ icon('arrow-up') }}{{ count }}</span>
+        <span class="badge badge-count text-bg-info ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.updatable'|trans({label: label}) }}">{{ icon('arrow-up') }}{{ count }}</span>
     {%- else -%}
-        <span class="badge badge-count text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="No compatible updates pending">{{ icon('check') }}{{ count }}</span>
+        <span class="badge badge-count text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.no_updates'|trans }}">{{ icon('check') }}{{ count }}</span>
     {%- endif -%}
 {% endmacro %}
 
 {% macro stale_badge(lastSeenAt) %}
     {%- import _self as icons -%}
     {%- if lastSeenAt and lastSeenAt < date(constant('App\\Entity\\Site::STALE_AFTER')) -%}
-        <span class="status-icon text-bg-warning ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="Last seen: stale (over 2 days ago)">{{ icons.icon_warning() }}</span>
+        <span class="status-icon text-bg-warning ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.stale'|trans }}">{{ icons.icon_warning() }}</span>
     {%- endif -%}
 {% endmacro %}
 
 {# Links the project's organization, named in the tooltip; a dash without one #}
 {% macro organization_icon(organization) %}
     {%- if organization -%}
-        <a href="{{ path('dashboard_organization_show', {id: organization.id}) }}" class="cms-type-icon" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ organization.name }}" aria-label="Organization: {{ organization.name }}">{{ icon('building') }}</a>
+        <a href="{{ path('dashboard_organization_show', {id: organization.id}) }}" class="cms-type-icon" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ organization.name }}" aria-label="{{ 'organization.label'|trans }}: {{ organization.name }}">{{ icon('building') }}</a>
     {%- else -%}
-        <span class="cms-type-icon text-muted" data-controller="tooltip" data-bs-toggle="tooltip" title="No organization">&mdash;</span>
+        <span class="cms-type-icon text-muted" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'organization.none'|trans }}">&mdash;</span>
     {%- endif -%}
 {% endmacro %}
 
@@ -197,8 +197,8 @@
 {% macro sla_status_icon(slaActive) %}
     {%- import _self as icons -%}
     {%- if slaActive -%}
-        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="SLA: active">{{ icons.icon_check() }}</span>
+        <span class="status-icon text-bg-success ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="SLA: {{ 'badge.sla.active'|trans }}">{{ icons.icon_check() }}</span>
     {%- else -%}
-        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="SLA: inactive">{{ icons.icon_dash() }}</span>
+        <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="SLA: {{ 'badge.sla.inactive'|trans }}">{{ icons.icon_dash() }}</span>
     {%- endif -%}
 {% endmacro %}

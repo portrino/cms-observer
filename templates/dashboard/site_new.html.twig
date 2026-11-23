@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block title %}Add Project - CMS Observer{% endblock %}
+{% block title %}{{ 'project.add'|trans }} - CMS Observer{% endblock %}
 
-{% block page_title %}Add Project{% endblock %}
+{% block page_title %}{{ 'project.add'|trans }}{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('dashboard_index'), 'arrow-left', 'All projects') }}
+    {{ m.topbar_link(path('dashboard_index'), 'arrow-left', 'project.all'|trans) }}
 {% endblock %}
 
 {% block body %}
@@ -24,7 +24,7 @@
                 </div>
                 {{ form_row(form.repositoryUrl) }}
                 {{ form_row(form.issueTrackerUrl) }}
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} Create</button>
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} {{ 'common.create'|trans }}</button>
             {{ form_end(form) }}
         </div>
     </div>

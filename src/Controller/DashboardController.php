@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class DashboardController extends AbstractController
 {
@@ -256,7 +257,7 @@ class DashboardController extends AbstractController
             );
             $entityManager->flush();
 
-            $this->addFlash('success', 'Project updated.');
+            $this->addFlash('success', 'project.updated');
 
             return $this->redirectToRoute('dashboard_site_show', ['id' => $site->getId()]);
         }
@@ -302,7 +303,7 @@ class DashboardController extends AbstractController
             : $site->getName();
 
         if (trim($request->request->getString('confirmation')) !== $expectedConfirmation) {
-            $this->addFlash('error', 'Confirmation text did not match - project was not deleted.');
+            $this->addFlash('error', 'project.delete_mismatch');
 
             return $this->redirectToRoute('dashboard_site_edit', ['id' => $site->getId()]);
         }
@@ -310,7 +311,7 @@ class DashboardController extends AbstractController
         $entityManager->remove($site);
         $entityManager->flush();
 
-        $this->addFlash('success', sprintf('Project "%s" and all its data was deleted.', $expectedConfirmation));
+        $this->addFlash('success', new TranslatableMessage('project.deleted', ['name' => $expectedConfirmation]));
 
         return $this->redirectToRoute('dashboard_index');
     }

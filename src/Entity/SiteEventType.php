@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-enum SiteEventType: string
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+enum SiteEventType: string implements TranslatableInterface
 {
     case FirstReport = 'first-report';
     case CoreChanged = 'core-changed';
@@ -39,5 +42,10 @@ enum SiteEventType: string
             self::BecameSecure => 'Became secure',
             self::StoppedReporting => 'Stopped reporting',
         };
+    }
+
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
+    {
+        return $translator->trans('event.'.$this->value, locale: $locale);
     }
 }

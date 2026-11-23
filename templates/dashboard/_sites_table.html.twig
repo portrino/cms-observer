@@ -1,17 +1,17 @@
 {% import 'dashboard/_macros.html.twig' as m %}
-{% set emptyMessage = emptyMessage|default('No projects registered yet.') %}
+{% set emptyMessage = emptyMessage|default('project.none_yet'|trans) %}
 {# off on an organization's own page, where every project belongs to it #}
 {% set showOrganization = showOrganization ?? true %}
 
 <table class="table table-hover align-middle bg-white">
     <thead>
         <tr>
-            <th>Name</th>
-            {% if showOrganization %}<th>Org</th>{% endif %}
-            <th>Type</th>
+            <th>{{ 'common.name'|trans }}</th>
+            {% if showOrganization %}<th>{{ 'project.org'|trans }}</th>{% endif %}
+            <th>{{ 'common.type'|trans }}</th>
             <th>Core</th>
-            <th>Packages</th>
-            <th>Security</th>
+            <th>{{ 'nav.packages'|trans }}</th>
+            <th>{{ 'common.security'|trans }}</th>
             <th>SLA</th>
         </tr>
     </thead>
@@ -20,7 +20,7 @@
         {% set packageStatus = packageStatusBySite[site.id] ?? {insecure: null, outdated: null} %}
         {% set packageSummary = packageSummaryBySite[site.id] ?? {total: 0, updatable: 0, insecureCount: 0} %}
         {% set coreStatus = coreMajorStatusBySite[site.id] ?? {outdated: null, latestInMajor: null, newerMajor: null} %}
-        {% set packageLabel = site.type.value == 'typo3' ? 'extensions' : 'plugins and themes' %}
+        {% set packageLabel = site.type.value == 'typo3' ? 'package.label.extensions'|trans : 'package.label.plugins_themes'|trans %}
         {% set anyInsecure = site.coreInsecure is same as(true) or packageStatus.insecure is same as(true) %}
         <tr class="{{ anyInsecure ? 'row-insecure' : '' }}">
             <td class="text-nowrap">

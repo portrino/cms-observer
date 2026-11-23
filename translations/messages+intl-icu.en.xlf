@@ -82,6 +82,674 @@
         <source>two_factor.cancel</source>
         <target>Cancel and log out</target>
       </trans-unit>
+      <trans-unit id="common.search" resname="common.search">
+        <source>common.search</source>
+        <target>Search</target>
+      </trans-unit>
+      <trans-unit id="common.type" resname="common.type">
+        <source>common.type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="common.all_types" resname="common.all_types">
+        <source>common.all_types</source>
+        <target>All types</target>
+      </trans-unit>
+      <trans-unit id="common.security" resname="common.security">
+        <source>common.security</source>
+        <target>Security</target>
+      </trans-unit>
+      <trans-unit id="common.name" resname="common.name">
+        <source>common.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="common.filter" resname="common.filter">
+        <source>common.filter</source>
+        <target>Filter</target>
+      </trans-unit>
+      <trans-unit id="common.filters" resname="common.filters">
+        <source>common.filters</source>
+        <target>Filters</target>
+      </trans-unit>
+      <trans-unit id="common.project" resname="common.project">
+        <source>common.project</source>
+        <target>Project</target>
+      </trans-unit>
+      <trans-unit id="common.version" resname="common.version">
+        <source>common.version</source>
+        <target>Version</target>
+      </trans-unit>
+      <trans-unit id="common.date" resname="common.date">
+        <source>common.date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="common.edit" resname="common.edit">
+        <source>common.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="common.edit_named" resname="common.edit_named">
+        <source>common.edit_named</source>
+        <target>Edit {name}</target>
+      </trans-unit>
+      <trans-unit id="common.more_actions" resname="common.more_actions">
+        <source>common.more_actions</source>
+        <target>More actions</target>
+      </trans-unit>
+      <trans-unit id="common.website" resname="common.website">
+        <source>common.website</source>
+        <target>Website</target>
+      </trans-unit>
+      <trans-unit id="common.create" resname="common.create">
+        <source>common.create</source>
+        <target>Create</target>
+      </trans-unit>
+      <trans-unit id="common.save" resname="common.save">
+        <source>common.save</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" resname="common.cancel">
+        <source>common.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="common.close" resname="common.close">
+        <source>common.close</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="project.add" resname="project.add">
+        <source>project.add</source>
+        <target>Add Project</target>
+      </trans-unit>
+      <trans-unit id="project.search" resname="project.search">
+        <source>project.search</source>
+        <target>Search name, URL, organization…</target>
+      </trans-unit>
+      <trans-unit id="project.any_security" resname="project.any_security">
+        <source>project.any_security</source>
+        <target>Any security status</target>
+      </trans-unit>
+      <trans-unit id="project.any_sla" resname="project.any_sla">
+        <source>project.any_sla</source>
+        <target>With and without SLA</target>
+      </trans-unit>
+      <trans-unit id="project.none_match" resname="project.none_match">
+        <source>project.none_match</source>
+        <target>No projects match.</target>
+      </trans-unit>
+      <trans-unit id="project.none_yet" resname="project.none_yet">
+        <source>project.none_yet</source>
+        <target>No projects registered yet.</target>
+      </trans-unit>
+      <trans-unit id="project.org" resname="project.org">
+        <source>project.org</source>
+        <target>Org</target>
+      </trans-unit>
+      <trans-unit id="project.history" resname="project.history">
+        <source>project.history</source>
+        <target>History</target>
+      </trans-unit>
+      <trans-unit id="project.history_of" resname="project.history_of">
+        <source>project.history_of</source>
+        <target>History of {name}</target>
+      </trans-unit>
+      <trans-unit id="project.token_shown_once" resname="project.token_shown_once">
+        <source>project.token_shown_once</source>
+        <target>Push token — copy it now, it will not be shown again:</target>
+      </trans-unit>
+      <trans-unit id="project.last_seen" resname="project.last_seen">
+        <source>project.last_seen</source>
+        <target>Last seen</target>
+      </trans-unit>
+      <trans-unit id="project.never" resname="project.never">
+        <source>project.never</source>
+        <target>never</target>
+      </trans-unit>
+      <trans-unit id="project.rejected_report" resname="project.rejected_report">
+        <source>project.rejected_report</source>
+        <target>Rejected report from {domains} on {date}: none of its domains matches {url}. Another instance (e.g. staging) seems to use this site's token.</target>
+      </trans-unit>
+      <trans-unit id="project.system_info" resname="project.system_info">
+        <source>project.system_info</source>
+        <target>System information</target>
+      </trans-unit>
+      <trans-unit id="project.context" resname="project.context">
+        <source>project.context</source>
+        <target>Context</target>
+      </trans-unit>
+      <trans-unit id="project.not_production" resname="project.not_production">
+        <source>project.not_production</source>
+        <target>Not Production</target>
+      </trans-unit>
+      <trans-unit id="project.not_production_hint" resname="project.not_production_hint">
+        <source>project.not_production_hint</source>
+        <target>Error details and debug output can be public</target>
+      </trans-unit>
+      <trans-unit id="project.client_version" resname="project.client_version">
+        <source>project.client_version</source>
+        <target>Client version</target>
+      </trans-unit>
+      <trans-unit id="project.domains" resname="project.domains">
+        <source>project.domains</source>
+        <target>Domains</target>
+      </trans-unit>
+      <trans-unit id="project.domains_not_reported" resname="project.domains_not_reported">
+        <source>project.domains_not_reported</source>
+        <target>not reported, so not checked against the site URL</target>
+      </trans-unit>
+      <trans-unit id="project.php_version" resname="project.php_version">
+        <source>project.php_version</source>
+        <target>PHP version</target>
+      </trans-unit>
+      <trans-unit id="project.db_version" resname="project.db_version">
+        <source>project.db_version</source>
+        <target>Database version</target>
+      </trans-unit>
+      <trans-unit id="project.eol_info" resname="project.eol_info">
+        <source>project.eol_info</source>
+        <target>EOL info</target>
+      </trans-unit>
+      <trans-unit id="project.project_info" resname="project.project_info">
+        <source>project.project_info</source>
+        <target>Project information</target>
+      </trans-unit>
+      <trans-unit id="project.issue_tracker" resname="project.issue_tracker">
+        <source>project.issue_tracker</source>
+        <target>Issue tracker</target>
+      </trans-unit>
+      <trans-unit id="project.repository" resname="project.repository">
+        <source>project.repository</source>
+        <target>Repository</target>
+      </trans-unit>
+      <trans-unit id="project.no_newer_core" resname="project.no_newer_core">
+        <source>project.no_newer_core</source>
+        <target>No newer core releases known.</target>
+      </trans-unit>
+      <trans-unit id="project.notes" resname="project.notes">
+        <source>project.notes</source>
+        <target>Notes</target>
+      </trans-unit>
+      <trans-unit id="project.release_notes" resname="project.release_notes">
+        <source>project.release_notes</source>
+        <target>Release notes</target>
+      </trans-unit>
+      <trans-unit id="project.all" resname="project.all">
+        <source>project.all</source>
+        <target>All projects</target>
+      </trans-unit>
+      <trans-unit id="project.edit" resname="project.edit">
+        <source>project.edit</source>
+        <target>Edit Project</target>
+      </trans-unit>
+      <trans-unit id="project.back" resname="project.back">
+        <source>project.back</source>
+        <target>Back to project</target>
+      </trans-unit>
+      <trans-unit id="project.delete" resname="project.delete">
+        <source>project.delete</source>
+        <target>Delete project</target>
+      </trans-unit>
+      <trans-unit id="project.push_token" resname="project.push_token">
+        <source>project.push_token</source>
+        <target>Push token</target>
+      </trans-unit>
+      <trans-unit id="project.token_hashed" resname="project.token_hashed">
+        <source>project.token_hashed</source>
+        <target>The token is stored hashed and can't be shown again. If it got lost, generate a new one.</target>
+      </trans-unit>
+      <trans-unit id="project.token_generate" resname="project.token_generate">
+        <source>project.token_generate</source>
+        <target>Generate new token</target>
+      </trans-unit>
+      <trans-unit id="project.token_generate_title" resname="project.token_generate_title">
+        <source>project.token_generate_title</source>
+        <target>Generate a new push token</target>
+      </trans-unit>
+      <trans-unit id="project.token_warning" resname="project.token_warning">
+        <source>project.token_warning</source>
+        <target>The current token stops working immediately. The site's reports are rejected until the new token is entered in its client.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_title" resname="project.delete_title">
+        <source>project.delete_title</source>
+        <target>Delete this project</target>
+      </trans-unit>
+      <trans-unit id="project.delete_irreversible" resname="project.delete_irreversible">
+        <source>project.delete_irreversible</source>
+        <target>This operation &lt;strong&gt;CANNOT&lt;/strong&gt; be undone.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_all_data" resname="project.delete_all_data">
+        <source>project.delete_all_data</source>
+        <target>This operation will permanently delete the {name} project including all referenced data.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_enter" resname="project.delete_enter">
+        <source>project.delete_enter</source>
+        <target>Enter the organization and project name exactly as shown:</target>
+      </trans-unit>
+      <trans-unit id="project.delete_confirmation" resname="project.delete_confirmation">
+        <source>project.delete_confirmation</source>
+        <target>Confirmation string</target>
+      </trans-unit>
+      <trans-unit id="project.updated" resname="project.updated">
+        <source>project.updated</source>
+        <target>Project updated.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_mismatch" resname="project.delete_mismatch">
+        <source>project.delete_mismatch</source>
+        <target>Confirmation text did not match - project was not deleted.</target>
+      </trans-unit>
+      <trans-unit id="project.deleted" resname="project.deleted">
+        <source>project.deleted</source>
+        <target>Project "{name}" and all its data was deleted.</target>
+      </trans-unit>
+      <trans-unit id="project.form.url" resname="project.form.url">
+        <source>project.form.url</source>
+        <target>Site URL</target>
+      </trans-unit>
+      <trans-unit id="project.form.url_help" resname="project.form.url_help">
+        <source>project.form.url_help</source>
+        <target>The production URL of the site, exactly as the monitored instance uses it (including or excluding "www."). Reports from other domains, e.g. a staging copy using the same token, are rejected.</target>
+      </trans-unit>
+      <trans-unit id="project.form.sla" resname="project.form.sla">
+        <source>project.form.sla</source>
+        <target>Active maintenance contract (SLA)</target>
+      </trans-unit>
+      <trans-unit id="project.form.repository" resname="project.form.repository">
+        <source>project.form.repository</source>
+        <target>Repository URL</target>
+      </trans-unit>
+      <trans-unit id="project.form.issue_tracker" resname="project.form.issue_tracker">
+        <source>project.form.issue_tracker</source>
+        <target>Issue tracker URL</target>
+      </trans-unit>
+      <trans-unit id="project.filter.insecure" resname="project.filter.insecure">
+        <source>project.filter.insecure</source>
+        <target>Insecure core or packages</target>
+      </trans-unit>
+      <trans-unit id="project.filter.infrastructure" resname="project.filter.infrastructure">
+        <source>project.filter.infrastructure</source>
+        <target>PHP/database warnings</target>
+      </trans-unit>
+      <trans-unit id="project.filter.ok" resname="project.filter.ok">
+        <source>project.filter.ok</source>
+        <target>No known issues</target>
+      </trans-unit>
+      <trans-unit id="project.filter.with_sla" resname="project.filter.with_sla">
+        <source>project.filter.with_sla</source>
+        <target>With SLA</target>
+      </trans-unit>
+      <trans-unit id="project.filter.without_sla" resname="project.filter.without_sla">
+        <source>project.filter.without_sla</source>
+        <target>Without SLA</target>
+      </trans-unit>
+      <trans-unit id="package.label.extensions" resname="package.label.extensions">
+        <source>package.label.extensions</source>
+        <target>extensions</target>
+      </trans-unit>
+      <trans-unit id="package.label.plugins_themes" resname="package.label.plugins_themes">
+        <source>package.label.plugins_themes</source>
+        <target>plugins and themes</target>
+      </trans-unit>
+      <trans-unit id="package.across_projects" resname="package.across_projects">
+        <source>package.across_projects</source>
+        <target>Packages across all projects</target>
+      </trans-unit>
+      <trans-unit id="package.search" resname="package.search">
+        <source>package.search</source>
+        <target>Filter by package name…</target>
+      </trans-unit>
+      <trans-unit id="package.type" resname="package.type">
+        <source>package.type</source>
+        <target>Package type</target>
+      </trans-unit>
+      <trans-unit id="package.none_match" resname="package.none_match">
+        <source>package.none_match</source>
+        <target>No packages match.</target>
+      </trans-unit>
+      <trans-unit id="package.updates" resname="package.updates">
+        <source>package.updates</source>
+        <target>Updates</target>
+      </trans-unit>
+      <trans-unit id="package.inactive" resname="package.inactive">
+        <source>package.inactive</source>
+        <target>Inactive</target>
+      </trans-unit>
+      <trans-unit id="package.vulnerability" resname="package.vulnerability">
+        <source>package.vulnerability</source>
+        <target>Vulnerability</target>
+      </trans-unit>
+      <trans-unit id="package.view_on" resname="package.view_on">
+        <source>package.view_on</source>
+        <target>View on {site}</target>
+      </trans-unit>
+      <trans-unit id="package.known_vulnerability" resname="package.known_vulnerability">
+        <source>package.known_vulnerability</source>
+        <target>known vulnerability, severity {severity}</target>
+      </trans-unit>
+      <trans-unit id="package.no_fix" resname="package.no_fix">
+        <source>package.no_fix</source>
+        <target>No fixed version available.</target>
+      </trans-unit>
+      <trans-unit id="package.fixed_in" resname="package.fixed_in">
+        <source>package.fixed_in</source>
+        <target>Fixed in {versions}.</target>
+      </trans-unit>
+      <trans-unit id="package.no_newer" resname="package.no_newer">
+        <source>package.no_newer</source>
+        <target>No newer versions known.</target>
+      </trans-unit>
+      <trans-unit id="package.comment" resname="package.comment">
+        <source>package.comment</source>
+        <target>Comment</target>
+      </trans-unit>
+      <trans-unit id="package.compatibility" resname="package.compatibility">
+        <source>package.compatibility</source>
+        <target>Compatibility</target>
+      </trans-unit>
+      <trans-unit id="package.manual" resname="package.manual">
+        <source>package.manual</source>
+        <target>Manual</target>
+      </trans-unit>
+      <trans-unit id="package.none_reported" resname="package.none_reported">
+        <source>package.none_reported</source>
+        <target>No packages reported yet.</target>
+      </trans-unit>
+      <trans-unit id="badge.insecure" resname="badge.insecure">
+        <source>badge.insecure</source>
+        <target>Insecure</target>
+      </trans-unit>
+      <trans-unit id="badge.secure" resname="badge.secure">
+        <source>badge.secure</source>
+        <target>Secure</target>
+      </trans-unit>
+      <trans-unit id="badge.latest" resname="badge.latest">
+        <source>badge.latest</source>
+        <target>Latest</target>
+      </trans-unit>
+      <trans-unit id="badge.typo3.supported" resname="badge.typo3.supported">
+        <source>badge.typo3.supported</source>
+        <target>supported</target>
+      </trans-unit>
+      <trans-unit id="badge.typo3.elts_only" resname="badge.typo3.elts_only">
+        <source>badge.typo3.elts_only</source>
+        <target>ELTS only</target>
+      </trans-unit>
+      <trans-unit id="badge.typo3.unsupported" resname="badge.typo3.unsupported">
+        <source>badge.typo3.unsupported</source>
+        <target>no longer supported</target>
+      </trans-unit>
+      <trans-unit id="badge.wp.compatible" resname="badge.wp.compatible">
+        <source>badge.wp.compatible</source>
+        <target>runs on the installed WordPress</target>
+      </trans-unit>
+      <trans-unit id="badge.wp.needs_newer" resname="badge.wp.needs_newer">
+        <source>badge.wp.needs_newer</source>
+        <target>needs a newer WordPress</target>
+      </trans-unit>
+      <trans-unit id="badge.wp.requires" resname="badge.wp.requires">
+        <source>badge.wp.requires</source>
+        <target>Requires WordPress {version}</target>
+      </trans-unit>
+      <trans-unit id="badge.vulnerability_data" resname="badge.vulnerability_data">
+        <source>badge.vulnerability_data</source>
+        <target>Vulnerability data</target>
+      </trans-unit>
+      <trans-unit id="badge.license" resname="badge.license">
+        <source>badge.license</source>
+        <target>license</target>
+      </trans-unit>
+      <trans-unit id="badge.outdated" resname="badge.outdated">
+        <source>badge.outdated</source>
+        <target>Outdated</target>
+      </trans-unit>
+      <trans-unit id="badge.outdated_available" resname="badge.outdated_available">
+        <source>badge.outdated_available</source>
+        <target>Outdated ({version} available)</target>
+      </trans-unit>
+      <trans-unit id="badge.up_to_date" resname="badge.up_to_date">
+        <source>badge.up_to_date</source>
+        <target>Up to date</target>
+      </trans-unit>
+      <trans-unit id="badge.newer_core_package" resname="badge.newer_core_package">
+        <source>badge.newer_core_package</source>
+        <target>{cms} compatible version ({version})</target>
+      </trans-unit>
+      <trans-unit id="badge.compatible_with" resname="badge.compatible_with">
+        <source>badge.compatible_with</source>
+        <target>{cms} compatible version</target>
+      </trans-unit>
+      <trans-unit id="badge.newer_major" resname="badge.newer_major">
+        <source>badge.newer_major</source>
+        <target>{cms} available ({version})</target>
+      </trans-unit>
+      <trans-unit id="badge.available" resname="badge.available">
+        <source>badge.available</source>
+        <target>{cms} available</target>
+      </trans-unit>
+      <trans-unit id="badge.core.insecure" resname="badge.core.insecure">
+        <source>badge.core.insecure</source>
+        <target>Insecure core version</target>
+      </trans-unit>
+      <trans-unit id="badge.core.secure" resname="badge.core.secure">
+        <source>badge.core.secure</source>
+        <target>Secure core version</target>
+      </trans-unit>
+      <trans-unit id="badge.core.unknown" resname="badge.core.unknown">
+        <source>badge.core.unknown</source>
+        <target>Unknown core version</target>
+      </trans-unit>
+      <trans-unit id="badge.packages.insecure" resname="badge.packages.insecure">
+        <source>badge.packages.insecure</source>
+        <target>Insecure {label}: {count}</target>
+      </trans-unit>
+      <trans-unit id="badge.packages.secure" resname="badge.packages.secure">
+        <source>badge.packages.secure</source>
+        <target>secure</target>
+      </trans-unit>
+      <trans-unit id="badge.packages.unknown" resname="badge.packages.unknown">
+        <source>badge.packages.unknown</source>
+        <target>unknown</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.php_insecure" resname="badge.infra.php_insecure">
+        <source>badge.infra.php_insecure</source>
+        <target>Insecure PHP version {version}</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.db_insecure" resname="badge.infra.db_insecure">
+        <source>badge.infra.db_insecure</source>
+        <target>Insecure database version {version}</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.context" resname="badge.infra.context">
+        <source>badge.infra.context</source>
+        <target>Application context {context} on the production URL</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.ok" resname="badge.infra.ok">
+        <source>badge.infra.ok</source>
+        <target>PHP and database: up to date</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.unknown" resname="badge.infra.unknown">
+        <source>badge.infra.unknown</source>
+        <target>PHP and database: unknown</target>
+      </trans-unit>
+      <trans-unit id="badge.installed" resname="badge.installed">
+        <source>badge.installed</source>
+        <target>Installed {label}</target>
+      </trans-unit>
+      <trans-unit id="badge.updatable" resname="badge.updatable">
+        <source>badge.updatable</source>
+        <target>{label} with a compatible update available</target>
+      </trans-unit>
+      <trans-unit id="badge.no_updates" resname="badge.no_updates">
+        <source>badge.no_updates</source>
+        <target>No compatible updates pending</target>
+      </trans-unit>
+      <trans-unit id="badge.stale" resname="badge.stale">
+        <source>badge.stale</source>
+        <target>Last seen: stale (over 2 days ago)</target>
+      </trans-unit>
+      <trans-unit id="badge.stale_short" resname="badge.stale_short">
+        <source>badge.stale_short</source>
+        <target>Stale</target>
+      </trans-unit>
+      <trans-unit id="badge.sla.active" resname="badge.sla.active">
+        <source>badge.sla.active</source>
+        <target>active</target>
+      </trans-unit>
+      <trans-unit id="badge.sla.inactive" resname="badge.sla.inactive">
+        <source>badge.sla.inactive</source>
+        <target>inactive</target>
+      </trans-unit>
+      <trans-unit id="organization.label" resname="organization.label">
+        <source>organization.label</source>
+        <target>Organization</target>
+      </trans-unit>
+      <trans-unit id="organization.none" resname="organization.none">
+        <source>organization.none</source>
+        <target>No organization</target>
+      </trans-unit>
+      <trans-unit id="organization.new" resname="organization.new">
+        <source>organization.new</source>
+        <target>New organization</target>
+      </trans-unit>
+      <trans-unit id="organization.edit" resname="organization.edit">
+        <source>organization.edit</source>
+        <target>Edit Organization</target>
+      </trans-unit>
+      <trans-unit id="organization.back" resname="organization.back">
+        <source>organization.back</source>
+        <target>Back to organization</target>
+      </trans-unit>
+      <trans-unit id="organization.add" resname="organization.add">
+        <source>organization.add</source>
+        <target>Add Organization</target>
+      </trans-unit>
+      <trans-unit id="organization.none_yet" resname="organization.none_yet">
+        <source>organization.none_yet</source>
+        <target>No organizations yet.</target>
+      </trans-unit>
+      <trans-unit id="organization.all" resname="organization.all">
+        <source>organization.all</source>
+        <target>All organizations</target>
+      </trans-unit>
+      <trans-unit id="organization.description" resname="organization.description">
+        <source>organization.description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="organization.no_projects" resname="organization.no_projects">
+        <source>organization.no_projects</source>
+        <target>No projects attached to this organization yet.</target>
+      </trans-unit>
+      <trans-unit id="organization.created" resname="organization.created">
+        <source>organization.created</source>
+        <target>Organization created.</target>
+      </trans-unit>
+      <trans-unit id="organization.updated" resname="organization.updated">
+        <source>organization.updated</source>
+        <target>Organization updated.</target>
+      </trans-unit>
+      <trans-unit id="calculation.plural" resname="calculation.plural">
+        <source>calculation.plural</source>
+        <target>Upgrade calculations</target>
+      </trans-unit>
+      <trans-unit id="history.search" resname="history.search">
+        <source>history.search</source>
+        <target>Search package, version…</target>
+      </trans-unit>
+      <trans-unit id="history.type" resname="history.type">
+        <source>history.type</source>
+        <target>Type of change</target>
+      </trans-unit>
+      <trans-unit id="history.all" resname="history.all">
+        <source>history.all</source>
+        <target>All changes</target>
+      </trans-unit>
+      <trans-unit id="history.none" resname="history.none">
+        <source>history.none</source>
+        <target>No changes recorded.</target>
+      </trans-unit>
+      <trans-unit id="history.none_filtered" resname="history.none_filtered">
+        <source>history.none_filtered</source>
+        <target>No changes recorded for this filter.</target>
+      </trans-unit>
+      <trans-unit id="history.change" resname="history.change">
+        <source>history.change</source>
+        <target>Change</target>
+      </trans-unit>
+      <trans-unit id="history.details" resname="history.details">
+        <source>history.details</source>
+        <target>Details</target>
+      </trans-unit>
+      <trans-unit id="history.from" resname="history.from">
+        <source>history.from</source>
+        <target>from {detail}</target>
+      </trans-unit>
+      <trans-unit id="history.pages" resname="history.pages">
+        <source>history.pages</source>
+        <target>History pages</target>
+      </trans-unit>
+      <trans-unit id="event.first-report" resname="event.first-report">
+        <source>event.first-report</source>
+        <target>First report</target>
+      </trans-unit>
+      <trans-unit id="event.core-changed" resname="event.core-changed">
+        <source>event.core-changed</source>
+        <target>Core version changed</target>
+      </trans-unit>
+      <trans-unit id="event.php-changed" resname="event.php-changed">
+        <source>event.php-changed</source>
+        <target>PHP version changed</target>
+      </trans-unit>
+      <trans-unit id="event.db-changed" resname="event.db-changed">
+        <source>event.db-changed</source>
+        <target>Database version changed</target>
+      </trans-unit>
+      <trans-unit id="event.client-changed" resname="event.client-changed">
+        <source>event.client-changed</source>
+        <target>Client version changed</target>
+      </trans-unit>
+      <trans-unit id="event.package-installed" resname="event.package-installed">
+        <source>event.package-installed</source>
+        <target>Package installed</target>
+      </trans-unit>
+      <trans-unit id="event.package-updated" resname="event.package-updated">
+        <source>event.package-updated</source>
+        <target>Package version changed</target>
+      </trans-unit>
+      <trans-unit id="event.package-removed" resname="event.package-removed">
+        <source>event.package-removed</source>
+        <target>Package removed</target>
+      </trans-unit>
+      <trans-unit id="event.package-activated" resname="event.package-activated">
+        <source>event.package-activated</source>
+        <target>Package activated</target>
+      </trans-unit>
+      <trans-unit id="event.package-deactivated" resname="event.package-deactivated">
+        <source>event.package-deactivated</source>
+        <target>Package deactivated</target>
+      </trans-unit>
+      <trans-unit id="event.report-rejected" resname="event.report-rejected">
+        <source>event.report-rejected</source>
+        <target>Report rejected</target>
+      </trans-unit>
+      <trans-unit id="event.became-insecure" resname="event.became-insecure">
+        <source>event.became-insecure</source>
+        <target>Became insecure</target>
+      </trans-unit>
+      <trans-unit id="event.became-secure" resname="event.became-secure">
+        <source>event.became-secure</source>
+        <target>Became secure</target>
+      </trans-unit>
+      <trans-unit id="event.stopped-reporting" resname="event.stopped-reporting">
+        <source>event.stopped-reporting</source>
+        <target>Stopped reporting</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.php_outdated" resname="badge.infra.php_outdated">
+        <source>badge.infra.php_outdated</source>
+        <target>{latest, select, empty {Outdated PHP version {version}} other {Outdated PHP version {version} ({latest} available)}}</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.db_outdated" resname="badge.infra.db_outdated">
+        <source>badge.infra.db_outdated</source>
+        <target>{latest, select, empty {Outdated database version {version}} other {Outdated database version {version} ({latest} available)}}</target>
+      </trans-unit>
+      <trans-unit id="badge.available_word" resname="badge.available_word">
+        <source>badge.available_word</source>
+        <target>available</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
