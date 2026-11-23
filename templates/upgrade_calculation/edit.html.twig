@@ -15,6 +15,16 @@
     {% if based_on is defined %}
         <p class="text-muted">Based on the version of {{ based_on.createdAt|date('Y-m-d H:i') }} by {{ based_on.author }}. Saving creates a new version, this one stays as it is.</p>
     {% endif %}
+    {% if changes is defined and changes is not null %}
+        <div class="alert alert-info" id="upgradeRefreshChanges">
+            {% if changes is empty %}
+                The latest report changes nothing in the packages.
+            {% else %}
+                <p class="mb-1">Changed by the latest report, hours, notes and "Replace" or "Remove" decisions are kept:</p>
+                <ul class="mb-0">{% for change in changes %}<li>{{ change }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+    {% endif %}
 
     {{ form_start(form, {attr: {id: 'upgrade-calculation-form', 'data-controller': 'upgrade-sums', 'data-action': 'input->upgrade-sums#update form-collection:changed->upgrade-sums#update'}}) }}
         {{ form_errors(form) }}

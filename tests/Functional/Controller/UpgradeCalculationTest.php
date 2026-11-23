@@ -269,6 +269,60 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertStringContainsString("License costs<br>\nnot included", $crawler->filter('.upgrade-calculation .card-footer')->html(), 'a line break stays one');
     }
 
+    public function testRefreshBringsThePackagesUpToTheLatestReport(): void
+    {
+        $site = $this->typo3Site();
+        $this->entityManager->persist(new SitePackage($site, 'powermail', 'Powermail', '10.0.0', true, 'in2code/powermail'));
+        $this->entityManager->persist(new SitePackage($site, 'gone_ext', 'Gone', '1.0.0', true));
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+        $this->client->submit($crawler->selectButton('Save as new version')->form([
+            'upgrade_calculation_version[packages][0][maxHours]' => '3',
+            'upgrade_calculation_version[packages][0][notes]' => 'See changelog',
+            'upgrade_calculation_version[own-packages][1][status]' => 'replace', // powermail, after gone_ext; not in TER here
+            'upgrade_calculation_version[hourlyRate]' => '100',
+            'upgrade_calculation_version[managementPercent]' => '10',
+            'upgrade_calculation_version[author]' => 'JD',
+        ]));
+        $calculation = $this->calculationOf($site);
+        self::assertNotNull($calculation);
+
+        // later report: news updated, one extension gone, a new one installed
+        $packages = $this->entityManager->getRepository(SitePackage::class);
+        $packages->findOneBy(['site' => $site->getId(), 'name' => 'news'])?->update('News', '14.0.0', true, 'georgringer/news');
+        $this->entityManager->remove($packages->findOneBy(['site' => $site->getId(), 'name' => 'gone_ext']) ?? throw new \LogicException());
+        $this->entityManager->persist(new SitePackage($this->entityManager->find(Site::class, $site->getId()) ?? throw new \LogicException(), 'new_ext', 'New', '2.0.0', true));
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/refresh');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.topbar-title', 'Refresh calculation: Upgrade TYPO3 13 → 14');
+        $changes = $crawler->filter('#upgradeRefreshChanges')->text();
+        self::assertStringContainsString('georgringer/news: installed 12.3.1 → 14.0.0, to-do Update before core → Compatible', $changes);
+        self::assertStringContainsString('to-do Update before core → Compatible', $changes);
+        self::assertStringContainsString('gone_ext: not installed anymore, left out', $changes);
+        self::assertStringContainsString('new_ext: newly installed, added', $changes);
+        self::assertStringNotContainsString('powermail', $changes, 'the "Replace" decision is kept');
+
+        $this->client->submit($crawler->selectButton('Save as new version')->form(['upgrade_calculation_version[author]' => 'PM']));
+        self::assertResponseRedirects();
+
+        $this->entityManager->clear();
+        $latest = $this->entityManager->find(UpgradeCalculation::class, $calculation->getId())?->getLatestVersion();
+        self::assertStringStartsWith('Refreshed from the', (string) $latest?->getNote());
+        $packages = [];
+        foreach ($latest?->getItems() ?? [] as $item) {
+            if (null !== $item->package) {
+                $packages[$item->package] = [$item->installedVersion, $item->status, $item->maxHours, $item->notes];
+            }
+        }
+        self::assertSame(['14.0.0', UpgradeItemStatus::Compatible, 3.0, 'See changelog'], $packages['news'], 'hours and notes kept');
+        self::assertSame(UpgradeItemStatus::Replace, $packages['powermail'][1]);
+        self::assertArrayNotHasKey('gone_ext', $packages);
+        self::assertSame(UpgradeItemStatus::Manual, $packages['new_ext'][1]);
+    }
+
     public function testUnknownTargetIsNotFound(): void
     {
         $site = $this->typo3Site();

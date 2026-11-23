@@ -13,6 +13,7 @@ use App\Form\UpgradeCalculationVersionType;
 use App\Repository\AgencySettingsRepository;
 use App\Repository\UpgradeCalculationRepository;
 use App\Service\UpgradeCalculationDrafter;
+use App\Service\UpgradeCalculationRefresher;
 use App\Service\UpgradeTotals;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -97,7 +98,33 @@ class UpgradeCalculationController extends AbstractController
     public function edit(UpgradeCalculation $calculation, Request $request, #[MapQueryParameter] ?int $version = null): Response
     {
         $base = $this->findVersion($calculation, $version);
-        $form = $this->createForm(UpgradeCalculationVersionType::class, UpgradeCalculationVersionType::dataFrom($base->getItems(), $base));
+
+        return $this->versionForm($calculation, $base, UpgradeCalculationVersionType::dataFrom($base->getItems(), $base), $request, 'Edit calculation');
+    }
+
+    /**
+     * The edit form with the package rows brought up to the latest report; nothing is saved until
+     * someone saves it as a new version.
+     */
+    #[Route('/calculations/{id}/refresh', name: 'upgrade_calculation_refresh', methods: ['GET', 'POST'])]
+    public function refresh(UpgradeCalculation $calculation, Request $request, UpgradeCalculationRefresher $refresher, #[MapQueryParameter] ?int $version = null): Response
+    {
+        $base = $this->findVersion($calculation, $version);
+        $refreshed = $refresher->refresh($calculation, $base);
+        $data = UpgradeCalculationVersionType::dataFrom($refreshed['items'], $base);
+        $reportedAt = $calculation->getSite()->getLastSeenAt();
+        $data['note'] = null !== $reportedAt ? sprintf('Refreshed from the report of %s', $reportedAt->format('Y-m-d')) : 'Refreshed from the latest report';
+
+        return $this->versionForm($calculation, $base, $data, $request, 'Refresh calculation', $refreshed['changes']);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param list<string>|null    $changes of a refresh, null when editing
+     */
+    private function versionForm(UpgradeCalculation $calculation, UpgradeCalculationVersion $base, array $data, Request $request, string $action, ?array $changes = null): Response
+    {
+        $form = $this->createForm(UpgradeCalculationVersionType::class, $data);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->saveVersion($calculation, $form);
@@ -105,8 +132,9 @@ class UpgradeCalculationController extends AbstractController
 
         return $this->render('upgrade_calculation/edit.html.twig', [
             'site' => $calculation->getSite(),
-            'title' => sprintf('Edit calculation: Upgrade %s %d → %d', $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor()),
+            'title' => sprintf('%s: Upgrade %s %d → %d', $action, $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor()),
             'based_on' => $base,
+            'changes' => $changes,
             'form' => $form,
             'cancelUrl' => $this->generateUrl('upgrade_calculation_show', ['id' => $calculation->getId(), 'version' => $base->getId()]),
         ]);

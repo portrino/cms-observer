@@ -11,6 +11,7 @@
 {% block page_actions %}
     {{ m.topbar_link(path('upgrade_calculation_index', {id: site.id}), 'arrow-left', 'All calculations') }}
     <button type="button" class="btn btn-tertiary d-inline-flex align-items-center gap-1" data-controller="print" data-action="print#print" aria-label="Print or save as PDF">{{ icon('printer') }}<span class="d-none d-md-inline">Print / PDF</span></button>
+    {{ m.topbar_link(path('upgrade_calculation_refresh', {id: calculation.id, version: version.id}), 'refresh-cw', 'Refresh from report') }}
     {{ m.topbar_link(path('upgrade_calculation_edit', {id: calculation.id, version: version.id}), 'pencil', 'Edit') }}
 {% endblock %}
 

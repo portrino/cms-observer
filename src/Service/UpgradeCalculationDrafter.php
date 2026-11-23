@@ -65,6 +65,16 @@ final class UpgradeCalculationDrafter
         return $this->resolver($calculation->getSite())->supportPhases($calculation->getFromMajor(), $calculation->getTargetMajor());
     }
 
+    /**
+     * The site's packages as of its latest report.
+     *
+     * @return list<UpgradeItem>
+     */
+    public function packageItems(Site $site, int $targetMajor): array
+    {
+        return $this->resolver($site)->packageItems($site, $targetMajor);
+    }
+
     private function resolver(Site $site): UpgradeCompatibilityResolver
     {
         return $this->resolvers->get($site->getType()->value);
