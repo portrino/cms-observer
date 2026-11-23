@@ -51,6 +51,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $twoFactorEnabledAt = null;
 
+    // language of the interface, e.g. "de"; null: the browser's language
+    #[ORM\Column(length: 5, nullable: true)]
+    private ?string $locale = null;
+
     public function __construct(
         #[ORM\Column(length: 180, unique: true)]
         private string $email,
@@ -72,6 +76,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setEmail(string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): void
+    {
+        $this->locale = $locale;
     }
 
     public function getName(): string

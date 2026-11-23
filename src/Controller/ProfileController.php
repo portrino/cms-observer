@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\LanguageType;
 use App\Form\ProfileType;
 use App\Repository\UserRepository;
 use App\Security\TotpSecretEncryptor;
@@ -58,7 +59,26 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/edit.html.twig', [
             'form' => $form,
+            'languageForm' => $this->createForm(LanguageType::class, ['locale' => $user->getLocale() ?? ''], ['action' => $this->generateUrl('app_profile_language')]),
             'twoFactorAvailable' => $encryptor->isConfigured(),
         ]);
+    }
+
+    #[Route('/profile/language', name: 'app_profile_language', methods: ['POST'])]
+    public function language(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $form = $this->createForm(LanguageType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $locale = $form->getData()['locale'] ?? null;
+            $user->setLocale(null !== $locale && '' !== $locale ? $locale : null);
+            $entityManager->flush();
+            $this->addFlash('success', 'Language saved.');
+        }
+
+        return $this->redirectToRoute('app_profile');
     }
 }
