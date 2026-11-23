@@ -14,7 +14,7 @@
     <div class="page-filters collapse d-md-block" id="pageFilters">
     <form method="get" class="row g-2 mb-3" data-controller="auto-submit" data-turbo-frame="packages-results">
         <div class="col-auto">
-            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="{{ 'package.search'|trans }}" aria-label="{{ 'common.search'|trans }}" data-action="input->auto-submit#submitAfterTyping">
+            <input type="search" name="q" value="{{ query }}" class="form-control" autocomplete="off" placeholder="{{ 'package.search'|trans }}" aria-label="{{ 'common.search'|trans }}" data-action="input->auto-submit#submitAfterTyping">
         </div>
         <div class="col-auto">
             <select name="type" class="form-select" aria-label="{{ 'package.type'|trans }}" data-action="change->auto-submit#submit">

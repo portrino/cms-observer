@@ -16,7 +16,7 @@
     <div class="page-filters collapse d-md-block" id="pageFilters">
     <form method="get" class="row g-2 mb-3" data-controller="auto-submit" data-turbo-frame="history-results">
         <div class="col-auto">
-            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="{{ 'history.search'|trans }}" aria-label="{{ 'common.search'|trans }}" data-action="input->auto-submit#submitAfterTyping">
+            <input type="search" name="q" value="{{ query }}" class="form-control" autocomplete="off" placeholder="{{ 'history.search'|trans }}" aria-label="{{ 'common.search'|trans }}" data-action="input->auto-submit#submitAfterTyping">
         </div>
         <div class="col-auto">
             <select name="type" class="form-select" aria-label="{{ 'history.type'|trans }}" data-action="change->auto-submit#submit">
