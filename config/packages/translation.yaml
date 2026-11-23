@@ -1,5 +1,7 @@
 framework:
     default_locale: en
+    # the languages of the interface; a user picks one in the profile, or gets the browser's
+    enabled_locales: ['en', 'de']
     translator:
         default_path: '%kernel.project_dir%/translations'
         providers:

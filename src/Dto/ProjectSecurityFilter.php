@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Entity\Site;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-enum ProjectSecurityFilter: string
+enum ProjectSecurityFilter: string implements TranslatableInterface
 {
     case Insecure = 'insecure';
     case Infrastructure = 'infrastructure';
@@ -30,5 +32,10 @@ enum ProjectSecurityFilter: string
             self::Infrastructure => $site->hasInfrastructureWarning(),
             self::NoKnownIssues => !$insecure && !$site->hasInfrastructureWarning(),
         };
+    }
+
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
+    {
+        return $translator->trans('project.filter.'.$this->value, locale: $locale);
     }
 }

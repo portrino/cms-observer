@@ -19,7 +19,8 @@ class MailTestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('recipient', EmailType::class, [
-            'label' => 'Recipient',
+            'label' => 'status.recipient',
+            'help' => 'status.recipient_help',
             'constraints' => [new NotBlank(), new Email()],
         ]);
     }

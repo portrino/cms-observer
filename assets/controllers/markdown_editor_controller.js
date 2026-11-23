@@ -14,7 +14,9 @@ export default class extends Controller {
     connect() {
         const icons = document.getElementById('markdown-editor-icons')?.content;
         const icon = (name) => icons?.querySelector(`[data-icon="${name}"]`)?.innerHTML ?? name;
-        const button = (name, action, iconName, title, extra = {}) => ({ name, action, title, className: `easymde-${name}`, icon: icon(iconName), ...extra });
+        // the page's language: titles come with the icons, the English ones are the fallback
+        const title = (name, fallback) => icons?.querySelector(`[data-icon="${name}"]`)?.dataset.title ?? fallback;
+        const button = (name, action, iconName, fallback, extra = {}) => ({ name, action, title: title(iconName, fallback), className: `easymde-${name}`, icon: icon(iconName), ...extra });
         this.editor = new EasyMDE({
             element: this.element,
             forceSync: true,

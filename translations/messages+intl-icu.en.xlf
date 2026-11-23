@@ -1,0 +1,1713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="nav.projects" resname="nav.projects">
+        <source>nav.projects</source>
+        <target>Projects</target>
+      </trans-unit>
+      <trans-unit id="nav.packages" resname="nav.packages">
+        <source>nav.packages</source>
+        <target>Packages</target>
+      </trans-unit>
+      <trans-unit id="nav.organizations" resname="nav.organizations">
+        <source>nav.organizations</source>
+        <target>Organizations</target>
+      </trans-unit>
+      <trans-unit id="nav.status" resname="nav.status">
+        <source>nav.status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="nav.syncs_overdue" resname="nav.syncs_overdue">
+        <source>nav.syncs_overdue</source>
+        <target>{count, plural, one {# sync overdue} other {# syncs overdue}}</target>
+      </trans-unit>
+      <trans-unit id="nav.user_menu" resname="nav.user_menu">
+        <source>nav.user_menu</source>
+        <target>User menu</target>
+      </trans-unit>
+      <trans-unit id="nav.profile" resname="nav.profile">
+        <source>nav.profile</source>
+        <target>Profile</target>
+      </trans-unit>
+      <trans-unit id="nav.settings" resname="nav.settings">
+        <source>nav.settings</source>
+        <target>Settings</target>
+      </trans-unit>
+      <trans-unit id="nav.logout" resname="nav.logout">
+        <source>nav.logout</source>
+        <target>Log out</target>
+      </trans-unit>
+      <trans-unit id="nav.toggle_sidebar" resname="nav.toggle_sidebar">
+        <source>nav.toggle_sidebar</source>
+        <target>Toggle sidebar</target>
+      </trans-unit>
+      <trans-unit id="login.title" resname="login.title">
+        <source>login.title</source>
+        <target>Log in</target>
+      </trans-unit>
+      <trans-unit id="login.email" resname="login.email">
+        <source>login.email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="login.password" resname="login.password">
+        <source>login.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="login.remember_me" resname="login.remember_me">
+        <source>login.remember_me</source>
+        <target>Remember me for 30 days</target>
+      </trans-unit>
+      <trans-unit id="login.submit" resname="login.submit">
+        <source>login.submit</source>
+        <target>Log in</target>
+      </trans-unit>
+      <trans-unit id="two_factor.title" resname="two_factor.title">
+        <source>two_factor.title</source>
+        <target>Two-factor authentication</target>
+      </trans-unit>
+      <trans-unit id="two_factor.code" resname="two_factor.code">
+        <source>two_factor.code</source>
+        <target>Authentication code</target>
+      </trans-unit>
+      <trans-unit id="two_factor.code_help" resname="two_factor.code_help">
+        <source>two_factor.code_help</source>
+        <target>Enter the code from your authenticator app, or one of your backup codes.</target>
+      </trans-unit>
+      <trans-unit id="two_factor.verify" resname="two_factor.verify">
+        <source>two_factor.verify</source>
+        <target>Verify</target>
+      </trans-unit>
+      <trans-unit id="two_factor.cancel" resname="two_factor.cancel">
+        <source>two_factor.cancel</source>
+        <target>Cancel and log out</target>
+      </trans-unit>
+      <trans-unit id="common.search" resname="common.search">
+        <source>common.search</source>
+        <target>Search</target>
+      </trans-unit>
+      <trans-unit id="common.type" resname="common.type">
+        <source>common.type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="common.all_types" resname="common.all_types">
+        <source>common.all_types</source>
+        <target>All types</target>
+      </trans-unit>
+      <trans-unit id="common.security" resname="common.security">
+        <source>common.security</source>
+        <target>Security</target>
+      </trans-unit>
+      <trans-unit id="common.name" resname="common.name">
+        <source>common.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="common.filter" resname="common.filter">
+        <source>common.filter</source>
+        <target>Filter</target>
+      </trans-unit>
+      <trans-unit id="common.filters" resname="common.filters">
+        <source>common.filters</source>
+        <target>Filters</target>
+      </trans-unit>
+      <trans-unit id="common.project" resname="common.project">
+        <source>common.project</source>
+        <target>Project</target>
+      </trans-unit>
+      <trans-unit id="common.version" resname="common.version">
+        <source>common.version</source>
+        <target>Version</target>
+      </trans-unit>
+      <trans-unit id="common.date" resname="common.date">
+        <source>common.date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="common.edit" resname="common.edit">
+        <source>common.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="common.edit_named" resname="common.edit_named">
+        <source>common.edit_named</source>
+        <target>Edit {name}</target>
+      </trans-unit>
+      <trans-unit id="common.more_actions" resname="common.more_actions">
+        <source>common.more_actions</source>
+        <target>More actions</target>
+      </trans-unit>
+      <trans-unit id="common.website" resname="common.website">
+        <source>common.website</source>
+        <target>Website</target>
+      </trans-unit>
+      <trans-unit id="common.create" resname="common.create">
+        <source>common.create</source>
+        <target>Create</target>
+      </trans-unit>
+      <trans-unit id="common.save" resname="common.save">
+        <source>common.save</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" resname="common.cancel">
+        <source>common.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="common.close" resname="common.close">
+        <source>common.close</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="project.add" resname="project.add">
+        <source>project.add</source>
+        <target>Add Project</target>
+      </trans-unit>
+      <trans-unit id="project.search" resname="project.search">
+        <source>project.search</source>
+        <target>Search name, URL, organization…</target>
+      </trans-unit>
+      <trans-unit id="project.any_security" resname="project.any_security">
+        <source>project.any_security</source>
+        <target>Any security status</target>
+      </trans-unit>
+      <trans-unit id="project.any_sla" resname="project.any_sla">
+        <source>project.any_sla</source>
+        <target>With and without SLA</target>
+      </trans-unit>
+      <trans-unit id="project.none_match" resname="project.none_match">
+        <source>project.none_match</source>
+        <target>No projects match.</target>
+      </trans-unit>
+      <trans-unit id="project.none_yet" resname="project.none_yet">
+        <source>project.none_yet</source>
+        <target>No projects registered yet.</target>
+      </trans-unit>
+      <trans-unit id="project.org" resname="project.org">
+        <source>project.org</source>
+        <target>Org</target>
+      </trans-unit>
+      <trans-unit id="project.history" resname="project.history">
+        <source>project.history</source>
+        <target>History</target>
+      </trans-unit>
+      <trans-unit id="project.history_of" resname="project.history_of">
+        <source>project.history_of</source>
+        <target>History of {name}</target>
+      </trans-unit>
+      <trans-unit id="project.token_shown_once" resname="project.token_shown_once">
+        <source>project.token_shown_once</source>
+        <target>Push token — copy it now, it will not be shown again:</target>
+      </trans-unit>
+      <trans-unit id="project.last_seen" resname="project.last_seen">
+        <source>project.last_seen</source>
+        <target>Last seen</target>
+      </trans-unit>
+      <trans-unit id="project.never" resname="project.never">
+        <source>project.never</source>
+        <target>never</target>
+      </trans-unit>
+      <trans-unit id="project.rejected_report" resname="project.rejected_report">
+        <source>project.rejected_report</source>
+        <target>Rejected report from {domains} on {date}: none of its domains matches {url}. Another instance (e.g. staging) seems to use this site's token.</target>
+      </trans-unit>
+      <trans-unit id="project.system_info" resname="project.system_info">
+        <source>project.system_info</source>
+        <target>System information</target>
+      </trans-unit>
+      <trans-unit id="project.context" resname="project.context">
+        <source>project.context</source>
+        <target>Context</target>
+      </trans-unit>
+      <trans-unit id="project.not_production" resname="project.not_production">
+        <source>project.not_production</source>
+        <target>Not Production</target>
+      </trans-unit>
+      <trans-unit id="project.not_production_hint" resname="project.not_production_hint">
+        <source>project.not_production_hint</source>
+        <target>Error details and debug output can be public</target>
+      </trans-unit>
+      <trans-unit id="project.client_version" resname="project.client_version">
+        <source>project.client_version</source>
+        <target>Client version</target>
+      </trans-unit>
+      <trans-unit id="project.domains" resname="project.domains">
+        <source>project.domains</source>
+        <target>Domains</target>
+      </trans-unit>
+      <trans-unit id="project.domains_not_reported" resname="project.domains_not_reported">
+        <source>project.domains_not_reported</source>
+        <target>not reported, so not checked against the site URL</target>
+      </trans-unit>
+      <trans-unit id="project.php_version" resname="project.php_version">
+        <source>project.php_version</source>
+        <target>PHP version</target>
+      </trans-unit>
+      <trans-unit id="project.db_version" resname="project.db_version">
+        <source>project.db_version</source>
+        <target>Database version</target>
+      </trans-unit>
+      <trans-unit id="project.eol_info" resname="project.eol_info">
+        <source>project.eol_info</source>
+        <target>EOL info</target>
+      </trans-unit>
+      <trans-unit id="project.project_info" resname="project.project_info">
+        <source>project.project_info</source>
+        <target>Project information</target>
+      </trans-unit>
+      <trans-unit id="project.issue_tracker" resname="project.issue_tracker">
+        <source>project.issue_tracker</source>
+        <target>Issue tracker</target>
+      </trans-unit>
+      <trans-unit id="project.repository" resname="project.repository">
+        <source>project.repository</source>
+        <target>Repository</target>
+      </trans-unit>
+      <trans-unit id="project.no_newer_core" resname="project.no_newer_core">
+        <source>project.no_newer_core</source>
+        <target>No newer core releases known.</target>
+      </trans-unit>
+      <trans-unit id="project.notes" resname="project.notes">
+        <source>project.notes</source>
+        <target>Notes</target>
+      </trans-unit>
+      <trans-unit id="project.release_notes" resname="project.release_notes">
+        <source>project.release_notes</source>
+        <target>Release notes</target>
+      </trans-unit>
+      <trans-unit id="project.all" resname="project.all">
+        <source>project.all</source>
+        <target>All projects</target>
+      </trans-unit>
+      <trans-unit id="project.edit" resname="project.edit">
+        <source>project.edit</source>
+        <target>Edit Project</target>
+      </trans-unit>
+      <trans-unit id="project.back" resname="project.back">
+        <source>project.back</source>
+        <target>Back to project</target>
+      </trans-unit>
+      <trans-unit id="project.delete" resname="project.delete">
+        <source>project.delete</source>
+        <target>Delete project</target>
+      </trans-unit>
+      <trans-unit id="project.push_token" resname="project.push_token">
+        <source>project.push_token</source>
+        <target>Push token</target>
+      </trans-unit>
+      <trans-unit id="project.token_hashed" resname="project.token_hashed">
+        <source>project.token_hashed</source>
+        <target>The token is stored hashed and can't be shown again. If it got lost, generate a new one.</target>
+      </trans-unit>
+      <trans-unit id="project.token_generate" resname="project.token_generate">
+        <source>project.token_generate</source>
+        <target>Generate new token</target>
+      </trans-unit>
+      <trans-unit id="project.token_generate_title" resname="project.token_generate_title">
+        <source>project.token_generate_title</source>
+        <target>Generate a new push token</target>
+      </trans-unit>
+      <trans-unit id="project.token_warning" resname="project.token_warning">
+        <source>project.token_warning</source>
+        <target>The current token stops working immediately. The site's reports are rejected until the new token is entered in its client.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_title" resname="project.delete_title">
+        <source>project.delete_title</source>
+        <target>Delete this project</target>
+      </trans-unit>
+      <trans-unit id="project.delete_irreversible" resname="project.delete_irreversible">
+        <source>project.delete_irreversible</source>
+        <target>This operation &lt;strong&gt;CANNOT&lt;/strong&gt; be undone.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_all_data" resname="project.delete_all_data">
+        <source>project.delete_all_data</source>
+        <target>This operation will permanently delete the {name} project including all referenced data.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_enter" resname="project.delete_enter">
+        <source>project.delete_enter</source>
+        <target>Enter the organization and project name exactly as shown:</target>
+      </trans-unit>
+      <trans-unit id="project.delete_confirmation" resname="project.delete_confirmation">
+        <source>project.delete_confirmation</source>
+        <target>Confirmation string</target>
+      </trans-unit>
+      <trans-unit id="project.updated" resname="project.updated">
+        <source>project.updated</source>
+        <target>Project updated.</target>
+      </trans-unit>
+      <trans-unit id="project.delete_mismatch" resname="project.delete_mismatch">
+        <source>project.delete_mismatch</source>
+        <target>Confirmation text did not match - project was not deleted.</target>
+      </trans-unit>
+      <trans-unit id="project.deleted" resname="project.deleted">
+        <source>project.deleted</source>
+        <target>Project "{name}" and all its data was deleted.</target>
+      </trans-unit>
+      <trans-unit id="project.form.url" resname="project.form.url">
+        <source>project.form.url</source>
+        <target>Site URL</target>
+      </trans-unit>
+      <trans-unit id="project.form.url_help" resname="project.form.url_help">
+        <source>project.form.url_help</source>
+        <target>The production URL of the site, exactly as the monitored instance uses it (including or excluding "www."). Reports from other domains, e.g. a staging copy using the same token, are rejected.</target>
+      </trans-unit>
+      <trans-unit id="project.form.sla" resname="project.form.sla">
+        <source>project.form.sla</source>
+        <target>Active maintenance contract (SLA)</target>
+      </trans-unit>
+      <trans-unit id="project.form.repository" resname="project.form.repository">
+        <source>project.form.repository</source>
+        <target>Repository URL</target>
+      </trans-unit>
+      <trans-unit id="project.form.issue_tracker" resname="project.form.issue_tracker">
+        <source>project.form.issue_tracker</source>
+        <target>Issue tracker URL</target>
+      </trans-unit>
+      <trans-unit id="project.filter.insecure" resname="project.filter.insecure">
+        <source>project.filter.insecure</source>
+        <target>Insecure core or packages</target>
+      </trans-unit>
+      <trans-unit id="project.filter.infrastructure" resname="project.filter.infrastructure">
+        <source>project.filter.infrastructure</source>
+        <target>PHP/database warnings</target>
+      </trans-unit>
+      <trans-unit id="project.filter.ok" resname="project.filter.ok">
+        <source>project.filter.ok</source>
+        <target>No known issues</target>
+      </trans-unit>
+      <trans-unit id="project.filter.with_sla" resname="project.filter.with_sla">
+        <source>project.filter.with_sla</source>
+        <target>With SLA</target>
+      </trans-unit>
+      <trans-unit id="project.filter.without_sla" resname="project.filter.without_sla">
+        <source>project.filter.without_sla</source>
+        <target>Without SLA</target>
+      </trans-unit>
+      <trans-unit id="package.label.extensions" resname="package.label.extensions">
+        <source>package.label.extensions</source>
+        <target>extensions</target>
+      </trans-unit>
+      <trans-unit id="package.label.plugins_themes" resname="package.label.plugins_themes">
+        <source>package.label.plugins_themes</source>
+        <target>plugins and themes</target>
+      </trans-unit>
+      <trans-unit id="package.across_projects" resname="package.across_projects">
+        <source>package.across_projects</source>
+        <target>Packages across all projects</target>
+      </trans-unit>
+      <trans-unit id="package.search" resname="package.search">
+        <source>package.search</source>
+        <target>Filter by package name…</target>
+      </trans-unit>
+      <trans-unit id="package.type" resname="package.type">
+        <source>package.type</source>
+        <target>Package type</target>
+      </trans-unit>
+      <trans-unit id="package.none_match" resname="package.none_match">
+        <source>package.none_match</source>
+        <target>No packages match.</target>
+      </trans-unit>
+      <trans-unit id="package.updates" resname="package.updates">
+        <source>package.updates</source>
+        <target>Updates</target>
+      </trans-unit>
+      <trans-unit id="package.inactive" resname="package.inactive">
+        <source>package.inactive</source>
+        <target>Inactive</target>
+      </trans-unit>
+      <trans-unit id="package.vulnerability" resname="package.vulnerability">
+        <source>package.vulnerability</source>
+        <target>Vulnerability</target>
+      </trans-unit>
+      <trans-unit id="package.view_on" resname="package.view_on">
+        <source>package.view_on</source>
+        <target>View on {site}</target>
+      </trans-unit>
+      <trans-unit id="package.known_vulnerability" resname="package.known_vulnerability">
+        <source>package.known_vulnerability</source>
+        <target>known vulnerability, severity {severity}</target>
+      </trans-unit>
+      <trans-unit id="package.no_fix" resname="package.no_fix">
+        <source>package.no_fix</source>
+        <target>No fixed version available.</target>
+      </trans-unit>
+      <trans-unit id="package.fixed_in" resname="package.fixed_in">
+        <source>package.fixed_in</source>
+        <target>Fixed in {versions}.</target>
+      </trans-unit>
+      <trans-unit id="package.no_newer" resname="package.no_newer">
+        <source>package.no_newer</source>
+        <target>No newer versions known.</target>
+      </trans-unit>
+      <trans-unit id="package.comment" resname="package.comment">
+        <source>package.comment</source>
+        <target>Comment</target>
+      </trans-unit>
+      <trans-unit id="package.compatibility" resname="package.compatibility">
+        <source>package.compatibility</source>
+        <target>Compatibility</target>
+      </trans-unit>
+      <trans-unit id="package.manual" resname="package.manual">
+        <source>package.manual</source>
+        <target>Manual</target>
+      </trans-unit>
+      <trans-unit id="package.none_reported" resname="package.none_reported">
+        <source>package.none_reported</source>
+        <target>No packages reported yet.</target>
+      </trans-unit>
+      <trans-unit id="badge.insecure" resname="badge.insecure">
+        <source>badge.insecure</source>
+        <target>Insecure</target>
+      </trans-unit>
+      <trans-unit id="badge.secure" resname="badge.secure">
+        <source>badge.secure</source>
+        <target>Secure</target>
+      </trans-unit>
+      <trans-unit id="badge.latest" resname="badge.latest">
+        <source>badge.latest</source>
+        <target>Latest</target>
+      </trans-unit>
+      <trans-unit id="badge.typo3.supported" resname="badge.typo3.supported">
+        <source>badge.typo3.supported</source>
+        <target>supported</target>
+      </trans-unit>
+      <trans-unit id="badge.typo3.elts_only" resname="badge.typo3.elts_only">
+        <source>badge.typo3.elts_only</source>
+        <target>ELTS only</target>
+      </trans-unit>
+      <trans-unit id="badge.typo3.unsupported" resname="badge.typo3.unsupported">
+        <source>badge.typo3.unsupported</source>
+        <target>no longer supported</target>
+      </trans-unit>
+      <trans-unit id="badge.wp.compatible" resname="badge.wp.compatible">
+        <source>badge.wp.compatible</source>
+        <target>runs on the installed WordPress</target>
+      </trans-unit>
+      <trans-unit id="badge.wp.needs_newer" resname="badge.wp.needs_newer">
+        <source>badge.wp.needs_newer</source>
+        <target>needs a newer WordPress</target>
+      </trans-unit>
+      <trans-unit id="badge.wp.requires" resname="badge.wp.requires">
+        <source>badge.wp.requires</source>
+        <target>Requires WordPress {version}</target>
+      </trans-unit>
+      <trans-unit id="badge.vulnerability_data" resname="badge.vulnerability_data">
+        <source>badge.vulnerability_data</source>
+        <target>Vulnerability data</target>
+      </trans-unit>
+      <trans-unit id="badge.license" resname="badge.license">
+        <source>badge.license</source>
+        <target>license</target>
+      </trans-unit>
+      <trans-unit id="badge.outdated" resname="badge.outdated">
+        <source>badge.outdated</source>
+        <target>Outdated</target>
+      </trans-unit>
+      <trans-unit id="badge.outdated_available" resname="badge.outdated_available">
+        <source>badge.outdated_available</source>
+        <target>Outdated ({version} available)</target>
+      </trans-unit>
+      <trans-unit id="badge.up_to_date" resname="badge.up_to_date">
+        <source>badge.up_to_date</source>
+        <target>Up to date</target>
+      </trans-unit>
+      <trans-unit id="badge.newer_core_package" resname="badge.newer_core_package">
+        <source>badge.newer_core_package</source>
+        <target>{cms} compatible version ({version})</target>
+      </trans-unit>
+      <trans-unit id="badge.compatible_with" resname="badge.compatible_with">
+        <source>badge.compatible_with</source>
+        <target>{cms} compatible version</target>
+      </trans-unit>
+      <trans-unit id="badge.newer_major" resname="badge.newer_major">
+        <source>badge.newer_major</source>
+        <target>{cms} available ({version})</target>
+      </trans-unit>
+      <trans-unit id="badge.available" resname="badge.available">
+        <source>badge.available</source>
+        <target>{cms} available</target>
+      </trans-unit>
+      <trans-unit id="badge.core.insecure" resname="badge.core.insecure">
+        <source>badge.core.insecure</source>
+        <target>Insecure core version</target>
+      </trans-unit>
+      <trans-unit id="badge.core.secure" resname="badge.core.secure">
+        <source>badge.core.secure</source>
+        <target>Secure core version</target>
+      </trans-unit>
+      <trans-unit id="badge.core.unknown" resname="badge.core.unknown">
+        <source>badge.core.unknown</source>
+        <target>Unknown core version</target>
+      </trans-unit>
+      <trans-unit id="badge.packages.insecure" resname="badge.packages.insecure">
+        <source>badge.packages.insecure</source>
+        <target>Insecure {label}: {count}</target>
+      </trans-unit>
+      <trans-unit id="badge.packages.secure" resname="badge.packages.secure">
+        <source>badge.packages.secure</source>
+        <target>secure</target>
+      </trans-unit>
+      <trans-unit id="badge.packages.unknown" resname="badge.packages.unknown">
+        <source>badge.packages.unknown</source>
+        <target>unknown</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.php_insecure" resname="badge.infra.php_insecure">
+        <source>badge.infra.php_insecure</source>
+        <target>Insecure PHP version {version}</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.db_insecure" resname="badge.infra.db_insecure">
+        <source>badge.infra.db_insecure</source>
+        <target>Insecure database version {version}</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.context" resname="badge.infra.context">
+        <source>badge.infra.context</source>
+        <target>Application context {context} on the production URL</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.ok" resname="badge.infra.ok">
+        <source>badge.infra.ok</source>
+        <target>PHP and database: up to date</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.unknown" resname="badge.infra.unknown">
+        <source>badge.infra.unknown</source>
+        <target>PHP and database: unknown</target>
+      </trans-unit>
+      <trans-unit id="badge.installed" resname="badge.installed">
+        <source>badge.installed</source>
+        <target>Installed {label}</target>
+      </trans-unit>
+      <trans-unit id="badge.updatable" resname="badge.updatable">
+        <source>badge.updatable</source>
+        <target>{label} with a compatible update available</target>
+      </trans-unit>
+      <trans-unit id="badge.no_updates" resname="badge.no_updates">
+        <source>badge.no_updates</source>
+        <target>No compatible updates pending</target>
+      </trans-unit>
+      <trans-unit id="badge.stale" resname="badge.stale">
+        <source>badge.stale</source>
+        <target>Last seen: stale (over 2 days ago)</target>
+      </trans-unit>
+      <trans-unit id="badge.stale_short" resname="badge.stale_short">
+        <source>badge.stale_short</source>
+        <target>Stale</target>
+      </trans-unit>
+      <trans-unit id="badge.sla.active" resname="badge.sla.active">
+        <source>badge.sla.active</source>
+        <target>active</target>
+      </trans-unit>
+      <trans-unit id="badge.sla.inactive" resname="badge.sla.inactive">
+        <source>badge.sla.inactive</source>
+        <target>inactive</target>
+      </trans-unit>
+      <trans-unit id="organization.label" resname="organization.label">
+        <source>organization.label</source>
+        <target>Organization</target>
+      </trans-unit>
+      <trans-unit id="organization.none" resname="organization.none">
+        <source>organization.none</source>
+        <target>No organization</target>
+      </trans-unit>
+      <trans-unit id="organization.new" resname="organization.new">
+        <source>organization.new</source>
+        <target>New organization</target>
+      </trans-unit>
+      <trans-unit id="organization.edit" resname="organization.edit">
+        <source>organization.edit</source>
+        <target>Edit Organization</target>
+      </trans-unit>
+      <trans-unit id="organization.back" resname="organization.back">
+        <source>organization.back</source>
+        <target>Back to organization</target>
+      </trans-unit>
+      <trans-unit id="organization.add" resname="organization.add">
+        <source>organization.add</source>
+        <target>Add Organization</target>
+      </trans-unit>
+      <trans-unit id="organization.none_yet" resname="organization.none_yet">
+        <source>organization.none_yet</source>
+        <target>No organizations yet.</target>
+      </trans-unit>
+      <trans-unit id="organization.all" resname="organization.all">
+        <source>organization.all</source>
+        <target>All organizations</target>
+      </trans-unit>
+      <trans-unit id="organization.description" resname="organization.description">
+        <source>organization.description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="organization.no_projects" resname="organization.no_projects">
+        <source>organization.no_projects</source>
+        <target>No projects attached to this organization yet.</target>
+      </trans-unit>
+      <trans-unit id="organization.created" resname="organization.created">
+        <source>organization.created</source>
+        <target>Organization created.</target>
+      </trans-unit>
+      <trans-unit id="organization.updated" resname="organization.updated">
+        <source>organization.updated</source>
+        <target>Organization updated.</target>
+      </trans-unit>
+      <trans-unit id="calculation.plural" resname="calculation.plural">
+        <source>calculation.plural</source>
+        <target>Upgrade calculations</target>
+      </trans-unit>
+      <trans-unit id="history.search" resname="history.search">
+        <source>history.search</source>
+        <target>Search package, version…</target>
+      </trans-unit>
+      <trans-unit id="history.type" resname="history.type">
+        <source>history.type</source>
+        <target>Type of change</target>
+      </trans-unit>
+      <trans-unit id="history.all" resname="history.all">
+        <source>history.all</source>
+        <target>All changes</target>
+      </trans-unit>
+      <trans-unit id="history.none" resname="history.none">
+        <source>history.none</source>
+        <target>No changes recorded.</target>
+      </trans-unit>
+      <trans-unit id="history.none_filtered" resname="history.none_filtered">
+        <source>history.none_filtered</source>
+        <target>No changes recorded for this filter.</target>
+      </trans-unit>
+      <trans-unit id="history.change" resname="history.change">
+        <source>history.change</source>
+        <target>Change</target>
+      </trans-unit>
+      <trans-unit id="history.details" resname="history.details">
+        <source>history.details</source>
+        <target>Details</target>
+      </trans-unit>
+      <trans-unit id="history.from" resname="history.from">
+        <source>history.from</source>
+        <target>from {detail}</target>
+      </trans-unit>
+      <trans-unit id="history.pages" resname="history.pages">
+        <source>history.pages</source>
+        <target>History pages</target>
+      </trans-unit>
+      <trans-unit id="event.first-report" resname="event.first-report">
+        <source>event.first-report</source>
+        <target>First report</target>
+      </trans-unit>
+      <trans-unit id="event.core-changed" resname="event.core-changed">
+        <source>event.core-changed</source>
+        <target>Core version changed</target>
+      </trans-unit>
+      <trans-unit id="event.php-changed" resname="event.php-changed">
+        <source>event.php-changed</source>
+        <target>PHP version changed</target>
+      </trans-unit>
+      <trans-unit id="event.db-changed" resname="event.db-changed">
+        <source>event.db-changed</source>
+        <target>Database version changed</target>
+      </trans-unit>
+      <trans-unit id="event.client-changed" resname="event.client-changed">
+        <source>event.client-changed</source>
+        <target>Client version changed</target>
+      </trans-unit>
+      <trans-unit id="event.package-installed" resname="event.package-installed">
+        <source>event.package-installed</source>
+        <target>Package installed</target>
+      </trans-unit>
+      <trans-unit id="event.package-updated" resname="event.package-updated">
+        <source>event.package-updated</source>
+        <target>Package version changed</target>
+      </trans-unit>
+      <trans-unit id="event.package-removed" resname="event.package-removed">
+        <source>event.package-removed</source>
+        <target>Package removed</target>
+      </trans-unit>
+      <trans-unit id="event.package-activated" resname="event.package-activated">
+        <source>event.package-activated</source>
+        <target>Package activated</target>
+      </trans-unit>
+      <trans-unit id="event.package-deactivated" resname="event.package-deactivated">
+        <source>event.package-deactivated</source>
+        <target>Package deactivated</target>
+      </trans-unit>
+      <trans-unit id="event.report-rejected" resname="event.report-rejected">
+        <source>event.report-rejected</source>
+        <target>Report rejected</target>
+      </trans-unit>
+      <trans-unit id="event.became-insecure" resname="event.became-insecure">
+        <source>event.became-insecure</source>
+        <target>Became insecure</target>
+      </trans-unit>
+      <trans-unit id="event.became-secure" resname="event.became-secure">
+        <source>event.became-secure</source>
+        <target>Became secure</target>
+      </trans-unit>
+      <trans-unit id="event.stopped-reporting" resname="event.stopped-reporting">
+        <source>event.stopped-reporting</source>
+        <target>Stopped reporting</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.php_outdated" resname="badge.infra.php_outdated">
+        <source>badge.infra.php_outdated</source>
+        <target>{latest, select, empty {Outdated PHP version {version}} other {Outdated PHP version {version} ({latest} available)}}</target>
+      </trans-unit>
+      <trans-unit id="badge.infra.db_outdated" resname="badge.infra.db_outdated">
+        <source>badge.infra.db_outdated</source>
+        <target>{latest, select, empty {Outdated database version {version}} other {Outdated database version {version} ({latest} available)}}</target>
+      </trans-unit>
+      <trans-unit id="badge.available_word" resname="badge.available_word">
+        <source>badge.available_word</source>
+        <target>available</target>
+      </trans-unit>
+      <trans-unit id="event.subject.no_reports" resname="event.subject.no_reports">
+        <source>event.subject.no_reports</source>
+        <target>No reports</target>
+      </trans-unit>
+      <trans-unit id="event.subject.extension" resname="event.subject.extension">
+        <source>event.subject.extension</source>
+        <target>Extension {name} {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.plugin" resname="event.subject.plugin">
+        <source>event.subject.plugin</source>
+        <target>Plugin {name} {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.theme" resname="event.subject.theme">
+        <source>event.subject.theme</source>
+        <target>Theme {name} {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.php" resname="event.subject.php">
+        <source>event.subject.php</source>
+        <target>PHP {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.db" resname="event.subject.db">
+        <source>event.subject.db</source>
+        <target>Database {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.core" resname="event.subject.core">
+        <source>event.subject.core</source>
+        <target>{cms} core {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.context" resname="event.subject.context">
+        <source>event.subject.context</source>
+        <target>Application context {context}</target>
+      </trans-unit>
+      <trans-unit id="event.detail.stale" resname="event.detail.stale">
+        <source>event.detail.stale</source>
+        <target>No report since {since, date,yyyy-MM-dd} {since, time,HH:mm}, the security status is no longer up to date.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.vulnerability" resname="event.detail.vulnerability">
+        <source>event.detail.vulnerability</source>
+        <target>{id} ({severity, select, unknown {unknown severity} other {{severity}}}): {url}</target>
+      </trans-unit>
+      <trans-unit id="event.detail.advisory" resname="event.detail.advisory">
+        <source>event.detail.advisory</source>
+        <target>Matches {id} ({severity, select, unknown {unknown severity} other {{severity}}}): {url}</target>
+      </trans-unit>
+      <trans-unit id="event.detail.ter_insecure" resname="event.detail.ter_insecure">
+        <source>event.detail.ter_insecure</source>
+        <target>TER marked this exact version insecure (review_state).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.php_eol" resname="event.detail.php_eol">
+        <source>event.detail.php_eol</source>
+        <target>PHP version is now insecure (past end of life).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.php_missing_fixes" resname="event.detail.php_missing_fixes">
+        <source>event.detail.php_missing_fixes</source>
+        <target>PHP version is missing security fixes (fixed in {fixed}).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.php_secure" resname="event.detail.php_secure">
+        <source>event.detail.php_secure</source>
+        <target>PHP version is secure again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.db_eol" resname="event.detail.db_eol">
+        <source>event.detail.db_eol</source>
+        <target>Database version is now insecure (past end of life).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.db_secure" resname="event.detail.db_secure">
+        <source>event.detail.db_secure</source>
+        <target>Database version is secure again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.context_not_production" resname="event.detail.context_not_production">
+        <source>event.detail.context_not_production</source>
+        <target>The production site runs outside the Production context: error details and debug output can be public.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.context_production" resname="event.detail.context_production">
+        <source>event.detail.context_production</source>
+        <target>The production site runs in the Production context again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.core_insecure" resname="event.detail.core_insecure">
+        <source>event.detail.core_insecure</source>
+        <target>Core version is now insecure (unmaintained or superseded by a security release).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.core_secure" resname="event.detail.core_secure">
+        <source>event.detail.core_secure</source>
+        <target>Core version is secure again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.packages" resname="event.detail.packages">
+        <source>event.detail.packages</source>
+        <target>{count, plural, one {# package} other {# packages}}</target>
+      </trans-unit>
+      <trans-unit id="status.server_time" resname="status.server_time">
+        <source>status.server_time</source>
+        <target>All times are the server's, as the scheduler runs on the server. Current server time is {now} ({timezone}, GMT {offset}).</target>
+      </trans-unit>
+      <trans-unit id="status.timezone_mismatch" resname="status.timezone_mismatch">
+        <source>status.timezone_mismatch</source>
+        <target>But the scheduler's worker runs in {timezone}: times it records are off by the difference, and syncs may show as overdue. Set the same &lt;code&gt;date.timezone&lt;/code&gt; in the PHP configuration of the web server and the command line.</target>
+      </trans-unit>
+      <trans-unit id="status.never_ran" resname="status.never_ran">
+        <source>status.never_ran</source>
+        <target>The scheduler hasn't run a sync yet: check the cron job that starts its worker, see the installation docs.</target>
+      </trans-unit>
+      <trans-unit id="status.last_sync" resname="status.last_sync">
+        <source>status.last_sync</source>
+        <target>The last sync was {command}, started {how, select, scheduled {(automatically)} manual {(manually)} other {}}{started, select, unknown {} other { on {started} at {startedTime}}} and ended on {ended} at {endedTime}.</target>
+      </trans-unit>
+      <trans-unit id="status.intro" resname="status.intro">
+        <source>status.intro</source>
+        <target>The scheduled syncs fetch the release and vulnerability data the ratings are based on. A sync is overdue when it missed its last three runs.</target>
+      </trans-unit>
+      <trans-unit id="status.schedule" resname="status.schedule">
+        <source>status.schedule</source>
+        <target>Schedule</target>
+      </trans-unit>
+      <trans-unit id="status.last_success" resname="status.last_success">
+        <source>status.last_success</source>
+        <target>Last success</target>
+      </trans-unit>
+      <trans-unit id="status.last_failure" resname="status.last_failure">
+        <source>status.last_failure</source>
+        <target>Last failure</target>
+      </trans-unit>
+      <trans-unit id="status.overdue" resname="status.overdue">
+        <source>status.overdue</source>
+        <target>Overdue</target>
+      </trans-unit>
+      <trans-unit id="status.no_syncs" resname="status.no_syncs">
+        <source>status.no_syncs</source>
+        <target>No scheduled syncs.</target>
+      </trans-unit>
+      <trans-unit id="status.mail_test" resname="status.mail_test">
+        <source>status.mail_test</source>
+        <target>Test mail setup</target>
+      </trans-unit>
+      <trans-unit id="status.mail_test_hint" resname="status.mail_test_hint">
+        <source>status.mail_test_hint</source>
+        <target>Sends a test mail from {from} via {transport}.</target>
+      </trans-unit>
+      <trans-unit id="status.mail_test_send" resname="status.mail_test_send">
+        <source>status.mail_test_send</source>
+        <target>Send test mail</target>
+      </trans-unit>
+      <trans-unit id="status.recipient" resname="status.recipient">
+        <source>status.recipient</source>
+        <target>Recipient</target>
+      </trans-unit>
+      <trans-unit id="status.mail_sent" resname="status.mail_sent">
+        <source>status.mail_sent</source>
+        <target>The mail server accepted the test mail to {recipient}. Check that it arrives, also in the spam folder.</target>
+      </trans-unit>
+      <trans-unit id="status.mail_failed" resname="status.mail_failed">
+        <source>status.mail_failed</source>
+        <target>The test mail could not be sent: {error}</target>
+      </trans-unit>
+      <trans-unit id="sync.app:check-syncs" resname="sync.app:check-syncs">
+        <source>sync.app:check-syncs</source>
+        <target>Mail about scheduled syncs that missed their last three runs, once per outage</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-plugin-vulnerabilities" resname="sync.app:wordpress:sync-plugin-vulnerabilities">
+        <source>sync.app:wordpress:sync-plugin-vulnerabilities</source>
+        <target>Fetch the Wordfence Intelligence vulnerability feed (needs WORDFENCE_API_KEY), then re-rate every reported plugin version</target>
+      </trans-unit>
+      <trans-unit id="sync.app:typo3:sync-core-releases" resname="sync.app:typo3:sync-core-releases">
+        <source>sync.app:typo3:sync-core-releases</source>
+        <target>Fetch the TYPO3 core releases and their security status from get.typo3.org, then re-rate the TYPO3 version of every project</target>
+      </trans-unit>
+      <trans-unit id="sync.app:sync-endoflife-releases" resname="sync.app:sync-endoflife-releases">
+        <source>sync.app:sync-endoflife-releases</source>
+        <target>Fetch the support cycles of PHP, MariaDB, MySQL, PostgreSQL and TYPO3 from endoflife.date, then re-rate the PHP and database version of every project</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-core-releases" resname="sync.app:wordpress:sync-core-releases">
+        <source>sync.app:wordpress:sync-core-releases</source>
+        <target>Fetch the WordPress core releases and which are insecure from api.wordpress.org, then re-rate the WordPress version of every project</target>
+      </trans-unit>
+      <trans-unit id="sync.app:typo3:sync-extension-advisories" resname="sync.app:typo3:sync-extension-advisories">
+        <source>sync.app:typo3:sync-extension-advisories</source>
+        <target>Fetch the TYPO3 security advisories for extensions, then re-rate every reported extension version</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-themes" resname="sync.app:wordpress:sync-themes">
+        <source>sync.app:wordpress:sync-themes</source>
+        <target>Fetch the latest WordPress.org version of every reported theme, then re-rate the reported themes as outdated</target>
+      </trans-unit>
+      <trans-unit id="sync.app:wordpress:sync-plugins" resname="sync.app:wordpress:sync-plugins">
+        <source>sync.app:wordpress:sync-plugins</source>
+        <target>Fetch the WordPress.org versions of a batch of reported plugins per run, then re-rate the reported plugins as outdated</target>
+      </trans-unit>
+      <trans-unit id="sync.app:typo3:sync-extension-versions" resname="sync.app:typo3:sync-extension-versions">
+        <source>sync.app:typo3:sync-extension-versions</source>
+        <target>Fetch the TER versions of a batch of reported extensions per run, then re-rate the reported extensions as insecure or outdated</target>
+      </trans-unit>
+      <trans-unit id="common.yes" resname="common.yes">
+        <source>common.yes</source>
+        <target>yes</target>
+      </trans-unit>
+      <trans-unit id="common.no" resname="common.no">
+        <source>common.no</source>
+        <target>no</target>
+      </trans-unit>
+      <trans-unit id="calculation.of" resname="calculation.of">
+        <source>calculation.of</source>
+        <target>Upgrade calculations of {name}</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_newer_major" resname="calculation.no_newer_major">
+        <source>calculation.no_newer_major</source>
+        <target>No newer {cms} major is known for this project.</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_newer_major_unreported" resname="calculation.no_newer_major_unreported">
+        <source>calculation.no_newer_major_unreported</source>
+        <target>No newer {cms} major is known for this project yet: it has not reported.</target>
+      </trans-unit>
+      <trans-unit id="calculation.new_from" resname="calculation.new_from">
+        <source>calculation.new_from</source>
+        <target>New calculation from {from} to</target>
+      </trans-unit>
+      <trans-unit id="calculation.start" resname="calculation.start">
+        <source>calculation.start</source>
+        <target>Start</target>
+      </trans-unit>
+      <trans-unit id="calculation.none_yet" resname="calculation.none_yet">
+        <source>calculation.none_yet</source>
+        <target>No calculations yet.</target>
+      </trans-unit>
+      <trans-unit id="calculation.last_saved" resname="calculation.last_saved">
+        <source>calculation.last_saved</source>
+        <target>Last saved</target>
+      </trans-unit>
+      <trans-unit id="calculation.by" resname="calculation.by">
+        <source>calculation.by</source>
+        <target>By</target>
+      </trans-unit>
+      <trans-unit id="calculation.versions" resname="calculation.versions">
+        <source>calculation.versions</source>
+        <target>Versions</target>
+      </trans-unit>
+      <trans-unit id="calculation.final" resname="calculation.final">
+        <source>calculation.final</source>
+        <target>Final</target>
+      </trans-unit>
+      <trans-unit id="calculation.saved_versions" resname="calculation.saved_versions">
+        <source>calculation.saved_versions</source>
+        <target>Saved versions</target>
+      </trans-unit>
+      <trans-unit id="calculation.all" resname="calculation.all">
+        <source>calculation.all</source>
+        <target>All calculations</target>
+      </trans-unit>
+      <trans-unit id="calculation.print" resname="calculation.print">
+        <source>calculation.print</source>
+        <target>Print / PDF</target>
+      </trans-unit>
+      <trans-unit id="calculation.print_hint" resname="calculation.print_hint">
+        <source>calculation.print_hint</source>
+        <target>Print or save as PDF</target>
+      </trans-unit>
+      <trans-unit id="calculation.more_edit" resname="calculation.more_edit">
+        <source>calculation.more_edit</source>
+        <target>More ways to edit</target>
+      </trans-unit>
+      <trans-unit id="calculation.refresh" resname="calculation.refresh">
+        <source>calculation.refresh</source>
+        <target>Refresh from report</target>
+      </trans-unit>
+      <trans-unit id="calculation.version_of" resname="calculation.version_of">
+        <source>calculation.version_of</source>
+        <target>Version of {date} by {author}</target>
+      </trans-unit>
+      <trans-unit id="calculation.older_version" resname="calculation.older_version">
+        <source>calculation.older_version</source>
+        <target>Older version</target>
+      </trans-unit>
+      <trans-unit id="calculation.timeline" resname="calculation.timeline">
+        <source>calculation.timeline</source>
+        <target>Timeline</target>
+      </trans-unit>
+      <trans-unit id="calculation.package" resname="calculation.package">
+        <source>calculation.package</source>
+        <target>Package</target>
+      </trans-unit>
+      <trans-unit id="calculation.position" resname="calculation.position">
+        <source>calculation.position</source>
+        <target>Position</target>
+      </trans-unit>
+      <trans-unit id="calculation.installed" resname="calculation.installed">
+        <source>calculation.installed</source>
+        <target>Installed</target>
+      </trans-unit>
+      <trans-unit id="calculation.target" resname="calculation.target">
+        <source>calculation.target</source>
+        <target>Target</target>
+      </trans-unit>
+      <trans-unit id="calculation.todo" resname="calculation.todo">
+        <source>calculation.todo</source>
+        <target>To-do</target>
+      </trans-unit>
+      <trans-unit id="calculation.hours" resname="calculation.hours">
+        <source>calculation.hours</source>
+        <target>Hours</target>
+      </trans-unit>
+      <trans-unit id="calculation.price" resname="calculation.price">
+        <source>calculation.price</source>
+        <target>Price</target>
+      </trans-unit>
+      <trans-unit id="calculation.notes" resname="calculation.notes">
+        <source>calculation.notes</source>
+        <target>Notes</target>
+      </trans-unit>
+      <trans-unit id="calculation.sum" resname="calculation.sum">
+        <source>calculation.sum</source>
+        <target>Sum</target>
+      </trans-unit>
+      <trans-unit id="calculation.management" resname="calculation.management">
+        <source>calculation.management</source>
+        <target>Project management ({percent} %)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total" resname="calculation.total">
+        <source>calculation.total</source>
+        <target>Total</target>
+      </trans-unit>
+      <trans-unit id="calculation.beforehand" resname="calculation.beforehand">
+        <source>calculation.beforehand</source>
+        <target>of which possible before the upgrade, e.g. in maintenance</target>
+      </trans-unit>
+      <trans-unit id="calculation.optional_total" resname="calculation.optional_total">
+        <source>calculation.optional_total</source>
+        <target>Optional, incl. project management</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare_previous" resname="calculation.compare_previous">
+        <source>calculation.compare_previous</source>
+        <target>Compare with previous</target>
+      </trans-unit>
+      <trans-unit id="calculation.add_note" resname="calculation.add_note">
+        <source>calculation.add_note</source>
+        <target>Add note</target>
+      </trans-unit>
+      <trans-unit id="calculation.edit_notes" resname="calculation.edit_notes">
+        <source>calculation.edit_notes</source>
+        <target>Edit notes</target>
+      </trans-unit>
+      <trans-unit id="calculation.move_row" resname="calculation.move_row">
+        <source>calculation.move_row</source>
+        <target>Move row: drag, or use the arrow keys</target>
+      </trans-unit>
+      <trans-unit id="calculation.min_hours_of" resname="calculation.min_hours_of">
+        <source>calculation.min_hours_of</source>
+        <target>Min hours of {label}</target>
+      </trans-unit>
+      <trans-unit id="calculation.max_hours_of" resname="calculation.max_hours_of">
+        <source>calculation.max_hours_of</source>
+        <target>Max hours of {label}</target>
+      </trans-unit>
+      <trans-unit id="calculation.remove_row" resname="calculation.remove_row">
+        <source>calculation.remove_row</source>
+        <target>Remove row</target>
+      </trans-unit>
+      <trans-unit id="calculation.support.free" resname="calculation.support.free">
+        <source>calculation.support.free</source>
+        <target>{cms} receives free core updates until {until}.</target>
+      </trans-unit>
+      <trans-unit id="calculation.support.elts" resname="calculation.support.elts">
+        <source>calculation.support.elts</source>
+        <target>From {from} on, core updates need a paid extended support (ELTS) license, available until {until}.</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.development" resname="calculation.phase.development">
+        <source>calculation.phase.development</source>
+        <target>Development (sprint releases)</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.regular" resname="calculation.phase.regular">
+        <source>calculation.phase.regular</source>
+        <target>Regular maintenance</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.priority" resname="calculation.phase.priority">
+        <source>calculation.phase.priority</source>
+        <target>Priority bugfixes</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.extended" resname="calculation.phase.extended">
+        <source>calculation.phase.extended</source>
+        <target>Paid extended support (ELTS)</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.label" resname="calculation.phase.label">
+        <source>calculation.phase.label</source>
+        <target>Support phases of {cms}</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.until" resname="calculation.phase.until">
+        <source>calculation.phase.until</source>
+        <target>{phase} until {until}</target>
+      </trans-unit>
+      <trans-unit id="calculation.today" resname="calculation.today">
+        <source>calculation.today</source>
+        <target>Today</target>
+      </trans-unit>
+      <trans-unit id="calculation.based_on" resname="calculation.based_on">
+        <source>calculation.based_on</source>
+        <target>Based on the version of {date} by {author}. Saving creates a new version, this one stays as it is.</target>
+      </trans-unit>
+      <trans-unit id="calculation.refresh_nothing" resname="calculation.refresh_nothing">
+        <source>calculation.refresh_nothing</source>
+        <target>The latest report changes nothing in the packages.</target>
+      </trans-unit>
+      <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
+        <source>calculation.refresh_changes</source>
+        <target>Changed by the latest report, hours, notes and "Replace" or "Remove" decisions are kept:</target>
+      </trans-unit>
+      <trans-unit id="calculation.pricing" resname="calculation.pricing">
+        <source>calculation.pricing</source>
+        <target>Pricing</target>
+      </trans-unit>
+      <trans-unit id="calculation.pricing_summary" resname="calculation.pricing_summary">
+        <source>calculation.pricing_summary</source>
+        <target>{rate} EUR/h, project management {percent} %</target>
+      </trans-unit>
+      <trans-unit id="calculation.add_row" resname="calculation.add_row">
+        <source>calculation.add_row</source>
+        <target>Add row</target>
+      </trans-unit>
+      <trans-unit id="calculation.order" resname="calculation.order">
+        <source>calculation.order</source>
+        <target>Order</target>
+      </trans-unit>
+      <trans-unit id="calculation.min_h" resname="calculation.min_h">
+        <source>calculation.min_h</source>
+        <target>Min h</target>
+      </trans-unit>
+      <trans-unit id="calculation.max_h" resname="calculation.max_h">
+        <source>calculation.max_h</source>
+        <target>Max h</target>
+      </trans-unit>
+      <trans-unit id="calculation.actions" resname="calculation.actions">
+        <source>calculation.actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="calculation.save_new" resname="calculation.save_new">
+        <source>calculation.save_new</source>
+        <target>Save as new version</target>
+      </trans-unit>
+      <trans-unit id="calculation.color" resname="calculation.color">
+        <source>calculation.color</source>
+        <target>Color</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_color" resname="calculation.no_color">
+        <source>calculation.no_color</source>
+        <target>No color</target>
+      </trans-unit>
+      <trans-unit id="calculation.apply" resname="calculation.apply">
+        <source>calculation.apply</source>
+        <target>Apply</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare_versions" resname="calculation.compare_versions">
+        <source>calculation.compare_versions</source>
+        <target>Compare versions</target>
+      </trans-unit>
+      <trans-unit id="calculation.upgrade" resname="calculation.upgrade">
+        <source>calculation.upgrade</source>
+        <target>Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.back" resname="calculation.back">
+        <source>calculation.back</source>
+        <target>Back to calculation</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare" resname="calculation.compare">
+        <source>calculation.compare</source>
+        <target>Compare</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare_with" resname="calculation.compare_with">
+        <source>calculation.compare_with</source>
+        <target>with</target>
+      </trans-unit>
+      <trans-unit id="calculation.from" resname="calculation.from">
+        <source>calculation.from</source>
+        <target>From</target>
+      </trans-unit>
+      <trans-unit id="calculation.to" resname="calculation.to">
+        <source>calculation.to</source>
+        <target>To</target>
+      </trans-unit>
+      <trans-unit id="calculation.date_by" resname="calculation.date_by">
+        <source>calculation.date_by</source>
+        <target>{date} by {author}</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_differences" resname="calculation.no_differences">
+        <source>calculation.no_differences</source>
+        <target>No differences.</target>
+      </trans-unit>
+      <trans-unit id="calculation.totals" resname="calculation.totals">
+        <source>calculation.totals</source>
+        <target>Totals</target>
+      </trans-unit>
+      <trans-unit id="calculation.pricing_notes" resname="calculation.pricing_notes">
+        <source>calculation.pricing_notes</source>
+        <target>Pricing and notes</target>
+      </trans-unit>
+      <trans-unit id="calculation.added" resname="calculation.added">
+        <source>calculation.added</source>
+        <target>Added</target>
+      </trans-unit>
+      <trans-unit id="calculation.removed" resname="calculation.removed">
+        <source>calculation.removed</source>
+        <target>Removed</target>
+      </trans-unit>
+      <trans-unit id="calculation.changed" resname="calculation.changed">
+        <source>calculation.changed</source>
+        <target>Changed</target>
+      </trans-unit>
+      <trans-unit id="calculation.label" resname="calculation.label">
+        <source>calculation.label</source>
+        <target>Label</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_color" resname="calculation.note_color">
+        <source>calculation.note_color</source>
+        <target>Note color</target>
+      </trans-unit>
+      <trans-unit id="calculation.final_version" resname="calculation.final_version">
+        <source>calculation.final_version</source>
+        <target>Final version</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.positions" resname="calculation.total.positions">
+        <source>calculation.total.positions</source>
+        <target>Positions (h)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.hours" resname="calculation.total.hours">
+        <source>calculation.total.hours</source>
+        <target>Total (h)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.price" resname="calculation.total.price">
+        <source>calculation.total.price</source>
+        <target>Total price (EUR)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.optional" resname="calculation.total.optional">
+        <source>calculation.total.optional</source>
+        <target>Optional (h)</target>
+      </trans-unit>
+      <trans-unit id="calculation.title.new" resname="calculation.title.new">
+        <source>calculation.title.new</source>
+        <target>New calculation: Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.title.edit" resname="calculation.title.edit">
+        <source>calculation.title.edit</source>
+        <target>Edit calculation: Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.title.refresh" resname="calculation.title.refresh">
+        <source>calculation.title.refresh</source>
+        <target>Refresh calculation: Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.refreshed_of" resname="calculation.refreshed_of">
+        <source>calculation.refreshed_of</source>
+        <target>Refreshed from the report of {date, date, yyyy-MM-dd}</target>
+      </trans-unit>
+      <trans-unit id="calculation.refreshed" resname="calculation.refreshed">
+        <source>calculation.refreshed</source>
+        <target>Refreshed from the latest report</target>
+      </trans-unit>
+      <trans-unit id="calculation.saved" resname="calculation.saved">
+        <source>calculation.saved</source>
+        <target>Saved as a new version.</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.rate" resname="calculation.field.rate">
+        <source>calculation.field.rate</source>
+        <target>Hourly rate (EUR)</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.management" resname="calculation.field.management">
+        <source>calculation.field.management</source>
+        <target>Project management (%)</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.header_notes" resname="calculation.field.header_notes">
+        <source>calculation.field.header_notes</source>
+        <target>Calculation notes</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.header_notes_help" resname="calculation.field.header_notes_help">
+        <source>calculation.field.header_notes_help</source>
+        <target>E.g. when the upgrade is scheduled. Markdown, e.g. **bold** or lists.</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.remarks" resname="calculation.field.remarks">
+        <source>calculation.field.remarks</source>
+        <target>Remarks</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.remarks_help" resname="calculation.field.remarks_help">
+        <source>calculation.field.remarks_help</source>
+        <target>Shown below the totals, e.g. "License costs not included". Markdown, e.g. **bold** or lists.</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.author" resname="calculation.field.author">
+        <source>calculation.field.author</source>
+        <target>Your name or initials</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.note" resname="calculation.field.note">
+        <source>calculation.field.note</source>
+        <target>What changed</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.note_placeholder" resname="calculation.field.note_placeholder">
+        <source>calculation.field.note_placeholder</source>
+        <target>e.g. Estimated the package updates</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.final" resname="calculation.field.final">
+        <source>calculation.field.final</source>
+        <target>Final version?</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.final_help" resname="calculation.field.final_help">
+        <source>calculation.field.final_help</source>
+        <target>Marks the version sent to the customer. Later versions are still possible.</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.positions" resname="calculation.section.positions">
+        <source>calculation.section.positions</source>
+        <target>Positions</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.packages" resname="calculation.section.packages">
+        <source>calculation.section.packages</source>
+        <target>Third-party packages</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.own-packages" resname="calculation.section.own-packages">
+        <source>calculation.section.own-packages</source>
+        <target>Custom packages</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.optional" resname="calculation.section.optional">
+        <source>calculation.section.optional</source>
+        <target>Optional</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.compatible" resname="calculation.status.compatible">
+        <source>calculation.status.compatible</source>
+        <target>Compatible</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.update-first" resname="calculation.status.update-first">
+        <source>calculation.status.update-first</source>
+        <target>Update before core</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.update" resname="calculation.status.update">
+        <source>calculation.status.update</source>
+        <target>Update with core</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.blocker" resname="calculation.status.blocker">
+        <source>calculation.status.blocker</source>
+        <target>Show-stopper</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.replace" resname="calculation.status.replace">
+        <source>calculation.status.replace</source>
+        <target>Replace</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.remove" resname="calculation.status.remove">
+        <source>calculation.status.remove</source>
+        <target>Remove</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.manual" resname="calculation.status.manual">
+        <source>calculation.status.manual</source>
+        <target>Check manually</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_level.success" resname="calculation.note_level.success">
+        <source>calculation.note_level.success</source>
+        <target>Compatible or simple update</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_level.warning" resname="calculation.note_level.warning">
+        <source>calculation.note_level.warning</source>
+        <target>Migration or manual changes needed</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_level.danger" resname="calculation.note_level.danger">
+        <source>calculation.note_level.danger</source>
+        <target>No compatible version yet</target>
+      </trans-unit>
+      <trans-unit id="calculation.default.core" resname="calculation.default.core">
+        <source>calculation.default.core</source>
+        <target>Core upgrade</target>
+      </trans-unit>
+      <trans-unit id="calculation.default.php" resname="calculation.default.php">
+        <source>calculation.default.php</source>
+        <target>PHP version upgrade</target>
+      </trans-unit>
+      <trans-unit id="calculation.default.testing" resname="calculation.default.testing">
+        <source>calculation.default.testing</source>
+        <target>Testing, code reviews and deployments</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.gone" resname="calculation.change.gone">
+        <source>calculation.change.gone</source>
+        <target>{label}: not installed anymore, left out</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.added" resname="calculation.change.added">
+        <source>calculation.change.added</source>
+        <target>{label}: newly installed, added</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.installed" resname="calculation.change.installed">
+        <source>calculation.change.installed</source>
+        <target>installed {old} → {new}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.target" resname="calculation.change.target">
+        <source>calculation.change.target</source>
+        <target>target {old} → {new}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.status" resname="calculation.change.status">
+        <source>calculation.change.status</source>
+        <target>to-do {old} → {new}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.moved" resname="calculation.change.moved">
+        <source>calculation.change.moved</source>
+        <target>moved to {section}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.row" resname="calculation.change.row">
+        <source>calculation.change.row</source>
+        <target>{label}: {changes}</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.bold" resname="calculation.editor.bold">
+        <source>calculation.editor.bold</source>
+        <target>Bold</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.italic" resname="calculation.editor.italic">
+        <source>calculation.editor.italic</source>
+        <target>Italic</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.list" resname="calculation.editor.list">
+        <source>calculation.editor.list</source>
+        <target>Bulleted list</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.list-ordered" resname="calculation.editor.list-ordered">
+        <source>calculation.editor.list-ordered</source>
+        <target>Numbered list</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.link" resname="calculation.editor.link">
+        <source>calculation.editor.link</source>
+        <target>Link</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.eye" resname="calculation.editor.eye">
+        <source>calculation.editor.eye</source>
+        <target>Preview</target>
+      </trans-unit>
+      <trans-unit id="settings.intro" resname="settings.intro">
+        <source>settings.intro</source>
+        <target>A project's first calculation starts with these values; later ones take over those of the project's previous calculation.</target>
+      </trans-unit>
+      <trans-unit id="settings.saved" resname="settings.saved">
+        <source>settings.saved</source>
+        <target>Settings saved.</target>
+      </trans-unit>
+      <trans-unit id="settings.field.rate" resname="settings.field.rate">
+        <source>settings.field.rate</source>
+        <target>Default hourly rate (EUR)</target>
+      </trans-unit>
+      <trans-unit id="settings.field.management" resname="settings.field.management">
+        <source>settings.field.management</source>
+        <target>Default project management (%)</target>
+      </trans-unit>
+      <trans-unit id="profile.title" resname="profile.title">
+        <source>profile.title</source>
+        <target>My Profile</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.enabled" resname="profile.2fa.enabled">
+        <source>profile.2fa.enabled</source>
+        <target>Enabled</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.since" resname="profile.2fa.since">
+        <source>profile.2fa.since</source>
+        <target>since {date}</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.codes_left" resname="profile.2fa.codes_left">
+        <source>profile.2fa.codes_left</source>
+        <target>{count, plural, one {# unused backup code left.} other {# unused backup codes left.}}</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.codes_soon" resname="profile.2fa.codes_soon">
+        <source>profile.2fa.codes_soon</source>
+        <target>Generate new ones soon.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.new_codes" resname="profile.2fa.new_codes">
+        <source>profile.2fa.new_codes</source>
+        <target>New backup codes</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.disable" resname="profile.2fa.disable">
+        <source>profile.2fa.disable</source>
+        <target>Disable</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.unavailable" resname="profile.2fa.unavailable">
+        <source>profile.2fa.unavailable</source>
+        <target>Two-factor authentication isn't available yet: the server has no valid &lt;code&gt;TOTP_ENCRYPTION_KEY&lt;/code&gt; configured. Please contact the administrator.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.intro" resname="profile.2fa.intro">
+        <source>profile.2fa.intro</source>
+        <target>Protect your account with a code from an authenticator app in addition to your password.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.setup" resname="profile.2fa.setup">
+        <source>profile.2fa.setup</source>
+        <target>Set up two-factor authentication</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.scan" resname="profile.2fa.scan">
+        <source>profile.2fa.scan</source>
+        <target>Scan the QR code with an authenticator app (e.g. 1Password, Google Authenticator, Authy).</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.enter" resname="profile.2fa.enter">
+        <source>profile.2fa.enter</source>
+        <target>Enter the 6-digit code the app shows to confirm.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.qr" resname="profile.2fa.qr">
+        <source>profile.2fa.qr</source>
+        <target>QR code for your authenticator app</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.manual" resname="profile.2fa.manual">
+        <source>profile.2fa.manual</source>
+        <target>Can't scan it? Enter this key manually:</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.enable" resname="profile.2fa.enable">
+        <source>profile.2fa.enable</source>
+        <target>Enable two-factor authentication</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.now_enabled" resname="profile.2fa.now_enabled">
+        <source>profile.2fa.now_enabled</source>
+        <target>Two-factor authentication is now enabled.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.now_disabled" resname="profile.2fa.now_disabled">
+        <source>profile.2fa.now_disabled</source>
+        <target>Two-factor authentication is now disabled.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.disable_title" resname="profile.2fa.disable_title">
+        <source>profile.2fa.disable_title</source>
+        <target>Disable two-factor authentication</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.disable_intro" resname="profile.2fa.disable_intro">
+        <source>profile.2fa.disable_intro</source>
+        <target>Your account will be protected by your password only.</target>
+      </trans-unit>
+      <trans-unit id="profile.language" resname="profile.language">
+        <source>profile.language</source>
+        <target>Language</target>
+      </trans-unit>
+      <trans-unit id="profile.language_auto" resname="profile.language_auto">
+        <source>profile.language_auto</source>
+        <target>Automatic (browser language)</target>
+      </trans-unit>
+      <trans-unit id="profile.language_saved" resname="profile.language_saved">
+        <source>profile.language_saved</source>
+        <target>Language saved.</target>
+      </trans-unit>
+      <trans-unit id="profile.updated" resname="profile.updated">
+        <source>profile.updated</source>
+        <target>Profile updated.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.title" resname="profile.codes.title">
+        <source>profile.codes.title</source>
+        <target>Backup codes</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.yours" resname="profile.codes.yours">
+        <source>profile.codes.yours</source>
+        <target>Your backup codes</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.warning" resname="profile.codes.warning">
+        <source>profile.codes.warning</source>
+        <target>Store these codes somewhere safe, e.g. in your password manager. &lt;strong&gt;They are shown only once.&lt;/strong&gt; Each code works once, if you can't use your authenticator app.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.saved" resname="profile.codes.saved">
+        <source>profile.codes.saved</source>
+        <target>I have saved my backup codes</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.regenerated" resname="profile.codes.regenerated">
+        <source>profile.codes.regenerated</source>
+        <target>New backup codes generated, the old ones no longer work.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.regenerate_intro" resname="profile.codes.regenerate_intro">
+        <source>profile.codes.regenerate_intro</source>
+        <target>All existing backup codes stop working. Confirm with a code from your authenticator app.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.regenerate" resname="profile.codes.regenerate">
+        <source>profile.codes.regenerate</source>
+        <target>Generate new backup codes</target>
+      </trans-unit>
+      <trans-unit id="profile.error.password" resname="profile.error.password">
+        <source>profile.error.password</source>
+        <target>Current password is incorrect.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.email" resname="profile.error.email">
+        <source>profile.error.email</source>
+        <target>This email is already in use.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.code" resname="profile.error.code">
+        <source>profile.error.code</source>
+        <target>The code is not valid.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.code_time" resname="profile.error.code_time">
+        <source>profile.error.code_time</source>
+        <target>The code is not valid. Check that the time on your phone is correct.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.throttled" resname="profile.error.throttled">
+        <source>profile.error.throttled</source>
+        <target>{minutes, plural, one {Too many failed attempts, please try again in # minute.} other {Too many failed attempts, please try again in # minutes.}}</target>
+      </trans-unit>
+      <trans-unit id="profile.field.new_password" resname="profile.field.new_password">
+        <source>profile.field.new_password</source>
+        <target>New password (leave blank to keep current)</target>
+      </trans-unit>
+      <trans-unit id="profile.field.repeat_password" resname="profile.field.repeat_password">
+        <source>profile.field.repeat_password</source>
+        <target>Repeat new password</target>
+      </trans-unit>
+      <trans-unit id="profile.field.current_password_confirm" resname="profile.field.current_password_confirm">
+        <source>profile.field.current_password_confirm</source>
+        <target>Current password (to confirm changes)</target>
+      </trans-unit>
+      <trans-unit id="profile.field.current_password" resname="profile.field.current_password">
+        <source>profile.field.current_password</source>
+        <target>Current password</target>
+      </trans-unit>
+      <trans-unit id="profile.field.code" resname="profile.field.code">
+        <source>profile.field.code</source>
+        <target>Code from your authenticator app</target>
+      </trans-unit>
+      <trans-unit id="profile.field.code_or_backup" resname="profile.field.code_or_backup">
+        <source>profile.field.code_or_backup</source>
+        <target>Code from your authenticator app or a backup code</target>
+      </trans-unit>
+      <trans-unit id="mail.kind.insecure" resname="mail.kind.insecure">
+        <source>mail.kind.insecure</source>
+        <target>Insecure</target>
+      </trans-unit>
+      <trans-unit id="mail.kind.stopped_reporting" resname="mail.kind.stopped_reporting">
+        <source>mail.kind.stopped_reporting</source>
+        <target>Stopped reporting</target>
+      </trans-unit>
+      <trans-unit id="mail.kind.sync_overdue" resname="mail.kind.sync_overdue">
+        <source>mail.kind.sync_overdue</source>
+        <target>Syncs overdue</target>
+      </trans-unit>
+      <trans-unit id="mail.count.insecure" resname="mail.count.insecure">
+        <source>mail.count.insecure</source>
+        <target>{count, plural, one {# new security finding} other {# new security findings}}</target>
+      </trans-unit>
+      <trans-unit id="mail.count.stopped_reporting" resname="mail.count.stopped_reporting">
+        <source>mail.count.stopped_reporting</source>
+        <target>{count, plural, one {# project stopped reporting} other {# projects stopped reporting}}</target>
+      </trans-unit>
+      <trans-unit id="mail.count.sync_overdue" resname="mail.count.sync_overdue">
+        <source>mail.count.sync_overdue</source>
+        <target>{count, plural, one {# sync overdue} other {# syncs overdue}}</target>
+      </trans-unit>
+      <trans-unit id="mail.open_dashboard" resname="mail.open_dashboard">
+        <source>mail.open_dashboard</source>
+        <target>Open the dashboard</target>
+      </trans-unit>
+      <trans-unit id="mail.footer" resname="mail.footer">
+        <source>mail.footer</source>
+        <target>You get this mail as a user of the CMS Observer. Each finding is mailed once.</target>
+      </trans-unit>
+      <trans-unit id="mail.sync.subject" resname="mail.sync.subject">
+        <source>mail.sync.subject</source>
+        <target>Sync {command}</target>
+      </trans-unit>
+      <trans-unit id="mail.sync.since" resname="mail.sync.since">
+        <source>mail.sync.since</source>
+        <target>No successful run since {since}, its data is no longer up to date.{failed, select, none {} other { Last error ({failed}): {error}}}</target>
+      </trans-unit>
+      <trans-unit id="mail.sync.never" resname="mail.sync.never">
+        <source>mail.sync.never</source>
+        <target>No successful run yet, its data is missing.{failed, select, none {} other { Last error ({failed}): {error}}}</target>
+      </trans-unit>
+      <trans-unit id="mail.test.subject" resname="mail.test.subject">
+        <source>mail.test.subject</source>
+        <target>Test mail</target>
+      </trans-unit>
+      <trans-unit id="mail.test.body" resname="mail.test.body">
+        <source>mail.test.body</source>
+        <target>This is a test mail from the CMS Observer at {url}.
+
+If you can read it, the mail setup works.</target>
+      </trans-unit>
+      <trans-unit id="profile.language_help" resname="profile.language_help">
+        <source>profile.language_help</source>
+        <target>Mails, e.g. about security findings, are sent in this language; with "Automatic" in English, as the browser language is not known when mailing.</target>
+      </trans-unit>
+      <trans-unit id="status.recipient_help" resname="status.recipient_help">
+        <source>status.recipient_help</source>
+        <target>The test mail is sent in the language of this page. Mails about security findings use the profile language of each recipient; with "Automatic" English.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

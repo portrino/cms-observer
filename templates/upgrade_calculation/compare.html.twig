@@ -5,22 +5,22 @@
 {% set old = comparison.old %}
 {% set new = comparison.new %}
 
-{% block title %}Compare versions - {{ upgrade }} - {{ site.name }} - CMS Observer{% endblock %}
+{% block title %}{{ 'calculation.compare_versions'|trans }} - {{ upgrade }} - {{ site.name }} - CMS Observer{% endblock %}
 
-{% block page_title %}Compare versions: Upgrade {{ upgrade }} <span class="topbar-subtitle">{{ site.name }}</span>{% endblock %}
+{% block page_title %}{{ 'calculation.compare_versions'|trans }}: {{ 'calculation.upgrade'|trans({upgrade: upgrade}) }} <span class="topbar-subtitle">{{ site.name }}</span>{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('upgrade_calculation_show', {id: calculation.id, version: new.id}), 'arrow-left', 'Back to calculation') }}
+    {{ m.topbar_link(path('upgrade_calculation_show', {id: calculation.id, version: new.id}), 'arrow-left', 'calculation.back'|trans) }}
 {% endblock %}
 
 {% macro version_option(version, selected) %}
-    <option value="{{ version.id }}" {{ version == selected ? 'selected' }}>{{ version.createdAt|date('Y-m-d H:i') }} – {{ version.author }}{{ version.final ? ' (final)' }}</option>
+    <option value="{{ version.id }}" {{ version == selected ? 'selected' }}>{{ version.createdAt|format_datetime('medium', 'short') }} – {{ version.author }}{{ version.final ? ' (' ~ 'calculation.final'|trans ~ ')' }}</option>
 {% endmacro %}
 
 {% macro field_changes(changes) %}
     <ul class="list-unstyled mb-0">
         {% for change in changes %}
-            <li><span class="text-muted">{{ change.field }}:</span> <del>{{ change.old ?: '–' }}</del> → <ins>{{ change.new ?: '–' }}</ins></li>
+            <li><span class="text-muted">{{ change.field|trans }}:</span> <del>{{ change.old ? change.old|trans : '–' }}</del> → <ins>{{ change.new ? change.new|trans : '–' }}</ins></li>
         {% endfor %}
     </ul>
 {% endmacro %}
@@ -28,41 +28,41 @@
 {% block body %}
 <div class="container" id="upgradeComparison">
     <form method="get" class="row g-2 align-items-center mb-3" data-controller="auto-submit">
-        <label class="col-auto" for="compareFrom">Compare</label>
+        <label class="col-auto" for="compareFrom">{{ 'calculation.compare'|trans }}</label>
         <div class="col-auto">
             <select name="from" id="compareFrom" class="form-select" data-action="change->auto-submit#submit">
                 {% for version in calculation.versions %}{{ _self.version_option(version, old) }}{% endfor %}
             </select>
         </div>
-        <label class="col-auto" for="compareTo">with</label>
+        <label class="col-auto" for="compareTo">{{ 'calculation.compare_with'|trans }}</label>
         <div class="col-auto">
             <select name="to" id="compareTo" class="form-select" data-action="change->auto-submit#submit">
                 {% for version in calculation.versions %}{{ _self.version_option(version, new) }}{% endfor %}
             </select>
         </div>
-        <noscript class="col-auto"><button type="submit" class="btn btn-tertiary">Compare</button></noscript>
+        <noscript class="col-auto"><button type="submit" class="btn btn-tertiary">{{ 'calculation.compare'|trans }}</button></noscript>
     </form>
 
     <div class="card mb-3">
         <div class="card-body">
             {% for version in [old, new] %}
-                <p class="mb-1"><strong>{{ loop.first ? 'From' : 'To' }}:</strong> {{ version.createdAt|date('Y-m-d H:i') }} by {{ version.author }}{% if version.note %} – {{ version.note }}{% endif %}</p>
+                <p class="mb-1"><strong>{{ (loop.first ? 'calculation.from' : 'calculation.to')|trans }}:</strong> {{ 'calculation.date_by'|trans({date: version.createdAt|format_datetime('medium', 'short'), author: version.author}) }}{% if version.note %} – {{ version.note }}{% endif %}</p>
             {% endfor %}
         </div>
     </div>
 
     {% if comparison.isEmpty %}
-        <p class="text-muted">No differences.</p>
+        <p class="text-muted">{{ 'calculation.no_differences'|trans }}</p>
     {% else %}
         {% if comparison.totals is not empty %}
             <div class="card mb-3" id="compareTotals">
-                <div class="card-header bg-white"><h2 class="h6 mb-0">Totals</h2></div>
+                <div class="card-header bg-white"><h2 class="h6 mb-0">{{ 'calculation.totals'|trans }}</h2></div>
                 <div class="card-body">{{ _self.field_changes(comparison.totals) }}</div>
             </div>
         {% endif %}
         {% if comparison.settings is not empty %}
             <div class="card mb-3" id="compareSettings">
-                <div class="card-header bg-white"><h2 class="h6 mb-0">Pricing and notes</h2></div>
+                <div class="card-header bg-white"><h2 class="h6 mb-0">{{ 'calculation.pricing_notes'|trans }}</h2></div>
                 <div class="card-body">{{ _self.field_changes(comparison.settings) }}</div>
             </div>
         {% endif %}
@@ -70,16 +70,16 @@
             {% set rows = comparison.sections[section.value] %}
             {% if rows.added is not empty or rows.removed is not empty or rows.changed is not empty %}
                 <div class="card mb-3" id="compare-{{ section.value }}">
-                    <div class="card-header bg-white"><h2 class="h6 mb-0">{{ section.label }}</h2></div>
+                    <div class="card-header bg-white"><h2 class="h6 mb-0">{{ section|trans }}</h2></div>
                     <ul class="list-group list-group-flush">
                         {% for item in rows.added %}
-                            <li class="list-group-item"><span class="badge text-bg-success">Added</span> {{ item.label }}</li>
+                            <li class="list-group-item"><span class="badge text-bg-success">{{ 'calculation.added'|trans }}</span> {{ item.label }}</li>
                         {% endfor %}
                         {% for item in rows.removed %}
-                            <li class="list-group-item"><span class="badge text-bg-danger">Removed</span> {{ item.label }}</li>
+                            <li class="list-group-item"><span class="badge text-bg-danger">{{ 'calculation.removed'|trans }}</span> {{ item.label }}</li>
                         {% endfor %}
                         {% for row in rows.changed %}
-                            <li class="list-group-item"><span class="badge text-bg-info">Changed</span> {{ row.item.label }}{{ _self.field_changes(row.fields) }}</li>
+                            <li class="list-group-item"><span class="badge text-bg-info">{{ 'calculation.changed'|trans }}</span> {{ row.item.label }}{{ _self.field_changes(row.fields) }}</li>
                         {% endfor %}
                     </ul>
                 </div>

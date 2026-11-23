@@ -19,6 +19,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecurityNotifierTest extends KernelTestCase
 {
@@ -53,6 +55,30 @@ class SecurityNotifierTest extends KernelTestCase
         // the logo is embedded, mail clients can't load it from the Observer
         self::assertEmailAttachmentCount($email, 1);
         self::assertEmailHtmlBodyContains($email, 'src="cid:');
+    }
+
+    public function testEveryUserGetsTheMailInTheProfileLanguage(): void
+    {
+        $this->createUser('notify-auto@example.test', 'Notify Auto', 'password');
+        $german = $this->createUser('notify-de@example.test', 'Notify De', 'password');
+        $german->setLocale('de');
+        static::getContainer()->get(EntityManagerInterface::class)->flush();
+
+        $notifier = static::getContainer()->get(SecurityNotifier::class);
+        $notifier->addFinding($this->createSite('Site Lang'), new TranslatableMessage('event.subject.php', ['version' => '8.4.24']), new TranslatableMessage('event.detail.php_missing_fixes', ['fixed' => '8.4.27']));
+        $notifier->flush();
+
+        self::assertEmailCount(2);
+        [$english, $germanMail] = self::getMailerMessages();
+        self::assertInstanceOf(Email::class, $english);
+        self::assertInstanceOf(Email::class, $germanMail);
+        self::assertSame(['notify-auto@example.test'], array_map(static fn (Address $address): string => $address->getAddress(), $english->getTo()), '"automatic" is English');
+        self::assertEmailHeaderSame($english, 'Subject', '[CMS Observer] 1 new security finding');
+        self::assertEmailHtmlBodyContains($english, 'PHP version is missing security fixes (fixed in 8.4.27).');
+        self::assertSame(['notify-de@example.test'], array_map(static fn (Address $address): string => $address->getAddress(), $germanMail->getTo()));
+        self::assertEmailHeaderSame($germanMail, 'Subject', '[CMS Observer] 1 neuer Sicherheitsbefund');
+        self::assertEmailHtmlBodyContains($germanMail, 'Der PHP-Version fehlen Sicherheitskorrekturen (behoben in 8.4.27).');
+        self::assertEmailHtmlBodyContains($germanMail, 'Dashboard öffnen');
     }
 
     public function testFindingsAreGroupedByKindAndCountedInTheSubject(): void
@@ -116,7 +142,7 @@ class SecurityNotifierTest extends KernelTestCase
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::once())->method('error');
 
-        $notifier = new SecurityNotifier($mailer, $userRepository, $urlGenerator, $logger, self::createStub(EntityManagerInterface::class), 'no-reply@example.test');
+        $notifier = new SecurityNotifier($mailer, $userRepository, $urlGenerator, $logger, self::createStub(EntityManagerInterface::class), 'no-reply@example.test', self::createStub(TranslatorInterface::class));
         $notifier->addFinding($this->createSite('Site Fail'), 'PHP 8.4.24', 'detail');
         $notifier->flush();
     }

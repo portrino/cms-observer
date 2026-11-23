@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-enum UpgradeSection: string
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+enum UpgradeSection: string implements TranslatableInterface
 {
     case Positions = 'positions';
     case Packages = 'packages';
@@ -25,5 +28,10 @@ enum UpgradeSection: string
     public function hasPackages(): bool
     {
         return self::Packages === $this || self::OwnPackages === $this;
+    }
+
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
+    {
+        return $translator->trans('calculation.section.'.$this->value, locale: $locale);
     }
 }

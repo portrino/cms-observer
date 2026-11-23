@@ -17,6 +17,10 @@ job stopped working, or the token was replaced.
 The mails link to the projects, so `DEFAULT_URI` must be the Observer's
 public URL.
 
+Each user gets the mails in the language chosen in the profile. With
+"Automatic" they are English, as there is no browser to ask when mailing.
+A test mail is in the language of whoever sends it.
+
 To check the mail setup, send a test mail from the **Status** page or with
 `php bin/console app:mail:test <address>`. Both show the sender and the
 transport in use and, if sending fails, the mail server's error.
@@ -65,6 +69,18 @@ A login session ends after 2 hours of inactivity; expired sessions are
 removed from the database now and then on a later request. "Remember me" on the login
 form keeps a user logged in for 30 days; changing the password or resetting
 two-factor authentication logs out every remembered browser.
+
+## Language
+
+The interface is in English and German. Each user picks the language in the
+profile; the default "Automatic" follows the browser and falls back to
+English. Dates, numbers and prices are formatted for the language, e.g.
+`700,00 €` in German and `€700.00` in English.
+
+What the Observer writes and keeps, e.g. the history, is shown in the
+reader's language. Texts saved with an upgrade calculation, such as its
+prefilled positions, stay in the language of whoever wrote them. The console
+commands, logs and the report API are English only.
 
 ## Projects
 

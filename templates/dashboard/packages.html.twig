@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block title %}Packages - CMS Observer{% endblock %}
+{% block title %}{{ 'nav.packages'|trans }} - CMS Observer{% endblock %}
 
-{% block page_title %}Packages across all projects{% endblock %}
+{% block page_title %}{{ 'package.across_projects'|trans }}{% endblock %}
 
 {% block page_actions %}
     {{ m.filter_toggle([query, packageType]|filter(v => v)|length) }}
@@ -14,18 +14,18 @@
     <div class="page-filters collapse d-md-block" id="pageFilters">
     <form method="get" class="row g-2 mb-3" data-controller="auto-submit" data-turbo-frame="packages-results">
         <div class="col-auto">
-            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Filter by package name…" aria-label="Search" data-action="input->auto-submit#submitAfterTyping">
+            <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="{{ 'package.search'|trans }}" aria-label="{{ 'common.search'|trans }}" data-action="input->auto-submit#submitAfterTyping">
         </div>
         <div class="col-auto">
-            <select name="type" class="form-select" aria-label="Package type" data-action="change->auto-submit#submit">
-                <option value="">All types</option>
+            <select name="type" class="form-select" aria-label="{{ 'package.type'|trans }}" data-action="change->auto-submit#submit">
+                <option value="">{{ 'common.all_types'|trans }}</option>
                 {% for type in packageTypes %}
                     <option value="{{ type.value }}" {{ type == packageType ? 'selected' }}>{{ type.label }}</option>
                 {% endfor %}
             </select>
         </div>
         <noscript class="col-auto">
-            <button type="submit" class="btn btn-tertiary">Filter</button>
+            <button type="submit" class="btn btn-tertiary">{{ 'common.filter'|trans }}</button>
         </noscript>
     </form>
     </div>
@@ -33,7 +33,7 @@
     {# filters only swap this frame; links in the results (projects, external pages) still open as whole pages #}
     <turbo-frame id="packages-results" data-turbo-action="advance" target="_top">
     {% if packageGroups is empty %}
-        <p class="text-muted">No packages match.</p>
+        <p class="text-muted">{{ 'package.none_match'|trans }}</p>
     {% else %}
         <div class="card">
         <div class="card-body p-0">
@@ -53,10 +53,10 @@
                         <table class="table table-sm table-striped table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Project</th>
-                                    <th>Version</th>
-                                    <th>Updates</th>
-                                    <th>Security</th>
+                                    <th>{{ 'common.project'|trans }}</th>
+                                    <th>{{ 'common.version'|trans }}</th>
+                                    <th>{{ 'package.updates'|trans }}</th>
+                                    <th>{{ 'common.security'|trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>

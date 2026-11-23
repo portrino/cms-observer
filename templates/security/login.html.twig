@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in - CMS Observer{% endblock %}
+{% block title %}{{ 'login.title'|trans }} - CMS Observer{% endblock %}
 
 {% block body %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
@@ -14,21 +14,21 @@
             {% endif %}
             <form method="post">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Email</label>
+                    <label for="username" class="form-label">{{ 'login.email'|trans }}</label>
                     <input type="email" id="username" name="_username" class="form-control" value="{{ last_username }}" required autofocus>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">{{ 'login.password'|trans }}</label>
                     <input type="password" id="password" name="_password" class="form-control" required>
                 </div>
                 <div class="form-check mb-3">
                     <input type="checkbox" id="remember_me" name="_remember_me" class="form-check-input">
-                    <label for="remember_me" class="form-check-label">Remember me for 30 days</label>
+                    <label for="remember_me" class="form-check-label">{{ 'login.remember_me'|trans }}</label>
                 </div>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                <button type="submit" class="btn btn-primary w-100">Log in</button>
+                <button type="submit" class="btn btn-primary w-100">{{ 'login.submit'|trans }}</button>
             </form>
         </div>
     </div>

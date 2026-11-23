@@ -30,33 +30,38 @@ class SiteType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
+                'label' => 'common.name',
                 'constraints' => [new NotBlank()],
             ])
             ->add('url', UrlType::class, [
-                'label' => 'Site URL',
+                'label' => 'project.form.url',
                 // the clients send their domains and reports from other hosts (e.g. staging) are rejected
-                'help' => 'The production URL of the site, exactly as the monitored instance uses it (including or excluding "www."). Reports from other domains, e.g. a staging copy using the same token, are rejected.',
+                'help' => 'project.form.url_help',
                 'constraints' => [new NotBlank(), new Url()],
             ])
             ->add('type', EnumType::class, [
                 'class' => CmsType::class,
+                'label' => 'common.type',
+                'choice_translation_domain' => false,
                 'choice_label' => static fn (CmsType $type): string => $type->label(),
                 'placeholder' => false,
             ])
             ->add('slaActive', CheckboxType::class, [
-                'label' => 'Active maintenance contract (SLA)',
+                'label' => 'project.form.sla',
                 'required' => false,
             ])
             ->add('organization', EntityType::class, [
                 'class' => Organization::class,
+                'label' => 'organization.label',
+                'choice_translation_domain' => false,
                 'choice_label' => 'name',
                 'required' => false,
-                'placeholder' => 'No organization',
+                'placeholder' => 'organization.none',
             ])
             // organization_select_controller.js offers it as "+ New organization…" in the select above;
             // the controller creates it, or takes an existing one with that name
             ->add('newOrganization', TextType::class, [
-                'label' => 'New organization',
+                'label' => 'organization.new',
                 'required' => false,
                 'constraints' => [
                     new Length(max: 255),
@@ -69,12 +74,12 @@ class SiteType extends AbstractType
                 ],
             ])
             ->add('repositoryUrl', UrlType::class, [
-                'label' => 'Repository URL',
+                'label' => 'project.form.repository',
                 'required' => false,
                 'constraints' => [new Url()],
             ])
             ->add('issueTrackerUrl', UrlType::class, [
-                'label' => 'Issue tracker URL',
+                'label' => 'project.form.issue_tracker',
                 'required' => false,
                 'constraints' => [new Url()],
             ]);

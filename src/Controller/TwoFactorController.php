@@ -23,6 +23,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\LimiterInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Optional TOTP 2FA on the profile page: set up, show fresh backup codes
@@ -42,6 +43,7 @@ class TwoFactorController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         #[Target('two_factor_profile')]
         private readonly RateLimiterFactoryInterface $codeCheckLimiter,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -78,11 +80,11 @@ class TwoFactorController extends AbstractController
 
                 $session->remove(self::SETUP_SECRET);
 
-                return $this->showNewBackupCodes($request, $backupCodes, 'Two-factor authentication is now enabled.');
+                return $this->showNewBackupCodes($request, $backupCodes, 'profile.2fa.now_enabled');
             }
 
             $limiter->consume();
-            $form->get('code')->addError(new FormError('The code is not valid. Check that the time on your phone is correct.'));
+            $form->get('code')->addError(new FormError($this->translator->trans('profile.error.code_time')));
         }
 
         return $this->render('profile/two_factor_enable.html.twig', [
@@ -123,18 +125,18 @@ class TwoFactorController extends AbstractController
                 $user->replaceBackupCodes($backupCodes);
                 $this->entityManager->flush();
 
-                return $this->showNewBackupCodes($request, $backupCodes, 'New backup codes generated, the old ones no longer work.');
+                return $this->showNewBackupCodes($request, $backupCodes, 'profile.codes.regenerated');
             }
 
             $limiter->consume();
-            $form->get('code')->addError(new FormError('The code is not valid.'));
+            $form->get('code')->addError(new FormError($this->translator->trans('profile.error.code')));
         }
 
         return $this->render('profile/two_factor_confirm.html.twig', [
             'form' => $form,
-            'title' => 'New backup codes',
-            'intro' => 'All existing backup codes stop working. Confirm with a code from your authenticator app.',
-            'submitLabel' => 'Generate new backup codes',
+            'title' => 'profile.2fa.new_codes',
+            'intro' => 'profile.codes.regenerate_intro',
+            'submitLabel' => 'profile.codes.regenerate',
         ]);
     }
 
@@ -149,7 +151,7 @@ class TwoFactorController extends AbstractController
         // a hijacked session alone must not be able to switch 2FA off
         $form = $this->createForm(TwoFactorConfirmationType::class, null, [
             'require_password' => true,
-            'code_label' => 'Code from your authenticator app or a backup code',
+            'code_label' => 'profile.field.code_or_backup',
         ]);
         $form->handleRequest($request);
 
@@ -158,15 +160,15 @@ class TwoFactorController extends AbstractController
             $code = $this->code($form);
             if (!$passwordHasher->isPasswordValid($user, (string) $form->get('currentPassword')->getData())) {
                 $limiter->consume();
-                $form->get('currentPassword')->addError(new FormError('Current password is incorrect.'));
+                $form->get('currentPassword')->addError(new FormError($this->translator->trans('profile.error.password')));
             } elseif (!$this->totpAuthenticator->checkCode($user, $code) && !$user->isBackupCode($code)) {
                 $limiter->consume();
-                $form->get('code')->addError(new FormError('The code is not valid.'));
+                $form->get('code')->addError(new FormError($this->translator->trans('profile.error.code')));
             } else {
                 $limiter->reset();
                 $user->disableTwoFactor();
                 $this->entityManager->flush();
-                $this->addFlash('success', 'Two-factor authentication is now disabled.');
+                $this->addFlash('success', 'profile.2fa.now_disabled');
 
                 return $this->redirectToRoute('app_profile');
             }
@@ -174,9 +176,9 @@ class TwoFactorController extends AbstractController
 
         return $this->render('profile/two_factor_confirm.html.twig', [
             'form' => $form,
-            'title' => 'Disable two-factor authentication',
-            'intro' => 'Your account will be protected by your password only.',
-            'submitLabel' => 'Disable two-factor authentication',
+            'title' => 'profile.2fa.disable_title',
+            'intro' => 'profile.2fa.disable_intro',
+            'submitLabel' => 'profile.2fa.disable_title',
         ]);
     }
 
@@ -198,10 +200,9 @@ class TwoFactorController extends AbstractController
             return true;
         }
 
-        $form->get('code')->addError(new FormError(sprintf(
-            'Too many failed attempts, please try again in %d minutes.',
-            max(1, (int) ceil(($limit->getRetryAfter()->getTimestamp() - time()) / 60)),
-        )));
+        $form->get('code')->addError(new FormError($this->translator->trans('profile.error.throttled', [
+            'minutes' => max(1, (int) ceil(($limit->getRetryAfter()->getTimestamp() - time()) / 60)),
+        ])));
 
         return false;
     }

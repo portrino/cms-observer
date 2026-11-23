@@ -22,7 +22,7 @@ class TwoFactorConfirmationType extends AbstractType
     {
         if (true === $options['require_password']) {
             $builder->add('currentPassword', PasswordType::class, [
-                'label' => 'Current password',
+                'label' => 'profile.field.current_password',
                 'constraints' => [new NotBlank()],
             ]);
         }
@@ -39,7 +39,7 @@ class TwoFactorConfirmationType extends AbstractType
         $resolver->setDefaults([
             'data_class' => null,
             'require_password' => false,
-            'code_label' => 'Code from your authenticator app',
+            'code_label' => 'profile.field.code',
         ]);
         $resolver->setAllowedTypes('require_password', 'bool');
         $resolver->setAllowedTypes('code_label', 'string');

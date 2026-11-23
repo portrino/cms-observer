@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Two-factor authentication - CMS Observer{% endblock %}
+{% block title %}{{ 'two_factor.title'|trans }} - CMS Observer{% endblock %}
 
 {% block body %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
@@ -14,21 +14,21 @@
             {% endif %}
             <form method="post" action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}">
                 <div class="mb-3">
-                    <label for="_auth_code" class="form-label">Authentication code</label>
+                    <label for="_auth_code" class="form-label">{{ 'two_factor.code'|trans }}</label>
                     {# one field for both the 6-digit app code and a backup code like "k7mqp-2xt9r" #}
                     <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" class="form-control"
                            autocomplete="one-time-code" autocapitalize="off" spellcheck="false" required autofocus>
-                    <div class="form-text">Enter the code from your authenticator app, or one of your backup codes.</div>
+                    <div class="form-text">{{ 'two_factor.code_help'|trans }}</div>
                 </div>
 
                 {% if isCsrfProtectionEnabled %}
                     <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
                 {% endif %}
 
-                <button type="submit" class="btn btn-primary w-100">Verify</button>
+                <button type="submit" class="btn btn-primary w-100">{{ 'two_factor.verify'|trans }}</button>
             </form>
             {# no Turbo prefetch: hovering a GET logout link would already log out #}
-            <p class="text-center mt-3 mb-0"><a href="{{ logoutPath }}" data-turbo-prefetch="false">Cancel and log out</a></p>
+            <p class="text-center mt-3 mb-0"><a href="{{ logoutPath }}" data-turbo-prefetch="false">{{ 'two_factor.cancel'|trans }}</a></p>
         </div>
     </div>
 </div>

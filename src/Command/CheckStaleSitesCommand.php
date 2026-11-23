@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[AsCommand(
     name: 'app:check-stale-sites',
@@ -37,8 +38,8 @@ class CheckStaleSitesCommand extends Command
         foreach ($sites as $site) {
             $this->securityNotifier->addFinding(
                 $site,
-                'No reports',
-                sprintf('No report since %s, the security status is no longer up to date.', $site->getLastSeenAt()?->format('Y-m-d H:i')),
+                new TranslatableMessage('event.subject.no_reports'),
+                new TranslatableMessage('event.detail.stale', ['since' => $site->getLastSeenAt()?->getTimestamp() ?? 0]),
                 SiteEventType::StoppedReporting,
             );
         }

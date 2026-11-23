@@ -15,6 +15,8 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Collects security findings (a site's core or a package became insecure) during
@@ -38,30 +40,42 @@ class SecurityNotifier
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
         private readonly string $fromAddress,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
-    public function addFinding(Site $site, string $subject, string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
+    public function addFinding(Site $site, TranslatableMessage|string $subject, TranslatableMessage|string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
     {
         $url = $this->urlGenerator->generate('dashboard_site_show', ['id' => $site->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         $kind = SiteEventType::StoppedReporting === $type ? FindingKind::StoppedReporting : FindingKind::Insecure;
         $this->findings[] = new SecurityFinding($kind, $site->getName(), $url, $subject, $detail);
         // every caller flushes the entity manager after evaluating, which stores this with the new status
-        $this->entityManager->persist(new SiteEvent($site, $type, $subject, null, null, $detail));
+        $this->persistEvent($site, $type, $subject, $detail);
     }
 
     /**
      * Records in the history that a finding is resolved. Not mailed: only new problems need attention.
      */
-    public function recordResolved(Site $site, string $subject, string $detail): void
+    public function recordResolved(Site $site, TranslatableMessage|string $subject, TranslatableMessage|string $detail): void
     {
-        $this->entityManager->persist(new SiteEvent($site, SiteEventType::BecameSecure, $subject, null, null, $detail));
+        $this->persistEvent($site, SiteEventType::BecameSecure, $subject, $detail);
+    }
+
+    /** The English text stays stored, for the history search and as the fallback */
+    private function persistEvent(Site $site, SiteEventType $type, TranslatableMessage|string $subject, TranslatableMessage|string $detail): void
+    {
+        $this->entityManager->persist(new SiteEvent($site, $type, $this->english($subject), null, null, $this->english($detail), SiteEvent::messagesOf($subject, $detail)));
+    }
+
+    private function english(TranslatableMessage|string $message): string
+    {
+        return $message instanceof TranslatableMessage ? $message->trans($this->translator, 'en') : $message;
     }
 
     /**
      * A finding about the Observer itself, e.g. an overdue sync, linked to the status page.
      */
-    public function addSystemFinding(string $subject, string $detail): void
+    public function addSystemFinding(TranslatableMessage|string $subject, TranslatableMessage|string $detail): void
     {
         $url = $this->urlGenerator->generate('app_status', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->findings[] = new SecurityFinding(FindingKind::SyncOverdue, 'CMS Observer', $url, $subject, $detail);
@@ -76,15 +90,6 @@ class SecurityNotifier
         $findings = $this->findings;
         $this->findings = [];
 
-        $recipients = array_map(
-            static fn (User $user): Address => new Address($user->getEmail(), $user->getName()),
-            $this->userRepository->findAll(),
-        );
-
-        if ([] === $recipients) {
-            return;
-        }
-
         $groups = [];
         foreach (FindingKind::cases() as $kind) {
             $group = array_values(array_filter($findings, static fn (SecurityFinding $finding): bool => $kind === $finding->kind));
@@ -93,11 +98,30 @@ class SecurityNotifier
             }
         }
 
+        // one mail per language, in each recipient's profile language; "automatic" is English,
+        // as no browser tells the language when mailing
+        $recipientsByLocale = [];
+        foreach ($this->userRepository->findAll() as $user) {
+            $recipientsByLocale[$user->getLocale() ?? 'en'][] = new Address($user->getEmail(), $user->getName());
+        }
+
+        foreach ($recipientsByLocale as $locale => $recipients) {
+            $this->send($locale, $recipients, $groups);
+        }
+    }
+
+    /**
+     * @param list<Address>                                                   $recipients
+     * @param list<array{kind: FindingKind, findings: list<SecurityFinding>}> $groups
+     */
+    private function send(string $locale, array $recipients, array $groups): void
+    {
         $email = new TemplatedEmail()
             ->from($this->fromAddress)
             ->to(...$recipients)
-            ->subject('[CMS Observer] '.implode(', ', array_map(static fn (array $group): string => $group['kind']->count(count($group['findings'])), $groups)))
+            ->subject('[CMS Observer] '.implode(', ', array_map(fn (array $group): string => $group['kind']->count(count($group['findings']))->trans($this->translator, $locale), $groups)))
             ->htmlTemplate('emails/security_findings.html.twig')
+            ->locale($locale)
             ->context([
                 'groups' => $groups,
                 'dashboardUrl' => $this->urlGenerator->generate('dashboard_index', [], UrlGeneratorInterface::ABSOLUTE_URL),

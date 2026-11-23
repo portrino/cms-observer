@@ -10,6 +10,7 @@ use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Sends a test mail with the configured mailer, like "Test Mail Setup" in the TYPO3 Install Tool.
@@ -23,6 +24,7 @@ class MailTester
         private readonly string $fromAddress,
         #[Autowire(env: 'MAILER_DSN')]
         private readonly string $mailerDsn,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -34,11 +36,11 @@ class MailTester
         $email = new Email()
             ->from($this->fromAddress)
             ->to($to)
-            ->subject('[CMS Observer] Test mail')
-            ->text(sprintf(
-                "This is a test mail from the CMS Observer at %s.\n\nIf you can read it, the mail setup works.",
-                $this->urlGenerator->generate('dashboard_index', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            ));
+            // in the language of whoever sends it from the status page
+            ->subject('[CMS Observer] '.$this->translator->trans('mail.test.subject'))
+            ->text($this->translator->trans('mail.test.body', [
+                'url' => $this->urlGenerator->generate('dashboard_index', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            ]));
 
         try {
             $this->mailer->send($email);

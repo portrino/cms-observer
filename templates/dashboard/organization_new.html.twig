@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block title %}Add Organization - CMS Observer{% endblock %}
+{% block title %}{{ 'organization.add'|trans }} - CMS Observer{% endblock %}
 
-{% block page_title %}Add Organization{% endblock %}
+{% block page_title %}{{ 'organization.add'|trans }}{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('dashboard_organization_index'), 'arrow-left', 'All organizations') }}
+    {{ m.topbar_link(path('dashboard_organization_index'), 'arrow-left', 'organization.all'|trans) }}
 {% endblock %}
 
 {% block body %}
@@ -17,7 +17,7 @@
                 {{ form_row(form.name) }}
                 {{ form_row(form.description) }}
                 {{ form_row(form.website) }}
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} Create</button>
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} {{ 'common.create'|trans }}</button>
             {{ form_end(form) }}
         </div>
     </div>

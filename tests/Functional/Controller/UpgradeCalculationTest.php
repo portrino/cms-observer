@@ -67,17 +67,29 @@ class UpgradeCalculationTest extends WebTestCase
         $this->client->followRedirect();
 
         self::assertSelectorTextContains('#upgradeTotals', '7.00 h', 'sums with the maximum effort');
-        self::assertSelectorTextContains('#upgradeTotals', '700,00 EUR');
+        self::assertSelectorTextContains('#upgradeTotals', '€700.00');
         self::assertSelectorTextContains('#upgrade-packages td span.no-print', '1.00–2.00 h', 'the range of a row as a hint on screen');
         self::assertSelectorTextSame('#upgrade-packages td span.print-only', '2.00 h');
         self::assertSelectorTextContains('#upgrade-packages td.table-warning', 'Breaking changes, see changelog');
         self::assertSelectorTextContains('#upgrade-packages td.table-info', '14.0.0', 'a target for both majors is highlighted');
         self::assertSelectorTextContains('#upgradeBeforehand', '2.00 h');
         self::assertSelectorTextContains('#upgrade-positions tr.upgrade-sum-row', 'Third-party packages', 'the package section among the positions');
-        self::assertSelectorTextContains('#upgrade-positions tr.upgrade-sum-row', '200,00 EUR');
+        self::assertSelectorTextContains('#upgrade-positions tr.upgrade-sum-row', '€200.00');
         self::assertSelectorTextContains('#upgradeChangelog', 'First draft');
         self::assertSelectorTextContains('#upgradeVersions', 'JD');
         self::assertSelectorTextSame('.topbar-title', 'Upgrade TYPO3 13 → 14 Upgrade Project', 'names the upgrade and the project');
+
+        // the same calculation in German: texts, the sum row's label and the currency format follow the reader
+        $this->client->setServerParameter('HTTP_ACCEPT_LANGUAGE', 'de');
+        $this->client->request('GET', $this->client->getRequest()->getUri());
+        self::assertSelectorTextContains('#upgradeTotals', "700,00\u{a0}€");
+        self::assertSelectorTextContains('#upgradeTotals', 'Projektmanagement (10 %)');
+        self::assertSelectorTextContains('#upgrade-positions tr.upgrade-sum-row', 'Drittanbieter-Pakete');
+        self::assertDoesNotMatchRegularExpression('/\bcalculation\.[a-z_.-]+/', (string) $this->client->getResponse()->getContent(), 'untranslated key');
+        $this->client->clickLink('Bearbeiten');
+        self::assertSelectorTextContains('#upgrade-calculation-form', 'Als neue Version speichern');
+        self::assertSelectorExists('#upgrade-positions input[value="Drittanbieter-Pakete"]', 'the sum row is named in the reader\'s language');
+        self::assertDoesNotMatchRegularExpression('/\bcalculation\.[a-z_.-]+/', (string) $this->client->getResponse()->getContent(), 'untranslated key on the edit page');
 
         $version = $this->calculationOf($site)->getLatestVersion();
         self::assertNotNull($version);
@@ -247,8 +259,8 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorTextContains('#upgradeTimeline', 'From January 2028 on, core updates need a paid extended support (ELTS) license, available until December 2030.');
         self::assertSelectorTextContains('#upgradeTimeline', 'TYPO3 14 receives free core updates until June 2029.');
         self::assertSelectorExists('#upgradeTimeline svg rect.upgrade-roadmap-extended');
-        self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-development title', 'until 2024-10-15', 'sprint releases until the LTS');
-        self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-regular title', 'until 2026-07-01', 'priority bugfixes: the last 1.5 years');
+        self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-development title', 'until Oct 15, 2024', 'sprint releases until the LTS');
+        self::assertSelectorTextContains('#upgradeTimeline svg rect.upgrade-roadmap-regular title', 'until Jul 1, 2026', 'priority bugfixes: the last 1.5 years');
         self::assertSelectorExists('#upgradeTimeline svg line.upgrade-roadmap-tick');
         self::assertSelectorTextContains('#upgradeHeaderNotes', 'Scheduled for March', 'in the head, below the changelog');
 

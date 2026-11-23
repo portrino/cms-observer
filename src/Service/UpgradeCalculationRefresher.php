@@ -8,6 +8,7 @@ use App\Dto\UpgradeItem;
 use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeCalculationVersion;
 use App\Entity\UpgradeItemStatus;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The rows of a version brought up to the project's latest report: package rows get their
@@ -21,6 +22,7 @@ final readonly class UpgradeCalculationRefresher
 
     public function __construct(
         private UpgradeCalculationDrafter $drafter,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -45,7 +47,7 @@ final readonly class UpgradeCalculationRefresher
             $now = $fresh[$key] ?? null;
             unset($fresh[$key]);
             if (null === $now) {
-                $changes[] = sprintf('%s: not installed anymore, left out', $item->label);
+                $changes[] = $this->translator->trans('calculation.change.gone', ['label' => $item->label]);
                 continue;
             }
 
@@ -56,19 +58,19 @@ final readonly class UpgradeCalculationRefresher
             );
 
             $changed = array_filter([
-                $item->installedVersion !== $now->installedVersion ? sprintf('installed %s → %s', $item->installedVersion ?? '–', $now->installedVersion ?? '–') : null,
-                $item->targetVersion !== $now->targetVersion ? sprintf('target %s → %s', $item->targetVersion ?? '–', $now->targetVersion ?? '–') : null,
-                $item->status !== $status ? sprintf('to-do %s → %s', $item->status?->label() ?? '–', $status?->label() ?? '–') : null,
-                $item->section !== $now->section ? sprintf('moved to %s', $now->section->label()) : null,
-            ]);
+                $item->installedVersion !== $now->installedVersion ? $this->translator->trans('calculation.change.installed', ['old' => $item->installedVersion ?? '–', 'new' => $now->installedVersion ?? '–']) : null,
+                $item->targetVersion !== $now->targetVersion ? $this->translator->trans('calculation.change.target', ['old' => $item->targetVersion ?? '–', 'new' => $now->targetVersion ?? '–']) : null,
+                $item->status !== $status ? $this->translator->trans('calculation.change.status', ['old' => $item->status?->trans($this->translator) ?? '–', 'new' => $status?->trans($this->translator) ?? '–']) : null,
+                $item->section !== $now->section ? $this->translator->trans('calculation.change.moved', ['section' => $now->section->trans($this->translator)]) : null,
+            ], static fn (?string $change): bool => null !== $change);
             if ([] !== $changed) {
-                $changes[] = sprintf('%s: %s', $item->label, implode(', ', $changed));
+                $changes[] = $this->translator->trans('calculation.change.row', ['label' => $item->label, 'changes' => implode(', ', $changed)]);
             }
         }
 
         foreach ($fresh as $item) {
             $items[] = $item;
-            $changes[] = sprintf('%s: newly installed, added', $item->label);
+            $changes[] = $this->translator->trans('calculation.change.added', ['label' => $item->label]);
         }
 
         return ['items' => UpgradeItem::withSectionSums($items), 'changes' => $changes];

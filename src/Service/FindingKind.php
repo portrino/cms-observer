@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Symfony\Component\Translation\TranslatableMessage;
+
 /**
  * Groups the findings of a notification mail, in this order.
  */
@@ -13,24 +15,23 @@ enum FindingKind
     case StoppedReporting;
     case SyncOverdue;
 
-    public function heading(): string
+    public function heading(): TranslatableMessage
     {
-        return match ($this) {
-            self::Insecure => 'Insecure',
-            self::StoppedReporting => 'Stopped reporting',
-            self::SyncOverdue => 'Syncs overdue',
-        };
+        return new TranslatableMessage('mail.kind.'.$this->key());
     }
 
     /** For the mail subject, e.g. "2 new security findings" */
-    public function count(int $count): string
+    public function count(int $count): TranslatableMessage
     {
-        $plural = 1 === $count ? '' : 's';
+        return new TranslatableMessage('mail.count.'.$this->key(), ['count' => $count]);
+    }
 
+    private function key(): string
+    {
         return match ($this) {
-            self::Insecure => sprintf('%d new security finding%s', $count, $plural),
-            self::StoppedReporting => sprintf('%d project%s stopped reporting', $count, $plural),
-            self::SyncOverdue => sprintf('%d sync%s overdue', $count, $plural),
+            self::Insecure => 'insecure',
+            self::StoppedReporting => 'stopped_reporting',
+            self::SyncOverdue => 'sync_overdue',
         };
     }
 

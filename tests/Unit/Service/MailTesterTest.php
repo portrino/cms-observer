@@ -11,6 +11,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MailTesterTest extends TestCase
 {
@@ -45,6 +46,6 @@ class MailTesterTest extends TestCase
         $urlGenerator = self::createStub(UrlGeneratorInterface::class);
         $urlGenerator->method('generate')->willReturn('https://cms-observer.test/');
 
-        return new MailTester($mailer, $urlGenerator, 'no-reply@example.test', $dsn);
+        return new MailTester($mailer, $urlGenerator, 'no-reply@example.test', $dsn, self::createStub(TranslatorInterface::class));
     }
 }

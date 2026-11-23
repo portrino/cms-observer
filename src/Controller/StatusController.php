@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StatusController extends AbstractController
 {
@@ -27,8 +28,8 @@ class StatusController extends AbstractController
             $error = $mailTester->send($recipient);
 
             null === $error
-                ? $this->addFlash('success', sprintf('The mail server accepted the test mail to %s. Check that it arrives, also in the spam folder.', $recipient))
-                : $this->addFlash('error', sprintf('The test mail could not be sent: %s', $error));
+                ? $this->addFlash('success', new TranslatableMessage('status.mail_sent', ['recipient' => $recipient]))
+                : $this->addFlash('error', new TranslatableMessage('status.mail_failed', ['error' => $error]));
 
             return $this->redirectToRoute('app_status');
         }

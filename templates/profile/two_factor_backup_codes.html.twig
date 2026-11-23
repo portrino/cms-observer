@@ -1,23 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Backup codes - CMS Observer{% endblock %}
+{% block title %}{{ 'profile.codes.title'|trans }} - CMS Observer{% endblock %}
 
-{% block page_title %}Your backup codes{% endblock %}
+{% block page_title %}{{ 'profile.codes.yours'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container" style="max-width: 500px;">
     <div class="card">
         <div class="card-body">
             <div class="alert alert-warning">
-                Store these codes somewhere safe, e.g. in your password manager. <strong>They are shown only once.</strong>
-                Each code works once, if you can't use your authenticator app.
+                {{ 'profile.codes.warning'|trans|raw }}
             </div>
             <ul class="list-unstyled row row-cols-2 font-monospace fs-6 mb-3" id="backup-codes">
                 {% for code in backupCodes %}
                     <li class="col mb-1 user-select-all">{{ code }}</li>
                 {% endfor %}
             </ul>
-            <a href="{{ path('app_profile') }}" class="btn btn-tertiary">I have saved my backup codes</a>
+            <a href="{{ path('app_profile') }}" class="btn btn-tertiary">{{ 'profile.codes.saved'|trans }}</a>
         </div>
     </div>
 </div>

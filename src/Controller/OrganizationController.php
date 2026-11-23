@@ -39,7 +39,7 @@ class OrganizationController extends AbstractController
             $entityManager->persist($organization);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Organization created.');
+            $this->addFlash('success', 'organization.created');
 
             return $this->redirectToRoute('dashboard_organization_show', ['id' => $organization->getId()]);
         }
@@ -83,7 +83,7 @@ class OrganizationController extends AbstractController
             $organization->updateDetails($data['name'], $data['description'], $data['website']);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Organization updated.');
+            $this->addFlash('success', 'organization.updated');
 
             return $this->redirectToRoute('dashboard_organization_show', ['id' => $organization->getId()]);
         }

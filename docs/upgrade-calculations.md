@@ -14,6 +14,8 @@ target major and **Start**.
   testing. "Third-party packages" and "Custom packages" are positions too,
   their hours are the sums of those sections. Positions can be added,
   removed and reordered by dragging; the two package sums can't be removed.
+  The prefilled positions are named in the language of whoever starts the
+  calculation; the two sums always show in the reader's language.
 - **Third-party packages**: packages the Observer has release data for. For
   TYPO3 each extension gets the lowest version for the target major from the
   TER and a to-do: compatible, update before the core (a version supports
