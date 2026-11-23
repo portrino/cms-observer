@@ -15,12 +15,12 @@ use App\Entity\UpgradeItemStatus;
  * (hours, notes, assignee, label, a "Replace" or "Remove" decision). Packages no longer
  * installed are left out, new ones added; rows without a package stay as they are.
  */
-final class UpgradeCalculationRefresher
+final readonly class UpgradeCalculationRefresher
 {
     private const array DECISIONS = [UpgradeItemStatus::Replace, UpgradeItemStatus::Remove];
 
     public function __construct(
-        private readonly UpgradeCalculationDrafter $drafter,
+        private UpgradeCalculationDrafter $drafter,
     ) {
     }
 

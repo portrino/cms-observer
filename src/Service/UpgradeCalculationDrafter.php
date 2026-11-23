@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  * The rows a new calculation starts with: the usual positions without hours,
  * and the site's packages as its CMS's resolver judges them.
  */
-final class UpgradeCalculationDrafter
+final readonly class UpgradeCalculationDrafter
 {
     private const array POSITIONS = [
         'Core upgrade',
@@ -31,7 +31,7 @@ final class UpgradeCalculationDrafter
      */
     public function __construct(
         #[AutowireLocator(UpgradeCompatibilityResolver::class)]
-        private readonly ServiceLocator $resolvers,
+        private ServiceLocator $resolvers,
     ) {
     }
 

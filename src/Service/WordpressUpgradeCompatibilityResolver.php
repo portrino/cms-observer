@@ -18,11 +18,11 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * shortcut: every package is "check manually"; judge by "Requires at least" / "Tested up to" once WordPress calculations are used.
  */
 #[AsTaggedItem(index: 'wordpress')]
-final class WordpressUpgradeCompatibilityResolver implements UpgradeCompatibilityResolver
+final readonly class WordpressUpgradeCompatibilityResolver implements UpgradeCompatibilityResolver
 {
     public function __construct(
-        private readonly SitePackageRepository $packageRepository,
-        private readonly WordpressCoreReleaseRepository $coreReleaseRepository,
+        private SitePackageRepository $packageRepository,
+        private WordpressCoreReleaseRepository $coreReleaseRepository,
     ) {
     }
 

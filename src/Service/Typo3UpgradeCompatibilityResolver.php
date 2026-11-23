@@ -22,13 +22,13 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * Judges TYPO3 extensions by the TYPO3 majors of their TER versions.
  */
 #[AsTaggedItem(index: 'typo3')]
-final class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityResolver
+final readonly class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityResolver
 {
     public function __construct(
-        private readonly SitePackageRepository $packageRepository,
-        private readonly Typo3CoreReleaseRepository $coreReleaseRepository,
-        private readonly Typo3TerExtensionVersionRepository $terVersionRepository,
-        private readonly Typo3TerExtensionMetaRepository $terMetaRepository,
+        private SitePackageRepository $packageRepository,
+        private Typo3CoreReleaseRepository $coreReleaseRepository,
+        private Typo3TerExtensionVersionRepository $terVersionRepository,
+        private Typo3TerExtensionMetaRepository $terMetaRepository,
     ) {
     }
 
