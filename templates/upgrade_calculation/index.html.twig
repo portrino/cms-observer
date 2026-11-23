@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block title %}Upgrade calculations of {{ site.name }} - CMS Observer{% endblock %}
+{% block title %}{{ 'calculation.of'|trans({name: site.name}) }} - CMS Observer{% endblock %}
 
-{% block page_title %}Upgrade calculations of {{ site.name }}{% endblock %}
+{% block page_title %}{{ 'calculation.of'|trans({name: site.name}) }}{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('dashboard_site_show', {id: site.id}), 'arrow-left', 'Back to project') }}
+    {{ m.topbar_link(path('dashboard_site_show', {id: site.id}), 'arrow-left', 'project.back'|trans) }}
 {% endblock %}
 
 {% block body %}
@@ -14,10 +14,10 @@
     <div class="card mb-3">
         <div class="card-body">
             {% if targetMajors is empty %}
-                <p class="text-muted mb-0">No newer {{ site.type.label }} major is known for this project{{ site.currentCoreVersion ? '' : ' yet: it has not reported' }}.</p>
+                <p class="text-muted mb-0">{{ (site.currentCoreVersion ? 'calculation.no_newer_major' : 'calculation.no_newer_major_unreported')|trans({cms: site.type.label}) }}</p>
             {% else %}
                 <form method="get" action="{{ path('upgrade_calculation_new', {id: site.id}) }}" class="row g-2 align-items-center">
-                    <label class="col-auto" for="target">New calculation from {{ site.type.label }} {{ site.currentCoreVersion }} to</label>
+                    <label class="col-auto" for="target">{{ 'calculation.new_from'|trans({from: site.type.label ~ ' ' ~ site.currentCoreVersion}) }}</label>
                     <div class="col-auto">
                         <select name="target" id="target" class="form-select">
                             {% for major in targetMajors %}
@@ -26,7 +26,7 @@
                         </select>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} Start</button>
+                        <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('plus') }} {{ 'calculation.start'|trans }}</button>
                     </div>
                 </form>
             {% endif %}
@@ -34,7 +34,7 @@
     </div>
 
     {% if calculations is empty %}
-        <p class="text-muted">No calculations yet.</p>
+        <p class="text-muted">{{ 'calculation.none_yet'|trans }}</p>
     {% else %}
         <div class="card">
             <div class="card-body p-0">
@@ -42,9 +42,9 @@
                     <thead>
                         <tr>
                             <th>Upgrade</th>
-                            <th>Last saved</th>
-                            <th>By</th>
-                            <th>Versions</th>
+                            <th>{{ 'calculation.last_saved'|trans }}</th>
+                            <th>{{ 'calculation.by'|trans }}</th>
+                            <th>{{ 'calculation.versions'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,10 +52,10 @@
                             {% set latest = calculation.latestVersion %}
                             <tr>
                                 <td><a href="{{ path('upgrade_calculation_show', {id: calculation.id}) }}">{{ site.type.label }} {{ calculation.fromMajor }} → {{ calculation.targetMajor }}</a>
-                                    {% if latest.final %}<span class="badge text-bg-success">Final</span>{% endif %}</td>
-                                <td class="text-nowrap">{{ latest.createdAt|date('Y-m-d H:i') }}</td>
+                                    {% if latest.final %}<span class="badge text-bg-success">{{ 'calculation.final'|trans }}</span>{% endif %}</td>
+                                <td class="text-nowrap">{{ latest.createdAt|format_datetime('medium', 'short') }}</td>
                                 <td>{{ latest.author }}</td>
-                                <td>{{ m.count_badge(calculation.versions|length, 'receipt-text', 'Saved versions') }}</td>
+                                <td>{{ m.count_badge(calculation.versions|length, 'receipt-text', 'calculation.saved_versions'|trans) }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

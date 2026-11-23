@@ -35,9 +35,9 @@ class UpgradeItemType extends AbstractType
             ->add('notes', HiddenType::class, ['required' => false])
             ->add('noteLevel', ChoiceType::class, [
                 'required' => false,
-                'placeholder' => 'No color',
+                'placeholder' => 'calculation.no_color',
                 'choices' => array_combine(
-                    array_map(static fn (UpgradeNoteLevel $level): string => $level->label(), UpgradeNoteLevel::cases()),
+                    array_map(static fn (UpgradeNoteLevel $level): string => 'calculation.note_level.'.$level->value, UpgradeNoteLevel::cases()),
                     array_map(static fn (UpgradeNoteLevel $level): string => $level->value, UpgradeNoteLevel::cases()),
                 ),
             ])
@@ -55,9 +55,9 @@ class UpgradeItemType extends AbstractType
                 ->add('installedVersion', TextType::class, ['required' => false])
                 ->add('targetVersion', TextType::class, ['required' => false])
                 ->add('status', ChoiceType::class, [
-                    'label' => 'To-do',
+                    'label' => 'calculation.todo',
                     'choices' => array_combine(
-                        array_map(static fn (UpgradeItemStatus $status): string => $status->label(), UpgradeItemStatus::cases()),
+                        array_map(static fn (UpgradeItemStatus $status): string => 'calculation.status.'.$status->value, UpgradeItemStatus::cases()),
                         array_map(static fn (UpgradeItemStatus $status): string => $status->value, UpgradeItemStatus::cases()),
                     ),
                 ]);

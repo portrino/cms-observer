@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Major-upgrade calculations of a project. Saving always creates a new version (ADR-0004).
@@ -72,7 +74,7 @@ class UpgradeCalculationController extends AbstractController
 
         return $this->render('upgrade_calculation/edit.html.twig', [
             'site' => $site,
-            'title' => sprintf('New calculation: Upgrade %s %d → %d', $site->getType()->label(), (int) $site->getCurrentCoreVersion(), $target),
+            'title' => new TranslatableMessage('calculation.title.new', ['upgrade' => sprintf('%s %d → %d', $site->getType()->label(), (int) $site->getCurrentCoreVersion(), $target)]),
             'form' => $form,
             'cancelUrl' => $this->generateUrl('upgrade_calculation_index', ['id' => $site->getId()]),
         ]);
@@ -121,7 +123,7 @@ class UpgradeCalculationController extends AbstractController
     {
         $base = $this->findVersion($calculation, $version);
 
-        return $this->versionForm($calculation, $base, UpgradeCalculationVersionType::dataFrom($base->getItems(), $base), $request, 'Edit calculation');
+        return $this->versionForm($calculation, $base, UpgradeCalculationVersionType::dataFrom($base->getItems(), $base), $request, 'calculation.title.edit');
     }
 
     /**
@@ -129,15 +131,16 @@ class UpgradeCalculationController extends AbstractController
      * someone saves it as a new version.
      */
     #[Route('/calculations/{id}/refresh', name: 'upgrade_calculation_refresh', methods: ['GET', 'POST'])]
-    public function refresh(UpgradeCalculation $calculation, Request $request, UpgradeCalculationRefresher $refresher, #[MapQueryParameter] ?int $version = null): Response
+    public function refresh(UpgradeCalculation $calculation, Request $request, UpgradeCalculationRefresher $refresher, TranslatorInterface $translator, #[MapQueryParameter] ?int $version = null): Response
     {
         $base = $this->findVersion($calculation, $version);
         $refreshed = $refresher->refresh($calculation, $base);
         $data = UpgradeCalculationVersionType::dataFrom($refreshed['items'], $base);
         $reportedAt = $calculation->getSite()->getLastSeenAt();
-        $data['note'] = null !== $reportedAt ? sprintf('Refreshed from the report of %s', $reportedAt->format('Y-m-d')) : 'Refreshed from the latest report';
+        // saved with the version, so in the language of whoever refreshes
+        $data['note'] = null !== $reportedAt ? $translator->trans('calculation.refreshed_of', ['date' => $reportedAt]) : $translator->trans('calculation.refreshed');
 
-        return $this->versionForm($calculation, $base, $data, $request, 'Refresh calculation', $refreshed['changes']);
+        return $this->versionForm($calculation, $base, $data, $request, 'calculation.title.refresh', $refreshed['changes']);
     }
 
     /**
@@ -154,7 +157,7 @@ class UpgradeCalculationController extends AbstractController
 
         return $this->render('upgrade_calculation/edit.html.twig', [
             'site' => $calculation->getSite(),
-            'title' => sprintf('%s: Upgrade %s %d → %d', $action, $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor()),
+            'title' => new TranslatableMessage($action, ['upgrade' => sprintf('%s %d → %d', $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor())]),
             'based_on' => $base,
             'changes' => $changes,
             'form' => $form,
@@ -182,7 +185,7 @@ class UpgradeCalculationController extends AbstractController
         $this->entityManager->persist($version);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Saved as a new version.');
+        $this->addFlash('success', 'calculation.saved');
 
         return $this->redirectToRoute('upgrade_calculation_show', ['id' => $calculation->getId()]);
     }

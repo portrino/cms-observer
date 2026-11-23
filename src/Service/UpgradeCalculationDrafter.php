@@ -11,6 +11,7 @@ use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeSection;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The rows a new calculation starts with: the usual positions without hours,
@@ -19,11 +20,11 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 final readonly class UpgradeCalculationDrafter
 {
     private const array POSITIONS = [
-        'Core upgrade',
-        'PHP version upgrade',
+        'calculation.default.core',
+        'calculation.default.php',
         UpgradeSection::Packages,
         UpgradeSection::OwnPackages,
-        'Testing, code reviews and deployments',
+        'calculation.default.testing',
     ];
 
     /**
@@ -32,6 +33,7 @@ final readonly class UpgradeCalculationDrafter
     public function __construct(
         #[AutowireLocator(UpgradeCompatibilityResolver::class)]
         private ServiceLocator $resolvers,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -50,9 +52,10 @@ final readonly class UpgradeCalculationDrafter
     {
         return [
             // the order of the agency's Excel template; package sections as their sums
-            ...array_map(static fn (string|UpgradeSection $position): UpgradeItem => $position instanceof UpgradeSection
+            // the labels are saved, so in the language of whoever starts the calculation
+            ...array_map(fn (string|UpgradeSection $position): UpgradeItem => $position instanceof UpgradeSection
                 ? UpgradeItem::sumOf($position)
-                : new UpgradeItem(UpgradeSection::Positions, $position), self::POSITIONS),
+                : new UpgradeItem(UpgradeSection::Positions, $this->translator->trans($position)), self::POSITIONS),
             ...$this->resolver($site)->packageItems($site, $targetMajor),
         ];
     }

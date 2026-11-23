@@ -41,48 +41,49 @@ class UpgradeCalculationVersionType extends AbstractType
                 ),
                 // new rows by hand: nothing is known about the package yet
                 'prototype_data' => $section->hasPackages() ? ['status' => UpgradeItemStatus::Manual->value] : null,
-                'label' => $section->label(),
+                'label' => 'calculation.section.'.$section->value,
             ]);
         }
 
         $builder
             ->add('hourlyRate', NumberType::class, [
-                'label' => 'Hourly rate (EUR)',
+                'label' => 'calculation.field.rate',
                 'scale' => 2,
                 'html5' => true,
                 'attr' => ['step' => '0.01', 'min' => '0'],
                 'constraints' => [new Assert\NotNull(), new Assert\Positive()],
             ])
             ->add('managementPercent', NumberType::class, [
-                'label' => 'Project management (%)',
+                'label' => 'calculation.field.management',
                 'html5' => true,
                 'attr' => ['step' => '1', 'min' => '0', 'max' => '100'],
                 'constraints' => [new Assert\NotNull(), new Assert\Range(min: 0, max: 100)],
             ])
             ->add('headerNotes', TextareaType::class, [
-                'label' => 'Calculation notes',
+                'label' => 'calculation.field.header_notes',
                 'required' => false,
-                'help' => 'E.g. when the upgrade is scheduled. Markdown, e.g. **bold** or lists.',
+                'help' => 'calculation.field.header_notes_help',
                 'attr' => ['rows' => 3, 'data-controller' => 'markdown-editor'],
             ])
             ->add('remarks', TextareaType::class, [
+                'label' => 'calculation.field.remarks',
                 'required' => false,
-                'help' => 'Shown below the totals, e.g. "License costs not included". Markdown, e.g. **bold** or lists.',
+                'help' => 'calculation.field.remarks_help',
                 'attr' => ['rows' => 2, 'data-controller' => 'markdown-editor'],
             ])
             ->add('author', TextType::class, [
-                'label' => 'Your name or initials',
+                'label' => 'calculation.field.author',
                 'constraints' => [new Assert\NotBlank(), new Assert\Length(max: 100)],
             ])
             ->add('note', TextType::class, [
-                'label' => 'What changed',
+                'label' => 'calculation.field.note',
                 'required' => false,
-                'attr' => ['placeholder' => 'e.g. Estimated the package updates'],
+                'attr' => ['placeholder' => 'calculation.field.note_placeholder'],
                 'constraints' => [new Assert\Length(max: 255)],
             ])
             ->add('final', CheckboxType::class, [
-                'label' => 'Final version?',
-                'help' => 'Marks the version sent to the customer. Later versions are still possible.',
+                'label' => 'calculation.field.final',
+                'help' => 'calculation.field.final_help',
                 'required' => false,
             ]);
     }

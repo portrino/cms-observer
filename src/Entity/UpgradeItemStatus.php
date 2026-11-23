@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-enum UpgradeItemStatus: string
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+enum UpgradeItemStatus: string implements TranslatableInterface
 {
     /** the installed version already supports the target core */
     case Compatible = 'compatible';
@@ -46,5 +49,10 @@ enum UpgradeItemStatus: string
             self::Remove => 'neutral',
             self::Manual => 'warning',
         };
+    }
+
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
+    {
+        return $translator->trans('calculation.status.'.$this->value, locale: $locale);
     }
 }

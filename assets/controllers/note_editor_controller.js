@@ -32,7 +32,7 @@ export default class extends Controller {
         const firstLine = (text.split('\n').map((line) => line.trim()).find((line) => line) ?? '')
             .replace(/^([-*+]|\d+\.|#+|>)\s+/, '').replace(/[*_`~]/g, '');
         const preview = this.field('preview');
-        preview.querySelector('.upgrade-note-text').textContent = firstLine || 'Add note';
+        preview.querySelector('.upgrade-note-text').textContent = firstLine || preview.dataset.emptyText;
         preview.classList.remove('upgrade-note-success', 'upgrade-note-warning', 'upgrade-note-danger');
         if (this.levelTarget.value) {
             preview.classList.add(`upgrade-note-${this.levelTarget.value}`);

@@ -15,15 +15,15 @@ use App\Entity\UpgradeSection;
 final readonly class UpgradeVersionComparison
 {
     private const array ROW_FIELDS = [
-        'label' => 'Label',
-        'installedVersion' => 'Installed',
-        'targetVersion' => 'Target',
-        'status' => 'To-do',
-        'minHours' => 'Min h',
-        'maxHours' => 'Max h',
-        'notes' => 'Notes',
-        'noteLevel' => 'Note color',
-        'assignee' => 'By',
+        'label' => 'calculation.label',
+        'installedVersion' => 'calculation.installed',
+        'targetVersion' => 'calculation.target',
+        'status' => 'calculation.todo',
+        'minHours' => 'calculation.min_h',
+        'maxHours' => 'calculation.max_h',
+        'notes' => 'calculation.notes',
+        'noteLevel' => 'calculation.note_color',
+        'assignee' => 'calculation.by',
     ];
 
     /** @var list<array{field: string, old: string, new: string}> */
@@ -36,11 +36,11 @@ final readonly class UpgradeVersionComparison
     public function __construct(public UpgradeCalculationVersion $old, public UpgradeCalculationVersion $new)
     {
         $this->settings = self::changes([
-            'Hourly rate (EUR)' => [self::number($old->getHourlyRate()), self::number($new->getHourlyRate())],
-            'Project management (%)' => [self::number($old->getManagementPercent()), self::number($new->getManagementPercent())],
-            'Final version' => [$old->isFinal() ? 'yes' : 'no', $new->isFinal() ? 'yes' : 'no'],
-            'Calculation notes' => [(string) $old->getHeaderNotes(), (string) $new->getHeaderNotes()],
-            'Remarks' => [(string) $old->getRemarks(), (string) $new->getRemarks()],
+            'calculation.field.rate' => [self::number($old->getHourlyRate()), self::number($new->getHourlyRate())],
+            'calculation.field.management' => [self::number($old->getManagementPercent()), self::number($new->getManagementPercent())],
+            'calculation.final_version' => [$old->isFinal() ? 'common.yes' : 'common.no', $new->isFinal() ? 'common.yes' : 'common.no'],
+            'calculation.field.header_notes' => [(string) $old->getHeaderNotes(), (string) $new->getHeaderNotes()],
+            'calculation.field.remarks' => [(string) $old->getRemarks(), (string) $new->getRemarks()],
         ]);
 
         $sections = [];
@@ -68,10 +68,10 @@ final readonly class UpgradeVersionComparison
         $oldTotals = new UpgradeTotals($old->getItems(), $old->getManagementPercent());
         $newTotals = new UpgradeTotals($new->getItems(), $new->getManagementPercent());
         $this->totals = self::changes([
-            'Positions (h)' => [self::number($oldTotals->work['max']), self::number($newTotals->work['max'])],
-            'Total (h)' => [self::number($oldTotals->required['max']), self::number($newTotals->required['max'])],
-            'Total price (EUR)' => [self::number($oldTotals->required['max'] * $old->getHourlyRate()), self::number($newTotals->required['max'] * $new->getHourlyRate())],
-            'Optional (h)' => [self::number($oldTotals->optional['max']), self::number($newTotals->optional['max'])],
+            'calculation.total.positions' => [self::number($oldTotals->work['max']), self::number($newTotals->work['max'])],
+            'calculation.total.hours' => [self::number($oldTotals->required['max']), self::number($newTotals->required['max'])],
+            'calculation.total.price' => [self::number($oldTotals->required['max'] * $old->getHourlyRate()), self::number($newTotals->required['max'] * $new->getHourlyRate())],
+            'calculation.total.optional' => [self::number($oldTotals->optional['max']), self::number($newTotals->optional['max'])],
         ]);
     }
 
@@ -114,11 +114,11 @@ final readonly class UpgradeVersionComparison
             'label' => $item->label,
             'installedVersion' => (string) $item->installedVersion,
             'targetVersion' => (string) $item->targetVersion,
-            'status' => $item->status?->label() ?? '',
+            'status' => null !== $item->status ? 'calculation.status.'.$item->status->value : '',
             'minHours' => $hours($item->minHours),
             'maxHours' => $hours($item->maxHours),
             'notes' => (string) $item->notes,
-            'noteLevel' => $item->noteLevel?->label() ?? '',
+            'noteLevel' => null !== $item->noteLevel ? 'calculation.note_level.'.$item->noteLevel->value : '',
             'assignee' => (string) $item->assignee,
             default => throw new \LogicException(sprintf('Unknown row field "%s".', $field)),
         };

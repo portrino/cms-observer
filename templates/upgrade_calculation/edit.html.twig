@@ -2,25 +2,25 @@
 {% import 'dashboard/_macros.html.twig' as m %}
 {% import 'upgrade_calculation/_macros.html.twig' as u %}
 
-{% block title %}{{ title }} - {{ site.name }} - CMS Observer{% endblock %}
+{% block title %}{{ title|trans }} - {{ site.name }} - CMS Observer{% endblock %}
 
-{% block page_title %}{{ title }} <span class="topbar-subtitle">{{ site.name }}</span>{% endblock %}
+{% block page_title %}{{ title|trans }} <span class="topbar-subtitle">{{ site.name }}</span>{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(cancelUrl, 'arrow-left', 'Cancel') }}
+    {{ m.topbar_link(cancelUrl, 'arrow-left', 'common.cancel'|trans) }}
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid" data-controller="note-editor">
     {% if based_on is defined %}
-        <p class="text-muted">Based on the version of {{ based_on.createdAt|date('Y-m-d H:i') }} by {{ based_on.author }}. Saving creates a new version, this one stays as it is.</p>
+        <p class="text-muted">{{ 'calculation.based_on'|trans({date: based_on.createdAt|format_datetime('medium', 'short'), author: based_on.author}) }}</p>
     {% endif %}
     {% if changes is defined and changes is not null %}
         <div class="alert alert-info" id="upgradeRefreshChanges">
             {% if changes is empty %}
-                The latest report changes nothing in the packages.
+                {{ 'calculation.refresh_nothing'|trans }}
             {% else %}
-                <p class="mb-1">Changed by the latest report, hours, notes and "Replace" or "Remove" decisions are kept:</p>
+                <p class="mb-1">{{ 'calculation.refresh_changes'|trans }}</p>
                 <ul class="mb-0">{% for change in changes %}<li>{{ change }}</li>{% endfor %}</ul>
             {% endif %}
         </div>
@@ -36,9 +36,9 @@
                 <h2 class="accordion-header">
                     <button class="accordion-button {{ pricingOpen ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#upgradePricingBody" aria-expanded="{{ pricingOpen ? 'true' : 'false' }}" aria-controls="upgradePricingBody">
                         <span class="accordion-title">
-                            <span class="fw-bold">Pricing</span>
+                            <span class="fw-bold">{{ 'calculation.pricing'|trans }}</span>
                             {% if not pricingOpen %}
-                                <span class="text-muted">{{ form.hourlyRate.vars.value }} EUR/h, project management {{ form.managementPercent.vars.value }} %</span>
+                                <span class="text-muted">{{ 'calculation.pricing_summary'|trans({rate: form.hourlyRate.vars.value, percent: form.managementPercent.vars.value}) }}</span>
                             {% endif %}
                         </span>
                     </button>
@@ -65,21 +65,21 @@
             {% set package = section in ['packages', 'own-packages'] %}
             <div class="card mb-3" data-controller="form-collection" data-form-collection-index-value="{{ collection|length > 0 ? max(collection|keys) + 1 : 0 }}">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">{{ collection.vars.label }}</h2>
-                    <button type="button" class="btn btn-sm btn-outline-neutral d-inline-flex align-items-center gap-1" data-action="form-collection#add">{{ icon('plus') }} Add row</button>
+                    <h2 class="h6 mb-0">{{ collection.vars.label|trans }}</h2>
+                    <button type="button" class="btn btn-sm btn-outline-neutral d-inline-flex align-items-center gap-1" data-action="form-collection#add">{{ icon('plus') }} {{ 'calculation.add_row'|trans }}</button>
                 </div>
                 <div class="card-body p-0 table-responsive">
                     <table class="table table-sm mb-0 upgrade-table" id="upgrade-{{ section }}">
                         <thead>
                             <tr>
-                                <th class="upgrade-col-handle"><span class="visually-hidden">Order</span></th>
-                                <th>{{ package ? 'Package' : 'Position' }}</th>
-                                {% if package %}<th>Installed</th><th>Target</th><th>To-do</th>{% endif %}
-                                <th>Min h</th>
-                                <th>Max h</th>
-                                <th>Notes</th>
-                                <th>By</th>
-                                <th class="upgrade-col-actions"><span class="visually-hidden">Actions</span></th>
+                                <th class="upgrade-col-handle"><span class="visually-hidden">{{ 'calculation.order'|trans }}</span></th>
+                                <th>{{ (package ? 'calculation.package' : 'calculation.position')|trans }}</th>
+                                {% if package %}<th>{{ 'calculation.installed'|trans }}</th><th>{{ 'calculation.target'|trans }}</th><th>{{ 'calculation.todo'|trans }}</th>{% endif %}
+                                <th>{{ 'calculation.min_h'|trans }}</th>
+                                <th>{{ 'calculation.max_h'|trans }}</th>
+                                <th>{{ 'calculation.notes'|trans }}</th>
+                                <th>{{ 'calculation.by'|trans }}</th>
+                                <th class="upgrade-col-actions"><span class="visually-hidden">{{ 'calculation.actions'|trans }}</span></th>
                             </tr>
                         </thead>
                         <tbody data-form-collection-target="rows" data-action="dragstart->form-collection#dragStart dragover->form-collection#dragOver drop->form-collection#drop dragend->form-collection#dragEnd">
@@ -102,7 +102,7 @@
                     <div class="col-md">{{ form_row(form.note, {row_attr: {class: 'mb-0'}}) }}</div>
                 </div>
                 <div class="d-flex flex-wrap align-items-center gap-3">
-                    <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save as new version</button>
+                    <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} {{ 'calculation.save_new'|trans }}</button>
                     {{ form_widget(form.final) }}
                     {{ form_help(form.final, {help_attr: {class: 'mt-0'}}) }}
                 </div>
@@ -112,7 +112,7 @@
 
     {# toolbar icons of the Markdown editors (markdown_editor_controller.js) #}
     <template id="markdown-editor-icons">
-        {% for name in ['bold', 'italic', 'list', 'list-ordered', 'link', 'eye'] %}<span data-icon="{{ name }}">{{ icon(name) }}</span>{% endfor %}
+        {% for name in ['bold', 'italic', 'list', 'list-ordered', 'link', 'eye'] %}<span data-icon="{{ name }}" data-title="{{ ('calculation.editor.' ~ name)|trans }}">{{ icon(name) }}</span>{% endfor %}
     </template>
 
     {# one dialog for the notes of every row, also of rows added later #}
@@ -120,23 +120,23 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title h5" id="noteDialogTitle">Notes</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h2 class="modal-title h5" id="noteDialogTitle">{{ 'calculation.notes'|trans }}</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'common.close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
-                    <label class="form-label" for="noteDialogText">Notes</label>
+                    <label class="form-label" for="noteDialogText">{{ 'calculation.notes'|trans }}</label>
                     <textarea id="noteDialogText" class="form-control" rows="10" data-note-editor-target="text" data-controller="markdown-editor"></textarea>
-                    <label class="form-label mt-3" for="noteDialogLevel">Color</label>
+                    <label class="form-label mt-3" for="noteDialogLevel">{{ 'calculation.color'|trans }}</label>
                     <select id="noteDialogLevel" class="form-select" data-note-editor-target="level">
-                        <option value="">No color</option>
+                        <option value="">{{ 'calculation.no_color'|trans }}</option>
                         {% for level in enum_cases('App\\Entity\\UpgradeNoteLevel') %}
-                            <option value="{{ level.value }}">{{ level.label }}</option>
+                            <option value="{{ level.value }}">{{ level|trans }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-neutral" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-tertiary" data-action="note-editor#apply">Apply</button>
+                    <button type="button" class="btn btn-outline-neutral" data-bs-dismiss="modal">{{ 'common.cancel'|trans }}</button>
+                    <button type="button" class="btn btn-tertiary" data-action="note-editor#apply">{{ 'calculation.apply'|trans }}</button>
                 </div>
             </div>
         </div>

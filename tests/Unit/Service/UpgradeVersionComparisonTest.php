@@ -36,18 +36,18 @@ class UpgradeVersionComparisonTest extends TestCase
         $comparison = new UpgradeVersionComparison($old, $new);
 
         self::assertSame([
-            ['field' => 'Hourly rate (EUR)', 'old' => '100.00', 'new' => '90.00'],
-            ['field' => 'Final version', 'old' => 'no', 'new' => 'yes'],
+            ['field' => 'calculation.field.rate', 'old' => '100.00', 'new' => '90.00'],
+            ['field' => 'calculation.final_version', 'old' => 'common.no', 'new' => 'common.yes'],
         ], $comparison->settings);
         self::assertSame([], $comparison->sections['positions']['changed'], 'unchanged rows, also the package sums with unchanged hours');
         $packages = $comparison->sections['packages'];
         self::assertSame([
-            ['field' => 'To-do', 'old' => 'Show-stopper', 'new' => 'Update with core'],
-            ['field' => 'Max h', 'old' => '2.00', 'new' => '3.00'],
+            ['field' => 'calculation.todo', 'old' => 'calculation.status.blocker', 'new' => 'calculation.status.update'],
+            ['field' => 'calculation.max_h', 'old' => '2.00', 'new' => '3.00'],
         ], $packages['changed'][0]['fields']);
         self::assertSame('gone', $packages['removed'][0]->label);
         self::assertSame('Content blocks', $comparison->sections['optional']['added'][0]->label);
-        self::assertContains(['field' => 'Total price (EUR)', 'old' => '700.00', 'new' => '720.00'], $comparison->totals);
+        self::assertContains(['field' => 'calculation.total.price', 'old' => '700.00', 'new' => '720.00'], $comparison->totals);
         self::assertFalse($comparison->isEmpty());
         self::assertTrue(new UpgradeVersionComparison($old, $old)->isEmpty());
     }

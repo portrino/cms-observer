@@ -938,6 +938,534 @@
         <source>sync.app:typo3:sync-extension-versions</source>
         <target>Holt pro Lauf die TER-Versionen eines Teils der gemeldeten Extensions und bewertet danach, welche Extensions unsicher oder veraltet sind</target>
       </trans-unit>
+      <trans-unit id="common.yes" resname="common.yes">
+        <source>common.yes</source>
+        <target>ja</target>
+      </trans-unit>
+      <trans-unit id="common.no" resname="common.no">
+        <source>common.no</source>
+        <target>nein</target>
+      </trans-unit>
+      <trans-unit id="calculation.of" resname="calculation.of">
+        <source>calculation.of</source>
+        <target>Upgrade-Kalkulationen von {name}</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_newer_major" resname="calculation.no_newer_major">
+        <source>calculation.no_newer_major</source>
+        <target>Für dieses Projekt ist kein neueres {cms}-Major bekannt.</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_newer_major_unreported" resname="calculation.no_newer_major_unreported">
+        <source>calculation.no_newer_major_unreported</source>
+        <target>Für dieses Projekt ist noch kein neueres {cms}-Major bekannt: Es hat noch nicht gemeldet.</target>
+      </trans-unit>
+      <trans-unit id="calculation.new_from" resname="calculation.new_from">
+        <source>calculation.new_from</source>
+        <target>Neue Kalkulation von {from} auf</target>
+      </trans-unit>
+      <trans-unit id="calculation.start" resname="calculation.start">
+        <source>calculation.start</source>
+        <target>Starten</target>
+      </trans-unit>
+      <trans-unit id="calculation.none_yet" resname="calculation.none_yet">
+        <source>calculation.none_yet</source>
+        <target>Noch keine Kalkulationen.</target>
+      </trans-unit>
+      <trans-unit id="calculation.last_saved" resname="calculation.last_saved">
+        <source>calculation.last_saved</source>
+        <target>Zuletzt gespeichert</target>
+      </trans-unit>
+      <trans-unit id="calculation.by" resname="calculation.by">
+        <source>calculation.by</source>
+        <target>Von</target>
+      </trans-unit>
+      <trans-unit id="calculation.versions" resname="calculation.versions">
+        <source>calculation.versions</source>
+        <target>Versionen</target>
+      </trans-unit>
+      <trans-unit id="calculation.final" resname="calculation.final">
+        <source>calculation.final</source>
+        <target>Final</target>
+      </trans-unit>
+      <trans-unit id="calculation.saved_versions" resname="calculation.saved_versions">
+        <source>calculation.saved_versions</source>
+        <target>Gespeicherte Versionen</target>
+      </trans-unit>
+      <trans-unit id="calculation.all" resname="calculation.all">
+        <source>calculation.all</source>
+        <target>Alle Kalkulationen</target>
+      </trans-unit>
+      <trans-unit id="calculation.print" resname="calculation.print">
+        <source>calculation.print</source>
+        <target>Drucken / PDF</target>
+      </trans-unit>
+      <trans-unit id="calculation.print_hint" resname="calculation.print_hint">
+        <source>calculation.print_hint</source>
+        <target>Drucken oder als PDF speichern</target>
+      </trans-unit>
+      <trans-unit id="calculation.more_edit" resname="calculation.more_edit">
+        <source>calculation.more_edit</source>
+        <target>Weitere Bearbeitungsmöglichkeiten</target>
+      </trans-unit>
+      <trans-unit id="calculation.refresh" resname="calculation.refresh">
+        <source>calculation.refresh</source>
+        <target>Aus Report aktualisieren</target>
+      </trans-unit>
+      <trans-unit id="calculation.version_of" resname="calculation.version_of">
+        <source>calculation.version_of</source>
+        <target>Version vom {date} von {author}</target>
+      </trans-unit>
+      <trans-unit id="calculation.older_version" resname="calculation.older_version">
+        <source>calculation.older_version</source>
+        <target>Ältere Version</target>
+      </trans-unit>
+      <trans-unit id="calculation.timeline" resname="calculation.timeline">
+        <source>calculation.timeline</source>
+        <target>Zeitplan</target>
+      </trans-unit>
+      <trans-unit id="calculation.package" resname="calculation.package">
+        <source>calculation.package</source>
+        <target>Paket</target>
+      </trans-unit>
+      <trans-unit id="calculation.position" resname="calculation.position">
+        <source>calculation.position</source>
+        <target>Position</target>
+      </trans-unit>
+      <trans-unit id="calculation.installed" resname="calculation.installed">
+        <source>calculation.installed</source>
+        <target>Installiert</target>
+      </trans-unit>
+      <trans-unit id="calculation.target" resname="calculation.target">
+        <source>calculation.target</source>
+        <target>Ziel</target>
+      </trans-unit>
+      <trans-unit id="calculation.todo" resname="calculation.todo">
+        <source>calculation.todo</source>
+        <target>To-do</target>
+      </trans-unit>
+      <trans-unit id="calculation.hours" resname="calculation.hours">
+        <source>calculation.hours</source>
+        <target>Stunden</target>
+      </trans-unit>
+      <trans-unit id="calculation.price" resname="calculation.price">
+        <source>calculation.price</source>
+        <target>Preis</target>
+      </trans-unit>
+      <trans-unit id="calculation.notes" resname="calculation.notes">
+        <source>calculation.notes</source>
+        <target>Notizen</target>
+      </trans-unit>
+      <trans-unit id="calculation.sum" resname="calculation.sum">
+        <source>calculation.sum</source>
+        <target>Summe</target>
+      </trans-unit>
+      <trans-unit id="calculation.management" resname="calculation.management">
+        <source>calculation.management</source>
+        <target>Projektmanagement ({percent} %)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total" resname="calculation.total">
+        <source>calculation.total</source>
+        <target>Gesamt</target>
+      </trans-unit>
+      <trans-unit id="calculation.beforehand" resname="calculation.beforehand">
+        <source>calculation.beforehand</source>
+        <target>davon vor dem Upgrade möglich, z. B. in der Wartung</target>
+      </trans-unit>
+      <trans-unit id="calculation.optional_total" resname="calculation.optional_total">
+        <source>calculation.optional_total</source>
+        <target>Optional, inkl. Projektmanagement</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare_previous" resname="calculation.compare_previous">
+        <source>calculation.compare_previous</source>
+        <target>Mit vorheriger vergleichen</target>
+      </trans-unit>
+      <trans-unit id="calculation.add_note" resname="calculation.add_note">
+        <source>calculation.add_note</source>
+        <target>Notiz hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="calculation.edit_notes" resname="calculation.edit_notes">
+        <source>calculation.edit_notes</source>
+        <target>Notizen bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="calculation.move_row" resname="calculation.move_row">
+        <source>calculation.move_row</source>
+        <target>Zeile verschieben: ziehen oder Pfeiltasten verwenden</target>
+      </trans-unit>
+      <trans-unit id="calculation.min_hours_of" resname="calculation.min_hours_of">
+        <source>calculation.min_hours_of</source>
+        <target>Min. Stunden von {label}</target>
+      </trans-unit>
+      <trans-unit id="calculation.max_hours_of" resname="calculation.max_hours_of">
+        <source>calculation.max_hours_of</source>
+        <target>Max. Stunden von {label}</target>
+      </trans-unit>
+      <trans-unit id="calculation.remove_row" resname="calculation.remove_row">
+        <source>calculation.remove_row</source>
+        <target>Zeile entfernen</target>
+      </trans-unit>
+      <trans-unit id="calculation.support.free" resname="calculation.support.free">
+        <source>calculation.support.free</source>
+        <target>{cms} erhält kostenlose Core-Updates bis {until}.</target>
+      </trans-unit>
+      <trans-unit id="calculation.support.elts" resname="calculation.support.elts">
+        <source>calculation.support.elts</source>
+        <target>Ab {from} sind Core-Updates nur mit einer kostenpflichtigen ELTS-Lizenz möglich, erhältlich bis {until}.</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.development" resname="calculation.phase.development">
+        <source>calculation.phase.development</source>
+        <target>Entwicklung (Sprint-Releases)</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.regular" resname="calculation.phase.regular">
+        <source>calculation.phase.regular</source>
+        <target>Reguläre Wartung</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.priority" resname="calculation.phase.priority">
+        <source>calculation.phase.priority</source>
+        <target>Priority Bugfixes</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.extended" resname="calculation.phase.extended">
+        <source>calculation.phase.extended</source>
+        <target>Kostenpflichtiger Extended Support (ELTS)</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.label" resname="calculation.phase.label">
+        <source>calculation.phase.label</source>
+        <target>Support-Phasen von {cms}</target>
+      </trans-unit>
+      <trans-unit id="calculation.phase.until" resname="calculation.phase.until">
+        <source>calculation.phase.until</source>
+        <target>{phase} bis {until}</target>
+      </trans-unit>
+      <trans-unit id="calculation.today" resname="calculation.today">
+        <source>calculation.today</source>
+        <target>Heute</target>
+      </trans-unit>
+      <trans-unit id="calculation.based_on" resname="calculation.based_on">
+        <source>calculation.based_on</source>
+        <target>Basiert auf der Version vom {date} von {author}. Speichern erzeugt eine neue Version, diese bleibt unverändert.</target>
+      </trans-unit>
+      <trans-unit id="calculation.refresh_nothing" resname="calculation.refresh_nothing">
+        <source>calculation.refresh_nothing</source>
+        <target>Der neueste Report ändert nichts an den Paketen.</target>
+      </trans-unit>
+      <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
+        <source>calculation.refresh_changes</source>
+        <target>Durch den neuesten Report geändert, Stunden, Notizen und die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten:</target>
+      </trans-unit>
+      <trans-unit id="calculation.pricing" resname="calculation.pricing">
+        <source>calculation.pricing</source>
+        <target>Preise</target>
+      </trans-unit>
+      <trans-unit id="calculation.pricing_summary" resname="calculation.pricing_summary">
+        <source>calculation.pricing_summary</source>
+        <target>{rate} EUR/h, Projektmanagement {percent} %</target>
+      </trans-unit>
+      <trans-unit id="calculation.add_row" resname="calculation.add_row">
+        <source>calculation.add_row</source>
+        <target>Zeile hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="calculation.order" resname="calculation.order">
+        <source>calculation.order</source>
+        <target>Reihenfolge</target>
+      </trans-unit>
+      <trans-unit id="calculation.min_h" resname="calculation.min_h">
+        <source>calculation.min_h</source>
+        <target>Min. h</target>
+      </trans-unit>
+      <trans-unit id="calculation.max_h" resname="calculation.max_h">
+        <source>calculation.max_h</source>
+        <target>Max. h</target>
+      </trans-unit>
+      <trans-unit id="calculation.actions" resname="calculation.actions">
+        <source>calculation.actions</source>
+        <target>Aktionen</target>
+      </trans-unit>
+      <trans-unit id="calculation.save_new" resname="calculation.save_new">
+        <source>calculation.save_new</source>
+        <target>Als neue Version speichern</target>
+      </trans-unit>
+      <trans-unit id="calculation.color" resname="calculation.color">
+        <source>calculation.color</source>
+        <target>Farbe</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_color" resname="calculation.no_color">
+        <source>calculation.no_color</source>
+        <target>Keine Farbe</target>
+      </trans-unit>
+      <trans-unit id="calculation.apply" resname="calculation.apply">
+        <source>calculation.apply</source>
+        <target>Übernehmen</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare_versions" resname="calculation.compare_versions">
+        <source>calculation.compare_versions</source>
+        <target>Versionen vergleichen</target>
+      </trans-unit>
+      <trans-unit id="calculation.upgrade" resname="calculation.upgrade">
+        <source>calculation.upgrade</source>
+        <target>Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.back" resname="calculation.back">
+        <source>calculation.back</source>
+        <target>Zurück zur Kalkulation</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare" resname="calculation.compare">
+        <source>calculation.compare</source>
+        <target>Vergleichen</target>
+      </trans-unit>
+      <trans-unit id="calculation.compare_with" resname="calculation.compare_with">
+        <source>calculation.compare_with</source>
+        <target>mit</target>
+      </trans-unit>
+      <trans-unit id="calculation.from" resname="calculation.from">
+        <source>calculation.from</source>
+        <target>Von</target>
+      </trans-unit>
+      <trans-unit id="calculation.to" resname="calculation.to">
+        <source>calculation.to</source>
+        <target>Bis</target>
+      </trans-unit>
+      <trans-unit id="calculation.date_by" resname="calculation.date_by">
+        <source>calculation.date_by</source>
+        <target>{date} von {author}</target>
+      </trans-unit>
+      <trans-unit id="calculation.no_differences" resname="calculation.no_differences">
+        <source>calculation.no_differences</source>
+        <target>Keine Unterschiede.</target>
+      </trans-unit>
+      <trans-unit id="calculation.totals" resname="calculation.totals">
+        <source>calculation.totals</source>
+        <target>Summen</target>
+      </trans-unit>
+      <trans-unit id="calculation.pricing_notes" resname="calculation.pricing_notes">
+        <source>calculation.pricing_notes</source>
+        <target>Preise und Notizen</target>
+      </trans-unit>
+      <trans-unit id="calculation.added" resname="calculation.added">
+        <source>calculation.added</source>
+        <target>Hinzugefügt</target>
+      </trans-unit>
+      <trans-unit id="calculation.removed" resname="calculation.removed">
+        <source>calculation.removed</source>
+        <target>Entfernt</target>
+      </trans-unit>
+      <trans-unit id="calculation.changed" resname="calculation.changed">
+        <source>calculation.changed</source>
+        <target>Geändert</target>
+      </trans-unit>
+      <trans-unit id="calculation.label" resname="calculation.label">
+        <source>calculation.label</source>
+        <target>Bezeichnung</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_color" resname="calculation.note_color">
+        <source>calculation.note_color</source>
+        <target>Notizfarbe</target>
+      </trans-unit>
+      <trans-unit id="calculation.final_version" resname="calculation.final_version">
+        <source>calculation.final_version</source>
+        <target>Finale Version</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.positions" resname="calculation.total.positions">
+        <source>calculation.total.positions</source>
+        <target>Positionen (h)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.hours" resname="calculation.total.hours">
+        <source>calculation.total.hours</source>
+        <target>Gesamt (h)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.price" resname="calculation.total.price">
+        <source>calculation.total.price</source>
+        <target>Gesamtpreis (EUR)</target>
+      </trans-unit>
+      <trans-unit id="calculation.total.optional" resname="calculation.total.optional">
+        <source>calculation.total.optional</source>
+        <target>Optional (h)</target>
+      </trans-unit>
+      <trans-unit id="calculation.title.new" resname="calculation.title.new">
+        <source>calculation.title.new</source>
+        <target>Neue Kalkulation: Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.title.edit" resname="calculation.title.edit">
+        <source>calculation.title.edit</source>
+        <target>Kalkulation bearbeiten: Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.title.refresh" resname="calculation.title.refresh">
+        <source>calculation.title.refresh</source>
+        <target>Kalkulation aktualisieren: Upgrade {upgrade}</target>
+      </trans-unit>
+      <trans-unit id="calculation.refreshed_of" resname="calculation.refreshed_of">
+        <source>calculation.refreshed_of</source>
+        <target>Aus dem Report vom {date, date, medium} aktualisiert</target>
+      </trans-unit>
+      <trans-unit id="calculation.refreshed" resname="calculation.refreshed">
+        <source>calculation.refreshed</source>
+        <target>Aus dem neuesten Report aktualisiert</target>
+      </trans-unit>
+      <trans-unit id="calculation.saved" resname="calculation.saved">
+        <source>calculation.saved</source>
+        <target>Als neue Version gespeichert.</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.rate" resname="calculation.field.rate">
+        <source>calculation.field.rate</source>
+        <target>Stundensatz (EUR)</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.management" resname="calculation.field.management">
+        <source>calculation.field.management</source>
+        <target>Projektmanagement (%)</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.header_notes" resname="calculation.field.header_notes">
+        <source>calculation.field.header_notes</source>
+        <target>Kalkulationsnotizen</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.header_notes_help" resname="calculation.field.header_notes_help">
+        <source>calculation.field.header_notes_help</source>
+        <target>Z. B. wann das Upgrade geplant ist. Markdown, z. B. **fett** oder Listen.</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.remarks" resname="calculation.field.remarks">
+        <source>calculation.field.remarks</source>
+        <target>Anmerkungen</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.remarks_help" resname="calculation.field.remarks_help">
+        <source>calculation.field.remarks_help</source>
+        <target>Wird unter den Summen angezeigt, z. B. „Lizenzkosten nicht enthalten“. Markdown, z. B. **fett** oder Listen.</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.author" resname="calculation.field.author">
+        <source>calculation.field.author</source>
+        <target>Name oder Kürzel</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.note" resname="calculation.field.note">
+        <source>calculation.field.note</source>
+        <target>Was hat sich geändert</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.note_placeholder" resname="calculation.field.note_placeholder">
+        <source>calculation.field.note_placeholder</source>
+        <target>z. B. Paket-Updates geschätzt</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.final" resname="calculation.field.final">
+        <source>calculation.field.final</source>
+        <target>Finale Version?</target>
+      </trans-unit>
+      <trans-unit id="calculation.field.final_help" resname="calculation.field.final_help">
+        <source>calculation.field.final_help</source>
+        <target>Kennzeichnet die an den Kunden geschickte Version. Spätere Versionen sind weiterhin möglich.</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.positions" resname="calculation.section.positions">
+        <source>calculation.section.positions</source>
+        <target>Positionen</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.packages" resname="calculation.section.packages">
+        <source>calculation.section.packages</source>
+        <target>Drittanbieter-Pakete</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.own-packages" resname="calculation.section.own-packages">
+        <source>calculation.section.own-packages</source>
+        <target>Eigene Pakete</target>
+      </trans-unit>
+      <trans-unit id="calculation.section.optional" resname="calculation.section.optional">
+        <source>calculation.section.optional</source>
+        <target>Optional</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.compatible" resname="calculation.status.compatible">
+        <source>calculation.status.compatible</source>
+        <target>Kompatibel</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.update-first" resname="calculation.status.update-first">
+        <source>calculation.status.update-first</source>
+        <target>Update vor dem Core</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.update" resname="calculation.status.update">
+        <source>calculation.status.update</source>
+        <target>Update mit dem Core</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.blocker" resname="calculation.status.blocker">
+        <source>calculation.status.blocker</source>
+        <target>Show-Stopper</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.replace" resname="calculation.status.replace">
+        <source>calculation.status.replace</source>
+        <target>Ersetzen</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.remove" resname="calculation.status.remove">
+        <source>calculation.status.remove</source>
+        <target>Entfernen</target>
+      </trans-unit>
+      <trans-unit id="calculation.status.manual" resname="calculation.status.manual">
+        <source>calculation.status.manual</source>
+        <target>Manuell prüfen</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_level.success" resname="calculation.note_level.success">
+        <source>calculation.note_level.success</source>
+        <target>Kompatibel oder einfaches Update</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_level.warning" resname="calculation.note_level.warning">
+        <source>calculation.note_level.warning</source>
+        <target>Migration oder manuelle Anpassungen nötig</target>
+      </trans-unit>
+      <trans-unit id="calculation.note_level.danger" resname="calculation.note_level.danger">
+        <source>calculation.note_level.danger</source>
+        <target>Noch keine kompatible Version</target>
+      </trans-unit>
+      <trans-unit id="calculation.default.core" resname="calculation.default.core">
+        <source>calculation.default.core</source>
+        <target>Core-Upgrade</target>
+      </trans-unit>
+      <trans-unit id="calculation.default.php" resname="calculation.default.php">
+        <source>calculation.default.php</source>
+        <target>PHP-Versions-Upgrade</target>
+      </trans-unit>
+      <trans-unit id="calculation.default.testing" resname="calculation.default.testing">
+        <source>calculation.default.testing</source>
+        <target>Tests, Code-Reviews und Deployments</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.gone" resname="calculation.change.gone">
+        <source>calculation.change.gone</source>
+        <target>{label}: nicht mehr installiert, weggelassen</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.added" resname="calculation.change.added">
+        <source>calculation.change.added</source>
+        <target>{label}: neu installiert, hinzugefügt</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.installed" resname="calculation.change.installed">
+        <source>calculation.change.installed</source>
+        <target>installiert {old} → {new}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.target" resname="calculation.change.target">
+        <source>calculation.change.target</source>
+        <target>Ziel {old} → {new}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.status" resname="calculation.change.status">
+        <source>calculation.change.status</source>
+        <target>To-do {old} → {new}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.moved" resname="calculation.change.moved">
+        <source>calculation.change.moved</source>
+        <target>verschoben nach {section}</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.row" resname="calculation.change.row">
+        <source>calculation.change.row</source>
+        <target>{label}: {changes}</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.bold" resname="calculation.editor.bold">
+        <source>calculation.editor.bold</source>
+        <target>Fett</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.italic" resname="calculation.editor.italic">
+        <source>calculation.editor.italic</source>
+        <target>Kursiv</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.list" resname="calculation.editor.list">
+        <source>calculation.editor.list</source>
+        <target>Aufzählung</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.list-ordered" resname="calculation.editor.list-ordered">
+        <source>calculation.editor.list-ordered</source>
+        <target>Nummerierte Liste</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.link" resname="calculation.editor.link">
+        <source>calculation.editor.link</source>
+        <target>Link</target>
+      </trans-unit>
+      <trans-unit id="calculation.editor.eye" resname="calculation.editor.eye">
+        <source>calculation.editor.eye</source>
+        <target>Vorschau</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
