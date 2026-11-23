@@ -50,6 +50,17 @@ The release and vulnerability data is synced by the scheduler over time, run the
 [sync commands](docs/configuration.md#scheduled-syncs) (`ddev console app:…`) to fetch it right away. Reports come in
 through the clients, see [clients](docs/clients.md).
 
+### After a pull or switching branches
+
+Repeat the steps that the changes need. In doubt run all of them, they do nothing when nothing changed.
+
+```bash
+ddev composer install                                    # composer.lock changed
+ddev composer assets:build                               # SCSS or importmap.php changed
+ddev console doctrine:migrations:migrate -n              # new migrations
+ddev console doctrine:migrations:migrate -n --env=test
+```
+
 ## Run composer scripts
 
 ```bash
