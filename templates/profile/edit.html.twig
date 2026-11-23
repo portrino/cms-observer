@@ -18,16 +18,6 @@
         </div>
     </div>
 
-    <h2 class="h4 mt-4 mb-3">Language</h2>
-    <div class="card">
-        <div class="card-body">
-            {{ form_start(languageForm, {attr: {id: 'language-form'}}) }}
-                {{ form_row(languageForm.locale) }}
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
-            {{ form_end(languageForm) }}
-        </div>
-    </div>
-
     <h2 class="h4 mt-4 mb-3">Two-factor authentication</h2>
     <div class="card">
         <div class="card-body">
@@ -48,6 +38,16 @@
                 <p>Protect your account with a code from an authenticator app in addition to your password.</p>
                 <a href="{{ path('app_2fa_enable') }}" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('shield-check') }} Set up two-factor authentication</a>
             {% endif %}
+        </div>
+    </div>
+
+    <h2 class="h4 mt-4 mb-3">Language</h2>
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(languageForm, {attr: {id: 'language-form'}}) }}
+                {{ form_row(languageForm.locale) }}
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
+            {{ form_end(languageForm) }}
         </div>
     </div>
 </div>

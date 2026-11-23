@@ -31,23 +31,23 @@
                 <nav class="nav flex-column flex-nowrap py-2 sidebar-nav">
                     <a class="nav-link {{ currentRoute starts with 'dashboard_site' or currentRoute == 'dashboard_index' ? 'active' }}" href="{{ path('dashboard_index') }}">
                         {{ icon('layout-dashboard') }}
-                        <span>Projects</span>
+                        <span>{{ 'nav.projects'|trans }}</span>
                     </a>
                     <a class="nav-link {{ currentRoute == 'dashboard_packages' ? 'active' }}" href="{{ path('dashboard_packages') }}">
                         {{ icon('package') }}
-                        <span>Packages</span>
+                        <span>{{ 'nav.packages'|trans }}</span>
                     </a>
                     <a class="nav-link {{ currentRoute starts with 'dashboard_organization' ? 'active' }}" href="{{ path('dashboard_organization_index') }}">
                         {{ icon('building') }}
-                        <span>Organizations</span>
+                        <span>{{ 'nav.organizations'|trans }}</span>
                     </a>
                 </nav>
                 {% set overdueSyncs = overdue_sync_count() %}
                 <nav class="nav flex-column flex-nowrap sidebar-status">
                     <a class="nav-link {{ currentRoute == 'app_status' ? 'active' }}" href="{{ path('app_status') }}"
-                       {% if overdueSyncs %}title="{{ overdueSyncs }} sync(s) overdue"{% endif %}>
+                       {% if overdueSyncs %}title="{{ 'nav.syncs_overdue'|trans({count: overdueSyncs}) }}"{% endif %}>
                         {{ icon('activity') }}
-                        <span>Status</span>
+                        <span>{{ 'nav.status'|trans }}</span>
                         {% if overdueSyncs %}
                             <b class="sidebar-badge badge rounded-pill text-bg-danger">{{ overdueSyncs }}</b>
                         {% endif %}
@@ -55,21 +55,21 @@
                 </nav>
                 {# fixed strategy: the menu opens upwards and, in the collapsed sidebar, beyond its right edge #}
                 <div class="sidebar-user dropup">
-                    <a class="sidebar-user-toggle dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="User menu">
+                    <a class="sidebar-user-toggle dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="{{ 'nav.user_menu'|trans }}">
                         <span class="avatar">{{ app.user.initials }}</span>
                         <span class="sidebar-user-name">{{ app.user.name }}</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_profile') }}">{{ icon('user') }} Profile</a></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_settings') }}">{{ icon('settings') }} Settings</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_profile') }}">{{ icon('user') }} {{ 'nav.profile'|trans }}</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_settings') }}">{{ icon('settings') }} {{ 'nav.settings'|trans }}</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_logout') }}" data-turbo-prefetch="false">{{ icon('log-out') }} Log out</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_logout') }}" data-turbo-prefetch="false">{{ icon('log-out') }} {{ 'nav.logout'|trans }}</a></li>
                     </ul>
                 </div>
             </aside>
             <div class="sidebar-backdrop" data-action="click->sidebar#close"></div>
             <header class="app-topbar">
-                <button type="button" class="btn btn-sm sidebar-toggle" data-action="sidebar#toggle" aria-label="Toggle sidebar">
+                <button type="button" class="btn btn-sm sidebar-toggle" data-action="sidebar#toggle" aria-label="{{ 'nav.toggle_sidebar'|trans }}">
                     {{ icon('panel-left-close', 'icon sidebar-icon-close') }}
                     {{ icon('panel-left-open', 'icon sidebar-icon-open') }}
                 </button>

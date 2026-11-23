@@ -18,9 +18,11 @@ class UserLocaleTest extends WebTestCase
         $client = static::createClient([], ['HTTPS' => 'on', 'HTTP_ACCEPT_LANGUAGE' => 'de-DE,de;q=0.9,en;q=0.8']);
         $client->request('GET', '/login');
         self::assertSelectorExists('html[lang="de"]');
+        self::assertSelectorTextContains('button[type="submit"]', 'Anmelden');
 
         $client->request('GET', '/login', server: ['HTTP_ACCEPT_LANGUAGE' => 'fr-FR,fr;q=0.9']);
         self::assertSelectorExists('html[lang="en"]', 'a language without translations falls back to English');
+        self::assertSelectorTextContains('button[type="submit"]', 'Log in');
     }
 
     public function testTheProfileLanguageWinsOverTheBrowser(): void
@@ -35,6 +37,7 @@ class UserLocaleTest extends WebTestCase
 
         $client->followRedirect();
         self::assertSelectorExists('html[lang="de"]');
+        self::assertSelectorTextContains('.sidebar-nav', 'Projekte');
         $user = static::getContainer()->get(EntityManagerInterface::class)->getRepository(User::class)->findOneBy(['email' => 'locale@example.test']);
         self::assertSame('de', $user?->getLocale());
 

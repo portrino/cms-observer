@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="nav.projects" resname="nav.projects">
+        <source>nav.projects</source>
+        <target>Projects</target>
+      </trans-unit>
+      <trans-unit id="nav.packages" resname="nav.packages">
+        <source>nav.packages</source>
+        <target>Packages</target>
+      </trans-unit>
+      <trans-unit id="nav.organizations" resname="nav.organizations">
+        <source>nav.organizations</source>
+        <target>Organizations</target>
+      </trans-unit>
+      <trans-unit id="nav.status" resname="nav.status">
+        <source>nav.status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="nav.syncs_overdue" resname="nav.syncs_overdue">
+        <source>nav.syncs_overdue</source>
+        <target>{count, plural, one {# sync overdue} other {# syncs overdue}}</target>
+      </trans-unit>
+      <trans-unit id="nav.user_menu" resname="nav.user_menu">
+        <source>nav.user_menu</source>
+        <target>User menu</target>
+      </trans-unit>
+      <trans-unit id="nav.profile" resname="nav.profile">
+        <source>nav.profile</source>
+        <target>Profile</target>
+      </trans-unit>
+      <trans-unit id="nav.settings" resname="nav.settings">
+        <source>nav.settings</source>
+        <target>Settings</target>
+      </trans-unit>
+      <trans-unit id="nav.logout" resname="nav.logout">
+        <source>nav.logout</source>
+        <target>Log out</target>
+      </trans-unit>
+      <trans-unit id="nav.toggle_sidebar" resname="nav.toggle_sidebar">
+        <source>nav.toggle_sidebar</source>
+        <target>Toggle sidebar</target>
+      </trans-unit>
+      <trans-unit id="login.title" resname="login.title">
+        <source>login.title</source>
+        <target>Log in</target>
+      </trans-unit>
+      <trans-unit id="login.email" resname="login.email">
+        <source>login.email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="login.password" resname="login.password">
+        <source>login.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="login.remember_me" resname="login.remember_me">
+        <source>login.remember_me</source>
+        <target>Remember me for 30 days</target>
+      </trans-unit>
+      <trans-unit id="login.submit" resname="login.submit">
+        <source>login.submit</source>
+        <target>Log in</target>
+      </trans-unit>
+      <trans-unit id="two_factor.title" resname="two_factor.title">
+        <source>two_factor.title</source>
+        <target>Two-factor authentication</target>
+      </trans-unit>
+      <trans-unit id="two_factor.code" resname="two_factor.code">
+        <source>two_factor.code</source>
+        <target>Authentication code</target>
+      </trans-unit>
+      <trans-unit id="two_factor.code_help" resname="two_factor.code_help">
+        <source>two_factor.code_help</source>
+        <target>Enter the code from your authenticator app, or one of your backup codes.</target>
+      </trans-unit>
+      <trans-unit id="two_factor.verify" resname="two_factor.verify">
+        <source>two_factor.verify</source>
+        <target>Verify</target>
+      </trans-unit>
+      <trans-unit id="two_factor.cancel" resname="two_factor.cancel">
+        <source>two_factor.cancel</source>
+        <target>Cancel and log out</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

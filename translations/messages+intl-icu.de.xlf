@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="de" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="nav.projects" resname="nav.projects">
+        <source>nav.projects</source>
+        <target>Projekte</target>
+      </trans-unit>
+      <trans-unit id="nav.packages" resname="nav.packages">
+        <source>nav.packages</source>
+        <target>Pakete</target>
+      </trans-unit>
+      <trans-unit id="nav.organizations" resname="nav.organizations">
+        <source>nav.organizations</source>
+        <target>Organisationen</target>
+      </trans-unit>
+      <trans-unit id="nav.status" resname="nav.status">
+        <source>nav.status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="nav.syncs_overdue" resname="nav.syncs_overdue">
+        <source>nav.syncs_overdue</source>
+        <target>{count, plural, one {# Sync überfällig} other {# Syncs überfällig}}</target>
+      </trans-unit>
+      <trans-unit id="nav.user_menu" resname="nav.user_menu">
+        <source>nav.user_menu</source>
+        <target>Benutzermenü</target>
+      </trans-unit>
+      <trans-unit id="nav.profile" resname="nav.profile">
+        <source>nav.profile</source>
+        <target>Profil</target>
+      </trans-unit>
+      <trans-unit id="nav.settings" resname="nav.settings">
+        <source>nav.settings</source>
+        <target>Einstellungen</target>
+      </trans-unit>
+      <trans-unit id="nav.logout" resname="nav.logout">
+        <source>nav.logout</source>
+        <target>Abmelden</target>
+      </trans-unit>
+      <trans-unit id="nav.toggle_sidebar" resname="nav.toggle_sidebar">
+        <source>nav.toggle_sidebar</source>
+        <target>Seitenleiste ein-/ausblenden</target>
+      </trans-unit>
+      <trans-unit id="login.title" resname="login.title">
+        <source>login.title</source>
+        <target>Anmelden</target>
+      </trans-unit>
+      <trans-unit id="login.email" resname="login.email">
+        <source>login.email</source>
+        <target>E-Mail</target>
+      </trans-unit>
+      <trans-unit id="login.password" resname="login.password">
+        <source>login.password</source>
+        <target>Passwort</target>
+      </trans-unit>
+      <trans-unit id="login.remember_me" resname="login.remember_me">
+        <source>login.remember_me</source>
+        <target>30 Tage angemeldet bleiben</target>
+      </trans-unit>
+      <trans-unit id="login.submit" resname="login.submit">
+        <source>login.submit</source>
+        <target>Anmelden</target>
+      </trans-unit>
+      <trans-unit id="two_factor.title" resname="two_factor.title">
+        <source>two_factor.title</source>
+        <target>Zwei-Faktor-Authentifizierung</target>
+      </trans-unit>
+      <trans-unit id="two_factor.code" resname="two_factor.code">
+        <source>two_factor.code</source>
+        <target>Authentifizierungscode</target>
+      </trans-unit>
+      <trans-unit id="two_factor.code_help" resname="two_factor.code_help">
+        <source>two_factor.code_help</source>
+        <target>Code aus der Authenticator-App oder einen der Backup-Codes eingeben.</target>
+      </trans-unit>
+      <trans-unit id="two_factor.verify" resname="two_factor.verify">
+        <source>two_factor.verify</source>
+        <target>Bestätigen</target>
+      </trans-unit>
+      <trans-unit id="two_factor.cancel" resname="two_factor.cancel">
+        <source>two_factor.cancel</source>
+        <target>Abbrechen und abmelden</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
