@@ -15,6 +15,8 @@ jobs:
     name: tests - php${{ matrix.php }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # a new PHP version runs along without blocking, until its tools and dependencies support it
+    continue-on-error: ${{ matrix.experimental }}
     services:
       # the functional tests need a database
       db:
@@ -69,3 +71,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '8.4', '8.5' ]
+        experimental: [ false ]
+        include:
+          - php: '8.6'
+            experimental: true
