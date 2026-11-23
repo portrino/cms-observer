@@ -23,22 +23,24 @@ class ProfileType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
+                'label' => 'common.name',
                 'constraints' => [new NotBlank()],
             ])
             ->add('email', EmailType::class, [
+                'label' => 'login.email',
                 'constraints' => [new NotBlank()],
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'required' => false,
-                'first_options' => ['label' => 'New password (leave blank to keep current)'],
-                'second_options' => ['label' => 'Repeat new password'],
+                'first_options' => ['label' => 'profile.field.new_password'],
+                'second_options' => ['label' => 'profile.field.repeat_password'],
                 'invalid_message' => 'The password fields must match.',
                 'constraints' => [new Length(min: 8, minMessage: 'Password must be at least {{ limit }} characters.')],
             ])
             ->add('currentPassword', PasswordType::class, [
                 'mapped' => false,
-                'label' => 'Current password (to confirm changes)',
+                'label' => 'profile.field.current_password_confirm',
                 'constraints' => [new NotBlank()],
             ]);
     }

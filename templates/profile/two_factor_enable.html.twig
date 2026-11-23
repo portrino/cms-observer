@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import 'dashboard/_macros.html.twig' as m %}
 
-{% block title %}Set up two-factor authentication - CMS Observer{% endblock %}
+{% block title %}{{ 'profile.2fa.setup'|trans }} - CMS Observer{% endblock %}
 
-{% block page_title %}Set up two-factor authentication{% endblock %}
+{% block page_title %}{{ 'profile.2fa.setup'|trans }}{% endblock %}
 
 {% block page_actions %}
-    {{ m.topbar_link(path('app_profile'), 'arrow-left', 'My Profile') }}
+    {{ m.topbar_link(path('app_profile'), 'arrow-left', 'profile.title'|trans) }}
 {% endblock %}
 
 {% block body %}
@@ -14,19 +14,19 @@
     <div class="card">
         <div class="card-body">
             <ol class="ps-3">
-                <li class="mb-2">Scan the QR code with an authenticator app (e.g. 1Password, Google Authenticator, Authy).</li>
-                <li class="mb-2">Enter the 6-digit code the app shows to confirm.</li>
+                <li class="mb-2">{{ 'profile.2fa.scan'|trans }}</li>
+                <li class="mb-2">{{ 'profile.2fa.enter'|trans }}</li>
             </ol>
             <div class="text-center my-3">
-                <img src="{{ qrCode }}" alt="QR code for your authenticator app" width="200" height="200">
+                <img src="{{ qrCode }}" alt="{{ 'profile.2fa.qr'|trans }}" width="200" height="200">
             </div>
             <p class="small text-muted text-center">
-                Can't scan it? Enter this key manually:<br>
+                {{ 'profile.2fa.manual'|trans }}<br>
                 <code class="user-select-all">{{ secret|split('', 4)|join(' ') }}</code>
             </p>
             {{ form_start(form) }}
                 {{ form_row(form.code, {attr: {inputmode: 'numeric', autofocus: true}}) }}
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('shield-check') }} Enable two-factor authentication</button>
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('shield-check') }} {{ 'profile.2fa.enable'|trans }}</button>
             {{ form_end(form) }}
         </div>
     </div>

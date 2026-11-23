@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Profile - CMS Observer{% endblock %}
+{% block title %}{{ 'profile.title'|trans }} - CMS Observer{% endblock %}
 
-{% block page_title %}My Profile{% endblock %}
+{% block page_title %}{{ 'profile.title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container" style="max-width: 500px;">
@@ -13,40 +13,40 @@
                 {{ form_row(form.email) }}
                 {{ form_row(form.plainPassword) }}
                 {{ form_row(form.currentPassword) }}
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} {{ 'common.save'|trans }}</button>
             {{ form_end(form) }}
         </div>
     </div>
 
-    <h2 class="h4 mt-4 mb-3">Two-factor authentication</h2>
+    <h2 class="h4 mt-4 mb-3">{{ 'two_factor.title'|trans }}</h2>
     <div class="card">
         <div class="card-body">
             {% if app.user.totpAuthenticationEnabled %}
                 <p>
-                    <span class="badge text-bg-success">Enabled</span>
-                    {% if app.user.twoFactorEnabledAt %}<span class="text-muted ms-1">since {{ app.user.twoFactorEnabledAt|date('Y-m-d') }}</span>{% endif %}
+                    <span class="badge text-bg-success">{{ 'profile.2fa.enabled'|trans }}</span>
+                    {% if app.user.twoFactorEnabledAt %}<span class="text-muted ms-1">{{ 'profile.2fa.since'|trans({date: app.user.twoFactorEnabledAt|format_date('medium')}) }}</span>{% endif %}
                 </p>
                 <p>
-                    {{ app.user.remainingBackupCodeCount }} unused backup code{{ app.user.remainingBackupCodeCount == 1 ? '' : 's' }} left.
-                    {% if app.user.remainingBackupCodeCount < 3 %}<strong>Generate new ones soon.</strong>{% endif %}
+                    {{ 'profile.2fa.codes_left'|trans({count: app.user.remainingBackupCodeCount}) }}
+                    {% if app.user.remainingBackupCodeCount < 3 %}<strong>{{ 'profile.2fa.codes_soon'|trans }}</strong>{% endif %}
                 </p>
-                <a href="{{ path('app_2fa_regenerate_backup_codes') }}" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1">{{ icon('key-round') }} New backup codes</a>
-                <a href="{{ path('app_2fa_disable') }}" class="btn btn-outline-danger d-inline-flex align-items-center gap-1 ms-2">{{ icon('shield-off') }} Disable</a>
+                <a href="{{ path('app_2fa_regenerate_backup_codes') }}" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1">{{ icon('key-round') }} {{ 'profile.2fa.new_codes'|trans }}</a>
+                <a href="{{ path('app_2fa_disable') }}" class="btn btn-outline-danger d-inline-flex align-items-center gap-1 ms-2">{{ icon('shield-off') }} {{ 'profile.2fa.disable'|trans }}</a>
             {% elseif not twoFactorAvailable %}
-                <p class="mb-0 text-muted">Two-factor authentication isn't available yet: the server has no valid <code>TOTP_ENCRYPTION_KEY</code> configured. Please contact the administrator.</p>
+                <p class="mb-0 text-muted">{{ 'profile.2fa.unavailable'|trans|raw }}</p>
             {% else %}
-                <p>Protect your account with a code from an authenticator app in addition to your password.</p>
-                <a href="{{ path('app_2fa_enable') }}" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('shield-check') }} Set up two-factor authentication</a>
+                <p>{{ 'profile.2fa.intro'|trans }}</p>
+                <a href="{{ path('app_2fa_enable') }}" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('shield-check') }} {{ 'profile.2fa.setup'|trans }}</a>
             {% endif %}
         </div>
     </div>
 
-    <h2 class="h4 mt-4 mb-3">Language</h2>
+    <h2 class="h4 mt-4 mb-3">{{ 'profile.language'|trans }}</h2>
     <div class="card">
         <div class="card-body">
             {{ form_start(languageForm, {attr: {id: 'language-form'}}) }}
                 {{ form_row(languageForm.locale) }}
-                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} {{ 'common.save'|trans }}</button>
             {{ form_end(languageForm) }}
         </div>
     </div>

@@ -19,7 +19,7 @@ class AgencySettingsType extends AbstractType
     {
         $builder
             ->add('defaultHourlyRate', NumberType::class, [
-                'label' => 'Default hourly rate (EUR)',
+                'label' => 'settings.field.rate',
                 'required' => false,
                 'scale' => 2,
                 'html5' => true,
@@ -27,7 +27,7 @@ class AgencySettingsType extends AbstractType
                 'constraints' => [new Assert\Positive()],
             ])
             ->add('defaultManagementPercent', NumberType::class, [
-                'label' => 'Default project management (%)',
+                'label' => 'settings.field.management',
                 'required' => false,
                 'html5' => true,
                 'attr' => ['step' => '1', 'min' => '0', 'max' => '100'],

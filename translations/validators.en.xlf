@@ -6,6 +6,18 @@
         <source>Choose an existing organization or enter a new one, not both.</source>
         <target>Choose an existing organization or enter a new one, not both.</target>
       </trans-unit>
+      <trans-unit id="Password must be at least {{ limit }} characters." resname="Password must be at least {{ limit }} characters.">
+        <source>Password must be at least {{ limit }} characters.</source>
+        <target>Password must be at least {{ limit }} characters.</target>
+      </trans-unit>
+      <trans-unit id="The password fields must match." resname="The password fields must match.">
+        <source>The password fields must match.</source>
+        <target>The password fields must match.</target>
+      </trans-unit>
+      <trans-unit id="The maximum must not be below the minimum." resname="The maximum must not be below the minimum.">
+        <source>The maximum must not be below the minimum.</source>
+        <target>The maximum must not be below the minimum.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -19,11 +19,12 @@ class LanguageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('locale', ChoiceType::class, [
-            'label' => 'Language',
+            'label' => 'profile.language',
             'required' => false,
             'placeholder' => false,
             // each language in its own words, so it can be found in a language one can't read
-            'choices' => ['Automatic (browser language)' => '', 'English' => 'en', 'Deutsch' => 'de'],
+            // the languages in their own names, so anyone finds theirs
+            'choices' => ['profile.language_auto' => '', 'English' => 'en', 'Deutsch' => 'de'],
         ]);
     }
 

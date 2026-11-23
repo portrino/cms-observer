@@ -1466,6 +1466,186 @@
         <source>calculation.editor.eye</source>
         <target>Vorschau</target>
       </trans-unit>
+      <trans-unit id="settings.intro" resname="settings.intro">
+        <source>settings.intro</source>
+        <target>Die erste Kalkulation eines Projekts startet mit diesen Werten, spätere übernehmen die der vorherigen Kalkulation des Projekts.</target>
+      </trans-unit>
+      <trans-unit id="settings.saved" resname="settings.saved">
+        <source>settings.saved</source>
+        <target>Einstellungen gespeichert.</target>
+      </trans-unit>
+      <trans-unit id="settings.field.rate" resname="settings.field.rate">
+        <source>settings.field.rate</source>
+        <target>Standard-Stundensatz (EUR)</target>
+      </trans-unit>
+      <trans-unit id="settings.field.management" resname="settings.field.management">
+        <source>settings.field.management</source>
+        <target>Standard-Projektmanagement (%)</target>
+      </trans-unit>
+      <trans-unit id="profile.title" resname="profile.title">
+        <source>profile.title</source>
+        <target>Mein Profil</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.enabled" resname="profile.2fa.enabled">
+        <source>profile.2fa.enabled</source>
+        <target>Aktiviert</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.since" resname="profile.2fa.since">
+        <source>profile.2fa.since</source>
+        <target>seit {date}</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.codes_left" resname="profile.2fa.codes_left">
+        <source>profile.2fa.codes_left</source>
+        <target>{count, plural, one {Noch # unbenutzter Backup-Code.} other {Noch # unbenutzte Backup-Codes.}}</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.codes_soon" resname="profile.2fa.codes_soon">
+        <source>profile.2fa.codes_soon</source>
+        <target>Bald neue erzeugen.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.new_codes" resname="profile.2fa.new_codes">
+        <source>profile.2fa.new_codes</source>
+        <target>Neue Backup-Codes</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.disable" resname="profile.2fa.disable">
+        <source>profile.2fa.disable</source>
+        <target>Deaktivieren</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.unavailable" resname="profile.2fa.unavailable">
+        <source>profile.2fa.unavailable</source>
+        <target>Zwei-Faktor-Authentifizierung ist noch nicht verfügbar: Auf dem Server ist kein gültiger &lt;code&gt;TOTP_ENCRYPTION_KEY&lt;/code&gt; konfiguriert. Bitte an die Administration wenden.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.intro" resname="profile.2fa.intro">
+        <source>profile.2fa.intro</source>
+        <target>Zusätzlich zum Passwort schützt ein Code aus einer Authenticator-App das Konto.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.setup" resname="profile.2fa.setup">
+        <source>profile.2fa.setup</source>
+        <target>Zwei-Faktor-Authentifizierung einrichten</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.scan" resname="profile.2fa.scan">
+        <source>profile.2fa.scan</source>
+        <target>Den QR-Code mit einer Authenticator-App scannen (z. B. 1Password, Google Authenticator, Authy).</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.enter" resname="profile.2fa.enter">
+        <source>profile.2fa.enter</source>
+        <target>Zur Bestätigung den 6-stelligen Code aus der App eingeben.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.qr" resname="profile.2fa.qr">
+        <source>profile.2fa.qr</source>
+        <target>QR-Code für die Authenticator-App</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.manual" resname="profile.2fa.manual">
+        <source>profile.2fa.manual</source>
+        <target>Scannen nicht möglich? Diesen Schlüssel manuell eingeben:</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.enable" resname="profile.2fa.enable">
+        <source>profile.2fa.enable</source>
+        <target>Zwei-Faktor-Authentifizierung aktivieren</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.now_enabled" resname="profile.2fa.now_enabled">
+        <source>profile.2fa.now_enabled</source>
+        <target>Zwei-Faktor-Authentifizierung ist jetzt aktiviert.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.now_disabled" resname="profile.2fa.now_disabled">
+        <source>profile.2fa.now_disabled</source>
+        <target>Zwei-Faktor-Authentifizierung ist jetzt deaktiviert.</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.disable_title" resname="profile.2fa.disable_title">
+        <source>profile.2fa.disable_title</source>
+        <target>Zwei-Faktor-Authentifizierung deaktivieren</target>
+      </trans-unit>
+      <trans-unit id="profile.2fa.disable_intro" resname="profile.2fa.disable_intro">
+        <source>profile.2fa.disable_intro</source>
+        <target>Das Konto ist dann nur noch durch das Passwort geschützt.</target>
+      </trans-unit>
+      <trans-unit id="profile.language" resname="profile.language">
+        <source>profile.language</source>
+        <target>Sprache</target>
+      </trans-unit>
+      <trans-unit id="profile.language_auto" resname="profile.language_auto">
+        <source>profile.language_auto</source>
+        <target>Automatisch (Browsersprache)</target>
+      </trans-unit>
+      <trans-unit id="profile.language_saved" resname="profile.language_saved">
+        <source>profile.language_saved</source>
+        <target>Sprache gespeichert.</target>
+      </trans-unit>
+      <trans-unit id="profile.updated" resname="profile.updated">
+        <source>profile.updated</source>
+        <target>Profil aktualisiert.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.title" resname="profile.codes.title">
+        <source>profile.codes.title</source>
+        <target>Backup-Codes</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.yours" resname="profile.codes.yours">
+        <source>profile.codes.yours</source>
+        <target>Backup-Codes</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.warning" resname="profile.codes.warning">
+        <source>profile.codes.warning</source>
+        <target>Diese Codes sicher aufbewahren, z. B. im Passwort-Manager. &lt;strong&gt;Sie werden nur einmal angezeigt.&lt;/strong&gt; Jeder Code funktioniert einmal, falls die Authenticator-App nicht verfügbar ist.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.saved" resname="profile.codes.saved">
+        <source>profile.codes.saved</source>
+        <target>Backup-Codes sind gespeichert</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.regenerated" resname="profile.codes.regenerated">
+        <source>profile.codes.regenerated</source>
+        <target>Neue Backup-Codes erzeugt, die alten funktionieren nicht mehr.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.regenerate_intro" resname="profile.codes.regenerate_intro">
+        <source>profile.codes.regenerate_intro</source>
+        <target>Alle bisherigen Backup-Codes werden ungültig. Mit einem Code aus der Authenticator-App bestätigen.</target>
+      </trans-unit>
+      <trans-unit id="profile.codes.regenerate" resname="profile.codes.regenerate">
+        <source>profile.codes.regenerate</source>
+        <target>Neue Backup-Codes erzeugen</target>
+      </trans-unit>
+      <trans-unit id="profile.error.password" resname="profile.error.password">
+        <source>profile.error.password</source>
+        <target>Das aktuelle Passwort ist falsch.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.email" resname="profile.error.email">
+        <source>profile.error.email</source>
+        <target>Diese E-Mail-Adresse wird bereits verwendet.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.code" resname="profile.error.code">
+        <source>profile.error.code</source>
+        <target>Der Code ist ungültig.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.code_time" resname="profile.error.code_time">
+        <source>profile.error.code_time</source>
+        <target>Der Code ist ungültig. Bitte prüfen, ob die Uhrzeit des Smartphones stimmt.</target>
+      </trans-unit>
+      <trans-unit id="profile.error.throttled" resname="profile.error.throttled">
+        <source>profile.error.throttled</source>
+        <target>{minutes, plural, one {Zu viele Fehlversuche, bitte in # Minute erneut versuchen.} other {Zu viele Fehlversuche, bitte in # Minuten erneut versuchen.}}</target>
+      </trans-unit>
+      <trans-unit id="profile.field.new_password" resname="profile.field.new_password">
+        <source>profile.field.new_password</source>
+        <target>Neues Passwort (leer lassen, um das aktuelle zu behalten)</target>
+      </trans-unit>
+      <trans-unit id="profile.field.repeat_password" resname="profile.field.repeat_password">
+        <source>profile.field.repeat_password</source>
+        <target>Neues Passwort wiederholen</target>
+      </trans-unit>
+      <trans-unit id="profile.field.current_password_confirm" resname="profile.field.current_password_confirm">
+        <source>profile.field.current_password_confirm</source>
+        <target>Aktuelles Passwort (zur Bestätigung)</target>
+      </trans-unit>
+      <trans-unit id="profile.field.current_password" resname="profile.field.current_password">
+        <source>profile.field.current_password</source>
+        <target>Aktuelles Passwort</target>
+      </trans-unit>
+      <trans-unit id="profile.field.code" resname="profile.field.code">
+        <source>profile.field.code</source>
+        <target>Code aus der Authenticator-App</target>
+      </trans-unit>
+      <trans-unit id="profile.field.code_or_backup" resname="profile.field.code_or_backup">
+        <source>profile.field.code_or_backup</source>
+        <target>Code aus der Authenticator-App oder ein Backup-Code</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
