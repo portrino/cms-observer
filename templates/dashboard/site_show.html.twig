@@ -8,6 +8,12 @@
 {% block page_actions %}
     {{ m.topbar_link(path('dashboard_site_history', {id: site.id}), 'history', 'History') }}
     {{ m.topbar_link(path('dashboard_site_edit', {id: site.id}), 'pencil', 'Edit') }}
+    <div class="dropdown">
+        <button type="button" class="btn btn-tertiary" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More actions">{{ icon('ellipsis-vertical') }}</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('upgrade_calculation_index', {id: site.id}) }}">{{ icon('calculator') }} Upgrade calculations</a></li>
+        </ul>
+    </div>
 {% endblock %}
 
 {% block body %}

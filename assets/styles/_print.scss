@@ -1,0 +1,84 @@
+// Printing a page, e.g. to save an upgrade calculation as PDF: content only
+.print-only {
+    display: none;
+}
+
+@media print {
+    .sidebar,
+    .sidebar-backdrop,
+    .app-topbar,
+    .alert,
+    .no-print {
+        display: none;
+    }
+
+    // the element's own display, e.g. table for the changelog
+    .print-only {
+        display: revert;
+    }
+
+    // paper, not a screen: white, no page padding, cards as plain sections
+    body {
+        --bs-body-bg: #{$white};
+        background-color: $white;
+    }
+
+    .container,
+    .container-fluid {
+        max-width: none;
+        padding: 0;
+    }
+
+    .row {
+        --bs-gutter-x: 0;
+    }
+
+    .card {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    // same selectors as in _cards.scss: tables start at the page edge, not indented by the card padding
+    .card-body.p-0 > .table {
+        > :not(caption) > * > :first-child {
+            padding-left: 0;
+        }
+
+        > :not(caption) > * > :last-child {
+            padding-right: 0;
+        }
+    }
+
+    .app-main,
+    body.sidebar-collapsed .app-main {
+        margin-left: 0;
+        padding: 0;
+        transition: none;
+    }
+
+    .row > * {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    // keep the colors of notes and targets
+    .table {
+        print-color-adjust: exact;
+    }
+
+    .card {
+        break-inside: avoid;
+    }
+
+    .table-responsive {
+        overflow: visible;
+    }
+}

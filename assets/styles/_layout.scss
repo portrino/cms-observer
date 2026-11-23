@@ -25,6 +25,14 @@
     text-overflow: ellipsis;
 }
 
+// e.g. the project of a calculation, after the page title
+.topbar-subtitle {
+    margin-left: 0.5rem;
+    font-size: 1rem;
+    font-weight: normal;
+    color: var(--bs-secondary-color);
+}
+
 .topbar-actions {
     display: flex;
     flex-shrink: 0;

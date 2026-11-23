@@ -1,0 +1,121 @@
+{# Sums and prices are calculated with the maximum effort, like the agency always did #}
+{% macro hours(range) -%}
+    {{ range.max|number_format(2) }} h
+{%- endmacro %}
+
+{% macro price(range, rate) -%}
+    {{ (range.max * rate)|number_format(2, ',', '.') }} EUR
+{%- endmacro %}
+
+{# A row's effort: the range on screen, as a hint that it was hard to estimate; printed only the maximum #}
+{% macro row_hours(min, max) -%}
+    {%- if min is not null or max is not null -%}
+        {%- set max = max ?? min -%}
+        {%- set min = min ?? max -%}
+        {%- if min != max -%}
+            <span class="no-print">{{ min|number_format(2) }}–{{ max|number_format(2) }} h</span><span class="print-only">{{ max|number_format(2) }} h</span>
+        {%- else -%}
+            {{ max|number_format(2) }} h
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}
+
+{# The first line of a row's notes in its color; opens the note dialog #}
+{% macro note_preview(text, level) %}
+    {# first line without Markdown marks, like note_editor_controller.js #}
+    {% set firstLine = ((text ?? '')|split("\n")|map(line => line|trim)|filter(line => line)|first ?: '')|markdown_to_html|striptags|trim %}
+    <button type="button" class="btn btn-sm upgrade-note {{ level ? 'upgrade-note-' ~ level }} {{ firstLine ? '' : 'upgrade-note-empty' }}" data-action="note-editor#open" data-note-field="preview" aria-label="Edit notes">
+        <span class="upgrade-note-text">{{ firstLine ?: 'Add note' }}</span>
+    </button>
+{% endmacro %}
+
+{# One editable row of a calculation form; also renders the prototype for new rows #}
+{% macro form_row(entry, package) %}
+    {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
+    {# a position standing for a package section: label and hours come from that section, it can't be removed #}
+    {% set sumOf = entry.sumOf is defined ? entry.sumOf.vars.value : null %}
+    <tr data-form-collection-row {% if sumOf %}class="upgrade-sum-row"{% endif %}>
+        <td class="upgrade-col-handle">
+            <button type="button" class="btn btn-sm upgrade-handle" aria-label="Move row: drag, or use the arrow keys"
+                    data-action="pointerdown->form-collection#grab keydown->form-collection#key">{{ icon('grip-vertical') }}</button>
+            {{ form_widget(entry.position, {attr: {'data-form-collection-target': 'position'}}) }}
+            {{ form_widget(entry.sumOf) }}
+        </td>
+        <td class="upgrade-col-label">
+            {% if sumOf %}
+                {{ form_widget(entry.label, {attr: {class: 'form-control-plaintext form-control-sm fw-semibold', readonly: 'readonly', tabindex: '-1'}}) }}
+            {% else %}
+                {{ form_widget(entry.label, {attr: {class: 'form-control form-control-sm', placeholder: package ? 'vendor/package' : ''}}) }}{{ form_errors(entry.label) }}
+            {% endif %}
+            {% if package %}
+                {{ form_widget(entry.package) }}
+                {{ form_widget(entry.packageType) }}
+            {% endif %}
+        </td>
+        {% if package %}
+            <td class="upgrade-col-version">{{ form_widget(entry.installedVersion, sm) }}</td>
+            <td class="upgrade-col-version upgrade-col-target">{{ form_widget(entry.targetVersion, sm) }}</td>
+            <td class="upgrade-col-status">{{ form_widget(entry.status, {attr: {class: 'form-select form-select-sm'}}) }}</td>
+        {% endif %}
+        {% if sumOf %}
+            {% for bound in ['min', 'max'] %}
+                <td class="upgrade-col-hours">{{ form_widget(entry[bound ~ 'Hours'], {attr: {class: 'form-control-plaintext form-control-sm', readonly: 'readonly', tabindex: '-1', 'data-upgrade-sums-target': 'sum', 'data-sum-of': sumOf, 'data-bound': bound, 'aria-label': bound|capitalize ~ ' hours of ' ~ entry.label.vars.value}}) }}</td>
+            {% endfor %}
+        {% else %}
+            <td class="upgrade-col-hours">{{ form_widget(entry.minHours, sm) }}{{ form_errors(entry.minHours) }}</td>
+            <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
+        {% endif %}
+        <td class="upgrade-col-notes" data-note-editor-target="cell">
+            {{ form_widget(entry.notes, {attr: {'data-note-field': 'text'}}) }}
+            {{ form_widget(entry.noteLevel, {attr: {class: 'd-none', 'data-note-field': 'level', 'aria-hidden': 'true', tabindex: '-1'}}) }}
+            {{ _self.note_preview(entry.notes.vars.value, entry.noteLevel.vars.value) }}
+        </td>
+        <td class="upgrade-col-text">{{ form_widget(entry.assignee, sm) }}</td>
+        <td class="upgrade-col-actions">
+            {% if not sumOf %}
+                <button type="button" class="btn btn-sm btn-outline-neutral" data-action="form-collection#remove" aria-label="Remove row">{{ icon('trash') }}</button>
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{# What the support phases mean for the upgrade, in words #}
+{% macro support_text(cms, phases, fromMajor) %}
+    {% for phase in phases %}
+        <p class="mb-1">
+            {{ cms }} {{ phase.major }} receives free core updates until {{ phase.maintainedUntil|date('F Y') }}.
+            {% if phase.extendedUntil and phase.major == fromMajor %}
+                From {{ phase.maintainedUntil|date_modify('+1 day')|date('F Y') }} on, core updates need a paid extended support (ELTS) license, available until {{ phase.extendedUntil|date('F Y') }}.
+            {% endif %}
+        </p>
+    {% endfor %}
+{% endmacro %}
+
+{# Bars of the support phases on a time axis (geometry from UpgradeSupportChart), like the roadmap of typo3.com #}
+{% macro support_chart(cms, chart) %}
+    {% set titles = {development: 'Development (sprint releases)', regular: 'Regular maintenance', priority: 'Priority bugfixes', extended: 'Paid extended support (ELTS)'} %}
+    <svg class="upgrade-roadmap" viewBox="0 0 {{ constant('App\\Dto\\UpgradeSupportChart::WIDTH') }} {{ chart.height }}" role="img" aria-label="Support phases of {{ cms }} {{ chart.rows|map(r => r.major)|join(', ') }}">
+        {% for year in chart.years %}
+            <line class="upgrade-roadmap-grid" x1="{{ year.x }}" x2="{{ year.x }}" y1="0" y2="{{ chart.height - 20 }}"/>
+            <text class="upgrade-roadmap-year" x="{{ year.x }}" y="{{ chart.height - 4 }}" text-anchor="middle">{{ year.year }}</text>
+        {% endfor %}
+        {% for row in chart.rows %}
+            <text class="upgrade-roadmap-label" x="0" y="{{ row.y + 15 }}">{{ cms }} {{ row.major }}</text>
+            {% for segment in row.segments %}
+                <rect class="upgrade-roadmap-{{ segment.phase }}" x="{{ segment.x }}" y="{{ row.y }}" width="{{ segment.width }}" height="20"><title>{{ titles[segment.phase] }} until {{ segment.until|date('Y-m-d') }}</title></rect>
+            {% endfor %}
+            {% for tick in row.ticks %}
+                <line class="upgrade-roadmap-tick" x1="{{ tick }}" x2="{{ tick }}" y1="{{ row.y + 3 }}" y2="{{ row.y + 17 }}"/>
+            {% endfor %}
+        {% endfor %}
+        {% if chart.today is not null %}
+            <line class="upgrade-roadmap-today" x1="{{ chart.today }}" x2="{{ chart.today }}" y1="0" y2="{{ chart.height - 20 }}"/>
+        {% endif %}
+    </svg>
+    <p class="small text-muted mb-0 d-flex flex-wrap column-gap-3">
+        {% for phase, title in titles %}
+            <span><span class="upgrade-roadmap-key upgrade-roadmap-{{ phase }}"></span> {{ title }}</span>
+        {% endfor %}
+        <span><span class="upgrade-roadmap-key upgrade-roadmap-today-key"></span> Today</span>
+    </p>
+{% endmacro %}

@@ -1,0 +1,198 @@
+// Upgrade calculations: the editable and read-only row tables
+.upgrade-table {
+    td {
+        vertical-align: top;
+    }
+
+    .upgrade-col-label {
+        min-width: 14rem;
+    }
+
+    // wide enough to read on phones too, the table scrolls sideways instead
+    .upgrade-col-version {
+        min-width: 6rem;
+    }
+
+    .upgrade-col-status {
+        min-width: 10rem;
+    }
+
+    .upgrade-col-text {
+        min-width: 9rem;
+    }
+
+    .upgrade-col-hours {
+        width: 5.5rem;
+        min-width: 5.5rem;
+    }
+
+    .upgrade-col-notes {
+        min-width: 12rem;
+    }
+
+    .upgrade-col-handle {
+        width: 1%;
+        padding-right: 0;
+    }
+
+    // the handle needs no card padding before it, and the actions line up with "Add row" in
+    // the card header (same selector as in _cards.scss, so these later rules win)
+    .card-body.p-0 > & > :not(caption) > * > .upgrade-col-handle {
+        padding-left: 0.25rem;
+    }
+
+    .card-body.p-0 > & > :not(caption) > * > .upgrade-col-actions {
+        padding-right: $card-cap-padding-x;
+    }
+
+    .upgrade-handle {
+        cursor: grab;
+        color: var(--bs-secondary-color);
+    }
+
+    // the row being dragged
+    .upgrade-dragging {
+        opacity: 0.5;
+    }
+
+    // first line of a row's notes, opens the note dialog
+    .upgrade-note {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        background-color: $white;
+    }
+
+    .upgrade-note-text {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .upgrade-note-empty {
+        color: var(--bs-secondary-color);
+    }
+
+    @each $level in success, warning, danger {
+        .upgrade-note-#{$level} {
+            border-color: var(--bs-#{$level}-border-subtle);
+            background-color: var(--bs-#{$level}-bg-subtle);
+            color: var(--bs-#{$level}-text-emphasis);
+        }
+    }
+
+    // a version that covers the current and the next major: can be updated before the upgrade
+    tr:has(option[value="update-first"]:checked) .upgrade-col-target .form-control {
+        border-color: var(--bs-info-border-subtle);
+        background-color: var(--bs-info-bg-subtle);
+    }
+
+    // positions standing for a package section's hours
+    .upgrade-sum-row > td {
+        background-color: var(--bs-tertiary-bg);
+    }
+
+    // their fixed label and hours line up with the text of the inputs in other rows
+    .upgrade-sum-row .form-control-plaintext {
+        padding-left: calc(#{$input-padding-x-sm} + #{$input-border-width});
+    }
+
+    // the same place in every section, at the right edge
+    .upgrade-col-actions {
+        width: 1%;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .upgrade-notes {
+        min-width: 12rem;
+        white-space: normal;
+    }
+}
+
+// The note dialog shows the chosen color on its textarea, like the row's preview
+@each $level in success, warning, danger {
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) textarea,
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) .CodeMirror {
+        border-color: var(--bs-#{$level}-border-subtle);
+        background-color: var(--bs-#{$level}-bg-subtle);
+        color: var(--bs-#{$level}-text-emphasis);
+    }
+}
+
+// Support phases of an upgrade calculation's timeline
+.upgrade-roadmap {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-size: 0.8rem;
+    print-color-adjust: exact;
+}
+
+.upgrade-roadmap-label,
+.upgrade-roadmap-year {
+    fill: var(--bs-body-color);
+}
+
+.upgrade-roadmap-grid {
+    stroke: var(--bs-border-color);
+}
+
+// phase colors after the roadmap of typo3.com
+$roadmap-extended: #f8b36b; // light orange
+
+.upgrade-roadmap-development {
+    fill: $gray-400;
+    background-color: $gray-400;
+}
+
+.upgrade-roadmap-tick {
+    stroke: #8b3a1f;
+    stroke-width: 3;
+}
+
+.upgrade-roadmap-regular {
+    fill: $success;
+    background-color: $success;
+}
+
+.upgrade-roadmap-priority {
+    fill: tint-color($success, 50%);
+    background-color: tint-color($success, 50%);
+}
+
+.upgrade-roadmap-extended {
+    fill: $roadmap-extended;
+    background-color: $roadmap-extended;
+}
+
+.upgrade-roadmap-today {
+    stroke: $danger;
+    stroke-width: 2;
+}
+
+.upgrade-roadmap-today-key {
+    background-color: $danger;
+}
+
+.upgrade-roadmap-key {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    vertical-align: middle;
+    print-color-adjust: exact;
+}
+
+// Rendered Markdown of notes, timeline and remarks: no margin below the last block
+.upgrade-markdown {
+    > :last-child {
+        margin-bottom: 0;
+    }
+
+    ul,
+    ol {
+        padding-left: 1.25rem;
+    }
+}

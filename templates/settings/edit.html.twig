@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings - CMS Observer{% endblock %}
+
+{% block page_title %}Settings{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 500px;">
+    <h2 class="h4 mb-3">Upgrade calculations</h2>
+    <div class="card">
+        <div class="card-body">
+            <p class="text-muted">A project's first calculation starts with these values; later ones take over those of the project's previous calculation.</p>
+            {{ form_start(form) }}
+                {{ form_row(form.defaultHourlyRate) }}
+                {{ form_row(form.defaultManagementPercent) }}
+                <button type="submit" class="btn btn-tertiary d-inline-flex align-items-center gap-1">{{ icon('save') }} Save</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

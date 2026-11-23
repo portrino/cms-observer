@@ -26,6 +26,7 @@ pull request, see [supporting another CMS](docs/clients.md#supporting-another-cm
 - [**Security status per site**](docs/data-sources.md): insecure or outdated core, PHP, database and packages, the matching advisory or CVE
 - [**Email notifications**](docs/configuration.md#email): one summary mail per run for every new finding, never one mail per site
 - [**Change history**](docs/clients.md#what-a-report-changes): when which core, PHP, database or package version changed, and when something became insecure
+- [**Upgrade calculations**](docs/upgrade-calculations.md): effort and price of a major core upgrade from the latest report, versioned, comparable and printable
 - [**Staging-safe reports**](docs/clients.md#domain-check): reports from another domain, e.g. a staging copy with the production token, are rejected
 
 ## 🔥 Installation
@@ -64,6 +65,7 @@ vulnerability data fills in over the next hours, or right away with the
 | [Installation](docs/installation.md) | Requirements, setup, environment variables, cron job, updating |
 | [Configuration](docs/configuration.md) | Email, scheduled syncs, users and two-factor authentication |
 | [Data sources](docs/data-sources.md) | Where the release and vulnerability data comes from and how sites are rated |
+| [Upgrade calculations](docs/upgrade-calculations.md) | Calculating major upgrades, versions, refreshing from the latest report |
 | [Clients](docs/clients.md) | The report API, tokens, the domain check, supporting another CMS |
 | [Contributing](CONTRIBUTING.md) | Local setup with DDEV, tests, code style, pull requests |
 
