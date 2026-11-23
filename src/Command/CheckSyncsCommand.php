@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[AsCommand(
     name: 'app:check-syncs',
@@ -34,13 +35,13 @@ class CheckSyncsCommand extends Command
         $overdue = $this->syncMonitor->takeNewlyOverdue();
 
         foreach ($overdue as $status) {
-            $detail = null !== $status->getLastSucceededAt()
-                ? sprintf('No successful run since %s, its data is no longer up to date.', $status->getLastSucceededAt()->format('Y-m-d H:i'))
-                : 'No successful run yet, its data is missing.';
-            if (null !== $status->getLastFailedAt()) {
-                $detail .= sprintf(' Last error (%s): %s', $status->getLastFailedAt()->format('Y-m-d H:i'), $status->getLastError());
-            }
-            $this->securityNotifier->addSystemFinding(sprintf('Sync %s', $status->getCommand()), $detail);
+            // server times, like the status page
+            $detail = new TranslatableMessage(null !== $status->getLastSucceededAt() ? 'mail.sync.since' : 'mail.sync.never', [
+                'since' => $status->getLastSucceededAt()?->format('Y-m-d H:i') ?? '',
+                'failed' => $status->getLastFailedAt()?->format('Y-m-d H:i') ?? 'none',
+                'error' => (string) $status->getLastError(),
+            ]);
+            $this->securityNotifier->addSystemFinding(new TranslatableMessage('mail.sync.subject', ['command' => $status->getCommand()]), $detail);
         }
 
         $this->entityManager->flush();

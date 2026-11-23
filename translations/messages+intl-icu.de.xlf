@@ -1646,6 +1646,64 @@
         <source>profile.field.code_or_backup</source>
         <target>Code aus der Authenticator-App oder ein Backup-Code</target>
       </trans-unit>
+      <trans-unit id="mail.kind.insecure" resname="mail.kind.insecure">
+        <source>mail.kind.insecure</source>
+        <target>Unsicher</target>
+      </trans-unit>
+      <trans-unit id="mail.kind.stopped_reporting" resname="mail.kind.stopped_reporting">
+        <source>mail.kind.stopped_reporting</source>
+        <target>Meldet nicht mehr</target>
+      </trans-unit>
+      <trans-unit id="mail.kind.sync_overdue" resname="mail.kind.sync_overdue">
+        <source>mail.kind.sync_overdue</source>
+        <target>Syncs überfällig</target>
+      </trans-unit>
+      <trans-unit id="mail.count.insecure" resname="mail.count.insecure">
+        <source>mail.count.insecure</source>
+        <target>{count, plural, one {# neuer Sicherheitsbefund} other {# neue Sicherheitsbefunde}}</target>
+      </trans-unit>
+      <trans-unit id="mail.count.stopped_reporting" resname="mail.count.stopped_reporting">
+        <source>mail.count.stopped_reporting</source>
+        <target>{count, plural, one {# Projekt meldet nicht mehr} other {# Projekte melden nicht mehr}}</target>
+      </trans-unit>
+      <trans-unit id="mail.count.sync_overdue" resname="mail.count.sync_overdue">
+        <source>mail.count.sync_overdue</source>
+        <target>{count, plural, one {# Sync überfällig} other {# Syncs überfällig}}</target>
+      </trans-unit>
+      <trans-unit id="mail.open_dashboard" resname="mail.open_dashboard">
+        <source>mail.open_dashboard</source>
+        <target>Dashboard öffnen</target>
+      </trans-unit>
+      <trans-unit id="mail.footer" resname="mail.footer">
+        <source>mail.footer</source>
+        <target>Diese Mail geht an alle Benutzer des CMS Observer. Jeder Befund wird einmal gemeldet.</target>
+      </trans-unit>
+      <trans-unit id="mail.sync.subject" resname="mail.sync.subject">
+        <source>mail.sync.subject</source>
+        <target>Sync {command}</target>
+      </trans-unit>
+      <trans-unit id="mail.sync.since" resname="mail.sync.since">
+        <source>mail.sync.since</source>
+        <target>Kein erfolgreicher Lauf seit {since}, seine Daten sind nicht mehr aktuell.{failed, select, none {} other { Letzter Fehler ({failed}): {error}}}</target>
+      </trans-unit>
+      <trans-unit id="mail.sync.never" resname="mail.sync.never">
+        <source>mail.sync.never</source>
+        <target>Noch kein erfolgreicher Lauf, seine Daten fehlen.{failed, select, none {} other { Letzter Fehler ({failed}): {error}}}</target>
+      </trans-unit>
+      <trans-unit id="mail.test.subject" resname="mail.test.subject">
+        <source>mail.test.subject</source>
+        <target>Testmail</target>
+      </trans-unit>
+      <trans-unit id="mail.test.body" resname="mail.test.body">
+        <source>mail.test.body</source>
+        <target>Dies ist eine Testmail des CMS Observer unter {url}.
+
+Wenn sie lesbar ist, funktioniert der Mailversand.</target>
+      </trans-unit>
+      <trans-unit id="profile.language_help" resname="profile.language_help">
+        <source>profile.language_help</source>
+        <target>Mails, z. B. zu Sicherheitsbefunden, kommen in dieser Sprache; bei „Automatisch“ auf Englisch, da die Browsersprache beim Versand nicht bekannt ist.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

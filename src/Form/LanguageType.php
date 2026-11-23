@@ -20,6 +20,7 @@ class LanguageType extends AbstractType
     {
         $builder->add('locale', ChoiceType::class, [
             'label' => 'profile.language',
+            'help' => 'profile.language_help',
             'required' => false,
             'placeholder' => false,
             // each language in its own words, so it can be found in a language one can't read

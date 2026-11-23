@@ -1,7 +1,7 @@
 {# Mail clients ignore stylesheets and web fonts: tables and inline styles only, colors from assets/styles/app.scss #}
 {% set font = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app.locale }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
     <body style="margin: 0; padding: 0; background-color: #e9ecef; font-family: {{ font }}; color: #1d293d;">
         {# preview text in the inbox list #}
         <div style="display: none; max-height: 0; overflow: hidden;">
-            {{ groups|map(group => group.kind.count(group.findings|length))|join(', ') }}
+            {{ groups|map(group => group.kind.count(group.findings|length)|trans)|join(', ') }}
         </div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e9ecef;">
             <tr>
@@ -30,15 +30,15 @@
                                     {% set accent = group.kind.warning ? '#ffc107' : '#dc3545' %}
                                     <h2 style="margin: {{ loop.first ? '0' : '28px' }} 0 12px; font-size: 16px; font-weight: 600;">
                                         <span style="display: inline-block; width: 10px; height: 10px; border-radius: 5px; background-color: {{ accent }}; margin-right: 6px;"></span>
-                                        {{ group.kind.heading }} ({{ group.findings|length }})
+                                        {{ group.kind.heading|trans }} ({{ group.findings|length }})
                                     </h2>
                                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                                         {% for finding in group.findings %}
                                             <tr>
                                                 <td style="border-left: 3px solid {{ accent }}; background-color: #f8f9fa; padding: 10px 14px; font-size: 14px; line-height: 1.45;">
                                                     <a href="{{ finding.url }}" style="color: #1d293d; font-weight: 600; text-decoration: underline;">{{ finding.name }}</a>
-                                                    <span style="color: #6c757d;">&middot; {{ finding.subject }}</span><br>
-                                                    <span style="color: #495057;">{{ finding.detail }}</span>
+                                                    <span style="color: #6c757d;">&middot; {{ finding.subject|trans }}</span><br>
+                                                    <span style="color: #495057;">{{ finding.detail|trans }}</span>
                                                 </td>
                                             </tr>
                                             {% if not loop.last %}<tr><td style="height: 6px; line-height: 6px; font-size: 6px;">&nbsp;</td></tr>{% endif %}
@@ -48,7 +48,7 @@
                                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 28px;">
                                     <tr>
                                         <td style="background-color: #e5185e; border-radius: 6px;">
-                                            <a href="{{ dashboardUrl }}" style="display: inline-block; padding: 10px 18px; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none;">Open the dashboard</a>
+                                            <a href="{{ dashboardUrl }}" style="display: inline-block; padding: 10px 18px; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none;">{{ 'mail.open_dashboard'|trans }}</a>
                                         </td>
                                     </tr>
                                 </table>
@@ -56,7 +56,7 @@
                         </tr>
                         <tr>
                             <td style="padding: 16px 24px; font-size: 12px; line-height: 1.5; color: #6c757d; text-align: center;">
-                                You get this mail as a user of the CMS Observer. Each finding is mailed once.<br>
+                                {{ 'mail.footer'|trans }}<br>
                                 {# required attribution of the Wordfence feed, see the plugin vulnerability page #}
                                 WordPress plugin vulnerability data provided by Wordfence Intelligence, &copy; Defiant Inc.
                                 CVE records &copy; The MITRE Corporation.
