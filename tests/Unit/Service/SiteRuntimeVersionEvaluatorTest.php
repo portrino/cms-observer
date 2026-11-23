@@ -13,24 +13,25 @@ use App\Service\SecurityNotifier;
 use App\Service\SiteRuntimeVersionEvaluator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SiteRuntimeVersionEvaluatorTest extends TestCase
 {
     /**
-     * @return iterable<string, array{string, bool, ?string, bool, ?string}>
+     * @return iterable<string, array{string, bool, ?string, bool, ?TranslatableMessage}>
      */
     public static function phpVersions(): iterable
     {
         // installed, cycle EOL, latest security release, expected insecure, expected finding detail
-        yield 'older than the latest security release' => ['8.4.24', false, '8.4.27', true, 'PHP version is missing security fixes (fixed in 8.4.27).'];
+        yield 'older than the latest security release' => ['8.4.24', false, '8.4.27', true, new TranslatableMessage('event.detail.php_missing_fixes', ['fixed' => '8.4.27'])];
         yield 'equal to the latest security release' => ['8.4.27', false, '8.4.27', false, null];
         yield 'newer than the latest security release' => ['8.4.28', false, '8.4.27', false, null];
         yield 'no security release known' => ['8.4.24', false, null, false, null];
-        yield 'EOL cycle' => ['8.0.30', true, null, true, 'PHP version is now insecure (past end of life).'];
+        yield 'EOL cycle' => ['8.0.30', true, null, true, new TranslatableMessage('event.detail.php_eol')];
     }
 
     #[DataProvider('phpVersions')]
-    public function testPhpSecurityStatus(string $installed, bool $isEol, ?string $securityVersion, bool $expectedInsecure, ?string $expectedFinding): void
+    public function testPhpSecurityStatus(string $installed, bool $isEol, ?string $securityVersion, bool $expectedInsecure, ?TranslatableMessage $expectedFinding): void
     {
         $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
         $site->recordReport('13.4.0', $installed, '10.11.0-MariaDB');
@@ -46,7 +47,7 @@ class SiteRuntimeVersionEvaluatorTest extends TestCase
         $notifier = $this->createMock(SecurityNotifier::class);
         $notifier->expects(null === $expectedFinding ? self::never() : self::once())
             ->method('addFinding')
-            ->with($site, 'PHP '.$installed, $expectedFinding ?? '');
+            ->with($site, new TranslatableMessage('event.subject.php', ['version' => $installed]), $expectedFinding);
 
         new SiteRuntimeVersionEvaluator($repository, $notifier)->evaluate($site);
 
@@ -70,7 +71,7 @@ class SiteRuntimeVersionEvaluatorTest extends TestCase
 
         $notifier = $this->createMock(SecurityNotifier::class);
         $notifier->expects(self::never())->method('addFinding');
-        $notifier->expects(self::once())->method('recordResolved')->with($site, 'PHP 8.4.28', 'PHP version is secure again.');
+        $notifier->expects(self::once())->method('recordResolved')->with($site, new TranslatableMessage('event.subject.php', ['version' => '8.4.28']), new TranslatableMessage('event.detail.php_secure'));
 
         $site->recordReport('13.4.0', '8.4.28', '10.11.0-MariaDB');
         new SiteRuntimeVersionEvaluator($repository, $notifier)->evaluate($site);

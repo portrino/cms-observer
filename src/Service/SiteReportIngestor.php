@@ -16,6 +16,7 @@ use App\Entity\SiteReport;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SiteReportIngestor
 {
@@ -71,6 +72,7 @@ class SiteReportIngestor
                 null,
                 sprintf('%s %s', $site->getType()->label(), $request->coreVersion),
                 sprintf('%d packages', count($request->extensions ?? [])),
+                SiteEvent::messagesOf(null, new TranslatableMessage('event.detail.packages', ['count' => count($request->extensions ?? [])])),
             ));
         } else {
             $this->recordRuntimeChanges($site, $request, $dbPlatform.' '.$dbVersion);
@@ -114,9 +116,9 @@ class SiteReportIngestor
         $site->recordApplicationContext($context);
 
         if ($site->runsOutsideProductionContext() && !$wasOutside) {
-            $this->securityNotifier->addFinding($site, sprintf('Application context %s', $context), 'The production site runs outside the Production context: error details and debug output can be public.');
+            $this->securityNotifier->addFinding($site, new TranslatableMessage('event.subject.context', ['context' => $context]), new TranslatableMessage('event.detail.context_not_production'));
         } elseif ($wasOutside && null !== $context && !$site->runsOutsideProductionContext()) {
-            $this->securityNotifier->recordResolved($site, sprintf('Application context %s', $context), 'The production site runs in the Production context again.');
+            $this->securityNotifier->recordResolved($site, new TranslatableMessage('event.subject.context', ['context' => $context]), new TranslatableMessage('event.detail.context_production'));
         }
     }
 

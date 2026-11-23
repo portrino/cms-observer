@@ -750,6 +750,94 @@
         <source>badge.available_word</source>
         <target>available</target>
       </trans-unit>
+      <trans-unit id="event.subject.no_reports" resname="event.subject.no_reports">
+        <source>event.subject.no_reports</source>
+        <target>No reports</target>
+      </trans-unit>
+      <trans-unit id="event.subject.extension" resname="event.subject.extension">
+        <source>event.subject.extension</source>
+        <target>Extension {name} {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.plugin" resname="event.subject.plugin">
+        <source>event.subject.plugin</source>
+        <target>Plugin {name} {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.theme" resname="event.subject.theme">
+        <source>event.subject.theme</source>
+        <target>Theme {name} {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.php" resname="event.subject.php">
+        <source>event.subject.php</source>
+        <target>PHP {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.db" resname="event.subject.db">
+        <source>event.subject.db</source>
+        <target>Database {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.core" resname="event.subject.core">
+        <source>event.subject.core</source>
+        <target>{cms} core {version}</target>
+      </trans-unit>
+      <trans-unit id="event.subject.context" resname="event.subject.context">
+        <source>event.subject.context</source>
+        <target>Application context {context}</target>
+      </trans-unit>
+      <trans-unit id="event.detail.stale" resname="event.detail.stale">
+        <source>event.detail.stale</source>
+        <target>No report since {since, date,yyyy-MM-dd} {since, time,HH:mm}, the security status is no longer up to date.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.vulnerability" resname="event.detail.vulnerability">
+        <source>event.detail.vulnerability</source>
+        <target>{id} ({severity, select, unknown {unknown severity} other {{severity}}}): {url}</target>
+      </trans-unit>
+      <trans-unit id="event.detail.advisory" resname="event.detail.advisory">
+        <source>event.detail.advisory</source>
+        <target>Matches {id} ({severity, select, unknown {unknown severity} other {{severity}}}): {url}</target>
+      </trans-unit>
+      <trans-unit id="event.detail.ter_insecure" resname="event.detail.ter_insecure">
+        <source>event.detail.ter_insecure</source>
+        <target>TER marked this exact version insecure (review_state).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.php_eol" resname="event.detail.php_eol">
+        <source>event.detail.php_eol</source>
+        <target>PHP version is now insecure (past end of life).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.php_missing_fixes" resname="event.detail.php_missing_fixes">
+        <source>event.detail.php_missing_fixes</source>
+        <target>PHP version is missing security fixes (fixed in {fixed}).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.php_secure" resname="event.detail.php_secure">
+        <source>event.detail.php_secure</source>
+        <target>PHP version is secure again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.db_eol" resname="event.detail.db_eol">
+        <source>event.detail.db_eol</source>
+        <target>Database version is now insecure (past end of life).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.db_secure" resname="event.detail.db_secure">
+        <source>event.detail.db_secure</source>
+        <target>Database version is secure again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.context_not_production" resname="event.detail.context_not_production">
+        <source>event.detail.context_not_production</source>
+        <target>The production site runs outside the Production context: error details and debug output can be public.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.context_production" resname="event.detail.context_production">
+        <source>event.detail.context_production</source>
+        <target>The production site runs in the Production context again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.core_insecure" resname="event.detail.core_insecure">
+        <source>event.detail.core_insecure</source>
+        <target>Core version is now insecure (unmaintained or superseded by a security release).</target>
+      </trans-unit>
+      <trans-unit id="event.detail.core_secure" resname="event.detail.core_secure">
+        <source>event.detail.core_secure</source>
+        <target>Core version is secure again.</target>
+      </trans-unit>
+      <trans-unit id="event.detail.packages" resname="event.detail.packages">
+        <source>event.detail.packages</source>
+        <target>{count, plural, one {# package} other {# packages}}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -8,6 +8,7 @@ use App\Entity\PackageType;
 use App\Entity\SitePackage;
 use App\Entity\WordpressPluginVulnerability;
 use App\Repository\WordpressPluginVulnerabilityRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Resolves a WordPress plugin package's status. Callers are responsible for
@@ -54,13 +55,12 @@ class SitePackageWordpressEvaluator
         if (null !== $vulnerability && true !== $wasInsecure) {
             $this->securityNotifier->addFinding(
                 $package->getSite(),
-                sprintf('%s %s %s', $isTheme ? 'Theme' : 'Plugin', $package->getName(), $package->getVersion()),
-                sprintf(
-                    '%s (%s): %s',
-                    $vulnerability->getCve() ?? $vulnerability->getTitle(),
-                    $vulnerability->getCvssRating() ?? 'unknown severity',
-                    $vulnerability->getUrl(),
-                ),
+                new TranslatableMessage($isTheme ? 'event.subject.theme' : 'event.subject.plugin', ['name' => $package->getName(), 'version' => $package->getVersion()]),
+                new TranslatableMessage('event.detail.vulnerability', [
+                    'id' => $vulnerability->getCve() ?? $vulnerability->getTitle(),
+                    'severity' => $vulnerability->getCvssRating() ?? 'unknown',
+                    'url' => $vulnerability->getUrl(),
+                ]),
             );
         }
     }

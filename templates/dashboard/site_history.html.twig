@@ -63,7 +63,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if event.subject %}<code>{{ event.subject }}</code>{% endif %}
+                                    {% if event.subject %}<code>{{ event.subjectMessage|trans }}</code>{% endif %}
                                     {% if event.oldValue and event.newValue %}
                                         {{ event.oldValue }} &rarr; {{ event.newValue }}
                                     {% else %}
@@ -72,7 +72,7 @@
                                     {% if event.type.value == 'report-rejected' %}
                                         {{ 'history.from'|trans({detail: event.detail}) }}
                                     {% elseif event.detail %}
-                                        <span class="text-muted">{{ event.detail }}</span>
+                                        <span class="text-muted">{{ event.detailMessage|trans }}</span>
                                     {% endif %}
                                 </td>
                             </tr>

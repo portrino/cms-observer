@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\SitePackage;
 use App\Repository\Typo3TerExtensionVersionRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Applies cached TER data (Typo3TerExtensionVersion) to a set of SitePackage
@@ -42,8 +43,8 @@ class SitePackageTerEvaluator
             if (true === $insecure && true !== $wasInsecure) {
                 $this->securityNotifier->addFinding(
                     $package->getSite(),
-                    sprintf('Extension %s %s', $package->getName(), $package->getVersion()),
-                    'TER marked this exact version insecure (review_state).',
+                    new TranslatableMessage('event.subject.extension', ['name' => $package->getName(), 'version' => $package->getVersion()]),
+                    new TranslatableMessage('event.detail.ter_insecure'),
                 );
             }
         }

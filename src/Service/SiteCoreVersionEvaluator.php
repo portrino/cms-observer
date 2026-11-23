@@ -8,6 +8,7 @@ use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Repository\Typo3CoreReleaseRepository;
 use App\Repository\WordpressCoreReleaseRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Cross-references a site's reported core version against the synced
@@ -56,11 +57,11 @@ class SiteCoreVersionEvaluator
         if ($release->isInsecure() && true !== $wasInsecure) {
             $this->securityNotifier->addFinding(
                 $site,
-                sprintf('%s core %s', $site->getType()->label(), $version),
-                'Core version is now insecure (unmaintained or superseded by a security release).',
+                new TranslatableMessage('event.subject.core', ['cms' => $site->getType()->label(), 'version' => $version]),
+                new TranslatableMessage('event.detail.core_insecure'),
             );
         } elseif (!$release->isInsecure() && true === $wasInsecure) {
-            $this->securityNotifier->recordResolved($site, sprintf('%s core %s', $site->getType()->label(), $version), 'Core version is secure again.');
+            $this->securityNotifier->recordResolved($site, new TranslatableMessage('event.subject.core', ['cms' => $site->getType()->label(), 'version' => $version]), new TranslatableMessage('event.detail.core_secure'));
         }
     }
 

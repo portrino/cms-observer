@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\SitePackage;
 use App\Entity\Typo3ExtensionAdvisory;
 use App\Repository\Typo3ExtensionAdvisoryRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Cross-references a site's reported extension version against synced
@@ -40,13 +41,12 @@ class SitePackageAdvisoryEvaluator
     {
         $this->securityNotifier->addFinding(
             $package->getSite(),
-            sprintf('Extension %s %s', $package->getName(), $package->getVersion()),
-            sprintf(
-                'Matches %s (%s): %s',
-                $advisory->getAdvisoryId(),
-                $advisory->getSeverity() ?? 'unknown severity',
-                $advisory->getUrl(),
-            ),
+            new TranslatableMessage('event.subject.extension', ['name' => $package->getName(), 'version' => $package->getVersion()]),
+            new TranslatableMessage('event.detail.advisory', [
+                'id' => $advisory->getAdvisoryId(),
+                'severity' => $advisory->getSeverity() ?? 'unknown',
+                'url' => $advisory->getUrl(),
+            ]),
         );
     }
 

@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Site;
 use App\Repository\EndOfLifeReleaseRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Cross-references a site's reported PHP and database version against
@@ -52,11 +53,11 @@ class SiteRuntimeVersionEvaluator
         $site->setPhpStatus($insecure, $outdated, $outdated ? $release->getLatestVersion() : null, $release->getEolUrl());
 
         if ($insecure && true !== $wasInsecure) {
-            $this->securityNotifier->addFinding($site, sprintf('PHP %s', $version), $release->isEol()
-                ? 'PHP version is now insecure (past end of life).'
-                : sprintf('PHP version is missing security fixes (fixed in %s).', $securityVersion));
+            $this->securityNotifier->addFinding($site, new TranslatableMessage('event.subject.php', ['version' => $version]), $release->isEol()
+                ? new TranslatableMessage('event.detail.php_eol')
+                : new TranslatableMessage('event.detail.php_missing_fixes', ['fixed' => $securityVersion]));
         } elseif (!$insecure && true === $wasInsecure) {
-            $this->securityNotifier->recordResolved($site, sprintf('PHP %s', $version), 'PHP version is secure again.');
+            $this->securityNotifier->recordResolved($site, new TranslatableMessage('event.subject.php', ['version' => $version]), new TranslatableMessage('event.detail.php_secure'));
         }
     }
 
@@ -82,9 +83,9 @@ class SiteRuntimeVersionEvaluator
         $site->setDbStatus($release->isEol(), $outdated, $outdated ? $release->getLatestVersion() : null, $release->getEolUrl());
 
         if ($release->isEol() && true !== $wasInsecure) {
-            $this->securityNotifier->addFinding($site, sprintf('Database %s', $version), 'Database version is now insecure (past end of life).');
+            $this->securityNotifier->addFinding($site, new TranslatableMessage('event.subject.db', ['version' => $version]), new TranslatableMessage('event.detail.db_eol'));
         } elseif (!$release->isEol() && true === $wasInsecure) {
-            $this->securityNotifier->recordResolved($site, sprintf('Database %s', $version), 'Database version is secure again.');
+            $this->securityNotifier->recordResolved($site, new TranslatableMessage('event.subject.db', ['version' => $version]), new TranslatableMessage('event.detail.db_secure'));
         }
     }
 

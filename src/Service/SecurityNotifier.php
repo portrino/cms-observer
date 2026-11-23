@@ -15,6 +15,8 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Collects security findings (a site's core or a package became insecure) during
@@ -38,24 +40,36 @@ class SecurityNotifier
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
         private readonly string $fromAddress,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
-    public function addFinding(Site $site, string $subject, string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
+    public function addFinding(Site $site, TranslatableMessage|string $subject, TranslatableMessage|string $detail, SiteEventType $type = SiteEventType::BecameInsecure): void
     {
         $url = $this->urlGenerator->generate('dashboard_site_show', ['id' => $site->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         $kind = SiteEventType::StoppedReporting === $type ? FindingKind::StoppedReporting : FindingKind::Insecure;
-        $this->findings[] = new SecurityFinding($kind, $site->getName(), $url, $subject, $detail);
+        $this->findings[] = new SecurityFinding($kind, $site->getName(), $url, $this->english($subject), $this->english($detail));
         // every caller flushes the entity manager after evaluating, which stores this with the new status
-        $this->entityManager->persist(new SiteEvent($site, $type, $subject, null, null, $detail));
+        $this->persistEvent($site, $type, $subject, $detail);
     }
 
     /**
      * Records in the history that a finding is resolved. Not mailed: only new problems need attention.
      */
-    public function recordResolved(Site $site, string $subject, string $detail): void
+    public function recordResolved(Site $site, TranslatableMessage|string $subject, TranslatableMessage|string $detail): void
     {
-        $this->entityManager->persist(new SiteEvent($site, SiteEventType::BecameSecure, $subject, null, null, $detail));
+        $this->persistEvent($site, SiteEventType::BecameSecure, $subject, $detail);
+    }
+
+    /** The English text stays stored, for the history search and as the fallback */
+    private function persistEvent(Site $site, SiteEventType $type, TranslatableMessage|string $subject, TranslatableMessage|string $detail): void
+    {
+        $this->entityManager->persist(new SiteEvent($site, $type, $this->english($subject), null, null, $this->english($detail), SiteEvent::messagesOf($subject, $detail)));
+    }
+
+    private function english(TranslatableMessage|string $message): string
+    {
+        return $message instanceof TranslatableMessage ? $message->trans($this->translator, 'en') : $message;
     }
 
     /**

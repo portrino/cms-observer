@@ -19,6 +19,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecurityNotifierTest extends KernelTestCase
 {
@@ -116,7 +117,7 @@ class SecurityNotifierTest extends KernelTestCase
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::once())->method('error');
 
-        $notifier = new SecurityNotifier($mailer, $userRepository, $urlGenerator, $logger, self::createStub(EntityManagerInterface::class), 'no-reply@example.test');
+        $notifier = new SecurityNotifier($mailer, $userRepository, $urlGenerator, $logger, self::createStub(EntityManagerInterface::class), 'no-reply@example.test', self::createStub(TranslatorInterface::class));
         $notifier->addFinding($this->createSite('Site Fail'), 'PHP 8.4.24', 'detail');
         $notifier->flush();
     }

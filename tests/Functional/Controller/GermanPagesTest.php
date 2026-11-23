@@ -7,11 +7,14 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\CmsType;
 use App\Entity\Organization;
 use App\Entity\Site;
+use App\Entity\SiteEvent;
+use App\Entity\SiteEventType;
 use App\Entity\SiteReport;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -29,7 +32,7 @@ class GermanPagesTest extends WebTestCase
         yield 'new project' => ['/projects/new', 'Aktiver Wartungsvertrag (SLA)'];
         yield 'project' => ['/projects/{site}', 'Systeminformationen'];
         yield 'edit project' => ['/projects/{site}/edit', 'Neuen Token erzeugen'];
-        yield 'history' => ['/projects/{site}/history', 'Alle Änderungen'];
+        yield 'history' => ['/projects/{site}/history', 'Die PHP-Version ist wieder sicher.'];
         yield 'packages' => ['/packages', 'Pakete aller Projekte'];
         yield 'organizations' => ['/organizations', 'Organisation hinzufügen'];
         yield 'organization' => ['/organizations/{organization}', 'Beschreibung'];
@@ -50,6 +53,8 @@ class GermanPagesTest extends WebTestCase
         $entityManager->persist($organization);
         $entityManager->persist($site);
         $entityManager->persist(new SiteReport($site, '13.4.0', '8.3.0', '10.11.0', []));
+        $resolved = new TranslatableMessage('event.detail.php_secure');
+        $entityManager->persist(new SiteEvent($site, SiteEventType::BecameSecure, 'PHP 8.3.0', null, null, 'PHP version is secure again.', SiteEvent::messagesOf(null, $resolved)));
         $entityManager->flush();
 
         $client->request('GET', strtr($path, ['{site}' => $site->getId(), '{organization}' => $organization->getId()]));

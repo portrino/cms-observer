@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\SiteEventRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * One change in a site's history (e.g. "news 12.3.0 => 12.3.1"). Packages are referenced by
@@ -38,6 +39,14 @@ class SiteEvent
         private ?string $newValue = null,
         #[ORM\Column(type: Types::TEXT, nullable: true)]
         private ?string $detail = null,
+        /**
+         * Translation keys and parameters of subject and detail; null for events from before
+         * translations whose text no migration recognized, and for plain data like domains.
+         *
+         * @var array{subject?: array{key: string, params: array<string, scalar>}, detail?: array{key: string, params: array<string, scalar>}}|null
+         */
+        #[ORM\Column(type: Types::JSON, nullable: true)]
+        private ?array $messages = null,
     ) {
         $this->occurredAt = new \DateTimeImmutable();
     }
@@ -80,5 +89,40 @@ class SiteEvent
     public function getDetail(): ?string
     {
         return $this->detail;
+    }
+
+    /** The subject in the reader's language, the stored English text without a translation */
+    public function getSubjectMessage(): TranslatableMessage|string|null
+    {
+        return $this->message('subject') ?? $this->subject;
+    }
+
+    public function getDetailMessage(): TranslatableMessage|string|null
+    {
+        return $this->message('detail') ?? $this->detail;
+    }
+
+    /**
+     * @return array{subject?: array{key: string, params: array<string, scalar>}, detail?: array{key: string, params: array<string, scalar>}}
+     */
+    public static function messagesOf(TranslatableMessage|string|null $subject, TranslatableMessage|string|null $detail): array
+    {
+        $messages = [];
+        foreach (['subject' => $subject, 'detail' => $detail] as $part => $message) {
+            if ($message instanceof TranslatableMessage) {
+                /** @var array<string, scalar> $params */
+                $params = $message->getParameters();
+                $messages[$part] = ['key' => $message->getMessage(), 'params' => $params];
+            }
+        }
+
+        return $messages;
+    }
+
+    private function message(string $part): ?TranslatableMessage
+    {
+        $message = $this->messages[$part] ?? null;
+
+        return null !== $message ? new TranslatableMessage($message['key'], $message['params']) : null;
     }
 }
