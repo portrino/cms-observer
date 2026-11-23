@@ -1704,6 +1704,10 @@ If you can read it, the mail setup works.</target>
         <source>profile.language_help</source>
         <target>Mails, e.g. about security findings, are sent in this language; with "Automatic" in English, as the browser language is not known when mailing.</target>
       </trans-unit>
+      <trans-unit id="status.recipient_help" resname="status.recipient_help">
+        <source>status.recipient_help</source>
+        <target>The test mail is sent in the language of this page. Mails about security findings use the profile language of each recipient; with "Automatic" English.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

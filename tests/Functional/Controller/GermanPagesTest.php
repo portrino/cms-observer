@@ -37,7 +37,7 @@ class GermanPagesTest extends WebTestCase
         yield 'organizations' => ['/organizations', 'Organisation hinzufügen'];
         yield 'organization' => ['/organizations/{organization}', 'Beschreibung'];
         yield 'edit organization' => ['/organizations/{organization}/edit', 'Organisation bearbeiten'];
-        yield 'status' => ['/status', 'Mailversand testen'];
+        yield 'status' => ['/status', 'Die Testmail kommt in der Sprache dieser Seite.'];
         yield 'profile' => ['/profile', 'Automatisch (Browsersprache)'];
         yield 'settings' => ['/settings', 'Standard-Stundensatz (EUR)'];
         yield 'new organization' => ['/organizations/new', 'Alle Organisationen'];

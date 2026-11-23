@@ -1704,6 +1704,10 @@ Wenn sie lesbar ist, funktioniert der Mailversand.</target>
         <source>profile.language_help</source>
         <target>Mails, z. B. zu Sicherheitsbefunden, kommen in dieser Sprache; bei „Automatisch“ auf Englisch, da die Browsersprache beim Versand nicht bekannt ist.</target>
       </trans-unit>
+      <trans-unit id="status.recipient_help" resname="status.recipient_help">
+        <source>status.recipient_help</source>
+        <target>Die Testmail kommt in der Sprache dieser Seite. Mails zu Sicherheitsbefunden kommen in der Profilsprache des jeweiligen Empfängers, bei „Automatisch“ auf Englisch.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

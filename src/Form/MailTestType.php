@@ -20,6 +20,7 @@ class MailTestType extends AbstractType
     {
         $builder->add('recipient', EmailType::class, [
             'label' => 'status.recipient',
+            'help' => 'status.recipient_help',
             'constraints' => [new NotBlank(), new Email()],
         ]);
     }
