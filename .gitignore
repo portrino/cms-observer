@@ -43,3 +43,6 @@
 /tests/E2E/node_modules/
 /tests/E2E/playwright-report/
 /tests/E2E/test-results/
+
+# sloppy analyser snapshot (written by sloppy_health)
+/.sloppy-health.json
