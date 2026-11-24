@@ -17,6 +17,41 @@ class SiteCoreVersionEvaluatorTest extends KernelTestCase
 {
     public function testReportsTheMajorStatusOfEachSiteFromItsOwnCmsReleases(): void
     {
+        [$typo3, $wordpress, $unreported] = $this->sitesWithReleases();
+
+        $status = static::getContainer()->get(SiteCoreVersionEvaluator::class)
+            ->majorStatusBySite([$typo3, $wordpress, $unreported]);
+
+        self::assertSame(
+            [
+                $typo3->getId() => [true, '13.4.21', '14.1.0'],
+                $wordpress->getId() => [false, null, '7.0.0'],
+                $unreported->getId() => [null, null, null],
+            ],
+            array_map(static fn (array $site): array => [$site['outdated'], $site['latestInMajor'], $site['newerMajor']?->getVersion()], $status),
+            'each site is judged by the releases of its own CMS only',
+        );
+    }
+
+    public function testListsTheNewerReleasesOfTheSitesOwnCms(): void
+    {
+        [$typo3, $wordpress] = $this->sitesWithReleases();
+        $evaluator = static::getContainer()->get(SiteCoreVersionEvaluator::class);
+
+        $typo3Releases = $evaluator->newerReleases($typo3);
+        self::assertSame(['13.4.21'], array_map(static fn (Typo3CoreRelease|WordpressCoreRelease $release): string => $release->getVersion(), $typo3Releases['inMajor']));
+        self::assertSame('14.1.0', $typo3Releases['newerMajor']?->getVersion());
+
+        $wordpressReleases = $evaluator->newerReleases($wordpress);
+        self::assertSame([], $wordpressReleases['inMajor']);
+        self::assertSame('7.0.0', $wordpressReleases['newerMajor']?->getVersion());
+    }
+
+    /**
+     * @return array{Site, Site, Site} a TYPO3 13.4.20, a WordPress 6.8.1 and a TYPO3 site without report
+     */
+    private function sitesWithReleases(): array
+    {
         self::bootKernel();
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
 
@@ -43,18 +78,7 @@ class SiteCoreVersionEvaluatorTest extends KernelTestCase
         }
         $entityManager->flush();
 
-        $status = static::getContainer()->get(SiteCoreVersionEvaluator::class)
-            ->majorStatusBySite([$typo3, $wordpress, $unreported]);
-
-        self::assertSame(
-            [
-                $typo3->getId() => [true, '13.4.21', '14.1.0'],
-                $wordpress->getId() => [false, null, '7.0.0'],
-                $unreported->getId() => [null, null, null],
-            ],
-            array_map(static fn (array $site): array => [$site['outdated'], $site['latestInMajor'], $site['newerMajor']?->getVersion()], $status),
-            'each site is judged by the releases of its own CMS only',
-        );
+        return [$typo3, $wordpress, $unreported];
     }
 
     private function site(CmsType $type, ?string $coreVersion): Site

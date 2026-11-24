@@ -36,10 +36,7 @@ class SiteCoreVersionEvaluator
             return;
         }
 
-        $release = match ($site->getType()) {
-            CmsType::Typo3 => $this->typo3ReleaseRepository->findOneByVersion($version),
-            CmsType::WordPress => $this->wordpressReleaseRepository->findOneByVersion($version),
-        };
+        $release = $this->releaseRepository($site->getType())->findOneByVersion($version);
 
         $wasInsecure = $site->isCoreInsecure();
 
@@ -106,19 +103,41 @@ class SiteCoreVersionEvaluator
                 continue;
             }
 
-            $repository = match ($site->getType()) {
-                CmsType::Typo3 => $this->typo3ReleaseRepository,
-                CmsType::WordPress => $this->wordpressReleaseRepository,
-            };
-            $newerInMajor = $repository->findNewerThan($version);
+            $newer = $this->newerReleases($site);
 
             $status[$siteId] = [
-                'outdated' => [] !== $newerInMajor,
-                'latestInMajor' => ($newerInMajor[0] ?? null)?->getVersion(),
-                'newerMajor' => $repository->findLatestInNewerMajor($version),
+                'outdated' => [] !== $newer['inMajor'],
+                'latestInMajor' => ($newer['inMajor'][0] ?? null)?->getVersion(),
+                'newerMajor' => $newer['newerMajor'],
             ];
         }
 
         return $status;
+    }
+
+    /**
+     * Releases newer than the site's core version within its major line
+     * (newest first), and the latest release of the next major, both from the
+     * release data of the site's own CMS.
+     *
+     * @return array{inMajor: array<Typo3CoreRelease|WordpressCoreRelease>, newerMajor: Typo3CoreRelease|WordpressCoreRelease|null}
+     */
+    public function newerReleases(Site $site): array
+    {
+        $version = $site->getCurrentCoreVersion();
+        $repository = $this->releaseRepository($site->getType());
+
+        return [
+            'inMajor' => $repository->findNewerThan($version),
+            'newerMajor' => $repository->findLatestInNewerMajor($version),
+        ];
+    }
+
+    private function releaseRepository(CmsType $type): Typo3CoreReleaseRepository|WordpressCoreReleaseRepository
+    {
+        return match ($type) {
+            CmsType::Typo3 => $this->typo3ReleaseRepository,
+            CmsType::WordPress => $this->wordpressReleaseRepository,
+        };
     }
 }

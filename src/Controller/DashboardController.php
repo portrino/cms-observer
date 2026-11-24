@@ -20,8 +20,6 @@ use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
 use App\Repository\SiteRepository;
-use App\Repository\Typo3CoreReleaseRepository;
-use App\Repository\WordpressCoreReleaseRepository;
 use App\Security\SiteTokenFactory;
 use App\Service\SiteCoreVersionEvaluator;
 use App\Service\SitePackageDetailsProvider;
@@ -107,14 +105,13 @@ class DashboardController extends AbstractController
     public function show(
         Site $site,
         SitePackageRepository $packageRepository,
-        Typo3CoreReleaseRepository $coreReleaseRepository,
-        WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
+        SiteCoreVersionEvaluator $coreVersionEvaluator,
         EndOfLifeReleaseRepository $endOfLifeReleaseRepository,
         SiteReportRepository $reportRepository,
         SitePackageDetailsProvider $packageDetailsProvider,
     ): Response {
         $packages = $packageRepository->findBy(['site' => $site], ['name' => 'ASC']);
-        $coreVersion = $site->getCurrentCoreVersion();
+        $newerCoreReleases = $coreVersionEvaluator->newerReleases($site);
         $isWordpress = CmsType::WordPress === $site->getType();
 
         // TYPO3 major => support status, to color the compatibility badges of TER versions
@@ -131,12 +128,8 @@ class DashboardController extends AbstractController
             'typo3SupportStatus' => $typo3SupportStatus,
             'packages' => $packages,
             'packageDetails' => $packageDetailsProvider->forSite($site, $packages),
-            'newerCoreReleases' => $isWordpress
-                ? $wordpressCoreReleaseRepository->findNewerThan($coreVersion)
-                : $coreReleaseRepository->findNewerThan($coreVersion),
-            'newerMajorCoreRelease' => $isWordpress
-                ? $wordpressCoreReleaseRepository->findLatestInNewerMajor($coreVersion)
-                : $coreReleaseRepository->findLatestInNewerMajor($coreVersion),
+            'newerCoreReleases' => $newerCoreReleases['inMajor'],
+            'newerMajorCoreRelease' => $newerCoreReleases['newerMajor'],
         ]);
     }
 
