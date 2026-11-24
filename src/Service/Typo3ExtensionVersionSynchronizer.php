@@ -94,25 +94,25 @@ class Typo3ExtensionVersionSynchronizer
 
             if (null !== $existing) {
                 $existing->update(
-                    $data['title'],
-                    $data['description'],
-                    $data['uploadComment'],
-                    $data['state'],
-                    $data['typo3Versions'],
-                    $data['uploadDate'],
-                    $data['insecure'],
+                    title: $data['title'],
+                    insecure: $data['insecure'],
+                    description: $data['description'],
+                    uploadComment: $data['uploadComment'],
+                    state: $data['state'],
+                    typo3Versions: $data['typo3Versions'],
+                    uploadDate: $data['uploadDate'],
                 );
             } else {
                 $this->entityManager->persist(new Typo3TerExtensionVersion(
-                    $key,
-                    $data['version'],
-                    $data['title'],
-                    $data['description'],
-                    $data['uploadComment'],
-                    $data['state'],
-                    $data['typo3Versions'],
-                    $data['uploadDate'],
-                    $data['insecure'],
+                    extensionKey: $key,
+                    version: $data['version'],
+                    title: $data['title'],
+                    insecure: $data['insecure'],
+                    description: $data['description'],
+                    uploadComment: $data['uploadComment'],
+                    state: $data['state'],
+                    typo3Versions: $data['typo3Versions'],
+                    uploadDate: $data['uploadDate'],
                 ));
             }
         }

@@ -43,17 +43,17 @@ class SitePackageWordpressEvaluatorTest extends TestCase
     {
         $vulnerability = new WordpressPluginVulnerability('id-'.$toVersion.'-'.$cvssScore, 'example-plugin');
         $vulnerability->update(
-            'Example vulnerability up to '.$toVersion,
-            [['from_version' => '*', 'from_inclusive' => true, 'to_version' => $toVersion, 'to_inclusive' => true]],
-            [],
-            $informational,
-            $cvssScore,
-            $cvssScore >= 7.0 ? 'High' : 'Medium',
-            null,
-            'https://www.wordfence.com/threat-intel/vulnerabilities/example',
-            [],
-            null,
-            null,
+            title: 'Example vulnerability up to '.$toVersion,
+            affectedVersions: [['from_version' => '*', 'from_inclusive' => true, 'to_version' => $toVersion, 'to_inclusive' => true]],
+            patchedVersions: [],
+            informational: $informational,
+            url: 'https://www.wordfence.com/threat-intel/vulnerabilities/example',
+            copyrightNotices: [],
+            cvssScore: $cvssScore,
+            cvssRating: $cvssScore >= 7.0 ? 'High' : 'Medium',
+            cve: null,
+            publishedAt: null,
+            sourceUpdatedAt: null,
         );
 
         return $vulnerability;

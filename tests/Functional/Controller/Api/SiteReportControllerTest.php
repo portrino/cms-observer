@@ -100,17 +100,17 @@ class SiteReportControllerTest extends WebTestCase
 
         $vulnerability = new WordpressPluginVulnerability('848ccbdc-c6f1-480f-a272-cd459e706713', 'contact-form-7');
         $vulnerability->update(
-            'Contact Form 7 <= 6.0.5 - Order Replay Vulnerability',
-            [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '6.0.5', 'to_inclusive' => true]],
-            ['6.0.6'],
-            false,
-            5.3,
-            'Medium',
-            'CVE-2025-3247',
-            'https://www.wordfence.com/threat-intel/vulnerabilities/id/848ccbdc-c6f1-480f-a272-cd459e706713',
-            [],
-            null,
-            null,
+            title: 'Contact Form 7 <= 6.0.5 - Order Replay Vulnerability',
+            affectedVersions: [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '6.0.5', 'to_inclusive' => true]],
+            patchedVersions: ['6.0.6'],
+            informational: false,
+            url: 'https://www.wordfence.com/threat-intel/vulnerabilities/id/848ccbdc-c6f1-480f-a272-cd459e706713',
+            copyrightNotices: [],
+            cvssScore: 5.3,
+            cvssRating: 'Medium',
+            cve: 'CVE-2025-3247',
+            publishedAt: null,
+            sourceUpdatedAt: null,
         );
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $entityManager->persist($vulnerability);
@@ -243,7 +243,19 @@ class SiteReportControllerTest extends WebTestCase
 
         // only the theme "astra" is vulnerable, not the plugin of the same slug
         $vulnerability = new WordpressPluginVulnerability('5c3b5e2a-0000-4000-8000-000000000001', 'astra', PackageType::WordpressTheme);
-        $vulnerability->update('Astra <= 4.0.0 - XSS', [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '4.0.0', 'to_inclusive' => true]], ['4.0.1'], false, 6.4, 'Medium', 'CVE-2026-0001', 'https://www.wordfence.com/threat-intel/vulnerabilities/id/5c3b5e2a', [], null, null);
+        $vulnerability->update(
+            title: 'Astra <= 4.0.0 - XSS',
+            affectedVersions: [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '4.0.0', 'to_inclusive' => true]],
+            patchedVersions: ['4.0.1'],
+            informational: false,
+            url: 'https://www.wordfence.com/threat-intel/vulnerabilities/id/5c3b5e2a',
+            copyrightNotices: [],
+            cvssScore: 6.4,
+            cvssRating: 'Medium',
+            cve: 'CVE-2026-0001',
+            publishedAt: null,
+            sourceUpdatedAt: null,
+        );
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $entityManager->persist($vulnerability);
         $entityManager->flush();

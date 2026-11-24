@@ -29,12 +29,12 @@ class Typo3ExtensionAdvisory
         private string $url,
         #[ORM\Column]
         private \DateTimeImmutable $publishedAt,
+        #[ORM\Column(type: 'text')]
+        private string $affectedVersionsRaw,
         #[ORM\Column(length: 32, nullable: true)]
         private ?string $severity,
         #[ORM\Column(length: 255, nullable: true)]
         private ?string $cveIds,
-        #[ORM\Column(type: 'text')]
-        private string $affectedVersionsRaw,
     ) {
         $this->updatedAt = new \DateTimeImmutable();
     }

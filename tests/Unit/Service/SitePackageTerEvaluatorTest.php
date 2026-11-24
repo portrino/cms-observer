@@ -104,7 +104,17 @@ class SitePackageTerEvaluatorTest extends TestCase
         $package = new SitePackage($site, 'typo3_console', 'TYPO3 Console', $installed, true);
 
         $entities = array_map(
-            static fn (array $v): Typo3TerExtensionVersion => new Typo3TerExtensionVersion('typo3_console', $v[0], 'TYPO3 Console', null, null, 'stable', $v[1], null, $v[2] ?? false),
+            static fn (array $v): Typo3TerExtensionVersion => new Typo3TerExtensionVersion(
+                extensionKey: 'typo3_console',
+                version: $v[0],
+                title: 'TYPO3 Console',
+                insecure: $v[2] ?? false,
+                description: null,
+                uploadComment: null,
+                state: 'stable',
+                typo3Versions: $v[1],
+                uploadDate: null,
+            ),
             $versions,
         );
         $versionRepository = self::createStub(Typo3TerExtensionVersionRepository::class);

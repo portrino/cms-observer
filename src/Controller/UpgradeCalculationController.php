@@ -172,15 +172,15 @@ class UpgradeCalculationController extends AbstractController
     {
         $data = $form->getData();
         $version = new UpgradeCalculationVersion(
-            $calculation,
-            trim((string) $data['author']),
-            $data['note'] ?? null,
-            (float) $data['hourlyRate'],
-            (float) $data['managementPercent'],
-            $data['remarks'] ?? null,
-            (bool) $data['final'],
-            UpgradeCalculationVersionType::itemsFrom($data),
-            $data['headerNotes'] ?? null,
+            calculation: $calculation,
+            author: trim((string) $data['author']),
+            hourlyRate: (float) $data['hourlyRate'],
+            managementPercent: (float) $data['managementPercent'],
+            final: (bool) $data['final'],
+            items: UpgradeCalculationVersionType::itemsFrom($data),
+            note: $data['note'] ?? null,
+            remarks: $data['remarks'] ?? null,
+            headerNotes: $data['headerNotes'] ?? null,
         );
         $this->entityManager->persist($version);
         $this->entityManager->flush();

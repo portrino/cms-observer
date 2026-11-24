@@ -22,12 +22,12 @@ class UpgradeVersionComparisonTest extends TestCase
         $calculation = new UpgradeCalculation(new Site('Project', CmsType::Typo3, 'https://example.test', 'hash'), 13, 14);
         $news = static fn (UpgradeItemStatus $status, float $hours): UpgradeItem => new UpgradeItem(UpgradeSection::Packages, 'georgringer/news', 'news', PackageType::Typo3CmsExtension, '12.3.1', '13.0.0', $status, maxHours: $hours);
 
-        $old = new UpgradeCalculationVersion($calculation, 'JD', null, 100, 10, null, false, [
+        $old = new UpgradeCalculationVersion(calculation: $calculation, author: 'JD', hourlyRate: 100, managementPercent: 10, final: false, note: null, remarks: null, items: [
             new UpgradeItem(UpgradeSection::Positions, 'Core upgrade', maxHours: 4),
             $news(UpgradeItemStatus::Blocker, 2),
             new UpgradeItem(UpgradeSection::Packages, 'gone', 'gone', PackageType::Typo3CmsExtension),
         ]);
-        $new = new UpgradeCalculationVersion($calculation, 'PM', null, 90, 10, null, true, [
+        $new = new UpgradeCalculationVersion(calculation: $calculation, author: 'PM', hourlyRate: 90, managementPercent: 10, final: true, note: null, remarks: null, items: [
             new UpgradeItem(UpgradeSection::Positions, 'Core upgrade', maxHours: 4),
             $news(UpgradeItemStatus::Update, 3),
             new UpgradeItem(UpgradeSection::Optional, 'Content blocks', maxHours: 8),

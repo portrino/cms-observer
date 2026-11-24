@@ -52,14 +52,14 @@ class Typo3ExtensionAdvisorySynchronizer
             }
 
             $this->entityManager->persist(new Typo3ExtensionAdvisory(
-                $item['advisoryId'],
-                $details['extensionKey'],
-                $item['title'],
-                $item['url'],
-                $item['publishedAt'],
-                $details['severity'],
-                $details['cveIds'],
-                $details['affectedVersionsRaw'],
+                advisoryId: $item['advisoryId'],
+                extensionKey: $details['extensionKey'],
+                title: $item['title'],
+                url: $item['url'],
+                publishedAt: $item['publishedAt'],
+                affectedVersionsRaw: $details['affectedVersionsRaw'],
+                severity: $details['severity'],
+                cveIds: $details['cveIds'],
             ));
             ++$synced;
         }

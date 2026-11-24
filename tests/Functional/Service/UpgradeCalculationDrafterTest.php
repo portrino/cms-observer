@@ -94,7 +94,15 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
     {
         $site = $this->site(CmsType::Typo3, '12.4.30', []);
         foreach (['11.5.40', '12.4.30', '13.4.20', '13.4.21', '14.0.0'] as $version) {
-            $this->entityManager->persist(new Typo3CoreRelease($version, new \DateTimeImmutable(), Typo3ReleaseType::Regular, $version, true, null, false));
+            $this->entityManager->persist(new Typo3CoreRelease(
+                version: $version,
+                releaseDate: new \DateTimeImmutable(),
+                type: Typo3ReleaseType::Regular,
+                latestVersion: $version,
+                isActive: true,
+                insecure: false,
+                maintainedUntil: null,
+            ));
         }
         $this->entityManager->flush();
 
@@ -138,7 +146,17 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
     private function terVersions(string $key, array $versions): void
     {
         foreach ($versions as $version => $majors) {
-            $this->entityManager->persist(new Typo3TerExtensionVersion($key, $version, $key, null, null, 'stable', $majors, null, false));
+            $this->entityManager->persist(new Typo3TerExtensionVersion(
+                extensionKey: $key,
+                version: $version,
+                title: $key,
+                insecure: false,
+                description: null,
+                uploadComment: null,
+                state: 'stable',
+                typo3Versions: $majors,
+                uploadDate: null,
+            ));
         }
     }
 }

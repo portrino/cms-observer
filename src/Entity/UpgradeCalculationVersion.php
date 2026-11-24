@@ -36,19 +36,19 @@ class UpgradeCalculationVersion
         private readonly UpgradeCalculation $calculation,
         #[ORM\Column(length: 100)]
         private readonly string $author,
-        #[ORM\Column(type: Types::TEXT, nullable: true)]
-        private readonly ?string $note,
         #[ORM\Column]
         private readonly float $hourlyRate,
         // share of the summed hours added for project management, in percent
         #[ORM\Column]
         private readonly float $managementPercent,
-        // shown below the totals, e.g. "license costs not included"
-        #[ORM\Column(type: Types::TEXT, nullable: true)]
-        private readonly ?string $remarks,
         #[ORM\Column]
         private readonly bool $final,
         array $items,
+        #[ORM\Column(type: Types::TEXT, nullable: true)]
+        private readonly ?string $note,
+        // shown below the totals, e.g. "license costs not included"
+        #[ORM\Column(type: Types::TEXT, nullable: true)]
+        private readonly ?string $remarks,
         // free notes in the head of the calculation, e.g. when the upgrade is scheduled
         #[ORM\Column(type: Types::TEXT, nullable: true)]
         private readonly ?string $headerNotes = null,

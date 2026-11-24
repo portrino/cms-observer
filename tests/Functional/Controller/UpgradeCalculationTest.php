@@ -402,11 +402,50 @@ class UpgradeCalculationTest extends WebTestCase
         $site->recordReport('13.4.20', '8.3.14', '10.11.19-MariaDB');
         $this->entityManager->persist($site);
         $this->entityManager->persist(new SitePackage($site, 'news', 'News', '12.3.1', true, 'georgringer/news'));
-        $this->entityManager->persist(new Typo3CoreRelease('13.4.20', new \DateTimeImmutable('2025-11-11'), Typo3ReleaseType::Regular, '13.4.20', true, new \DateTimeImmutable('2027-12-31'), false, new \DateTimeImmutable('2030-12-31'), new \DateTimeImmutable('2024-10-15')));
-        $this->entityManager->persist(new Typo3CoreRelease('13.0.0', new \DateTimeImmutable('2024-01-30'), Typo3ReleaseType::Regular, '13.4.20', true, new \DateTimeImmutable('2027-12-31'), false, new \DateTimeImmutable('2030-12-31'), new \DateTimeImmutable('2024-10-15')));
-        $this->entityManager->persist(new Typo3CoreRelease('14.0.0', new \DateTimeImmutable('2025-11-25'), Typo3ReleaseType::Regular, '14.0.0', true, new \DateTimeImmutable('2029-06-30'), false, new \DateTimeImmutable('2032-06-30')));
+        $this->entityManager->persist(new Typo3CoreRelease(
+            version: '13.4.20',
+            releaseDate: new \DateTimeImmutable('2025-11-11'),
+            type: Typo3ReleaseType::Regular,
+            latestVersion: '13.4.20',
+            isActive: true,
+            insecure: false,
+            maintainedUntil: new \DateTimeImmutable('2027-12-31'),
+            eltsUntil: new \DateTimeImmutable('2030-12-31'),
+            ltsReleaseDate: new \DateTimeImmutable('2024-10-15'),
+        ));
+        $this->entityManager->persist(new Typo3CoreRelease(
+            version: '13.0.0',
+            releaseDate: new \DateTimeImmutable('2024-01-30'),
+            type: Typo3ReleaseType::Regular,
+            latestVersion: '13.4.20',
+            isActive: true,
+            insecure: false,
+            maintainedUntil: new \DateTimeImmutable('2027-12-31'),
+            eltsUntil: new \DateTimeImmutable('2030-12-31'),
+            ltsReleaseDate: new \DateTimeImmutable('2024-10-15'),
+        ));
+        $this->entityManager->persist(new Typo3CoreRelease(
+            version: '14.0.0',
+            releaseDate: new \DateTimeImmutable('2025-11-25'),
+            type: Typo3ReleaseType::Regular,
+            latestVersion: '14.0.0',
+            isActive: true,
+            insecure: false,
+            maintainedUntil: new \DateTimeImmutable('2029-06-30'),
+            eltsUntil: new \DateTimeImmutable('2032-06-30'),
+        ));
         foreach (['12.3.1' => '12, 13', '14.0.0' => '13, 14'] as $version => $majors) {
-            $this->entityManager->persist(new Typo3TerExtensionVersion('news', $version, 'News', null, null, 'stable', $majors, null, false));
+            $this->entityManager->persist(new Typo3TerExtensionVersion(
+                extensionKey: 'news',
+                version: $version,
+                title: 'News',
+                insecure: false,
+                description: null,
+                uploadComment: null,
+                state: 'stable',
+                typo3Versions: $majors,
+                uploadDate: null,
+            ));
         }
         $this->entityManager->flush();
 

@@ -29,10 +29,10 @@ class Typo3CoreRelease
         private string $latestVersion,
         #[ORM\Column]
         private bool $isActive,
-        #[ORM\Column(nullable: true)]
-        private ?\DateTimeImmutable $maintainedUntil,
         #[ORM\Column]
         private bool $insecure,
+        #[ORM\Column(nullable: true)]
+        private ?\DateTimeImmutable $maintainedUntil,
         // end of the paid extended support (ELTS) of the release's major
         #[ORM\Column(nullable: true)]
         private ?\DateTimeImmutable $eltsUntil = null,
@@ -48,8 +48,8 @@ class Typo3CoreRelease
         Typo3ReleaseType $type,
         string $latestVersion,
         bool $isActive,
-        ?\DateTimeImmutable $maintainedUntil,
         bool $insecure,
+        ?\DateTimeImmutable $maintainedUntil,
         ?\DateTimeImmutable $eltsUntil = null,
         ?\DateTimeImmutable $ltsReleaseDate = null,
     ): void {

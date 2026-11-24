@@ -40,18 +40,27 @@ class Typo3CoreReleaseSynchronizer
         foreach ($releases as $version => $data) {
             $existing = $this->repository->findOneByVersion($version);
             if (null !== $existing) {
-                $existing->update($data['releaseDate'], $data['type'], $data['latestVersion'], $data['isActive'], $data['maintainedUntil'], $data['insecure'], $data['eltsUntil'], $data['ltsReleaseDate']);
+                $existing->update(
+                    releaseDate: $data['releaseDate'],
+                    type: $data['type'],
+                    latestVersion: $data['latestVersion'],
+                    isActive: $data['isActive'],
+                    insecure: $data['insecure'],
+                    maintainedUntil: $data['maintainedUntil'],
+                    eltsUntil: $data['eltsUntil'],
+                    ltsReleaseDate: $data['ltsReleaseDate'],
+                );
             } else {
                 $this->entityManager->persist(new Typo3CoreRelease(
-                    $version,
-                    $data['releaseDate'],
-                    $data['type'],
-                    $data['latestVersion'],
-                    $data['isActive'],
-                    $data['maintainedUntil'],
-                    $data['insecure'],
-                    $data['eltsUntil'],
-                    $data['ltsReleaseDate'],
+                    version: $version,
+                    releaseDate: $data['releaseDate'],
+                    type: $data['type'],
+                    latestVersion: $data['latestVersion'],
+                    isActive: $data['isActive'],
+                    insecure: $data['insecure'],
+                    maintainedUntil: $data['maintainedUntil'],
+                    eltsUntil: $data['eltsUntil'],
+                    ltsReleaseDate: $data['ltsReleaseDate'],
                 ));
             }
         }

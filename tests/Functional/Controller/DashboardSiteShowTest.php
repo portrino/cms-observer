@@ -154,7 +154,17 @@ class DashboardSiteShowTest extends WebTestCase
         $entityManager->persist($site);
         $entityManager->persist($package = new SitePackage($site, 'newer_core_ext', 'Newer Core Ext', '12.4.0', true));
         foreach ([['12.4.0', '12,13'], ['13.0.0', '14'], ['13.1.0', '14']] as [$version, $majors]) {
-            $entityManager->persist(new Typo3TerExtensionVersion('newer_core_ext', $version, 'Newer Core Ext', null, null, 'stable', $majors, null, false));
+            $entityManager->persist(new Typo3TerExtensionVersion(
+                extensionKey: 'newer_core_ext',
+                version: $version,
+                title: 'Newer Core Ext',
+                insecure: false,
+                description: null,
+                uploadComment: null,
+                state: 'stable',
+                typo3Versions: $majors,
+                uploadDate: null,
+            ));
         }
         $entityManager->flush();
         static::getContainer()->get(SitePackageTerEvaluator::class)->evaluateAll([$package]);

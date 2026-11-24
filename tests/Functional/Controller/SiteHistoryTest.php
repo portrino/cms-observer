@@ -79,7 +79,17 @@ class SiteHistoryTest extends WebTestCase
         $client = static::createClient([], ['HTTPS' => 'on']);
         [$token, $site] = $this->createSite();
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $entityManager->persist(new Typo3TerExtensionVersion('secure_downloads', '7.1.1', 'Secure Downloads', null, null, 'stable', '13', null, false));
+        $entityManager->persist(new Typo3TerExtensionVersion(
+            extensionKey: 'secure_downloads',
+            version: '7.1.1',
+            title: 'Secure Downloads',
+            insecure: false,
+            description: null,
+            uploadComment: null,
+            state: 'stable',
+            typo3Versions: '13',
+            uploadDate: null,
+        ));
         $entityManager->flush();
 
         $this->postReport($client, $token, '13.4.20', [['name' => 'secure_downloads', 'version' => 'v7.1.1']]);
@@ -123,7 +133,16 @@ class SiteHistoryTest extends WebTestCase
         $client = static::createClient([], ['HTTPS' => 'on']);
         $this->createUser('history-notify@example.test', 'History Notify', 'password');
         [$token, $site] = $this->createSite();
-        $advisory = new Typo3ExtensionAdvisory('TYPO3-EXT-SA-2026-001', 'news', 'Cross-Site Scripting in news', 'https://typo3.org/security/advisory/typo3-ext-sa-2026-001', new \DateTimeImmutable(), 'medium', null, '12.3.0 and below');
+        $advisory = new Typo3ExtensionAdvisory(
+            advisoryId: 'TYPO3-EXT-SA-2026-001',
+            extensionKey: 'news',
+            title: 'Cross-Site Scripting in news',
+            url: 'https://typo3.org/security/advisory/typo3-ext-sa-2026-001',
+            publishedAt: new \DateTimeImmutable(),
+            affectedVersionsRaw: '12.3.0 and below',
+            severity: 'medium',
+            cveIds: null,
+        );
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $entityManager->persist($advisory);
         $entityManager->flush();

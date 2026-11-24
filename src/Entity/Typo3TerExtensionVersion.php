@@ -32,6 +32,8 @@ class Typo3TerExtensionVersion
         private string $version,
         #[ORM\Column(length: 255)]
         private string $title,
+        #[ORM\Column]
+        private bool $insecure,
         #[ORM\Column(type: 'text', nullable: true)]
         private ?string $description,
         #[ORM\Column(type: 'text', nullable: true)]
@@ -42,20 +44,18 @@ class Typo3TerExtensionVersion
         private ?string $typo3Versions,
         #[ORM\Column(nullable: true)]
         private ?\DateTimeImmutable $uploadDate,
-        #[ORM\Column]
-        private bool $insecure,
     ) {
         $this->fetchedAt = new \DateTimeImmutable();
     }
 
     public function update(
         string $title,
+        bool $insecure,
         ?string $description,
         ?string $uploadComment,
         ?string $state,
         ?string $typo3Versions,
         ?\DateTimeImmutable $uploadDate,
-        bool $insecure,
     ): void {
         $this->title = $title;
         $this->description = $description;
