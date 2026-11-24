@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\CmsType;
-use App\Entity\Site;
 use App\Entity\Typo3CoreRelease;
 use App\Entity\Typo3ReleaseType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -90,52 +88,5 @@ class Typo3CoreReleaseRepository extends ServiceEntityRepository
     private function majorOf(string $version): int
     {
         return (int) explode('.', $version)[0];
-    }
-
-    /**
-     * Major-version-aware core status for a sites table listing: whether a
-     * newer release exists within the site's own major line, that release's
-     * version, and the latest release of a newer major if one exists. Only
-     * evaluated for TYPO3 sites - non-TYPO3 sites (e.g. WordPress) are
-     * skipped entirely rather than given a null-shaped entry, so their own
-     * type-specific repository (e.g. WordpressCoreReleaseRepository) can
-     * supply theirs into the same merged map without being overwritten.
-     * TYPO3 sites with no reported core version yet still get a null/unknown
-     * entry, matching the tri-state convention used elsewhere. Reuses
-     * findNewerThan()/findLatestInNewerMajor() rather than re-implementing
-     * their filtering.
-     *
-     * @param iterable<Site> $sites
-     *
-     * @return array<int, array{outdated: ?bool, latestInMajor: ?string, newerMajor: ?Typo3CoreRelease}>
-     */
-    public function getMajorStatusBySite(iterable $sites): array
-    {
-        $status = [];
-
-        foreach ($sites as $site) {
-            if (CmsType::Typo3 !== $site->getType()) {
-                continue;
-            }
-
-            $version = $site->getCurrentCoreVersion();
-            $siteId = (int) $site->getId();
-
-            if (null === $version) {
-                $status[$siteId] = ['outdated' => null, 'latestInMajor' => null, 'newerMajor' => null];
-
-                continue;
-            }
-
-            $newerInMajor = $this->findNewerThan($version);
-
-            $status[$siteId] = [
-                'outdated' => [] !== $newerInMajor,
-                'latestInMajor' => ($newerInMajor[0] ?? null)?->getVersion(),
-                'newerMajor' => $this->findLatestInNewerMajor($version),
-            ];
-        }
-
-        return $status;
     }
 }

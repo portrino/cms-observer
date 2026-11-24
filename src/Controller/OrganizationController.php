@@ -8,8 +8,7 @@ use App\Entity\Organization;
 use App\Form\OrganizationType;
 use App\Repository\OrganizationRepository;
 use App\Repository\SitePackageRepository;
-use App\Repository\Typo3CoreReleaseRepository;
-use App\Repository\WordpressCoreReleaseRepository;
+use App\Service\SiteCoreVersionEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,14 +52,13 @@ class OrganizationController extends AbstractController
     public function show(
         Organization $organization,
         SitePackageRepository $packageRepository,
-        Typo3CoreReleaseRepository $coreReleaseRepository,
-        WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
+        SiteCoreVersionEvaluator $coreVersionEvaluator,
     ): Response {
         return $this->render('dashboard/organization_show.html.twig', [
             'organization' => $organization,
             'packageStatusBySite' => $packageRepository->getAggregateStatusBySite(),
             'packageSummaryBySite' => $packageRepository->getPackageSummaryBySite($organization->getSites()),
-            'coreMajorStatusBySite' => $coreReleaseRepository->getMajorStatusBySite($organization->getSites()) + $wordpressCoreReleaseRepository->getMajorStatusBySite($organization->getSites()),
+            'coreMajorStatusBySite' => $coreVersionEvaluator->majorStatusBySite($organization->getSites()),
         ]);
     }
 

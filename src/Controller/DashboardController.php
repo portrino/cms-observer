@@ -23,6 +23,7 @@ use App\Repository\SiteRepository;
 use App\Repository\Typo3CoreReleaseRepository;
 use App\Repository\WordpressCoreReleaseRepository;
 use App\Security\SiteTokenFactory;
+use App\Service\SiteCoreVersionEvaluator;
 use App\Service\SitePackageDetailsProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,8 +41,7 @@ class DashboardController extends AbstractController
     public function index(
         SiteRepository $siteRepository,
         SitePackageRepository $packageRepository,
-        Typo3CoreReleaseRepository $coreReleaseRepository,
-        WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
+        SiteCoreVersionEvaluator $coreVersionEvaluator,
         #[MapQueryString(validationFailedStatusCode: Response::HTTP_NOT_FOUND)] ProjectListQuery $query = new ProjectListQuery(),
     ): Response {
         $search = null !== $query->q && '' !== trim($query->q) ? trim($query->q) : null;
@@ -65,7 +65,7 @@ class DashboardController extends AbstractController
             'slaFilters' => ProjectSlaFilter::cases(),
             'packageStatusBySite' => $packageStatusBySite,
             'packageSummaryBySite' => $packageRepository->getPackageSummaryBySite($sites),
-            'coreMajorStatusBySite' => $coreReleaseRepository->getMajorStatusBySite($sites) + $wordpressCoreReleaseRepository->getMajorStatusBySite($sites),
+            'coreMajorStatusBySite' => $coreVersionEvaluator->majorStatusBySite($sites),
         ]);
     }
 

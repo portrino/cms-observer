@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\CmsType;
-use App\Entity\Site;
 use App\Entity\WordpressCoreRelease;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -80,44 +78,5 @@ class WordpressCoreReleaseRepository extends ServiceEntityRepository
     private function majorOf(string $version): int
     {
         return (int) explode('.', $version)[0];
-    }
-
-    /**
-     * WordPress counterpart to Typo3CoreReleaseRepository::getMajorStatusBySite() -
-     * see there for why non-WordPress sites are skipped rather than given a
-     * null-shaped entry.
-     *
-     * @param iterable<Site> $sites
-     *
-     * @return array<int, array{outdated: ?bool, latestInMajor: ?string, newerMajor: ?WordpressCoreRelease}>
-     */
-    public function getMajorStatusBySite(iterable $sites): array
-    {
-        $status = [];
-
-        foreach ($sites as $site) {
-            if (CmsType::WordPress !== $site->getType()) {
-                continue;
-            }
-
-            $version = $site->getCurrentCoreVersion();
-            $siteId = (int) $site->getId();
-
-            if (null === $version) {
-                $status[$siteId] = ['outdated' => null, 'latestInMajor' => null, 'newerMajor' => null];
-
-                continue;
-            }
-
-            $newerInMajor = $this->findNewerThan($version);
-
-            $status[$siteId] = [
-                'outdated' => [] !== $newerInMajor,
-                'latestInMajor' => ($newerInMajor[0] ?? null)?->getVersion(),
-                'newerMajor' => $this->findLatestInNewerMajor($version),
-            ];
-        }
-
-        return $status;
     }
 }

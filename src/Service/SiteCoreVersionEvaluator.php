@@ -6,6 +6,8 @@ namespace App\Service;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
+use App\Entity\Typo3CoreRelease;
+use App\Entity\WordpressCoreRelease;
 use App\Repository\Typo3CoreReleaseRepository;
 use App\Repository\WordpressCoreReleaseRepository;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -77,5 +79,46 @@ class SiteCoreVersionEvaluator
         foreach ($sites as $site) {
             $this->evaluate($site);
         }
+    }
+
+    /**
+     * Major-version-aware core status for a sites table listing: whether a
+     * newer release exists within the site's own major line, that release's
+     * version, and the latest release of a newer major if one exists. Sites
+     * with no reported core version yet get a null/unknown entry, matching
+     * the tri-state convention used elsewhere.
+     *
+     * @param iterable<Site> $sites
+     *
+     * @return array<int, array{outdated: ?bool, latestInMajor: ?string, newerMajor: Typo3CoreRelease|WordpressCoreRelease|null}>
+     */
+    public function majorStatusBySite(iterable $sites): array
+    {
+        $status = [];
+
+        foreach ($sites as $site) {
+            $version = $site->getCurrentCoreVersion();
+            $siteId = (int) $site->getId();
+
+            if (null === $version) {
+                $status[$siteId] = ['outdated' => null, 'latestInMajor' => null, 'newerMajor' => null];
+
+                continue;
+            }
+
+            $repository = match ($site->getType()) {
+                CmsType::Typo3 => $this->typo3ReleaseRepository,
+                CmsType::WordPress => $this->wordpressReleaseRepository,
+            };
+            $newerInMajor = $repository->findNewerThan($version);
+
+            $status[$siteId] = [
+                'outdated' => [] !== $newerInMajor,
+                'latestInMajor' => ($newerInMajor[0] ?? null)?->getVersion(),
+                'newerMajor' => $repository->findLatestInNewerMajor($version),
+            ];
+        }
+
+        return $status;
     }
 }
