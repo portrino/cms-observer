@@ -10,10 +10,6 @@ use App\Service\SecurityNotifier;
 use App\Service\SiteRuntimeVersionEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
@@ -21,34 +17,29 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the support cycles of PHP, MariaDB, MySQL, PostgreSQL and TYPO3 from endoflife.date, then re-rate the PHP and database version of every project',
 )]
 #[AsCronTask('17 3 * * *')] // once a day - EOL cycles change on the order of months, not hours
-class SyncEndOfLifeReleasesCommand extends Command
+class SyncEndOfLifeReleasesCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly EndOfLifeReleaseSynchronizer $synchronizer,
         private readonly SiteRuntimeVersionEvaluator $runtimeVersionEvaluator,
         private readonly SiteRepository $siteRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly SecurityNotifier $securityNotifier,
+        EntityManagerInterface $entityManager,
+        SecurityNotifier $securityNotifier,
     ) {
-        parent::__construct();
+        parent::__construct($entityManager, $securityNotifier);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function syncAndEvaluate(): string
     {
-        $io = new SymfonyStyle($input, $output);
         $cycleCount = $this->synchronizer->sync();
 
         $sites = $this->siteRepository->findAll();
         $this->runtimeVersionEvaluator->evaluateAll($sites);
-        $this->entityManager->flush();
-        $this->securityNotifier->flush();
 
-        $io->success(sprintf(
+        return sprintf(
             'Synced %d release cycles from endoflife.date and re-evaluated %d sites.',
             $cycleCount,
             count($sites),
-        ));
-
-        return Command::SUCCESS;
+        );
     }
 }

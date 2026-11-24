@@ -11,10 +11,6 @@ use App\Service\SiteCoreVersionEvaluator;
 use App\Service\Typo3CoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
@@ -22,34 +18,29 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the TYPO3 core releases and their security status from get.typo3.org, then re-rate the TYPO3 version of every project',
 )]
 #[AsCronTask('23 */6 * * *')] // every 6h - catches a new security release the same day it ships
-class Typo3SyncCoreReleasesCommand extends Command
+class Typo3SyncCoreReleasesCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly Typo3CoreReleaseSynchronizer $synchronizer,
         private readonly SiteCoreVersionEvaluator $coreVersionEvaluator,
         private readonly SiteRepository $siteRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly SecurityNotifier $securityNotifier,
+        EntityManagerInterface $entityManager,
+        SecurityNotifier $securityNotifier,
     ) {
-        parent::__construct();
+        parent::__construct($entityManager, $securityNotifier);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function syncAndEvaluate(): string
     {
-        $io = new SymfonyStyle($input, $output);
         $releaseCount = $this->synchronizer->sync();
 
         $sites = $this->siteRepository->findBy(['type' => CmsType::Typo3]);
         $this->coreVersionEvaluator->evaluateAll($sites);
-        $this->entityManager->flush();
-        $this->securityNotifier->flush();
 
-        $io->success(sprintf(
+        return sprintf(
             'Synced %d TYPO3 core releases and re-evaluated %d sites.',
             $releaseCount,
             count($sites),
-        ));
-
-        return Command::SUCCESS;
+        );
     }
 }

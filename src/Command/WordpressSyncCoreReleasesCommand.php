@@ -11,10 +11,6 @@ use App\Service\SiteCoreVersionEvaluator;
 use App\Service\WordpressCoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
@@ -22,34 +18,29 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the WordPress core releases and which are insecure from api.wordpress.org, then re-rate the WordPress version of every project',
 )]
 #[AsCronTask('37 */6 * * *')] // every 6h - catches a new security release the same day it ships
-class WordpressSyncCoreReleasesCommand extends Command
+class WordpressSyncCoreReleasesCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly WordpressCoreReleaseSynchronizer $synchronizer,
         private readonly SiteCoreVersionEvaluator $coreVersionEvaluator,
         private readonly SiteRepository $siteRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly SecurityNotifier $securityNotifier,
+        EntityManagerInterface $entityManager,
+        SecurityNotifier $securityNotifier,
     ) {
-        parent::__construct();
+        parent::__construct($entityManager, $securityNotifier);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function syncAndEvaluate(): string
     {
-        $io = new SymfonyStyle($input, $output);
         $releaseCount = $this->synchronizer->sync();
 
         $sites = $this->siteRepository->findBy(['type' => CmsType::WordPress]);
         $this->coreVersionEvaluator->evaluateAll($sites);
-        $this->entityManager->flush();
-        $this->securityNotifier->flush();
 
-        $io->success(sprintf(
+        return sprintf(
             'Synced %d WordPress core releases and re-evaluated %d sites.',
             $releaseCount,
             count($sites),
-        ));
-
-        return Command::SUCCESS;
+        );
     }
 }

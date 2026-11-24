@@ -11,10 +11,6 @@ use App\Service\SitePackageWordpressEvaluator;
 use App\Service\WordpressThemeSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
@@ -22,33 +18,29 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the latest WordPress.org version of every reported theme, then re-rate the reported themes as outdated',
 )]
 #[AsCronTask('53 */6 * * *')] // every 6h - like the core releases; all themes in one run
-class WordpressSyncThemesCommand extends Command
+class WordpressSyncThemesCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly WordpressThemeSynchronizer $synchronizer,
         private readonly SitePackageWordpressEvaluator $wordpressEvaluator,
         private readonly SitePackageRepository $sitePackageRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly SecurityNotifier $securityNotifier,
+        EntityManagerInterface $entityManager,
+        SecurityNotifier $securityNotifier,
     ) {
-        parent::__construct();
+        parent::__construct($entityManager, $securityNotifier);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function syncAndEvaluate(): string
     {
         $syncedSlugs = $this->synchronizer->sync();
 
         $packages = $this->sitePackageRepository->findByPackageType(PackageType::WordpressTheme);
         $this->wordpressEvaluator->evaluateAll($packages);
-        $this->entityManager->flush();
-        $this->securityNotifier->flush();
 
-        new SymfonyStyle($input, $output)->success(sprintf(
+        return sprintf(
             'Synced %d theme slug(s) via WordPress.org and re-evaluated %d reported themes.',
             $syncedSlugs,
             count($packages),
-        ));
-
-        return Command::SUCCESS;
+        );
     }
 }
