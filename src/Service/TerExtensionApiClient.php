@@ -39,27 +39,31 @@ class TerExtensionApiClient
         // The endpoint wraps the version list in an extra array: [[v1, v2, ...]].
         $versions = $response->toArray()[0] ?? [];
 
-        $history = [];
-        foreach ($versions as $version) {
-            if (!isset($version['number'])) {
-                continue;
-            }
+        return array_values(array_map(
+            self::historyEntry(...),
+            array_filter($versions, static fn (array $version): bool => isset($version['number'])),
+        ));
+    }
 
-            $typo3Versions = self::majorsFromConstraint($version['dependencies']['typo3'] ?? null) ?? $version['typo3_versions'] ?? [];
+    /**
+     * @param array<string, mixed> $version
+     *
+     * @return array{version: string, title: string, description: ?string, uploadComment: ?string, state: ?string, typo3Versions: ?string, uploadDate: ?\DateTimeImmutable, insecure: bool}
+     */
+    private static function historyEntry(array $version): array
+    {
+        $typo3Versions = self::majorsFromConstraint($version['dependencies']['typo3'] ?? null) ?? $version['typo3_versions'] ?? [];
 
-            $history[] = [
-                'version' => (string) $version['number'],
-                'title' => (string) ($version['title'] ?? ''),
-                'description' => '' !== $version['description'] ? ($version['description'] ?? null) : null,
-                'uploadComment' => $version['upload_comment'] ?? null,
-                'state' => $version['state'] ?? null,
-                'typo3Versions' => [] !== $typo3Versions ? implode(', ', $typo3Versions) : null,
-                'uploadDate' => isset($version['upload_date']) ? new \DateTimeImmutable()->setTimestamp((int) $version['upload_date']) : null,
-                'insecure' => ((int) ($version['review_state'] ?? 0)) === -1,
-            ];
-        }
-
-        return $history;
+        return [
+            'version' => (string) $version['number'],
+            'title' => (string) ($version['title'] ?? ''),
+            'description' => '' !== $version['description'] ? ($version['description'] ?? null) : null,
+            'uploadComment' => $version['upload_comment'] ?? null,
+            'state' => $version['state'] ?? null,
+            'typo3Versions' => [] !== $typo3Versions ? implode(', ', $typo3Versions) : null,
+            'uploadDate' => isset($version['upload_date']) ? new \DateTimeImmutable()->setTimestamp((int) $version['upload_date']) : null,
+            'insecure' => ((int) ($version['review_state'] ?? 0)) === -1,
+        ];
     }
 
     /**

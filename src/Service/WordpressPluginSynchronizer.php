@@ -102,12 +102,8 @@ class WordpressPluginSynchronizer
      */
     private function syncVersions(string $slug, array $installedVersions, ?string $bootstrapFilename): void
     {
-        $minInstalled = null;
-        foreach ($installedVersions as $installedVersion) {
-            if (null === $minInstalled || version_compare($installedVersion, $minInstalled, '<')) {
-                $minInstalled = $installedVersion;
-            }
-        }
+        usort($installedVersions, static fn (string $a, string $b): int => version_compare($a, $b));
+        $minInstalled = $installedVersions[0] ?? null;
         if (null === $minInstalled) {
             return;
         }

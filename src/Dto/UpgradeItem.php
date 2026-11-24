@@ -65,32 +65,27 @@ final readonly class UpgradeItem
      */
     public static function fromArray(array $data): self
     {
-        $string = static fn (string $key): ?string => isset($data[$key]) && '' !== (string) $data[$key] ? (string) $data[$key] : null;
-        $hours = static fn (string $key): ?float => isset($data[$key]) && is_numeric($data[$key]) ? (float) $data[$key] : null;
-        $package = $string('package');
+        $package = self::stringOf($data, 'package');
 
         $sumOf = UpgradeSection::tryFrom((string) ($data['sumOf'] ?? ''));
         if (null !== $sumOf && $sumOf->hasPackages()) {
             // its label and hours come from the section, whatever was submitted
-            return new self(UpgradeSection::Positions, $sumOf->label(), notes: $string('notes'), assignee: $string('assignee'),
+            return new self(UpgradeSection::Positions, $sumOf->label(), notes: self::stringOf($data, 'notes'), assignee: self::stringOf($data, 'assignee'),
                 noteLevel: UpgradeNoteLevel::tryFrom((string) ($data['noteLevel'] ?? '')), sumOf: $sumOf);
         }
 
         return new self(
             UpgradeSection::tryFrom((string) ($data['section'] ?? '')) ?? UpgradeSection::Positions,
-            $string('label') ?? $package ?? '',
+            self::stringOf($data, 'label') ?? $package ?? '',
             $package,
             PackageType::tryFrom((string) ($data['packageType'] ?? '')),
-            $string('installedVersion'),
-            $string('targetVersion'),
-            // a status from a newer Observer, or a lost one, must not hide the row
-            null !== $package || isset($data['status'])
-                ? UpgradeItemStatus::tryFrom((string) ($data['status'] ?? '')) ?? UpgradeItemStatus::Manual
-                : null,
-            $hours('minHours'),
-            $hours('maxHours'),
-            $string('notes'),
-            $string('assignee'),
+            self::stringOf($data, 'installedVersion'),
+            self::stringOf($data, 'targetVersion'),
+            self::statusOf($data, null !== $package),
+            self::hoursOf($data, 'minHours'),
+            self::hoursOf($data, 'maxHours'),
+            self::stringOf($data, 'notes'),
+            self::stringOf($data, 'assignee'),
             UpgradeNoteLevel::tryFrom((string) ($data['noteLevel'] ?? '')),
         );
     }
@@ -115,5 +110,35 @@ final readonly class UpgradeItem
             'noteLevel' => $this->noteLevel?->value,
             'sumOf' => $this->sumOf?->value,
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private static function stringOf(array $data, string $key): ?string
+    {
+        return isset($data[$key]) && '' !== (string) $data[$key] ? (string) $data[$key] : null;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private static function hoursOf(array $data, string $key): ?float
+    {
+        return isset($data[$key]) && is_numeric($data[$key]) ? (float) $data[$key] : null;
+    }
+
+    /**
+     * A status from a newer Observer, or a lost one, must not hide the row.
+     *
+     * @param array<string, mixed> $data
+     */
+    private static function statusOf(array $data, bool $hasPackage): ?UpgradeItemStatus
+    {
+        if (!$hasPackage && !isset($data['status'])) {
+            return null;
+        }
+
+        return UpgradeItemStatus::tryFrom((string) ($data['status'] ?? '')) ?? UpgradeItemStatus::Manual;
     }
 }

@@ -86,28 +86,45 @@ class SiteReportIngestor
         $this->coreVersionEvaluator->evaluate($site);
         $this->runtimeVersionEvaluator->evaluate($site);
 
-        // A payload without packages says nothing about them, an empty list means none are installed
-        if (null !== $request->packages) {
-            $byType = [];
-            foreach ($request->packages as $reported) {
-                $type = PackageType::fromReport($site->getType(), $reported->type);
-                if (null !== $type) { // an unknown type, e.g. from a newer client, is left out
-                    $byType[$type->value][] = $reported;
-                }
-            }
-            // complete for every type of the CMS: a type without entries has none installed
-            foreach (PackageType::allOf($site->getType()) as $type) {
-                $this->syncPackages($site, $byType[$type->value] ?? [], $type, !$isFirstReport);
-            }
-        } elseif (null !== $request->extensions) {
-            // older clients: only the CMS's default type, e.g. WordPress plugins without the themes
-            $this->syncPackages($site, $request->extensions, PackageType::fromCmsType($site->getType()), !$isFirstReport);
-        }
+        $this->syncReportedPackages($site, $request, !$isFirstReport);
 
         $this->entityManager->flush();
         $this->securityNotifier->flush();
 
         return $report;
+    }
+
+    private function syncReportedPackages(Site $site, SiteReportRequest $request, bool $recordEvents): void
+    {
+        // A payload without packages says nothing about them, an empty list means none are installed
+        if (null !== $request->packages) {
+            $byType = $this->packagesByType($site, $request->packages);
+            // complete for every type of the CMS: a type without entries has none installed
+            foreach (PackageType::allOf($site->getType()) as $type) {
+                $this->syncPackages($site, $byType[$type->value] ?? [], $type, $recordEvents);
+            }
+        } elseif (null !== $request->extensions) {
+            // older clients: only the CMS's default type, e.g. WordPress plugins without the themes
+            $this->syncPackages($site, $request->extensions, PackageType::fromCmsType($site->getType()), $recordEvents);
+        }
+    }
+
+    /**
+     * @param PackageReport[] $packages
+     *
+     * @return array<string, list<PackageReport>> keyed by package type
+     */
+    private function packagesByType(Site $site, array $packages): array
+    {
+        $byType = [];
+        foreach ($packages as $reported) {
+            $type = PackageType::fromReport($site->getType(), $reported->type);
+            if (null !== $type) { // an unknown type, e.g. from a newer client, is left out
+                $byType[$type->value][] = $reported;
+            }
+        }
+
+        return $byType;
     }
 
     private function evaluateApplicationContext(Site $site, ?string $context): void
@@ -145,22 +162,8 @@ class SiteReportIngestor
         }
 
         foreach ($reportedPackages as $reported) {
-            $sitePackage = $remaining[$reported->name] ?? null;
+            $sitePackage = $this->savePackage($site, $remaining[$reported->name] ?? null, $reported, $packageType, $recordEvents);
             unset($remaining[$reported->name]);
-            $version = PackageVersion::normalize($reported->version);
-
-            if (null !== $sitePackage) {
-                if ($recordEvents) {
-                    $this->recordPackageChanges($sitePackage, $reported, $version);
-                }
-                $sitePackage->update($reported->title, $version, $reported->active, $reported->composerName);
-            } else {
-                $sitePackage = new SitePackage($site, $reported->name, $reported->title, $version, $reported->active, $reported->composerName, $packageType);
-                $this->entityManager->persist($sitePackage);
-                if ($recordEvents) {
-                    $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $this->eventSubject($sitePackage), null, $version));
-                }
-            }
 
             // WordPress plugins and themes are checked against the synced Wordfence data right away
             if (CmsType::WordPress === $site->getType()) {
@@ -175,6 +178,31 @@ class SiteReportIngestor
             $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageRemoved, $this->eventSubject($removed), $removed->getVersion()));
             $this->entityManager->remove($removed);
         }
+    }
+
+    /**
+     * The known package updated to the report, or the reported one added.
+     */
+    private function savePackage(Site $site, ?SitePackage $known, PackageReport $reported, PackageType $packageType, bool $recordEvents): SitePackage
+    {
+        $version = PackageVersion::normalize($reported->version);
+
+        if (null !== $known) {
+            if ($recordEvents) {
+                $this->recordPackageChanges($known, $reported, $version);
+            }
+            $known->update($reported->title, $version, $reported->active, $reported->composerName);
+
+            return $known;
+        }
+
+        $sitePackage = new SitePackage($site, $reported->name, $reported->title, $version, $reported->active, $reported->composerName, $packageType);
+        $this->entityManager->persist($sitePackage);
+        if ($recordEvents) {
+            $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $this->eventSubject($sitePackage), null, $version));
+        }
+
+        return $sitePackage;
     }
 
     private function recordPackageChanges(SitePackage $package, PackageReport $reported, string $version): void

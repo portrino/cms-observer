@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\EndOfLifeRelease;
 use App\Entity\Site;
 use App\Repository\EndOfLifeReleaseRepository;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -52,12 +53,21 @@ class SiteRuntimeVersionEvaluator
         $outdated = version_compare($version, $release->getLatestVersion(), '<');
         $site->setPhpStatus($insecure, $outdated, $outdated ? $release->getLatestVersion() : null, $release->getEolUrl());
 
+        $this->notifyPhpChange($site, $version, $release, $insecure, $wasInsecure);
+    }
+
+    /**
+     * A finding when the PHP version became insecure, a resolved event when it became secure.
+     */
+    private function notifyPhpChange(Site $site, string $version, EndOfLifeRelease $release, bool $insecure, ?bool $wasInsecure): void
+    {
+        $subject = new TranslatableMessage('event.subject.php', ['version' => $version]);
         if ($insecure && true !== $wasInsecure) {
-            $this->securityNotifier->addFinding($site, new TranslatableMessage('event.subject.php', ['version' => $version]), $release->isEol()
+            $this->securityNotifier->addFinding($site, $subject, $release->isEol()
                 ? new TranslatableMessage('event.detail.php_eol')
-                : new TranslatableMessage('event.detail.php_missing_fixes', ['fixed' => $securityVersion]));
+                : new TranslatableMessage('event.detail.php_missing_fixes', ['fixed' => $release->getLatestSecurityVersion()]));
         } elseif (!$insecure && true === $wasInsecure) {
-            $this->securityNotifier->recordResolved($site, new TranslatableMessage('event.subject.php', ['version' => $version]), new TranslatableMessage('event.detail.php_secure'));
+            $this->securityNotifier->recordResolved($site, $subject, new TranslatableMessage('event.detail.php_secure'));
         }
     }
 

@@ -45,6 +45,22 @@ class Typo3ExtensionVersionSynchronizer
      */
     public function sync(): int
     {
+        $keys = $this->keysToSync();
+        foreach ($keys as $key) {
+            $this->syncVersions($key);
+            $this->syncMeta($key);
+        }
+
+        $this->entityManager->flush();
+
+        return count($keys);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function keysToSync(): array
+    {
         $keys = [];
         foreach ($this->sitePackageRepository->findByPackageType(PackageType::Typo3CmsExtension) as $package) {
             $keys[$package->getName()] = true;
@@ -57,68 +73,70 @@ class Typo3ExtensionVersionSynchronizer
         $alreadySynced = array_fill_keys($this->metaRepository->findAllExtensionKeys(), true);
         $orderedKeys = array_merge(array_diff_key($keys, $alreadySynced), array_intersect_key($alreadySynced, $keys));
 
-        $synced = 0;
-        foreach (array_slice(array_keys($orderedKeys), 0, self::MAX_KEYS_PER_RUN) as $key) {
-            // TER's history for a given key can contain more than one entry for the
-            // same version number (seen live for "powermail" and 1.6.7) - track what
-            // this batch has already persisted, since a not-yet-flushed entity isn't
-            // visible to a fresh findOneByExtensionKeyAndVersion() DB lookup.
-            $seenInBatch = [];
+        return array_slice(array_map(strval(...), array_keys($orderedKeys)), 0, self::MAX_KEYS_PER_RUN);
+    }
 
-            foreach ($this->apiClient->getVersionHistory($key) as $data) {
-                if (isset($seenInBatch[$data['version']])) {
-                    continue;
-                }
-                $seenInBatch[$data['version']] = true;
+    private function syncVersions(string $key): void
+    {
+        // TER's history for a given key can contain more than one entry for the
+        // same version number (seen live for "powermail" and 1.6.7) - track what
+        // this batch has already persisted, since a not-yet-flushed entity isn't
+        // visible to a fresh findOneByExtensionKeyAndVersion() DB lookup.
+        $seenInBatch = [];
 
-                $existing = $this->versionRepository->findOneByExtensionKeyAndVersion($key, $data['version']);
-
-                if (null !== $existing) {
-                    $existing->update(
-                        $data['title'],
-                        $data['description'],
-                        $data['uploadComment'],
-                        $data['state'],
-                        $data['typo3Versions'],
-                        $data['uploadDate'],
-                        $data['insecure'],
-                    );
-                } else {
-                    $this->entityManager->persist(new Typo3TerExtensionVersion(
-                        $key,
-                        $data['version'],
-                        $data['title'],
-                        $data['description'],
-                        $data['uploadComment'],
-                        $data['state'],
-                        $data['typo3Versions'],
-                        $data['uploadDate'],
-                        $data['insecure'],
-                    ));
-                }
+        foreach ($this->apiClient->getVersionHistory($key) as $data) {
+            if (isset($seenInBatch[$data['version']])) {
+                continue;
             }
+            $seenInBatch[$data['version']] = true;
 
-            $meta = $this->apiClient->getExtensionMeta($key);
-            if (null !== $meta) {
-                $existingMeta = $this->metaRepository->findOneByExtensionKey($key);
+            $existing = $this->versionRepository->findOneByExtensionKeyAndVersion($key, $data['version']);
 
-                if (null !== $existingMeta) {
-                    $existingMeta->update($meta['packagistUrl'], $meta['repositoryUrl'], $meta['manualUrl']);
-                } else {
-                    $this->entityManager->persist(new Typo3TerExtensionMeta(
-                        $key,
-                        $meta['packagistUrl'],
-                        $meta['repositoryUrl'],
-                        $meta['manualUrl'],
-                    ));
-                }
+            if (null !== $existing) {
+                $existing->update(
+                    $data['title'],
+                    $data['description'],
+                    $data['uploadComment'],
+                    $data['state'],
+                    $data['typo3Versions'],
+                    $data['uploadDate'],
+                    $data['insecure'],
+                );
+            } else {
+                $this->entityManager->persist(new Typo3TerExtensionVersion(
+                    $key,
+                    $data['version'],
+                    $data['title'],
+                    $data['description'],
+                    $data['uploadComment'],
+                    $data['state'],
+                    $data['typo3Versions'],
+                    $data['uploadDate'],
+                    $data['insecure'],
+                ));
             }
+        }
+    }
 
-            ++$synced;
+    private function syncMeta(string $key): void
+    {
+        $meta = $this->apiClient->getExtensionMeta($key);
+        if (null === $meta) {
+            return;
         }
 
-        $this->entityManager->flush();
+        $existingMeta = $this->metaRepository->findOneByExtensionKey($key);
+        if (null !== $existingMeta) {
+            $existingMeta->update($meta['packagistUrl'], $meta['repositoryUrl'], $meta['manualUrl']);
 
-        return $synced;
+            return;
+        }
+
+        $this->entityManager->persist(new Typo3TerExtensionMeta(
+            $key,
+            $meta['packagistUrl'],
+            $meta['repositoryUrl'],
+            $meta['manualUrl'],
+        ));
     }
 }

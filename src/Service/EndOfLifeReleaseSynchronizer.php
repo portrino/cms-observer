@@ -39,29 +39,7 @@ class EndOfLifeReleaseSynchronizer
             $data = $this->apiClient->fetchProduct($product);
 
             foreach ($data['cycles'] as $cycleData) {
-                $existing = $this->repository->findOneByProductAndCycle($product, $cycleData['cycle']);
-
-                if (null !== $existing) {
-                    $existing->update($cycleData['isEol'], $cycleData['latestVersion'], $data['eolUrl']);
-                    $release = $existing;
-                } else {
-                    $release = new EndOfLifeRelease(
-                        $product,
-                        $cycleData['cycle'],
-                        $cycleData['isEol'],
-                        $cycleData['latestVersion'],
-                        $data['eolUrl'],
-                    );
-                    $this->entityManager->persist($release);
-                }
-
-                $release->setExtendedSupportEnded($cycleData['extendedSupportEnded']);
-
-                // EOL cycles count as insecure anyway, so only supported PHP cycles need the patch-level check.
-                if ('php' === $product && !$cycleData['isEol']) {
-                    $release->setLatestSecurityVersion($this->phpReleaseApiClient->fetchLatestSecurityVersion($cycleData['cycle']));
-                }
-
+                $this->syncCycle($product, $cycleData, $data['eolUrl']);
                 ++$synced;
             }
         }
@@ -69,5 +47,33 @@ class EndOfLifeReleaseSynchronizer
         $this->entityManager->flush();
 
         return $synced;
+    }
+
+    /**
+     * @param array{cycle: string, isEol: bool, latestVersion: string, extendedSupportEnded: ?bool} $cycleData
+     */
+    private function syncCycle(string $product, array $cycleData, string $eolUrl): void
+    {
+        $release = $this->repository->findOneByProductAndCycle($product, $cycleData['cycle']);
+
+        if (null !== $release) {
+            $release->update($cycleData['isEol'], $cycleData['latestVersion'], $eolUrl);
+        } else {
+            $release = new EndOfLifeRelease(
+                $product,
+                $cycleData['cycle'],
+                $cycleData['isEol'],
+                $cycleData['latestVersion'],
+                $eolUrl,
+            );
+            $this->entityManager->persist($release);
+        }
+
+        $release->setExtendedSupportEnded($cycleData['extendedSupportEnded']);
+
+        // EOL cycles count as insecure anyway, so only supported PHP cycles need the patch-level check.
+        if ('php' === $product && !$cycleData['isEol']) {
+            $release->setLatestSecurityVersion($this->phpReleaseApiClient->fetchLatestSecurityVersion($cycleData['cycle']));
+        }
     }
 }

@@ -46,16 +46,8 @@ class PackageUpdateResolver
         // glance which ones are ready for a core upgrade: the installed version if it supports it
         // already, otherwise the newest version that does.
         $installed = array_find($versions, static fn (Typo3TerExtensionVersion $v): bool => $v->getVersion() === $installedVersion);
-        $nextMajor = null;
-        foreach (null === $installed ? $newer : [$installed, ...$newer] as $version) {
-            foreach ($version->getTypo3MajorVersions() as $major) {
-                if ($major > $coreMajor) {
-                    $nextMajor = min($nextMajor ?? $major, $major);
-                }
-            }
-        }
-        $supportsNextMajor = static fn (?Typo3TerExtensionVersion $v): bool => null !== $v && in_array($nextMajor, $v->getTypo3MajorVersions(), true);
-        $forNextMajor = null === $nextMajor ? null : ($supportsNextMajor($installed) ? $installed : array_find($newer, $supportsNextMajor));
+        $nextMajor = self::nextMajor(null === $installed ? $newer : [$installed, ...$newer], $coreMajor);
+        $forNextMajor = null === $nextMajor ? null : self::firstSupporting($nextMajor, $installed, $newer);
 
         return new PackageUpdate(
             [] !== $compatible,
@@ -63,6 +55,36 @@ class PackageUpdateResolver
             null === $forNextMajor ? null : (string) $nextMajor,
             $forNextMajor?->getVersion(),
         );
+    }
+
+    /**
+     * The lowest TYPO3 major above the site's one that any of the versions supports.
+     *
+     * @param list<Typo3TerExtensionVersion> $versions
+     */
+    private static function nextMajor(array $versions, int $coreMajor): ?int
+    {
+        $majors = array_filter(
+            array_merge(...array_map(static fn (Typo3TerExtensionVersion $v): array => $v->getTypo3MajorVersions(), $versions)),
+            static fn (int $major): bool => $major > $coreMajor,
+        );
+
+        return [] === $majors ? null : min($majors);
+    }
+
+    /**
+     * The installed version if it supports the major already, otherwise the newest version that does.
+     *
+     * @param list<Typo3TerExtensionVersion> $newer newest first
+     */
+    private static function firstSupporting(int $major, ?Typo3TerExtensionVersion $installed, array $newer): ?Typo3TerExtensionVersion
+    {
+        $supports = static fn (Typo3TerExtensionVersion $v): bool => in_array($major, $v->getTypo3MajorVersions(), true);
+        if (null !== $installed && $supports($installed)) {
+            return $installed;
+        }
+
+        return array_find($newer, $supports);
     }
 
     /**

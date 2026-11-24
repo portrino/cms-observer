@@ -45,13 +45,7 @@ class ProfileController extends AbstractController
             } elseif (null !== $conflict && $conflict !== $user) {
                 $form->get('email')->addError(new FormError($translator->trans('profile.error.email')));
             } else {
-                $user->setName($data['name']);
-                $user->setEmail($data['email']);
-
-                if (null !== $data['plainPassword'] && '' !== $data['plainPassword']) {
-                    $user->setPassword($passwordHasher->hashPassword($user, $data['plainPassword']));
-                }
-
+                $this->applyProfile($user, $data, $passwordHasher);
                 $entityManager->flush();
                 $this->addFlash('success', 'profile.updated');
 
@@ -82,5 +76,19 @@ class ProfileController extends AbstractController
         }
 
         return $this->redirectToRoute('app_profile');
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function applyProfile(User $user, array $data, UserPasswordHasherInterface $passwordHasher): void
+    {
+        $user->setName($data['name']);
+        $user->setEmail($data['email']);
+
+        // an empty new password keeps the current one
+        if (null !== $data['plainPassword'] && '' !== $data['plainPassword']) {
+            $user->setPassword($passwordHasher->hashPassword($user, $data['plainPassword']));
+        }
     }
 }

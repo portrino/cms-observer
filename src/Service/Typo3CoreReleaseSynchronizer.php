@@ -165,32 +165,36 @@ class Typo3CoreReleaseSynchronizer
     private function flagInsecureReleases(array &$releases): void
     {
         foreach ($releases as &$release) {
-            if (!$release['isActive']) {
-                $release['insecure'] = true;
-            }
+            $release['insecure'] = $release['insecure'] || !$release['isActive'];
         }
         unset($release);
 
-        $securityVersions = [];
-        foreach ($releases as $version => $release) {
-            if ($release['isActive'] && Typo3ReleaseType::Security === $release['type']) {
-                $securityVersions[] = $version;
-            }
-        }
-
-        foreach ($securityVersions as $version) {
-            $parts = explode('.', $version);
-            if (3 !== count($parts)) {
-                continue;
-            }
-
-            [$major, $minor, $patch] = $parts;
-            for ($i = 0; $i < (int) $patch; ++$i) {
-                $earlierVersion = sprintf('%s.%s.%d', $major, $minor, $i);
+        $securityReleases = array_filter($releases, static fn (array $release): bool => $release['isActive'] && Typo3ReleaseType::Security === $release['type']);
+        foreach (array_keys($securityReleases) as $version) {
+            foreach (self::earlierPatchVersions($version) as $earlierVersion) {
                 if (isset($releases[$earlierVersion])) {
                     $releases[$earlierVersion]['insecure'] = true;
                 }
             }
         }
+    }
+
+    /**
+     * @return list<string> e.g. 13.4.0 and 13.4.1 for 13.4.2
+     */
+    private static function earlierPatchVersions(string $version): array
+    {
+        $parts = explode('.', $version);
+        if (3 !== count($parts)) {
+            return [];
+        }
+
+        [$major, $minor, $patch] = $parts;
+        $versions = [];
+        for ($i = 0; $i < (int) $patch; ++$i) {
+            $versions[] = sprintf('%s.%s.%d', $major, $minor, $i);
+        }
+
+        return $versions;
     }
 }

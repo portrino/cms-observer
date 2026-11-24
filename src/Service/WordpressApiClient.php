@@ -161,12 +161,43 @@ class WordpressApiClient
      */
     private function getTagDatesFromUrl(string $tagsUrl): array
     {
+        $xml = $this->fetchTagListing($tagsUrl);
+        $entries = $xml?->xpath('//D:response');
+
+        $dates = [];
+        foreach (is_array($entries) ? $entries : [] as $entry) {
+            $tag = $this->tagOf($entry);
+            if (null === $tag) {
+                continue;
+            }
+
+            [$version, $lastModified] = $tag;
+            try {
+                $dates[$version] = new \DateTimeImmutable($lastModified);
+            } catch (\Exception $e) {
+                $this->logger->warning('Unreadable release date of {version} at {url}, skipped: {message}', [
+                    'version' => $version,
+                    'url' => $tagsUrl,
+                    'message' => $e->getMessage(),
+                    'exception' => $e,
+                ]);
+            }
+        }
+
+        return $dates;
+    }
+
+    /**
+     * The WebDAV listing of an SVN tags/ directory, null if there is none or it isn't XML.
+     */
+    private function fetchTagListing(string $tagsUrl): ?\SimpleXMLElement
+    {
         $response = $this->request('PROPFIND', $tagsUrl, [
             'headers' => ['Depth' => '1'],
         ]);
 
         if ($response->getStatusCode() >= 400) {
-            return [];
+            return null;
         }
 
         try {
@@ -179,43 +210,30 @@ class WordpressApiClient
                 'exception' => $e,
             ]);
 
-            return [];
+            return null;
         }
 
         $xml->registerXPathNamespace('D', 'DAV:');
 
-        $dates = [];
-        $entries = $xml->xpath('//D:response');
-        foreach (is_array($entries) ? $entries : [] as $entry) {
-            $href = $this->firstNode($entry, 'D:href');
-            if (null === $href) {
-                continue;
-            }
+        return $xml;
+    }
 
-            $segments = explode('/', trim((string) $href, '/'));
-            $version = end($segments);
-            if ('tags' === $version) {
-                continue; // the tags/ collection itself, not a version subfolder
-            }
-
-            $lastModified = $this->firstNode($entry, './/D:getlastmodified');
-            if (null === $lastModified) {
-                continue;
-            }
-
-            try {
-                $dates[$version] = new \DateTimeImmutable((string) $lastModified);
-            } catch (\Exception $e) {
-                $this->logger->warning('Unreadable release date of {version} at {url}, skipped: {message}', [
-                    'version' => $version,
-                    'url' => $tagsUrl,
-                    'message' => $e->getMessage(),
-                    'exception' => $e,
-                ]);
-            }
+    /**
+     * @return array{string, string}|null version and last-modified date of a tag folder
+     */
+    private function tagOf(\SimpleXMLElement $entry): ?array
+    {
+        $href = $this->firstNode($entry, 'D:href');
+        $lastModified = $this->firstNode($entry, './/D:getlastmodified');
+        if (null === $href || null === $lastModified) {
+            return null;
         }
 
-        return $dates;
+        $segments = explode('/', trim((string) $href, '/'));
+        $version = end($segments);
+
+        // the tags/ collection itself, not a version subfolder
+        return 'tags' === $version ? null : [$version, (string) $lastModified];
     }
 
     /**
