@@ -13,7 +13,6 @@ use App\Entity\Organization;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEventType;
-use App\Entity\WordpressPluginVulnerability;
 use App\Form\SiteType;
 use App\Repository\EndOfLifeReleaseRepository;
 use App\Repository\OrganizationRepository;
@@ -22,13 +21,9 @@ use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
 use App\Repository\SiteRepository;
 use App\Repository\Typo3CoreReleaseRepository;
-use App\Repository\Typo3TerExtensionMetaRepository;
-use App\Repository\Typo3TerExtensionVersionRepository;
 use App\Repository\WordpressCoreReleaseRepository;
-use App\Repository\WordpressPluginInfoRepository;
-use App\Repository\WordpressPluginVersionRepository;
-use App\Repository\WordpressPluginVulnerabilityRepository;
 use App\Security\SiteTokenFactory;
+use App\Service\SitePackageDetailsProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -114,73 +109,13 @@ class DashboardController extends AbstractController
         SitePackageRepository $packageRepository,
         Typo3CoreReleaseRepository $coreReleaseRepository,
         WordpressCoreReleaseRepository $wordpressCoreReleaseRepository,
-        Typo3TerExtensionVersionRepository $terVersionRepository,
-        Typo3TerExtensionMetaRepository $terMetaRepository,
-        WordpressPluginInfoRepository $wordpressPluginInfoRepository,
-        WordpressPluginVersionRepository $wordpressPluginVersionRepository,
         EndOfLifeReleaseRepository $endOfLifeReleaseRepository,
-        WordpressPluginVulnerabilityRepository $wordpressVulnerabilityRepository,
         SiteReportRepository $reportRepository,
+        SitePackageDetailsProvider $packageDetailsProvider,
     ): Response {
         $packages = $packageRepository->findBy(['site' => $site], ['name' => 'ASC']);
         $coreVersion = $site->getCurrentCoreVersion();
-        $coreMajor = null !== $coreVersion ? (int) explode('.', $coreVersion)[0] : null;
         $isWordpress = CmsType::WordPress === $site->getType();
-
-        $packageDetails = [];
-        foreach ($packages as $package) {
-            if ($isWordpress) {
-                $vulnerabilities = array_filter(
-                    $wordpressVulnerabilityRepository->findBySlug($package->getName(), $package->getPackageType()),
-                    static fn (WordpressPluginVulnerability $v): bool => !$v->isInformational(),
-                );
-                if (PackageType::WordpressTheme === $package->getPackageType()) {
-                    // no theme versions or info synced, and the plugin data of the same slug isn't this theme's
-                    $packageDetails[$package->getId()] = ['wordpressPluginInfo' => null, 'newerVersions' => [], 'versionStates' => [], 'latestVersion' => null];
-                    continue;
-                }
-
-                // like the TER versions: only what installs on the site's WordPress, unknown "requires" stays
-                $newerVersions = [];
-                $versionStates = [];
-                foreach ($wordpressPluginVersionRepository->findNewerThan($package->getName(), $package->getVersion()) as $version) {
-                    $compatible = null !== $coreVersion && null !== $version->getRequiresWpVersion()
-                        ? version_compare($coreVersion, $version->getRequiresWpVersion(), '>=')
-                        : null;
-                    if (false === $compatible) {
-                        continue;
-                    }
-
-                    $newerVersions[] = $version;
-                    $versionStates[$version->getVersion()] = [
-                        'insecure' => [] !== array_filter($vulnerabilities, static fn (WordpressPluginVulnerability $v): bool => $v->affects($version->getVersion())),
-                        'compatible' => $compatible,
-                    ];
-                }
-
-                $packageDetails[$package->getId()] = [
-                    'wordpressPluginInfo' => $wordpressPluginInfoRepository->findOneBySlug($package->getName()),
-                    'newerVersions' => $newerVersions,
-                    'versionStates' => $versionStates,
-                    // newest first: the first version without a known vulnerability
-                    'latestVersion' => array_find_key($versionStates, static fn (array $state): bool => !$state['insecure']),
-                ];
-
-                continue;
-            }
-
-            $cached = $terVersionRepository->findOneByExtensionKeyAndVersion($package->getName(), $package->getVersion());
-            $meta = $terMetaRepository->findOneByExtensionKey($package->getName());
-            $packageDetails[$package->getId()] = [
-                'description' => $cached?->getDescription(),
-                'packagistUrl' => $meta?->getPackagistUrl(),
-                'repositoryUrl' => $meta?->getRepositoryUrl(),
-                'manualUrl' => $meta?->getManualUrl(),
-                'newerVersions' => null !== $coreMajor
-                    ? $terVersionRepository->findNewerCompatibleWith($package->getName(), $package->getVersion(), $coreMajor)
-                    : $terVersionRepository->findNewerThan($package->getName(), $package->getVersion()),
-            ];
-        }
 
         // TYPO3 major => support status, to color the compatibility badges of TER versions
         $typo3SupportStatus = [];
@@ -195,7 +130,7 @@ class DashboardController extends AbstractController
             'lastReport' => $reportRepository->findOneBy(['site' => $site], ['receivedAt' => 'DESC']),
             'typo3SupportStatus' => $typo3SupportStatus,
             'packages' => $packages,
-            'packageDetails' => $packageDetails,
+            'packageDetails' => $packageDetailsProvider->forSite($site, $packages),
             'newerCoreReleases' => $isWordpress
                 ? $wordpressCoreReleaseRepository->findNewerThan($coreVersion)
                 : $coreReleaseRepository->findNewerThan($coreVersion),
