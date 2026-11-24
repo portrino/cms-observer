@@ -122,7 +122,7 @@ class SecurityNotifierTest extends KernelTestCase
         $notifier->flush();
 
         self::assertEmailCount(1);
-        self::assertEmailHeaderSame(self::getMailerMessage(), 'Subject', '[CMS Observer] 1 new security finding');
+        self::assertEmailHeaderSame(self::getMailerMessage() ?? self::fail('No email sent'), 'Subject', '[CMS Observer] 1 new security finding');
     }
 
     /**

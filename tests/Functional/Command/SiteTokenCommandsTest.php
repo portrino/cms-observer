@@ -20,7 +20,7 @@ class SiteTokenCommandsTest extends KernelTestCase
     {
         $site = $this->createSite('Listed Site', 'https://listed.test');
 
-        $tester = new CommandTester(new Application(self::$kernel)->find('app:site:list'));
+        $tester = new CommandTester(new Application(self::$kernel ?? self::bootKernel())->find('app:site:list'));
 
         self::assertSame(Command::SUCCESS, $tester->execute([]));
         self::assertMatchesRegularExpression('/\b'.$site->getId().'\s+Listed Site\s+https:\/\/listed\.test/', $tester->getDisplay());
@@ -30,7 +30,7 @@ class SiteTokenCommandsTest extends KernelTestCase
     {
         $site = $this->createSite('Rotated Site');
 
-        $tester = new CommandTester(new Application(self::$kernel)->find('app:site:regenerate-token'));
+        $tester = new CommandTester(new Application(self::$kernel ?? self::bootKernel())->find('app:site:regenerate-token'));
         $tester->setInputs(['yes']);
 
         self::assertSame(Command::SUCCESS, $tester->execute(['id' => (string) $site->getId()]));
@@ -47,7 +47,7 @@ class SiteTokenCommandsTest extends KernelTestCase
     {
         $site = $this->createSite('Kept Site');
 
-        $tester = new CommandTester(new Application(self::$kernel)->find('app:site:regenerate-token'));
+        $tester = new CommandTester(new Application(self::$kernel ?? self::bootKernel())->find('app:site:regenerate-token'));
         $tester->setInputs(['no']);
 
         self::assertSame(Command::FAILURE, $tester->execute(['id' => (string) $site->getId()]));
@@ -59,7 +59,7 @@ class SiteTokenCommandsTest extends KernelTestCase
     public function testRegenerateTokenFailsForAnUnknownId(): void
     {
         self::bootKernel();
-        $tester = new CommandTester(new Application(self::$kernel)->find('app:site:regenerate-token'));
+        $tester = new CommandTester(new Application(self::$kernel ?? self::bootKernel())->find('app:site:regenerate-token'));
 
         self::assertSame(Command::FAILURE, $tester->execute(['id' => '999999']));
         self::assertStringContainsString('No site found', $tester->getDisplay());

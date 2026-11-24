@@ -31,7 +31,7 @@ final class TranslationFilesTest extends TestCase
         self::assertNotFalse($xml);
         $xml->registerXPathNamespace('x', 'urn:oasis:names:tc:xliff:document:1.2');
         $units = $xml->xpath('//x:trans-unit');
-        self::assertNotFalse($units);
+        self::assertIsArray($units);
         $keys = array_map(static fn (\SimpleXMLElement $unit): string => (string) $unit['id'], $units);
         sort($keys);
 

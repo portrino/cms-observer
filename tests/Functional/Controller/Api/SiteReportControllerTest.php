@@ -183,7 +183,8 @@ class SiteReportControllerTest extends WebTestCase
         );
         self::assertSame([], static::getContainer()->get(SiteReportRepository::class)->findBy(['site' => $site]));
         $site = static::getContainer()->get(EntityManagerInterface::class)->find(Site::class, $site->getId());
-        self::assertNull($site?->getCurrentCoreVersion());
+        self::assertNotNull($site);
+        self::assertNull($site->getCurrentCoreVersion());
         self::assertSame(['staging.example.test'], $site->getLastRejectedReportDomains());
         self::assertNotNull($site->getLastRejectedReportAt());
     }
@@ -252,7 +253,7 @@ class SiteReportControllerTest extends WebTestCase
         $this->postReport($client, $token, ['dbVersion' => '11.8.0', 'packages' => [$plugin, $theme]]);
         self::assertResponseStatusCodeSame(202);
         self::assertEmailCount(1);
-        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Theme astra 3.0.0');
+        self::assertEmailHtmlBodyContains(self::getMailerMessage() ?? self::fail('No email sent'), 'Theme astra 3.0.0');
 
         $packages = static::getContainer()->get(SitePackageRepository::class);
         self::assertTrue($packages->findOneBySiteAndName($site, 'astra', PackageType::WordpressTheme)?->isInsecure());
@@ -298,7 +299,7 @@ class SiteReportControllerTest extends WebTestCase
 
         $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Development']);
         self::assertEmailCount(1);
-        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Application context Development');
+        self::assertEmailHtmlBodyContains(self::getMailerMessage() ?? self::fail('No email sent'), 'Application context Development');
 
         // still Development: already mailed
         $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Development']);

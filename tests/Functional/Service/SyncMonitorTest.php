@@ -105,8 +105,8 @@ class SyncMonitorTest extends KernelTestCase
         $monitor->recordFailure('app:sync-endoflife-releases', 'Could not resolve host: endoflife.date');
         $this->runCheck();
         self::assertEmailCount(1);
-        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Sync app:sync-endoflife-releases');
-        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Could not resolve host: endoflife.date');
+        self::assertEmailHtmlBodyContains(self::getMailerMessage() ?? self::fail('No email sent'), 'Sync app:sync-endoflife-releases');
+        self::assertEmailHtmlBodyContains(self::getMailerMessage() ?? self::fail('No email sent'), 'Could not resolve host: endoflife.date');
 
         // still overdue an hour later, already notified
         $clock->modify('+1 hour');
@@ -123,7 +123,7 @@ class SyncMonitorTest extends KernelTestCase
 
     private function runCheck(): void
     {
-        new CommandTester(new Application(self::$kernel)->find('app:check-syncs'))->execute([]);
+        new CommandTester(new Application(self::$kernel ?? self::bootKernel())->find('app:check-syncs'))->execute([]);
     }
 
     private function stateOf(SyncMonitor $monitor, string $command): ?bool

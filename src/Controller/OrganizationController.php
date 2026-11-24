@@ -33,7 +33,7 @@ class OrganizationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $data = $form->getData() ?? throw new \LogicException('A submitted form without data_class has array data.');
 
             $organization = new Organization($data['name'], $data['description'], $data['website']);
             $entityManager->persist($organization);

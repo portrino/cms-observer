@@ -81,7 +81,7 @@ class StatusControllerTest extends WebTestCase
         $client->submitForm('Send test mail', ['mail_test[recipient]' => 'someone@example.test']);
 
         self::assertEmailCount(1);
-        self::assertEmailAddressContains(self::getMailerMessage(), 'To', 'someone@example.test');
+        self::assertEmailAddressContains(self::getMailerMessage() ?? self::fail('No email sent'), 'To', 'someone@example.test');
         self::assertResponseRedirects('/status');
         $client->followRedirect();
         self::assertSelectorTextContains('.alert-success', 'accepted the test mail to someone@example.test');

@@ -76,7 +76,7 @@ class DashboardController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $data = $form->getData() ?? throw new \LogicException('A submitted form without data_class has array data.');
 
             [$token, $tokenHash] = $tokenFactory->generate();
 

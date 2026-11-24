@@ -149,6 +149,7 @@ class Typo3ExtensionAdvisorySynchronizer
     {
         $decoded = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
 
-        return trim(preg_replace('/\s+/u', ' ', $decoded));
+        // null on invalid UTF-8: keep the text rather than lose it
+        return trim(preg_replace('/\s+/u', ' ', $decoded) ?? $decoded);
     }
 }

@@ -13,7 +13,7 @@ includes:
 	- ../vendor/tomasvotruba/type-coverage/config/extension.neon
 
 parameters:
-  level: 7
+  level: 8
 
   symfony:
     # Types $container->get(Foo::class) in KernelTestCase/WebTestCase; CI warms this cache first.

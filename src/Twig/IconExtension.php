@@ -30,6 +30,6 @@ final class IconExtension
             ['width="1em"', 'height="1em"', sprintf('<svg class="%s"', htmlspecialchars($class, ENT_QUOTES))],
             $svg,
             1,
-        );
+        ) ?? $svg;
     }
 }

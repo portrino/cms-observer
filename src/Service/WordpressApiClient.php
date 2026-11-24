@@ -186,25 +186,25 @@ class WordpressApiClient
 
         $dates = [];
         $entries = $xml->xpath('//D:response');
-        foreach (false !== $entries ? $entries : [] as $entry) {
-            $hrefNodes = $entry->xpath('D:href');
-            if ([] === $hrefNodes || false === $hrefNodes) {
+        foreach (is_array($entries) ? $entries : [] as $entry) {
+            $href = $this->firstNode($entry, 'D:href');
+            if (null === $href) {
                 continue;
             }
 
-            $segments = explode('/', trim((string) $hrefNodes[0], '/'));
+            $segments = explode('/', trim((string) $href, '/'));
             $version = end($segments);
             if ('tags' === $version) {
                 continue; // the tags/ collection itself, not a version subfolder
             }
 
-            $lastModifiedNodes = $entry->xpath('.//D:getlastmodified');
-            if ([] === $lastModifiedNodes || false === $lastModifiedNodes) {
+            $lastModified = $this->firstNode($entry, './/D:getlastmodified');
+            if (null === $lastModified) {
                 continue;
             }
 
             try {
-                $dates[$version] = new \DateTimeImmutable((string) $lastModifiedNodes[0]);
+                $dates[$version] = new \DateTimeImmutable((string) $lastModified);
             } catch (\Exception $e) {
                 $this->logger->warning('Unreadable release date of {version} at {url}, skipped: {message}', [
                     'version' => $version,
@@ -301,11 +301,18 @@ class WordpressApiClient
         return null;
     }
 
+    private function firstNode(\SimpleXMLElement $element, string $path): ?\SimpleXMLElement
+    {
+        $nodes = $element->xpath($path);
+
+        return is_array($nodes) ? ($nodes[0] ?? null) : null;
+    }
+
     private function toPlainText(string $html): string
     {
         $text = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5);
 
-        return trim(preg_replace('/\s+/', ' ', $text));
+        return trim(preg_replace('/\s+/', ' ', $text) ?? $text);
     }
 
     /**

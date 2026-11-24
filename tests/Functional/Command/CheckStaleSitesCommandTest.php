@@ -30,7 +30,7 @@ class CheckStaleSitesCommandTest extends KernelTestCase
         $this->runCheck();
 
         self::assertEmailCount(1);
-        self::assertEmailHtmlBodyContains(self::getMailerMessage(), 'Stale Site');
+        self::assertEmailHtmlBodyContains(self::getMailerMessage() ?? self::fail('No email sent'), 'Stale Site');
         self::assertSame(1, $this->stoppedReportingEvents($stale));
         self::assertSame(0, $this->stoppedReportingEvents($fresh));
         self::assertSame(0, $this->stoppedReportingEvents($never));
@@ -47,7 +47,7 @@ class CheckStaleSitesCommandTest extends KernelTestCase
 
     private function runCheck(): void
     {
-        $tester = new CommandTester(new Application(self::$kernel)->find('app:check-stale-sites'));
+        $tester = new CommandTester(new Application(self::$kernel ?? self::bootKernel())->find('app:check-stale-sites'));
         self::assertSame(Command::SUCCESS, $tester->execute([]));
     }
 

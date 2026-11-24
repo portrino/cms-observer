@@ -91,7 +91,7 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertSelectorExists('#upgrade-positions input[value="Drittanbieter-Pakete"]', 'the sum row is named in the reader\'s language');
         self::assertDoesNotMatchRegularExpression('/\bcalculation\.[a-z_.-]+/', (string) $this->client->getResponse()->getContent(), 'untranslated key on the edit page');
 
-        $version = $this->calculationOf($site)->getLatestVersion();
+        $version = $this->calculationOf($site)?->getLatestVersion();
         self::assertNotNull($version);
         $news = $version->getItems(UpgradeSection::Packages)[0];
         self::assertSame(UpgradeItemStatus::UpdateFirst, $news->status);
@@ -103,6 +103,7 @@ class UpgradeCalculationTest extends WebTestCase
         $site = $this->typo3Site();
         $this->createCalculation($site, 'JD');
         $calculation = $this->calculationOf($site);
+        self::assertNotNull($calculation);
         $first = $calculation->getLatestVersion();
 
         $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/edit');
@@ -117,7 +118,7 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertResponseRedirects();
 
         $this->entityManager->clear();
-        $calculation = $this->entityManager->find(UpgradeCalculation::class, $calculation->getId());
+        $calculation = $this->entityManager->find(UpgradeCalculation::class, $calculation->getId()) ?? self::fail('The calculation is gone.');
         self::assertCount(2, $calculation->getVersions());
 
         $this->client->request('GET', '/projects/'.$site->getId().'/calculations');
