@@ -1,9 +1,10 @@
-[![CI](https://github.com/portrino/cms-observer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/portrino/cms-observer/actions/workflows/ci.yml)
+# CMS Observer
+
+[![Latest Stable Version](https://poser.pugx.org/portrino/cms-observer/v/stable)](https://packagist.org/packages/portrino/cms-observer)
 [![Symfony 8.1](https://img.shields.io/badge/Symfony-8.1-000000.svg?logo=symfony)](https://symfony.com/releases/8.1)
 [![PHP 8.4](https://img.shields.io/badge/PHP-8.4-4f5b93.svg?logo=php)](https://www.php.net/releases/)
 [![License](https://img.shields.io/badge/License-GPL--2.0--or--later-blue.svg)](LICENSE.txt)
-
-# CMS Observer
+[![CI](https://github.com/portrino/cms-observer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/portrino/cms-observer/actions/workflows/ci.yml)
 
 Monitors the CMS installations of all your sites in one place. Each site
 pushes a short report with its CMS core, PHP and database versions and its
