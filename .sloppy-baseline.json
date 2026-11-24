@@ -1,0 +1,25 @@
+{
+    "schema": 1,
+    "tool": "sloppy",
+    "generated_at": "2026-11-24T14:47:52+00:00",
+    "score": 99,
+    "total": 2,
+    "entries": [
+        {
+            "id": "84e334f5c25a0a02",
+            "rule": "SL113",
+            "file": "src/Entity/Typo3CoreRelease.php",
+            "fingerprint": "Typo3CoreRelease::update",
+            "count": 1,
+            "message": "Typo3CoreRelease::update() takes 8 parameters, past the limit of 7."
+        },
+        {
+            "id": "9b611efaa7b969f3",
+            "rule": "SL113",
+            "file": "src/Entity/WordpressPluginVulnerability.php",
+            "fingerprint": "WordpressPluginVulnerability::update",
+            "count": 1,
+            "message": "WordpressPluginVulnerability::update() takes 11 parameters, past the limit of 7."
+        }
+    ]
+}
