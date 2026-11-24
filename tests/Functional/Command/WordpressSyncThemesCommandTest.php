@@ -16,6 +16,7 @@ use App\Service\SitePackageWordpressEvaluator;
 use App\Service\WordpressApiClient;
 use App\Service\WordpressThemeSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -50,7 +51,7 @@ class WordpressSyncThemesCommandTest extends KernelTestCase
         });
 
         $command = new WordpressSyncThemesCommand(
-            new WordpressThemeSynchronizer(new WordpressApiClient($api), $container->get(SitePackageRepository::class), $container->get(WordpressThemeInfoRepository::class), $entityManager),
+            new WordpressThemeSynchronizer(new WordpressApiClient($api, new NullLogger()), $container->get(SitePackageRepository::class), $container->get(WordpressThemeInfoRepository::class), $entityManager),
             $container->get(SitePackageWordpressEvaluator::class),
             $container->get(SitePackageRepository::class),
             $entityManager,

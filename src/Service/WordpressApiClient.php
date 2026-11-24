@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -41,6 +42,7 @@ class WordpressApiClient
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -168,8 +170,15 @@ class WordpressApiClient
         }
 
         try {
-            $xml = new \SimpleXMLElement($response->getContent());
-        } catch (\Throwable) {
+            // no libxml warnings on top of the exception, which is logged below
+            $xml = new \SimpleXMLElement($response->getContent(), \LIBXML_NOERROR | \LIBXML_NOWARNING);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Unreadable SVN tag listing at {url}, no release dates taken from it: {message}', [
+                'url' => $tagsUrl,
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+
             return [];
         }
 
@@ -196,8 +205,13 @@ class WordpressApiClient
 
             try {
                 $dates[$version] = new \DateTimeImmutable((string) $lastModifiedNodes[0]);
-            } catch (\Exception) {
-                continue;
+            } catch (\Exception $e) {
+                $this->logger->warning('Unreadable release date of {version} at {url}, skipped: {message}', [
+                    'version' => $version,
+                    'url' => $tagsUrl,
+                    'message' => $e->getMessage(),
+                    'exception' => $e,
+                ]);
             }
         }
 

@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Service;
+
+use App\Service\WordpressApiClient;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\ErrorHandler\BufferingLogger;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+
+class WordpressApiClientTest extends TestCase
+{
+    public function testReadsTheReleaseDatePerTagAndLogsAnUnreadableOne(): void
+    {
+        $logger = new BufferingLogger();
+        $client = new WordpressApiClient(new MockHttpClient(new MockResponse(<<<'XML'
+            <?xml version="1.0" encoding="utf-8"?>
+            <D:multistatus xmlns:D="DAV:">
+              <D:response><D:href>/akismet/tags/</D:href><D:propstat><D:prop><D:getlastmodified>Mon, 01 Jan 2024 10:00:00 GMT</D:getlastmodified></D:prop></D:propstat></D:response>
+              <D:response><D:href>/akismet/tags/5.3/</D:href><D:propstat><D:prop><D:getlastmodified>Tue, 02 Jan 2024 10:00:00 GMT</D:getlastmodified></D:prop></D:propstat></D:response>
+              <D:response><D:href>/akismet/tags/5.4/</D:href><D:propstat><D:prop><D:getlastmodified>not a date</D:getlastmodified></D:prop></D:propstat></D:response>
+            </D:multistatus>
+            XML)), $logger);
+
+        $dates = $client->getTagDates('akismet');
+
+        self::assertSame(['5.3'], array_keys($dates));
+        self::assertSame('2024-01-02', $dates['5.3']->format('Y-m-d'));
+        $logs = $logger->cleanLogs();
+        self::assertCount(1, $logs);
+        self::assertSame('warning', $logs[0][0]);
+        self::assertSame('5.4', $logs[0][2]['version']);
+    }
+
+    public function testLogsAnUnreadableTagListing(): void
+    {
+        $logger = new BufferingLogger();
+        $client = new WordpressApiClient(new MockHttpClient(new MockResponse('<html>maintenance</html')), $logger);
+
+        self::assertSame([], $client->getCoreTagDates());
+        $logs = $logger->cleanLogs();
+        self::assertCount(1, $logs);
+        self::assertSame('warning', $logs[0][0]);
+        self::assertSame('https://core.svn.wordpress.org/tags/', $logs[0][2]['url']);
+    }
+}
