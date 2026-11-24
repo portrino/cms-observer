@@ -11,6 +11,7 @@ includes:
 	- ../vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
 	- ../vendor/tomasvotruba/cognitive-complexity/config/extension.neon
 	- ../vendor/tomasvotruba/type-coverage/config/extension.neon
+	- ../vendor/heyosseus/phpstan-sloppy/extension.neon
 
 parameters:
   level: 8
@@ -28,6 +29,11 @@ parameters:
 
   excludePaths:
     - ../*/node_modules/*
+
+  sloppy:
+    # Sloppy's own default, set here to keep the gate visible; accepted
+    # findings live in .sloppy-baseline.json
+    failOn: high
 
   type_coverage:
     return: 100

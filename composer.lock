@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4ab880005c39308e07966649cfe6022",
+    "content-hash": "5bec9291d0bdaca0bef813a039e065a8",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10474,6 +10474,85 @@
             ],
             "time": "2026-11-17T18:09:13+00:00",
             "published-time": "2026-11-17T18:09:33+00:00"
+        },
+        {
+            "name": "heyosseus/phpstan-sloppy",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Heyosseus/phpstan-sloppy.git",
+                "reference": "8ee82c9dd2861b0939b8086bd7bae4941367646a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Heyosseus/phpstan-sloppy/zipball/8ee82c9dd2861b0939b8086bd7bae4941367646a",
+                "reference": "8ee82c9dd2861b0939b8086bd7bae4941367646a",
+                "shasum": ""
+            },
+            "require": {
+                "heyosseus/sloppy": "^1.3",
+                "php": "^8.3",
+                "phpstan/phpstan": "^2.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.18",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^11.5 || ^12.0"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Heyosseus\\PhpstanSloppy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "heyosseus",
+                    "email": "ratiruxadzee@gmail.com"
+                }
+            ],
+            "description": "Sloppy's rules inside your PHPStan run: swallowed exceptions, god methods, N+1 queries, placeholder bodies, weakened tests and the rest of the debt AI coding agents leave in PHP, reported as PHPStan errors. Diff mode, editor mode, a quality gate and a result cache included.",
+            "homepage": "https://github.com/heyosseus/phpstan-sloppy",
+            "keywords": [
+                "PHPStan",
+                "ai",
+                "ai-agents",
+                "ai-code-review",
+                "claude-code",
+                "code-quality",
+                "code-review",
+                "eloquent",
+                "larastan",
+                "laravel",
+                "n-plus-one",
+                "phpstan-extension",
+                "phpstan-rules",
+                "pull-request",
+                "quality-gate",
+                "sloppy",
+                "static-analysis",
+                "technical-debt"
+            ],
+            "support": {
+                "docs": "https://github.com/heyosseus/sloppy#readme",
+                "issues": "https://github.com/heyosseus/phpstan-sloppy/issues",
+                "source": "https://github.com/heyosseus/phpstan-sloppy"
+            },
+            "time": "2026-09-30T18:43:34+00:00",
+            "published-time": "2026-09-30T18:48:52+00:00"
         },
         {
             "name": "heyosseus/sloppy",

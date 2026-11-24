@@ -167,6 +167,12 @@ yours to fix in passing:
 ddev php ./bin/sloppy diff main --fail-on=high
 ```
 
+PHPStan runs the same rules through `heyosseus/phpstan-sloppy` (gate
+`failOn: high` in `build/phpstan.neon`), so `composer ci:static` fails on
+them too. Accepted findings live in `.sloppy-baseline.json`; a catch block
+that is meant to swallow gets a comment saying why, which Sloppy lowers to
+low severity.
+
 The rules and their rationale: `ddev php ./bin/sloppy rules --stdout --format=markdown`
 (or the `sloppy` MCP server's `sloppy_rules` / `sloppy_diff`). Never make
 a failing test pass by weakening it (skipping it, deleting assertions,
