@@ -155,6 +155,23 @@ Symfony's coding standard, the `@Symfony` php-cs-fixer ruleset (a PSR-12-derived
 superset). Run `vendor/bin/php-cs-fixer fix` if `friendsofphp/php-cs-fixer` is
 installed; it isn't part of the skeleton by default.
 
+## Code quality: Sloppy
+
+Sloppy (`heyosseus/sloppy`) checks `src/` for AI-slop patterns: god
+methods/classes, copy-paste drift, swallowed exceptions, placeholders,
+needless abstractions. Before calling a task finished, run it over your
+own change and fix what it reports as new; inherited findings aren't
+yours to fix in passing:
+
+```bash
+ddev php ./bin/sloppy diff main --fail-on=high
+```
+
+The rules and their rationale: `ddev php ./bin/sloppy rules --stdout --format=markdown`
+(or the `sloppy` MCP server's `sloppy_rules` / `sloppy_diff`). Never make
+a failing test pass by weakening it (skipping it, deleting assertions,
+`assertTrue(true)`); fix the code, or fix the assertion and say why.
+
 ## Discover, don't guess
 
 Framework APIs change between versions and your training data may be stale. Look

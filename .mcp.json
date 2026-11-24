@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sloppy": {
+      "command": "ddev",
+      "args": ["php", "./bin/sloppy-mcp"]
+    }
+  }
+}

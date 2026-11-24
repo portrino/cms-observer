@@ -43,5 +43,28 @@
             },
             "autoUpdate": true
         }
+    },
+    "hooks": {
+        "PostToolUse": [
+            {
+                "matcher": "Edit|Write|MultiEdit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && ddev php ./bin/sloppy hook post-edit"
+                    }
+                ]
+            }
+        ],
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && ddev php ./bin/sloppy hook stop"
+                    }
+                ]
+            }
+        ]
     }
 }
