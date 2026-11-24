@@ -39,7 +39,7 @@ final readonly class UpgradeCalculationRefresher
         $items = [];
         $changes = [];
         foreach ($base->getItems() as $item) {
-            if (null === $item->package || null !== $item->sumOf) {
+            if (!self::isPackageRow($item)) {
                 $items[] = $item;
                 continue;
             }
@@ -51,20 +51,11 @@ final readonly class UpgradeCalculationRefresher
                 continue;
             }
 
-            $status = in_array($item->status, self::DECISIONS, true) ? $item->status : $now->status;
-            $items[] = new UpgradeItem(
-                $now->section, $item->label, $item->package, $item->packageType, $now->installedVersion, $now->targetVersion, $status,
-                $item->minHours, $item->maxHours, $item->notes, $item->assignee, $item->noteLevel,
-            );
-
-            $changed = array_filter([
-                $item->installedVersion !== $now->installedVersion ? $this->translator->trans('calculation.change.installed', ['old' => $item->installedVersion ?? '–', 'new' => $now->installedVersion ?? '–']) : null,
-                $item->targetVersion !== $now->targetVersion ? $this->translator->trans('calculation.change.target', ['old' => $item->targetVersion ?? '–', 'new' => $now->targetVersion ?? '–']) : null,
-                $item->status !== $status ? $this->translator->trans('calculation.change.status', ['old' => $item->status?->trans($this->translator) ?? '–', 'new' => $status?->trans($this->translator) ?? '–']) : null,
-                $item->section !== $now->section ? $this->translator->trans('calculation.change.moved', ['section' => $now->section->trans($this->translator)]) : null,
-            ], static fn (?string $change): bool => null !== $change);
-            if ([] !== $changed) {
-                $changes[] = $this->translator->trans('calculation.change.row', ['label' => $item->label, 'changes' => implode(', ', $changed)]);
+            $refreshed = $this->refreshed($item, $now);
+            $items[] = $refreshed;
+            $change = $this->rowChange($item, $refreshed);
+            if (null !== $change) {
+                $changes[] = $change;
             }
         }
 
@@ -74,6 +65,38 @@ final readonly class UpgradeCalculationRefresher
         }
 
         return ['items' => UpgradeItem::withSectionSums($items), 'changes' => $changes];
+    }
+
+    /**
+     * The fresh versions, to-do and section with what people entered on the old row.
+     */
+    private function refreshed(UpgradeItem $item, UpgradeItem $now): UpgradeItem
+    {
+        return new UpgradeItem(
+            $now->section, $item->label, $item->package, $item->packageType, $now->installedVersion, $now->targetVersion,
+            in_array($item->status, self::DECISIONS, true) ? $item->status : $now->status,
+            $item->minHours, $item->maxHours, $item->notes, $item->assignee, $item->noteLevel,
+        );
+    }
+
+    private function rowChange(UpgradeItem $old, UpgradeItem $new): ?string
+    {
+        $changed = array_filter([
+            $old->installedVersion !== $new->installedVersion ? $this->translator->trans('calculation.change.installed', ['old' => $old->installedVersion ?? '–', 'new' => $new->installedVersion ?? '–']) : null,
+            $old->targetVersion !== $new->targetVersion ? $this->translator->trans('calculation.change.target', ['old' => $old->targetVersion ?? '–', 'new' => $new->targetVersion ?? '–']) : null,
+            $old->status !== $new->status ? $this->translator->trans('calculation.change.status', ['old' => $old->status?->trans($this->translator) ?? '–', 'new' => $new->status?->trans($this->translator) ?? '–']) : null,
+            $old->section !== $new->section ? $this->translator->trans('calculation.change.moved', ['section' => $new->section->trans($this->translator)]) : null,
+        ], static fn (?string $change): bool => null !== $change);
+
+        return [] === $changed ? null : $this->translator->trans('calculation.change.row', ['label' => $old->label, 'changes' => implode(', ', $changed)]);
+    }
+
+    /**
+     * Rows without a package, and section sums, are kept as they are.
+     */
+    private static function isPackageRow(UpgradeItem $item): bool
+    {
+        return null !== $item->package && null === $item->sumOf;
     }
 
     private static function key(UpgradeItem $item): string
