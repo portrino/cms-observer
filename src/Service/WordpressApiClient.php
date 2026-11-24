@@ -80,6 +80,7 @@ class WordpressApiClient
         try {
             $data = $response->toArray();
         } catch (ClientExceptionInterface) {
+            // any other 4xx counts as unknown slug: the existing data stays and the next sync tries again
             return null;
         }
 
@@ -116,6 +117,7 @@ class WordpressApiClient
         try {
             $data = $response->toArray();
         } catch (ClientExceptionInterface) {
+            // any other 4xx counts as unknown slug: the existing data stays and the next sync tries again
             return null;
         }
 

@@ -69,6 +69,7 @@ class MailTester
         try {
             $dsn = Dsn::fromString($this->mailerDsn);
         } catch (\InvalidArgumentException) {
+            // only a label for display; sending through the broken DSN reports the actual error
             return 'invalid MAILER_DSN';
         }
 
