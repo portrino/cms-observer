@@ -56,9 +56,15 @@ test('the brand opens the system information, also when collapsed', async ({ pag
 
 test('the filters stay in view while scrolling', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 400 });
-    await page.goto('/');
+    // the longest list in the dev DB, so there is something to scroll
+    await page.goto('/packages');
+    const filters = page.locator('.page-filters');
+    const lineOpacity = () => filters.evaluate((el) => getComputedStyle(el, '::after').opacity);
+    // the line below them only shows once they stick
+    expect(await lineOpacity()).toBe('0');
     await page.mouse.wheel(0, 2000);
 
+    await expect.poll(lineOpacity).toBe('1');
     await expect(page.getByRole('searchbox', { name: 'Search' })).toBeInViewport();
-    await expect(page.getByRole('link', { name: 'Add Project' })).toBeInViewport();
+    await expect(page.getByRole('heading', { name: 'Packages across all projects' })).toBeInViewport();
 });
