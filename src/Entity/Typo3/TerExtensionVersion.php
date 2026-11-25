@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Typo3;
 
-use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Repository\Typo3\TerExtensionVersionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,9 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  * Backs both the insecure/outdated cross-reference (SitePackageTerEvaluator)
  * and the "newer versions" table shown on the site detail page.
  */
-#[ORM\Entity(repositoryClass: Typo3TerExtensionVersionRepository::class)]
+#[ORM\Entity(repositoryClass: TerExtensionVersionRepository::class)]
+#[ORM\Table(name: 'typo3_ter_extension_version')]
 #[ORM\UniqueConstraint(name: 'ter_extension_version', columns: ['extension_key', 'version'])]
-class Typo3TerExtensionVersion
+class TerExtensionVersion
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

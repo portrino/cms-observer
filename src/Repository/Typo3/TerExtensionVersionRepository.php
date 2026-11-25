@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Typo3;
 
-use App\Entity\Typo3TerExtensionVersion;
+use App\Entity\Typo3\TerExtensionVersion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Typo3TerExtensionVersion>
+ * @extends ServiceEntityRepository<TerExtensionVersion>
  */
-class Typo3TerExtensionVersionRepository extends ServiceEntityRepository
+class TerExtensionVersionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Typo3TerExtensionVersion::class);
+        parent::__construct($registry, TerExtensionVersion::class);
     }
 
-    public function findOneByExtensionKeyAndVersion(string $extensionKey, string $version): ?Typo3TerExtensionVersion
+    public function findOneByExtensionKeyAndVersion(string $extensionKey, string $version): ?TerExtensionVersion
     {
         return $this->findOneBy(['extensionKey' => $extensionKey, 'version' => $version]);
     }
@@ -30,16 +30,16 @@ class Typo3TerExtensionVersionRepository extends ServiceEntityRepository
      * otherwise). Filtered/sorted in PHP via version_compare() since version
      * strings don't sort correctly as plain strings.
      *
-     * @return Typo3TerExtensionVersion[]
+     * @return TerExtensionVersion[]
      */
     public function findNewerThan(string $extensionKey, string $version): array
     {
         $newer = array_filter(
             $this->findBy(['extensionKey' => $extensionKey]),
-            static fn (Typo3TerExtensionVersion $v): bool => version_compare($v->getVersion(), $version, '>'),
+            static fn (TerExtensionVersion $v): bool => version_compare($v->getVersion(), $version, '>'),
         );
 
-        usort($newer, static fn (Typo3TerExtensionVersion $a, Typo3TerExtensionVersion $b): int => version_compare($b->getVersion(), $a->getVersion()));
+        usort($newer, static fn (TerExtensionVersion $a, TerExtensionVersion $b): int => version_compare($b->getVersion(), $a->getVersion()));
 
         return $newer;
     }
@@ -50,17 +50,17 @@ class Typo3TerExtensionVersionRepository extends ServiceEntityRepository
      * only supports a newer core major than the site is running isn't
      * something the site could actually install, so it's excluded here.
      *
-     * @return Typo3TerExtensionVersion[]
+     * @return TerExtensionVersion[]
      */
     public function findNewerCompatibleWith(string $extensionKey, string $version, int $coreMajor): array
     {
         $newer = array_filter(
             $this->findBy(['extensionKey' => $extensionKey]),
-            static fn (Typo3TerExtensionVersion $v): bool => version_compare($v->getVersion(), $version, '>')
+            static fn (TerExtensionVersion $v): bool => version_compare($v->getVersion(), $version, '>')
                 && in_array($coreMajor, $v->getTypo3MajorVersions(), true),
         );
 
-        usort($newer, static fn (Typo3TerExtensionVersion $a, Typo3TerExtensionVersion $b): int => version_compare($b->getVersion(), $a->getVersion()));
+        usort($newer, static fn (TerExtensionVersion $a, TerExtensionVersion $b): int => version_compare($b->getVersion(), $a->getVersion()));
 
         return $newer;
     }

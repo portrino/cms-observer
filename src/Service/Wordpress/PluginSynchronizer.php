@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Service\Wordpress;
 
 use App\Entity\PackageType;
-use App\Entity\WordpressPluginInfo;
-use App\Entity\WordpressPluginVersion;
+use App\Entity\Wordpress\PluginInfo;
+use App\Entity\Wordpress\PluginVersion;
 use App\Repository\SitePackageRepository;
-use App\Repository\WordpressPluginInfoRepository;
-use App\Repository\WordpressPluginVersionRepository;
+use App\Repository\Wordpress\PluginInfoRepository;
+use App\Repository\Wordpress\PluginVersionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -20,7 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
  *
  * Unlike TER, WordPress.org's plugin info API only exposes the latest
  * published version's metadata, so per-version release dates and
- * compatibility (WordpressPluginVersion) are instead scraped from the
+ * compatibility (Wordpress\PluginVersion) are instead scraped from the
  * plugin's SVN mirror: one PROPFIND per slug for every tag's date, then one
  * request per newer version to read its bootstrap file's "Requires at
  * least" header. Only versions newer than the oldest version any monitored
@@ -39,8 +39,8 @@ class PluginSynchronizer
     public function __construct(
         private readonly ApiClient $apiClient,
         private readonly SitePackageRepository $sitePackageRepository,
-        private readonly WordpressPluginInfoRepository $pluginInfoRepository,
-        private readonly WordpressPluginVersionRepository $versionRepository,
+        private readonly PluginInfoRepository $pluginInfoRepository,
+        private readonly PluginVersionRepository $versionRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -69,7 +69,7 @@ class PluginSynchronizer
             if (null !== $existingInfo) {
                 $existingInfo->update($info['version'], $info['requires'], $info['tested'], $info['description'], $bootstrapFilename);
             } else {
-                $this->entityManager->persist(new WordpressPluginInfo(
+                $this->entityManager->persist(new PluginInfo(
                     $slug,
                     $info['version'],
                     $info['requires'],
@@ -130,7 +130,7 @@ class PluginSynchronizer
                 ? $this->apiClient->getRequiresAtLeast($slug, $bootstrapFilename, $version)
                 : null;
 
-            $this->entityManager->persist(new WordpressPluginVersion($slug, $version, $tagDates[$version], $requiresAtLeast));
+            $this->entityManager->persist(new PluginVersion($slug, $version, $tagDates[$version], $requiresAtLeast));
             ++$fetched;
         }
     }

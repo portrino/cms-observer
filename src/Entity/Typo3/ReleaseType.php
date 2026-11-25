@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Typo3;
 
-enum Typo3ReleaseType: string
+enum ReleaseType: string
 {
     case Regular = 'regular';
     case Release = 'release';

@@ -8,13 +8,13 @@ use App\Dto\UpgradeItem;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\Typo3CoreRelease;
-use App\Entity\Typo3ReleaseType;
-use App\Entity\Typo3TerExtensionVersion;
+use App\Entity\Typo3\CoreRelease as Typo3CoreRelease;
+use App\Entity\Typo3\ReleaseType;
+use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
-use App\Entity\WordpressCoreRelease;
+use App\Entity\Wordpress\CoreRelease as WordpressCoreRelease;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -405,7 +405,7 @@ class UpgradeCalculationTest extends WebTestCase
         $this->entityManager->persist(new Typo3CoreRelease(
             version: '13.4.20',
             releaseDate: new \DateTimeImmutable('2025-11-11'),
-            type: Typo3ReleaseType::Regular,
+            type: ReleaseType::Regular,
             latestVersion: '13.4.20',
             isActive: true,
             insecure: false,
@@ -416,7 +416,7 @@ class UpgradeCalculationTest extends WebTestCase
         $this->entityManager->persist(new Typo3CoreRelease(
             version: '13.0.0',
             releaseDate: new \DateTimeImmutable('2024-01-30'),
-            type: Typo3ReleaseType::Regular,
+            type: ReleaseType::Regular,
             latestVersion: '13.4.20',
             isActive: true,
             insecure: false,
@@ -427,7 +427,7 @@ class UpgradeCalculationTest extends WebTestCase
         $this->entityManager->persist(new Typo3CoreRelease(
             version: '14.0.0',
             releaseDate: new \DateTimeImmutable('2025-11-25'),
-            type: Typo3ReleaseType::Regular,
+            type: ReleaseType::Regular,
             latestVersion: '14.0.0',
             isActive: true,
             insecure: false,
@@ -435,7 +435,7 @@ class UpgradeCalculationTest extends WebTestCase
             eltsUntil: new \DateTimeImmutable('2032-06-30'),
         ));
         foreach (['12.3.1' => '12, 13', '14.0.0' => '13, 14'] as $version => $majors) {
-            $this->entityManager->persist(new Typo3TerExtensionVersion(
+            $this->entityManager->persist(new TerExtensionVersion(
                 extensionKey: 'news',
                 version: $version,
                 title: 'News',

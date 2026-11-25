@@ -8,15 +8,15 @@ use App\Dto\UpgradeItem;
 use App\Dto\UpgradeSupportPhase;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\Typo3CoreRelease;
-use App\Entity\Typo3TerExtensionVersion;
+use App\Entity\Typo3\CoreRelease;
+use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
 use App\Repository\SitePackageRepository;
-use App\Repository\Typo3CoreReleaseRepository;
-use App\Repository\Typo3TerExtensionMetaRepository;
-use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Repository\Typo3\CoreReleaseRepository;
+use App\Repository\Typo3\TerExtensionMetaRepository;
+use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
 use App\Service\UpgradeTargets;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
@@ -29,9 +29,9 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
 {
     public function __construct(
         private SitePackageRepository $packageRepository,
-        private Typo3CoreReleaseRepository $coreReleaseRepository,
-        private Typo3TerExtensionVersionRepository $terVersionRepository,
-        private Typo3TerExtensionMetaRepository $terMetaRepository,
+        private CoreReleaseRepository $coreReleaseRepository,
+        private TerExtensionVersionRepository $terVersionRepository,
+        private TerExtensionMetaRepository $terMetaRepository,
     ) {
     }
 
@@ -39,7 +39,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     {
         return UpgradeTargets::above(
             $site->getCurrentCoreVersion(),
-            array_map(static fn (Typo3CoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
+            array_map(static fn (CoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
         );
     }
 
@@ -103,7 +103,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     /**
      * The to-do for an installed TER release, and the version to update to.
      *
-     * @param list<Typo3TerExtensionVersion> $terVersions
+     * @param list<TerExtensionVersion> $terVersions
      *
      * @return array{UpgradeItemStatus, ?string}
      */
@@ -116,7 +116,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
 
         // newest first, so the last one is the lowest version to update to
         $forTarget = $this->terVersionRepository->findNewerCompatibleWith($key, $installed, $targetMajor);
-        $forBoth = array_filter($forTarget, static fn (Typo3TerExtensionVersion $v): bool => in_array($currentMajor, $v->getTypo3MajorVersions(), true));
+        $forBoth = array_filter($forTarget, static fn (TerExtensionVersion $v): bool => in_array($currentMajor, $v->getTypo3MajorVersions(), true));
         if ([] !== $forBoth) {
             return [UpgradeItemStatus::UpdateFirst, end($forBoth)->getVersion()];
         }
@@ -124,18 +124,18 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
             return [UpgradeItemStatus::Update, end($forTarget)->getVersion()];
         }
 
-        $newest = array_reduce($terVersions, static fn (?Typo3TerExtensionVersion $carry, Typo3TerExtensionVersion $v): Typo3TerExtensionVersion => null === $carry || version_compare($v->getVersion(), $carry->getVersion(), '>') ? $v : $carry);
+        $newest = array_reduce($terVersions, static fn (?TerExtensionVersion $carry, TerExtensionVersion $v): TerExtensionVersion => null === $carry || version_compare($v->getVersion(), $carry->getVersion(), '>') ? $v : $carry);
 
         // without TYPO3 versions on the newest release there's nothing to judge by
         return [[] === $newest?->getTypo3MajorVersions() ? UpgradeItemStatus::Manual : UpgradeItemStatus::Blocker, null];
     }
 
     /**
-     * @param non-empty-list<Typo3CoreRelease> $releases
+     * @param non-empty-list<CoreRelease> $releases
      */
     private function supportPhase(int $major, array $releases): ?UpgradeSupportPhase
     {
-        usort($releases, static fn (Typo3CoreRelease $a, Typo3CoreRelease $b): int => $a->getReleaseDate() <=> $b->getReleaseDate());
+        usort($releases, static fn (CoreRelease $a, CoreRelease $b): int => $a->getReleaseDate() <=> $b->getReleaseDate());
         $any = $releases[0];
         $maintainedUntil = $any->getMaintainedUntil();
         if (null === $maintainedUntil) {
@@ -154,8 +154,8 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
             null !== $lts && $prioritySince < $lts ? $lts : $prioritySince,
             // sprint releases: the x.y.0 versions before the LTS one
             array_values(array_map(
-                static fn (Typo3CoreRelease $r): \DateTimeImmutable => $r->getReleaseDate(),
-                array_filter($releases, static fn (Typo3CoreRelease $r): bool => str_ends_with($r->getVersion(), '.0') && (null === $lts || $r->getReleaseDate() < $lts)),
+                static fn (CoreRelease $r): \DateTimeImmutable => $r->getReleaseDate(),
+                array_filter($releases, static fn (CoreRelease $r): bool => str_ends_with($r->getVersion(), '.0') && (null === $lts || $r->getReleaseDate() < $lts)),
             )),
         );
     }

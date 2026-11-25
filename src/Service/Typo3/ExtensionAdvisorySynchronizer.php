@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Typo3;
 
-use App\Entity\Typo3ExtensionAdvisory;
-use App\Repository\Typo3ExtensionAdvisoryRepository;
+use App\Entity\Typo3\ExtensionAdvisory;
+use App\Repository\Typo3\ExtensionAdvisoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -30,7 +30,7 @@ class ExtensionAdvisorySynchronizer
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly EntityManagerInterface $entityManager,
-        private readonly Typo3ExtensionAdvisoryRepository $repository,
+        private readonly ExtensionAdvisoryRepository $repository,
     ) {
     }
 
@@ -51,7 +51,7 @@ class ExtensionAdvisorySynchronizer
                 continue;
             }
 
-            $this->entityManager->persist(new Typo3ExtensionAdvisory(
+            $this->entityManager->persist(new ExtensionAdvisory(
                 advisoryId: $item['advisoryId'],
                 extensionKey: $details['extensionKey'],
                 title: $item['title'],

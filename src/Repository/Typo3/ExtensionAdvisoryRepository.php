@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Typo3;
 
-use App\Entity\Typo3ExtensionAdvisory;
+use App\Entity\Typo3\ExtensionAdvisory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Typo3ExtensionAdvisory>
+ * @extends ServiceEntityRepository<ExtensionAdvisory>
  */
-class Typo3ExtensionAdvisoryRepository extends ServiceEntityRepository
+class ExtensionAdvisoryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Typo3ExtensionAdvisory::class);
+        parent::__construct($registry, ExtensionAdvisory::class);
     }
 
-    public function findOneByAdvisoryId(string $advisoryId): ?Typo3ExtensionAdvisory
+    public function findOneByAdvisoryId(string $advisoryId): ?ExtensionAdvisory
     {
         return $this->findOneBy(['advisoryId' => $advisoryId]);
     }
 
     /**
-     * @return Typo3ExtensionAdvisory[]
+     * @return ExtensionAdvisory[]
      */
     public function findByExtensionKey(string $extensionKey): array
     {

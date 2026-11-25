@@ -1,25 +1,33 @@
 {
     "schema": 1,
     "tool": "sloppy",
-    "generated_at": "2026-11-24T14:47:52+00:00",
-    "score": 99,
-    "total": 2,
+    "generated_at": "2026-11-25T22:46:10+00:00",
+    "score": 98,
+    "total": 3,
     "entries": [
         {
-            "id": "84e334f5c25a0a02",
-            "rule": "SL113",
-            "file": "src/Entity/Typo3CoreRelease.php",
-            "fingerprint": "Typo3CoreRelease::update",
+            "id": "a3bf80aa374d61cf",
+            "rule": "SL111",
+            "file": "src/Repository/Wordpress/CoreReleaseRepository.php",
+            "fingerprint": "CoreReleaseRepository::findLatestInNewerMajor~CoreReleaseRepository::findLatestInNewerMajor",
             "count": 1,
-            "message": "Typo3CoreRelease::update() takes 8 parameters, past the limit of 7."
+            "message": "CoreReleaseRepository::findLatestInNewerMajor() differs from CoreReleaseRepository::findLatestInNewerMajor() at src/Repository/Typo3/CoreReleaseRepository.php:62 by 22 token(s) out of 324 -- 6.8% of the body."
         },
         {
-            "id": "9b611efaa7b969f3",
+            "id": "875f0152fb562543",
             "rule": "SL113",
-            "file": "src/Entity/WordpressPluginVulnerability.php",
-            "fingerprint": "WordpressPluginVulnerability::update",
+            "file": "src/Entity/Typo3/CoreRelease.php",
+            "fingerprint": "CoreRelease::update",
             "count": 1,
-            "message": "WordpressPluginVulnerability::update() takes 11 parameters, past the limit of 7."
+            "message": "CoreRelease::update() takes 8 parameters, past the limit of 7."
+        },
+        {
+            "id": "488526af6c4eecf2",
+            "rule": "SL113",
+            "file": "src/Entity/Wordpress/PluginVulnerability.php",
+            "fingerprint": "PluginVulnerability::update",
+            "count": 1,
+            "message": "PluginVulnerability::update() takes 11 parameters, past the limit of 7."
         }
     ]
 }

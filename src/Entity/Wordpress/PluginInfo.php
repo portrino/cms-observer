@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Wordpress;
 
-use App\Repository\WordpressPluginInfoRepository;
+use App\Repository\Wordpress\PluginInfoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,12 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  * api.wordpress.org/plugins/info/1.2/ (Wordpress\PluginSynchronizer). One row
  * per slug - unlike TER, this API only exposes rich detail for the latest
  * published version (no per-version compatibility/security history), so
- * there's no per-version equivalent of Typo3TerExtensionVersion here. It also
+ * there's no per-version equivalent of Typo3\TerExtensionVersion here. It also
  * has no security/insecure signal at all - see Wordpress\SitePackageEvaluator
  * for why that stays unknown for WordPress plugins.
  */
-#[ORM\Entity(repositoryClass: WordpressPluginInfoRepository::class)]
-class WordpressPluginInfo
+#[ORM\Entity(repositoryClass: PluginInfoRepository::class)]
+#[ORM\Table(name: 'wordpress_plugin_info')]
+class PluginInfo
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

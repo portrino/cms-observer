@@ -8,7 +8,7 @@ use App\Entity\CmsType;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
-use App\Entity\WordpressPluginVulnerability;
+use App\Entity\Wordpress\PluginVulnerability;
 use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
@@ -98,7 +98,7 @@ class SiteReportControllerTest extends WebTestCase
         $this->createUser('ingest-notify@example.test', 'Ingest Notify', 'password');
         [$token, $site] = $this->createSite(CmsType::WordPress);
 
-        $vulnerability = new WordpressPluginVulnerability('848ccbdc-c6f1-480f-a272-cd459e706713', 'contact-form-7');
+        $vulnerability = new PluginVulnerability('848ccbdc-c6f1-480f-a272-cd459e706713', 'contact-form-7');
         $vulnerability->update(
             title: 'Contact Form 7 <= 6.0.5 - Order Replay Vulnerability',
             affectedVersions: [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '6.0.5', 'to_inclusive' => true]],
@@ -242,7 +242,7 @@ class SiteReportControllerTest extends WebTestCase
         [$token, $site] = $this->createSite(CmsType::WordPress);
 
         // only the theme "astra" is vulnerable, not the plugin of the same slug
-        $vulnerability = new WordpressPluginVulnerability('5c3b5e2a-0000-4000-8000-000000000001', 'astra', PackageType::WordpressTheme);
+        $vulnerability = new PluginVulnerability('5c3b5e2a-0000-4000-8000-000000000001', 'astra', PackageType::WordpressTheme);
         $vulnerability->update(
             title: 'Astra <= 4.0.0 - XSS',
             affectedVersions: [['from_version' => '*', 'from_inclusive' => true, 'to_version' => '4.0.0', 'to_inclusive' => true]],

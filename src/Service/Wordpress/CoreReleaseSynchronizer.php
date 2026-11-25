@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Wordpress;
 
-use App\Entity\WordpressCoreRelease;
-use App\Repository\WordpressCoreReleaseRepository;
+use App\Entity\Wordpress\CoreRelease;
+use App\Repository\Wordpress\CoreReleaseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -22,7 +22,7 @@ class CoreReleaseSynchronizer
 {
     public function __construct(
         private readonly ApiClient $apiClient,
-        private readonly WordpressCoreReleaseRepository $repository,
+        private readonly CoreReleaseRepository $repository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -47,7 +47,7 @@ class CoreReleaseSynchronizer
             if (null !== $existing) {
                 $existing->update($latestVersion, $insecure, $releaseDate);
             } else {
-                $this->entityManager->persist(new WordpressCoreRelease($version, $latestVersion, $insecure, $releaseDate));
+                $this->entityManager->persist(new CoreRelease($version, $latestVersion, $insecure, $releaseDate));
             }
         }
 

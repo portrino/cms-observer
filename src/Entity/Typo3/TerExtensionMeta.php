@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Typo3;
 
-use App\Repository\Typo3TerExtensionMetaRepository;
+use App\Repository\Typo3\TerExtensionMetaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,10 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  * links) - fetched via TerExtensionApiClient::getExtensionMeta() alongside
  * the version history in Typo3\ExtensionVersionSynchronizer, since it lives
  * on the same per-key TER endpoint. One row per extension key, unlike
- * Typo3TerExtensionVersion which has one row per (key, version).
+ * Typo3\TerExtensionVersion which has one row per (key, version).
  */
-#[ORM\Entity(repositoryClass: Typo3TerExtensionMetaRepository::class)]
-class Typo3TerExtensionMeta
+#[ORM\Entity(repositoryClass: TerExtensionMetaRepository::class)]
+#[ORM\Table(name: 'typo3_ter_extension_meta')]
+class TerExtensionMeta
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

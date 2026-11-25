@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace App\Service\Typo3;
 
 use App\Entity\SitePackage;
-use App\Entity\Typo3ExtensionAdvisory;
-use App\Repository\Typo3ExtensionAdvisoryRepository;
+use App\Entity\Typo3\ExtensionAdvisory;
+use App\Repository\Typo3\ExtensionAdvisoryRepository;
 use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Cross-references a site's reported extension version against synced
- * Typo3ExtensionAdvisory records to find a matching known vulnerability.
+ * Typo3\ExtensionAdvisory records to find a matching known vulnerability.
  * TYPO3 extension packages only - see evaluateAll().
  */
 class SitePackageAdvisoryEvaluator
 {
     public function __construct(
-        private readonly Typo3ExtensionAdvisoryRepository $advisoryRepository,
+        private readonly ExtensionAdvisoryRepository $advisoryRepository,
         private readonly SecurityNotifier $securityNotifier,
     ) {
     }
@@ -28,7 +28,7 @@ class SitePackageAdvisoryEvaluator
         $previousAdvisory = $package->getMatchedAdvisory();
         $matched = array_find(
             $this->advisoryRepository->findByExtensionKey($package->getName()),
-            fn (Typo3ExtensionAdvisory $advisory): bool => true === AffectedVersionRangeMatcher::matches($advisory->getAffectedVersionsRaw(), $package->getVersion()),
+            fn (ExtensionAdvisory $advisory): bool => true === AffectedVersionRangeMatcher::matches($advisory->getAffectedVersionsRaw(), $package->getVersion()),
         );
 
         $package->setMatchedAdvisory($matched);
@@ -38,7 +38,7 @@ class SitePackageAdvisoryEvaluator
         }
     }
 
-    private function notify(SitePackage $package, Typo3ExtensionAdvisory $advisory): void
+    private function notify(SitePackage $package, ExtensionAdvisory $advisory): void
     {
         $this->securityNotifier->addFinding(
             $package->getSite(),
@@ -58,7 +58,7 @@ class SitePackageAdvisoryEvaluator
      *
      * Callers are responsible for only passing TYPO3 extension packages (e.g.
      * via SitePackageRepository::findByPackageType(PackageType::Typo3CmsExtension))
-     * - a WordPress plugin can never match a Typo3ExtensionAdvisory, so
+     * - a WordPress plugin can never match a Typo3\ExtensionAdvisory, so
      * evaluating it here would just waste a query.
      *
      * @param iterable<SitePackage> $packages

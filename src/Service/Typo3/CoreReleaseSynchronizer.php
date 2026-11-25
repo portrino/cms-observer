@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\Typo3;
 
-use App\Entity\Typo3CoreRelease;
-use App\Entity\Typo3ReleaseType;
-use App\Repository\Typo3CoreReleaseRepository;
+use App\Entity\Typo3\CoreRelease;
+use App\Entity\Typo3\ReleaseType;
+use App\Repository\Typo3\CoreReleaseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -28,7 +28,7 @@ class CoreReleaseSynchronizer
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly EntityManagerInterface $entityManager,
-        private readonly Typo3CoreReleaseRepository $repository,
+        private readonly CoreReleaseRepository $repository,
     ) {
     }
 
@@ -51,7 +51,7 @@ class CoreReleaseSynchronizer
                     ltsReleaseDate: $data['ltsReleaseDate'],
                 );
             } else {
-                $this->entityManager->persist(new Typo3CoreRelease(
+                $this->entityManager->persist(new CoreRelease(
                     version: $version,
                     releaseDate: $data['releaseDate'],
                     type: $data['type'],
@@ -115,7 +115,7 @@ class CoreReleaseSynchronizer
      * @param array<int, array<string, mixed>>                                                                                                    $rawReleases
      * @param array<int|string, array{maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable}> $majors
      *
-     * @return array<string, array{releaseDate: \DateTimeImmutable, type: Typo3ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}>
+     * @return array<string, array{releaseDate: \DateTimeImmutable, type: ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}>
      */
     private function parseReleases(array $rawReleases, array $majors): array
     {
@@ -132,14 +132,14 @@ class CoreReleaseSynchronizer
             [$major, $minor] = $parts;
             $line = "{$major}.{$minor}";
 
-            $type = Typo3ReleaseType::tryFrom((string) ($item['type'] ?? '')) ?? Typo3ReleaseType::Regular;
+            $type = ReleaseType::tryFrom((string) ($item['type'] ?? '')) ?? ReleaseType::Regular;
 
             // TYPO3 8+ has one major-list entry per whole major number (e.g. "13.0"
             // covers the entire 13.x development+LTS history); TYPO3 <=7 had each
             // minor line (6.0/6.1/6.2, 4.0-4.7, ...) independently maintained.
             $majorData = $majors[$line] ?? $majors["{$major}.0"] ?? null;
             $maintainedUntil = $majorData['maintainedUntil'] ?? null;
-            $isActive = null !== $maintainedUntil && $maintainedUntil >= $now && Typo3ReleaseType::Development !== $type;
+            $isActive = null !== $maintainedUntil && $maintainedUntil >= $now && ReleaseType::Development !== $type;
 
             $releases[$version] = [
                 'releaseDate' => new \DateTimeImmutable((string) $item['date']),
@@ -169,7 +169,7 @@ class CoreReleaseSynchronizer
     }
 
     /**
-     * @param array<string, array{releaseDate: \DateTimeImmutable, type: Typo3ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}> $releases
+     * @param array<string, array{releaseDate: \DateTimeImmutable, type: ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}> $releases
      */
     private function flagInsecureReleases(array &$releases): void
     {
@@ -178,7 +178,7 @@ class CoreReleaseSynchronizer
         }
         unset($release);
 
-        $securityReleases = array_filter($releases, static fn (array $release): bool => $release['isActive'] && Typo3ReleaseType::Security === $release['type']);
+        $securityReleases = array_filter($releases, static fn (array $release): bool => $release['isActive'] && ReleaseType::Security === $release['type']);
         foreach (array_keys($securityReleases) as $version) {
             foreach (self::earlierPatchVersions($version) as $earlierVersion) {
                 if (isset($releases[$earlierVersion])) {

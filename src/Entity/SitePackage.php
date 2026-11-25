@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Typo3\ExtensionAdvisory;
+use App\Entity\Wordpress\PluginVulnerability;
 use App\Repository\SitePackageRepository;
 use App\Service\PackageUpdate;
 use Doctrine\ORM\Mapping as ORM;
@@ -42,14 +44,14 @@ class SitePackage
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $newerCorePackageVersion = null;
 
-    #[ORM\ManyToOne(targetEntity: Typo3ExtensionAdvisory::class)]
+    #[ORM\ManyToOne(targetEntity: ExtensionAdvisory::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Typo3ExtensionAdvisory $matchedAdvisory = null;
+    private ?ExtensionAdvisory $matchedAdvisory = null;
 
     // most severe Wordfence vulnerability affecting this WordPress plugin version
-    #[ORM\ManyToOne(targetEntity: WordpressPluginVulnerability::class)]
+    #[ORM\ManyToOne(targetEntity: PluginVulnerability::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?WordpressPluginVulnerability $matchedWordpressVulnerability = null;
+    private ?PluginVulnerability $matchedWordpressVulnerability = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
@@ -154,22 +156,22 @@ class SitePackage
         return $this->newerCorePackageVersion;
     }
 
-    public function getMatchedAdvisory(): ?Typo3ExtensionAdvisory
+    public function getMatchedAdvisory(): ?ExtensionAdvisory
     {
         return $this->matchedAdvisory;
     }
 
-    public function setMatchedAdvisory(?Typo3ExtensionAdvisory $advisory): void
+    public function setMatchedAdvisory(?ExtensionAdvisory $advisory): void
     {
         $this->matchedAdvisory = $advisory;
     }
 
-    public function getMatchedWordpressVulnerability(): ?WordpressPluginVulnerability
+    public function getMatchedWordpressVulnerability(): ?PluginVulnerability
     {
         return $this->matchedWordpressVulnerability;
     }
 
-    public function setMatchedWordpressVulnerability(?WordpressPluginVulnerability $vulnerability): void
+    public function setMatchedWordpressVulnerability(?PluginVulnerability $vulnerability): void
     {
         $this->matchedWordpressVulnerability = $vulnerability;
     }

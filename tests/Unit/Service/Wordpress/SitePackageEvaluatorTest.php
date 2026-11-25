@@ -7,13 +7,13 @@ namespace App\Tests\Unit\Service\Wordpress;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\WordpressPluginInfo;
-use App\Entity\WordpressPluginVulnerability;
-use App\Repository\Typo3TerExtensionVersionRepository;
-use App\Repository\WordpressPluginInfoRepository;
-use App\Repository\WordpressPluginVersionRepository;
-use App\Repository\WordpressPluginVulnerabilityRepository;
-use App\Repository\WordpressThemeInfoRepository;
+use App\Entity\Wordpress\PluginInfo;
+use App\Entity\Wordpress\PluginVulnerability;
+use App\Repository\Typo3\TerExtensionVersionRepository;
+use App\Repository\Wordpress\PluginInfoRepository;
+use App\Repository\Wordpress\PluginVersionRepository;
+use App\Repository\Wordpress\PluginVulnerabilityRepository;
+use App\Repository\Wordpress\ThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use App\Service\Wordpress\SitePackageEvaluator;
@@ -22,26 +22,26 @@ use PHPUnit\Framework\TestCase;
 class SitePackageEvaluatorTest extends TestCase
 {
     /**
-     * @param list<WordpressPluginVulnerability>|null $vulnerabilities null: the Wordfence feed was never synced
+     * @param list<PluginVulnerability>|null $vulnerabilities null: the Wordfence feed was never synced
      */
     private function createEvaluator(
-        WordpressPluginInfoRepository $pluginInfoRepository,
+        PluginInfoRepository $pluginInfoRepository,
         ?array $vulnerabilities = null,
         ?SecurityNotifier $notifier = null,
     ): SitePackageEvaluator {
-        $vulnerabilityRepository = self::createStub(WordpressPluginVulnerabilityRepository::class);
+        $vulnerabilityRepository = self::createStub(PluginVulnerabilityRepository::class);
         $vulnerabilityRepository->method('hasAny')->willReturn(null !== $vulnerabilities);
         $vulnerabilityRepository->method('findBySlug')->willReturn($vulnerabilities ?? []);
 
         // without a synced version history the resolver falls back to the plugin info
-        $resolver = new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), self::createStub(WordpressPluginVersionRepository::class), $pluginInfoRepository, self::createStub(WordpressThemeInfoRepository::class));
+        $resolver = new PackageUpdateResolver(self::createStub(TerExtensionVersionRepository::class), self::createStub(PluginVersionRepository::class), $pluginInfoRepository, self::createStub(ThemeInfoRepository::class));
 
         return new SitePackageEvaluator($resolver, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
     }
 
-    private function createVulnerability(string $toVersion, float $cvssScore, bool $informational = false): WordpressPluginVulnerability
+    private function createVulnerability(string $toVersion, float $cvssScore, bool $informational = false): PluginVulnerability
     {
-        $vulnerability = new WordpressPluginVulnerability('id-'.$toVersion.'-'.$cvssScore, 'example-plugin');
+        $vulnerability = new PluginVulnerability('id-'.$toVersion.'-'.$cvssScore, 'example-plugin');
         $vulnerability->update(
             title: 'Example vulnerability up to '.$toVersion,
             affectedVersions: [['from_version' => '*', 'from_inclusive' => true, 'to_version' => $toVersion, 'to_inclusive' => true]],
@@ -76,9 +76,9 @@ class SitePackageEvaluatorTest extends TestCase
     {
         $package = $this->createPackage('example-plugin', '5.1.0');
 
-        $info = new WordpressPluginInfo('example-plugin', '5.0.9', null, null, null, null);
+        $info = new PluginInfo('example-plugin', '5.0.9', null, null, null, null);
 
-        $pluginInfoRepository = self::createStub(WordpressPluginInfoRepository::class);
+        $pluginInfoRepository = self::createStub(PluginInfoRepository::class);
         $pluginInfoRepository->method('findOneBySlug')->willReturn($info);
 
         $evaluator = $this->createEvaluator($pluginInfoRepository);
@@ -92,9 +92,9 @@ class SitePackageEvaluatorTest extends TestCase
     {
         $package = $this->createPackage('example-plugin', '5.0.0');
 
-        $info = new WordpressPluginInfo('example-plugin', '5.0.9', null, null, null, null);
+        $info = new PluginInfo('example-plugin', '5.0.9', null, null, null, null);
 
-        $pluginInfoRepository = self::createStub(WordpressPluginInfoRepository::class);
+        $pluginInfoRepository = self::createStub(PluginInfoRepository::class);
         $pluginInfoRepository->method('findOneBySlug')->willReturn($info);
 
         $evaluator = $this->createEvaluator($pluginInfoRepository);
@@ -114,7 +114,7 @@ class SitePackageEvaluatorTest extends TestCase
         $notifier = $this->createMock(SecurityNotifier::class);
         $notifier->expects(self::once())->method('addFinding');
 
-        $evaluator = $this->createEvaluator(self::createStub(WordpressPluginInfoRepository::class), [$medium, $high, $fixedBefore], $notifier);
+        $evaluator = $this->createEvaluator(self::createStub(PluginInfoRepository::class), [$medium, $high, $fixedBefore], $notifier);
         $evaluator->evaluate($package);
         $evaluator->evaluate($package); // already insecure: no second mail
 
@@ -126,7 +126,7 @@ class SitePackageEvaluatorTest extends TestCase
     {
         $package = $this->createPackage('example-plugin', '1.0.0');
 
-        $evaluator = $this->createEvaluator(self::createStub(WordpressPluginInfoRepository::class), [$this->createVulnerability('2.0.0', 5.3, informational: true)]);
+        $evaluator = $this->createEvaluator(self::createStub(PluginInfoRepository::class), [$this->createVulnerability('2.0.0', 5.3, informational: true)]);
         $evaluator->evaluate($package);
 
         self::assertFalse($package->isInsecure());
@@ -137,7 +137,7 @@ class SitePackageEvaluatorTest extends TestCase
     {
         $package = $this->createPackage('example-plugin', '2.1.0');
 
-        $evaluator = $this->createEvaluator(self::createStub(WordpressPluginInfoRepository::class), [$this->createVulnerability('2.0.0', 8.1)]);
+        $evaluator = $this->createEvaluator(self::createStub(PluginInfoRepository::class), [$this->createVulnerability('2.0.0', 8.1)]);
         $evaluator->evaluate($package);
 
         self::assertFalse($package->isInsecure());
@@ -147,7 +147,7 @@ class SitePackageEvaluatorTest extends TestCase
     {
         $package = $this->createPackage('unknown-plugin', '1.0.0');
 
-        $pluginInfoRepository = self::createStub(WordpressPluginInfoRepository::class);
+        $pluginInfoRepository = self::createStub(PluginInfoRepository::class);
         $pluginInfoRepository->method('findOneBySlug')->willReturn(null);
 
         $evaluator = $this->createEvaluator($pluginInfoRepository);

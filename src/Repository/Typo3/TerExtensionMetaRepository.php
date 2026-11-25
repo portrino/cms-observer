@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Typo3;
 
-use App\Entity\Typo3TerExtensionMeta;
+use App\Entity\Typo3\TerExtensionMeta;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Typo3TerExtensionMeta>
+ * @extends ServiceEntityRepository<TerExtensionMeta>
  */
-class Typo3TerExtensionMetaRepository extends ServiceEntityRepository
+class TerExtensionMetaRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Typo3TerExtensionMeta::class);
+        parent::__construct($registry, TerExtensionMeta::class);
     }
 
-    public function findOneByExtensionKey(string $extensionKey): ?Typo3TerExtensionMeta
+    public function findOneByExtensionKey(string $extensionKey): ?TerExtensionMeta
     {
         return $this->findOneBy(['extensionKey' => $extensionKey]);
     }

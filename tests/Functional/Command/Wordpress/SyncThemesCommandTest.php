@@ -10,7 +10,7 @@ use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Repository\SitePackageRepository;
-use App\Repository\WordpressThemeInfoRepository;
+use App\Repository\Wordpress\ThemeInfoRepository;
 use App\Service\SecurityNotifier;
 use App\Service\Wordpress\ApiClient;
 use App\Service\Wordpress\SitePackageEvaluator;
@@ -51,7 +51,7 @@ class SyncThemesCommandTest extends KernelTestCase
         });
 
         $command = new SyncThemesCommand(
-            new ThemeSynchronizer(new ApiClient($api, new NullLogger()), $container->get(SitePackageRepository::class), $container->get(WordpressThemeInfoRepository::class), $entityManager),
+            new ThemeSynchronizer(new ApiClient($api, new NullLogger()), $container->get(SitePackageRepository::class), $container->get(ThemeInfoRepository::class), $entityManager),
             $container->get(SitePackageEvaluator::class),
             $container->get(SitePackageRepository::class),
             $entityManager,

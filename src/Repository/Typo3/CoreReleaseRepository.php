@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Typo3;
 
-use App\Entity\Typo3CoreRelease;
-use App\Entity\Typo3ReleaseType;
+use App\Entity\Typo3\CoreRelease;
+use App\Entity\Typo3\ReleaseType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Typo3CoreRelease>
+ * @extends ServiceEntityRepository<CoreRelease>
  */
-class Typo3CoreReleaseRepository extends ServiceEntityRepository
+class CoreReleaseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Typo3CoreRelease::class);
+        parent::__construct($registry, CoreRelease::class);
     }
 
-    public function findOneByVersion(string $version): ?Typo3CoreRelease
+    public function findOneByVersion(string $version): ?CoreRelease
     {
         return $this->findOneBy(['version' => $version]);
     }
@@ -32,7 +32,7 @@ class Typo3CoreReleaseRepository extends ServiceEntityRepository
      * rows) and version strings don't sort correctly as plain strings (e.g.
      * "12.4.9" > "12.4.10").
      *
-     * @return Typo3CoreRelease[]
+     * @return CoreRelease[]
      */
     public function findNewerThan(?string $version): array
     {
@@ -44,11 +44,11 @@ class Typo3CoreReleaseRepository extends ServiceEntityRepository
 
         $newer = array_filter(
             $this->findAll(),
-            static fn (Typo3CoreRelease $release): bool => $release->getMajor() === $currentMajor
+            static fn (CoreRelease $release): bool => $release->getMajor() === $currentMajor
                 && version_compare($release->getVersion(), $version, '>'),
         );
 
-        usort($newer, static fn (Typo3CoreRelease $a, Typo3CoreRelease $b): int => version_compare($b->getVersion(), $a->getVersion()));
+        usort($newer, static fn (CoreRelease $a, CoreRelease $b): int => version_compare($b->getVersion(), $a->getVersion()));
 
         return $newer;
     }
@@ -59,7 +59,7 @@ class Typo3CoreReleaseRepository extends ServiceEntityRepository
      * Used to hint "a newer major is available" without listing every 14.x
      * release in the same-major "newer versions" list.
      */
-    public function findLatestInNewerMajor(?string $version): ?Typo3CoreRelease
+    public function findLatestInNewerMajor(?string $version): ?CoreRelease
     {
         if (null === $version) {
             return null;
@@ -69,18 +69,18 @@ class Typo3CoreReleaseRepository extends ServiceEntityRepository
 
         $newerMajorReleases = array_filter(
             $this->findAll(),
-            static fn (Typo3CoreRelease $release): bool => $release->getMajor() > $currentMajor
-                && Typo3ReleaseType::Development !== $release->getType(),
+            static fn (CoreRelease $release): bool => $release->getMajor() > $currentMajor
+                && ReleaseType::Development !== $release->getType(),
         );
 
         if ([] === $newerMajorReleases) {
             return null;
         }
 
-        $nextMajor = min(array_map(static fn (Typo3CoreRelease $r): int => $r->getMajor(), $newerMajorReleases));
-        $inNextMajor = array_filter($newerMajorReleases, static fn (Typo3CoreRelease $r): bool => $r->getMajor() === $nextMajor);
+        $nextMajor = min(array_map(static fn (CoreRelease $r): int => $r->getMajor(), $newerMajorReleases));
+        $inNextMajor = array_filter($newerMajorReleases, static fn (CoreRelease $r): bool => $r->getMajor() === $nextMajor);
 
-        usort($inNextMajor, static fn (Typo3CoreRelease $a, Typo3CoreRelease $b): int => version_compare($b->getVersion(), $a->getVersion()));
+        usort($inNextMajor, static fn (CoreRelease $a, CoreRelease $b): int => version_compare($b->getVersion(), $a->getVersion()));
 
         return $inNextMajor[0];
     }

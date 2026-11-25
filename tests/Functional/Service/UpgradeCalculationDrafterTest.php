@@ -8,10 +8,10 @@ use App\Dto\UpgradeItem;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\Typo3CoreRelease;
-use App\Entity\Typo3ReleaseType;
-use App\Entity\Typo3TerExtensionMeta;
-use App\Entity\Typo3TerExtensionVersion;
+use App\Entity\Typo3\CoreRelease;
+use App\Entity\Typo3\ReleaseType;
+use App\Entity\Typo3\TerExtensionMeta;
+use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
@@ -46,7 +46,7 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         $this->terVersions('blocker', ['1.0.0' => '12, 13', '1.1.0' => '13']);
         $this->terVersions('no_data', ['1.0.0' => '13', '2.0.0' => null]);
         $this->terVersions('dev_branch', ['1.0.0' => '13']);
-        $this->entityManager->persist(new Typo3TerExtensionMeta('compatible', 'https://packagist.org/packages/vendor/compatible', null, null));
+        $this->entityManager->persist(new TerExtensionMeta('compatible', 'https://packagist.org/packages/vendor/compatible', null, null));
         $this->entityManager->flush();
 
         $items = static::getContainer()->get(UpgradeCalculationDrafter::class)->draft($site, 14);
@@ -94,10 +94,10 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
     {
         $site = $this->site(CmsType::Typo3, '12.4.30', []);
         foreach (['11.5.40', '12.4.30', '13.4.20', '13.4.21', '14.0.0'] as $version) {
-            $this->entityManager->persist(new Typo3CoreRelease(
+            $this->entityManager->persist(new CoreRelease(
                 version: $version,
                 releaseDate: new \DateTimeImmutable(),
-                type: Typo3ReleaseType::Regular,
+                type: ReleaseType::Regular,
                 latestVersion: $version,
                 isActive: true,
                 insecure: false,
@@ -146,7 +146,7 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
     private function terVersions(string $key, array $versions): void
     {
         foreach ($versions as $version => $majors) {
-            $this->entityManager->persist(new Typo3TerExtensionVersion(
+            $this->entityManager->persist(new TerExtensionVersion(
                 extensionKey: $key,
                 version: $version,
                 title: $key,

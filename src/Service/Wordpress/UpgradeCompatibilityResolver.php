@@ -8,9 +8,9 @@ use App\Dto\UpgradeItem;
 use App\Entity\Site;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
-use App\Entity\WordpressCoreRelease;
+use App\Entity\Wordpress\CoreRelease;
 use App\Repository\SitePackageRepository;
-use App\Repository\WordpressCoreReleaseRepository;
+use App\Repository\Wordpress\CoreReleaseRepository;
 use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
 use App\Service\UpgradeTargets;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
@@ -24,7 +24,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
 {
     public function __construct(
         private SitePackageRepository $packageRepository,
-        private WordpressCoreReleaseRepository $coreReleaseRepository,
+        private CoreReleaseRepository $coreReleaseRepository,
     ) {
     }
 
@@ -32,7 +32,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     {
         return UpgradeTargets::above(
             $site->getCurrentCoreVersion(),
-            array_map(static fn (WordpressCoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
+            array_map(static fn (CoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
         );
     }
 

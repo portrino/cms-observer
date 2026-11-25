@@ -7,11 +7,11 @@ namespace App\Tests\Unit\Service\Typo3;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\Typo3TerExtensionVersion;
-use App\Repository\Typo3TerExtensionVersionRepository;
-use App\Repository\WordpressPluginInfoRepository;
-use App\Repository\WordpressPluginVersionRepository;
-use App\Repository\WordpressThemeInfoRepository;
+use App\Entity\Typo3\TerExtensionVersion;
+use App\Repository\Typo3\TerExtensionVersionRepository;
+use App\Repository\Wordpress\PluginInfoRepository;
+use App\Repository\Wordpress\PluginVersionRepository;
+use App\Repository\Wordpress\ThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use App\Service\Typo3\SitePackageTerEvaluator;
@@ -104,7 +104,7 @@ class SitePackageTerEvaluatorTest extends TestCase
         $package = new SitePackage($site, 'typo3_console', 'TYPO3 Console', $installed, true);
 
         $entities = array_map(
-            static fn (array $v): Typo3TerExtensionVersion => new Typo3TerExtensionVersion(
+            static fn (array $v): TerExtensionVersion => new TerExtensionVersion(
                 extensionKey: 'typo3_console',
                 version: $v[0],
                 title: 'TYPO3 Console',
@@ -117,13 +117,13 @@ class SitePackageTerEvaluatorTest extends TestCase
             ),
             $versions,
         );
-        $versionRepository = self::createStub(Typo3TerExtensionVersionRepository::class);
+        $versionRepository = self::createStub(TerExtensionVersionRepository::class);
         $versionRepository->method('findBy')->willReturn($entities);
         $versionRepository->method('findOneByExtensionKeyAndVersion')->willReturnCallback(
-            static fn (string $key, string $version): ?Typo3TerExtensionVersion => array_find($entities, static fn (Typo3TerExtensionVersion $v): bool => $v->getVersion() === $version),
+            static fn (string $key, string $version): ?TerExtensionVersion => array_find($entities, static fn (TerExtensionVersion $v): bool => $v->getVersion() === $version),
         );
 
-        $resolver = new PackageUpdateResolver($versionRepository, self::createStub(WordpressPluginVersionRepository::class), self::createStub(WordpressPluginInfoRepository::class), self::createStub(WordpressThemeInfoRepository::class));
+        $resolver = new PackageUpdateResolver($versionRepository, self::createStub(PluginVersionRepository::class), self::createStub(PluginInfoRepository::class), self::createStub(ThemeInfoRepository::class));
         new SitePackageTerEvaluator($versionRepository, $resolver, self::createStub(SecurityNotifier::class))->evaluateAll([$package]);
 
         return $package;

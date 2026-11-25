@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Wordpress;
 
-use App\Repository\WordpressPluginVersionRepository;
+use App\Repository\Wordpress\PluginVersionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,12 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
  * (Wordpress\PluginSynchronizer / Wordpress\ApiClient) since WordPress.org's
  * plugin info API only exposes this for the single latest version. There's
  * no per-version "comment"/changelog field here (unlike
- * Typo3TerExtensionVersion's uploadComment) - no reliable structured source
+ * Typo3\TerExtensionVersion's uploadComment) - no reliable structured source
  * for it exists on WordPress.org.
  */
-#[ORM\Entity(repositoryClass: WordpressPluginVersionRepository::class)]
+#[ORM\Entity(repositoryClass: PluginVersionRepository::class)]
+#[ORM\Table(name: 'wordpress_plugin_version')]
 #[ORM\UniqueConstraint(name: 'wordpress_plugin_version', columns: ['slug', 'version'])]
-class WordpressPluginVersion
+class PluginVersion
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -8,8 +8,8 @@ use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Repository\SitePackageRepository;
-use App\Repository\Typo3TerExtensionMetaRepository;
-use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Repository\Typo3\TerExtensionMetaRepository;
+use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Service\Typo3\ExtensionVersionSynchronizer;
 use App\Service\Typo3\TerExtensionApiClient;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,11 +34,11 @@ class ExtensionVersionSynchronizerTest extends TestCase
         $sitePackageRepository = self::createStub(SitePackageRepository::class);
         $sitePackageRepository->method('findByPackageType')->willReturn($packages);
 
-        $metaRepository = self::createStub(Typo3TerExtensionMetaRepository::class);
+        $metaRepository = self::createStub(TerExtensionMetaRepository::class);
         $metaRepository->method('findAllExtensionKeys')->willReturn($alreadySyncedKeys);
         $metaRepository->method('findOneByExtensionKey')->willReturn(null);
 
-        $versionRepository = self::createStub(Typo3TerExtensionVersionRepository::class);
+        $versionRepository = self::createStub(TerExtensionVersionRepository::class);
         $versionRepository->method('findOneByExtensionKeyAndVersion')->willReturn(null);
 
         $processedKeys = [];
@@ -79,7 +79,7 @@ class ExtensionVersionSynchronizerTest extends TestCase
             static fn (string $key): SitePackage => new SitePackage($site, $key, $key, '1.0.0', true),
             $keys,
         ));
-        $metaRepository = self::createStub(Typo3TerExtensionMetaRepository::class);
+        $metaRepository = self::createStub(TerExtensionMetaRepository::class);
         $metaRepository->method('findAllExtensionKeys')->willReturn($leastRecentlyFetchedFirst);
 
         $processedKeys = [];
@@ -93,7 +93,7 @@ class ExtensionVersionSynchronizerTest extends TestCase
         new ExtensionVersionSynchronizer(
             $apiClient,
             $sitePackageRepository,
-            self::createStub(Typo3TerExtensionVersionRepository::class),
+            self::createStub(TerExtensionVersionRepository::class),
             $metaRepository,
             self::createStub(EntityManagerInterface::class),
         )->sync();

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service\Typo3;
 
-use App\Entity\Typo3CoreRelease;
-use App\Repository\Typo3CoreReleaseRepository;
+use App\Entity\Typo3\CoreRelease;
+use App\Repository\Typo3\CoreReleaseRepository;
 use App\Service\Typo3\CoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -25,13 +25,13 @@ class CoreReleaseSynchronizerTest extends TestCase
         $entityManager->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
             $persisted[] = $entity;
         });
-        $repository = self::createStub(Typo3CoreReleaseRepository::class);
+        $repository = self::createStub(CoreReleaseRepository::class);
 
         new CoreReleaseSynchronizer($http, $entityManager, $repository)->sync();
 
         self::assertCount(1, $persisted);
         $release = $persisted[0];
-        self::assertInstanceOf(Typo3CoreRelease::class, $release);
+        self::assertInstanceOf(CoreRelease::class, $release);
         self::assertSame('2027-12-31', $release->getMaintainedUntil()?->format('Y-m-d'));
         self::assertSame('2030-12-31', $release->getEltsUntil()?->format('Y-m-d'));
         self::assertSame('2024-10-15', $release->getLtsReleaseDate()?->format('Y-m-d'));

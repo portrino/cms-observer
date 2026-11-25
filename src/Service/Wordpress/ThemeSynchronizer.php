@@ -6,9 +6,9 @@ namespace App\Service\Wordpress;
 
 use App\Entity\PackageType;
 use App\Entity\SitePackage;
-use App\Entity\WordpressThemeInfo;
+use App\Entity\Wordpress\ThemeInfo;
 use App\Repository\SitePackageRepository;
-use App\Repository\WordpressThemeInfoRepository;
+use App\Repository\Wordpress\ThemeInfoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -20,7 +20,7 @@ class ThemeSynchronizer
     public function __construct(
         private readonly ApiClient $apiClient,
         private readonly SitePackageRepository $sitePackageRepository,
-        private readonly WordpressThemeInfoRepository $themeInfoRepository,
+        private readonly ThemeInfoRepository $themeInfoRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -46,7 +46,7 @@ class ThemeSynchronizer
             if (null !== $existing) {
                 $existing->update($info['version'], $info['requires']);
             } else {
-                $this->entityManager->persist(new WordpressThemeInfo($slug, $info['version'], $info['requires']));
+                $this->entityManager->persist(new ThemeInfo($slug, $info['version'], $info['requires']));
             }
             ++$synced;
         }

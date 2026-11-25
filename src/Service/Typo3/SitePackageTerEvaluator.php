@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Service\Typo3;
 
 use App\Entity\SitePackage;
-use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
- * Applies cached TER data (Typo3TerExtensionVersion) to a set of SitePackage
+ * Applies cached TER data (Typo3\TerExtensionVersion) to a set of SitePackage
  * rows: insecure from the exact version, outdated only by versions that run on
  * the site's TYPO3 (PackageUpdateResolver). Callers are
  * responsible for only passing TYPO3 extension packages (e.g. via
@@ -22,7 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class SitePackageTerEvaluator
 {
     public function __construct(
-        private readonly Typo3TerExtensionVersionRepository $versionRepository,
+        private readonly TerExtensionVersionRepository $versionRepository,
         private readonly PackageUpdateResolver $updateResolver,
         private readonly SecurityNotifier $securityNotifier,
     ) {

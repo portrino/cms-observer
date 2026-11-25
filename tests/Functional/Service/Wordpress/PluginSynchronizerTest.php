@@ -8,10 +8,10 @@ use App\Entity\CmsType;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\WordpressPluginVersion;
+use App\Entity\Wordpress\PluginVersion;
 use App\Repository\SitePackageRepository;
-use App\Repository\WordpressPluginInfoRepository;
-use App\Repository\WordpressPluginVersionRepository;
+use App\Repository\Wordpress\PluginInfoRepository;
+use App\Repository\Wordpress\PluginVersionRepository;
 use App\Service\Wordpress\ApiClient;
 use App\Service\Wordpress\PluginSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,7 +35,7 @@ class PluginSynchronizerTest extends KernelTestCase
         $entityManager->persist($site);
         $entityManager->persist(new SitePackage($site, 'sync-plugin', 'Sync Plugin', '1.0', true, null, PackageType::WordpressPlugin));
         // already cached: never fetched again
-        $entityManager->persist(new WordpressPluginVersion('sync-plugin', '1.2', null, '6.3'));
+        $entityManager->persist(new PluginVersion('sync-plugin', '1.2', null, '6.3'));
         $entityManager->flush();
 
         $requested = [];
@@ -56,18 +56,18 @@ class PluginSynchronizerTest extends KernelTestCase
         $synchronizer = new PluginSynchronizer(
             new ApiClient($api, new NullLogger()),
             $container->get(SitePackageRepository::class),
-            $container->get(WordpressPluginInfoRepository::class),
-            $container->get(WordpressPluginVersionRepository::class),
+            $container->get(PluginInfoRepository::class),
+            $container->get(PluginVersionRepository::class),
             $entityManager,
         );
 
         self::assertSame(1, $synchronizer->sync());
 
-        $info = $container->get(WordpressPluginInfoRepository::class)->findOneBySlug('sync-plugin');
+        $info = $container->get(PluginInfoRepository::class)->findOneBySlug('sync-plugin');
         self::assertSame('main.php', $info?->getBootstrapFilename());
         self::assertSame('1.3', $info->getLatestVersion());
 
-        $versions = $container->get(WordpressPluginVersionRepository::class);
+        $versions = $container->get(PluginVersionRepository::class);
         self::assertNull($versions->findOneBySlugAndVersion('sync-plugin', '0.9'), 'older than the installed version');
         self::assertNull($versions->findOneBySlugAndVersion('sync-plugin', '1.0'), 'the installed version itself');
         self::assertSame('6.2', $versions->findOneBySlugAndVersion('sync-plugin', '1.1')?->getRequiresWpVersion());

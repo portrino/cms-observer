@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Wordpress;
 
-use App\Repository\WordpressThemeInfoRepository;
+use App\Repository\Wordpress\ThemeInfoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,8 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  * reported themes as outdated. Unlike plugins no version history: themes only need "a newer
  * version exists and runs on the site's WordPress".
  */
-#[ORM\Entity(repositoryClass: WordpressThemeInfoRepository::class)]
-class WordpressThemeInfo
+#[ORM\Entity(repositoryClass: ThemeInfoRepository::class)]
+#[ORM\Table(name: 'wordpress_theme_info')]
+class ThemeInfo
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

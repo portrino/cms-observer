@@ -6,10 +6,10 @@ namespace App\Service;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
-use App\Entity\Typo3CoreRelease;
-use App\Entity\WordpressCoreRelease;
-use App\Repository\Typo3CoreReleaseRepository;
-use App\Repository\WordpressCoreReleaseRepository;
+use App\Entity\Typo3\CoreRelease as Typo3CoreRelease;
+use App\Entity\Wordpress\CoreRelease as WordpressCoreRelease;
+use App\Repository\Typo3\CoreReleaseRepository as Typo3CoreReleaseRepository;
+use App\Repository\Wordpress\CoreReleaseRepository as WordpressCoreReleaseRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**

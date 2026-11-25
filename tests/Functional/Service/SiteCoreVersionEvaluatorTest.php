@@ -6,9 +6,9 @@ namespace App\Tests\Functional\Service;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
-use App\Entity\Typo3CoreRelease;
-use App\Entity\Typo3ReleaseType;
-use App\Entity\WordpressCoreRelease;
+use App\Entity\Typo3\CoreRelease as Typo3CoreRelease;
+use App\Entity\Typo3\ReleaseType;
+use App\Entity\Wordpress\CoreRelease as WordpressCoreRelease;
 use App\Service\SiteCoreVersionEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -59,7 +59,7 @@ class SiteCoreVersionEvaluatorTest extends KernelTestCase
             $entityManager->persist(new Typo3CoreRelease(
                 version: $version,
                 releaseDate: new \DateTimeImmutable(),
-                type: Typo3ReleaseType::Regular,
+                type: ReleaseType::Regular,
                 latestVersion: str_starts_with($version, '13.') ? '13.4.21' : '14.1.0',
                 isActive: true,
                 insecure: false,

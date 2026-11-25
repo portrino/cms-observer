@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Wordpress;
 
-use App\Repository\WordpressCoreReleaseRepository;
+use App\Repository\Wordpress\CoreReleaseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,8 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
  * dates are (Wordpress\ApiClient::getTagDates()) - see
  * Wordpress\CoreReleaseSynchronizer.
  */
-#[ORM\Entity(repositoryClass: WordpressCoreReleaseRepository::class)]
-class WordpressCoreRelease
+#[ORM\Entity(repositoryClass: CoreReleaseRepository::class)]
+#[ORM\Table(name: 'wordpress_core_release')]
+class CoreRelease
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

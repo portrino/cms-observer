@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Service\Typo3;
 
 use App\Entity\PackageType;
-use App\Entity\Typo3TerExtensionMeta;
-use App\Entity\Typo3TerExtensionVersion;
+use App\Entity\Typo3\TerExtensionMeta;
+use App\Entity\Typo3\TerExtensionVersion;
 use App\Repository\SitePackageRepository;
-use App\Repository\Typo3TerExtensionMetaRepository;
-use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Repository\Typo3\TerExtensionMetaRepository;
+use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Service\SiteCoreVersionEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -35,8 +35,8 @@ class ExtensionVersionSynchronizer
     public function __construct(
         private readonly TerExtensionApiClient $apiClient,
         private readonly SitePackageRepository $sitePackageRepository,
-        private readonly Typo3TerExtensionVersionRepository $versionRepository,
-        private readonly Typo3TerExtensionMetaRepository $metaRepository,
+        private readonly TerExtensionVersionRepository $versionRepository,
+        private readonly TerExtensionMetaRepository $metaRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -104,7 +104,7 @@ class ExtensionVersionSynchronizer
                     uploadDate: $data['uploadDate'],
                 );
             } else {
-                $this->entityManager->persist(new Typo3TerExtensionVersion(
+                $this->entityManager->persist(new TerExtensionVersion(
                     extensionKey: $key,
                     version: $data['version'],
                     title: $data['title'],
@@ -133,7 +133,7 @@ class ExtensionVersionSynchronizer
             return;
         }
 
-        $this->entityManager->persist(new Typo3TerExtensionMeta(
+        $this->entityManager->persist(new TerExtensionMeta(
             $key,
             $meta['packagistUrl'],
             $meta['repositoryUrl'],

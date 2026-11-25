@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Typo3;
 
-use App\Repository\Typo3ExtensionAdvisoryRepository;
+use App\Repository\Typo3\ExtensionAdvisoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: Typo3ExtensionAdvisoryRepository::class)]
-class Typo3ExtensionAdvisory
+#[ORM\Entity(repositoryClass: ExtensionAdvisoryRepository::class)]
+#[ORM\Table(name: 'typo3_extension_advisory')]
+class ExtensionAdvisory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

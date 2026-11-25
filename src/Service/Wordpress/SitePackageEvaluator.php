@@ -6,8 +6,8 @@ namespace App\Service\Wordpress;
 
 use App\Entity\PackageType;
 use App\Entity\SitePackage;
-use App\Entity\WordpressPluginVulnerability;
-use App\Repository\WordpressPluginVulnerabilityRepository;
+use App\Entity\Wordpress\PluginVulnerability;
+use App\Repository\Wordpress\PluginVulnerabilityRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -19,7 +19,7 @@ use Symfony\Component\Translation\TranslatableMessage;
  * see SitePackageTerEvaluator for TYPO3 extensions.
  *
  * Outdated comes from the synced wordpress.org versions (PackageUpdateResolver,
- * only versions installable on the site's WordPress), insecure from synced Wordfence vulnerabilities (WordpressPluginVulnerability),
+ * only versions installable on the site's WordPress), insecure from synced Wordfence vulnerabilities (Wordpress\PluginVulnerability),
  * since WordPress.org's plugin info API has no security field. Informational
  * vulnerabilities (no real-world impact) are ignored. Insecure stays null
  * (unknown) until the Wordfence feed was synced at least once.
@@ -30,7 +30,7 @@ class SitePackageEvaluator
 
     public function __construct(
         private readonly PackageUpdateResolver $updateResolver,
-        private readonly WordpressPluginVulnerabilityRepository $vulnerabilityRepository,
+        private readonly PluginVulnerabilityRepository $vulnerabilityRepository,
         private readonly SecurityNotifier $securityNotifier,
     ) {
     }
@@ -77,13 +77,13 @@ class SitePackageEvaluator
         }
     }
 
-    private function findMostSevereVulnerability(SitePackage $package): ?WordpressPluginVulnerability
+    private function findMostSevereVulnerability(SitePackage $package): ?PluginVulnerability
     {
         $matches = array_filter(
             $this->vulnerabilityRepository->findBySlug($package->getName(), $package->getPackageType()),
-            static fn (WordpressPluginVulnerability $v): bool => !$v->isInformational() && $v->affects($package->getVersion()),
+            static fn (PluginVulnerability $v): bool => !$v->isInformational() && $v->affects($package->getVersion()),
         );
-        usort($matches, static fn (WordpressPluginVulnerability $a, WordpressPluginVulnerability $b): int => ($b->getCvssScore() ?? 0.0) <=> ($a->getCvssScore() ?? 0.0));
+        usort($matches, static fn (PluginVulnerability $a, PluginVulnerability $b): int => ($b->getCvssScore() ?? 0.0) <=> ($a->getCvssScore() ?? 0.0));
 
         return $matches[0] ?? null;
     }

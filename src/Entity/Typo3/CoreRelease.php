@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Typo3;
 
-use App\Repository\Typo3CoreReleaseRepository;
+use App\Repository\Typo3\CoreReleaseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: Typo3CoreReleaseRepository::class)]
-class Typo3CoreRelease
+#[ORM\Entity(repositoryClass: CoreReleaseRepository::class)]
+#[ORM\Table(name: 'typo3_core_release')]
+class CoreRelease
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,8 +24,8 @@ class Typo3CoreRelease
         private string $version,
         #[ORM\Column]
         private \DateTimeImmutable $releaseDate,
-        #[ORM\Column(enumType: Typo3ReleaseType::class)]
-        private Typo3ReleaseType $type,
+        #[ORM\Column(enumType: ReleaseType::class)]
+        private ReleaseType $type,
         #[ORM\Column(length: 32)]
         private string $latestVersion,
         #[ORM\Column]
@@ -45,7 +46,7 @@ class Typo3CoreRelease
 
     public function update(
         \DateTimeImmutable $releaseDate,
-        Typo3ReleaseType $type,
+        ReleaseType $type,
         string $latestVersion,
         bool $isActive,
         bool $insecure,
@@ -87,7 +88,7 @@ class Typo3CoreRelease
         return $this->releaseDate;
     }
 
-    public function getType(): Typo3ReleaseType
+    public function getType(): ReleaseType
     {
         return $this->type;
     }

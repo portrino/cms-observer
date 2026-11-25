@@ -8,8 +8,8 @@ use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
 use App\Entity\SiteEventType;
-use App\Entity\Typo3ExtensionAdvisory;
-use App\Entity\Typo3TerExtensionVersion;
+use App\Entity\Typo3\ExtensionAdvisory;
+use App\Entity\Typo3\TerExtensionVersion;
 use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Security\SiteTokenFactory;
@@ -92,7 +92,7 @@ class SiteHistoryTest extends WebTestCase
         $client = static::createClient([], ['HTTPS' => 'on']);
         [$token, $site] = $this->createSite();
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $entityManager->persist(new Typo3TerExtensionVersion(
+        $entityManager->persist(new TerExtensionVersion(
             extensionKey: 'secure_downloads',
             version: '7.1.1',
             title: 'Secure Downloads',
@@ -146,7 +146,7 @@ class SiteHistoryTest extends WebTestCase
         $client = static::createClient([], ['HTTPS' => 'on']);
         $this->createUser('history-notify@example.test', 'History Notify', 'password');
         [$token, $site] = $this->createSite();
-        $advisory = new Typo3ExtensionAdvisory(
+        $advisory = new ExtensionAdvisory(
             advisoryId: 'TYPO3-EXT-SA-2026-001',
             extensionKey: 'news',
             title: 'Cross-Site Scripting in news',

@@ -8,12 +8,12 @@ use App\Entity\CmsType;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
-use App\Entity\WordpressPluginVulnerability;
-use App\Repository\Typo3TerExtensionMetaRepository;
-use App\Repository\Typo3TerExtensionVersionRepository;
-use App\Repository\WordpressPluginInfoRepository;
-use App\Repository\WordpressPluginVersionRepository;
-use App\Repository\WordpressPluginVulnerabilityRepository;
+use App\Entity\Wordpress\PluginVulnerability;
+use App\Repository\Typo3\TerExtensionMetaRepository;
+use App\Repository\Typo3\TerExtensionVersionRepository;
+use App\Repository\Wordpress\PluginInfoRepository;
+use App\Repository\Wordpress\PluginVersionRepository;
+use App\Repository\Wordpress\PluginVulnerabilityRepository;
 
 /**
  * The per-package details of a project's detail page: newer versions with
@@ -22,11 +22,11 @@ use App\Repository\WordpressPluginVulnerabilityRepository;
 class SitePackageDetailsProvider
 {
     public function __construct(
-        private readonly Typo3TerExtensionVersionRepository $terVersionRepository,
-        private readonly Typo3TerExtensionMetaRepository $terMetaRepository,
-        private readonly WordpressPluginInfoRepository $wordpressPluginInfoRepository,
-        private readonly WordpressPluginVersionRepository $wordpressPluginVersionRepository,
-        private readonly WordpressPluginVulnerabilityRepository $wordpressVulnerabilityRepository,
+        private readonly TerExtensionVersionRepository $terVersionRepository,
+        private readonly TerExtensionMetaRepository $terMetaRepository,
+        private readonly PluginInfoRepository $wordpressPluginInfoRepository,
+        private readonly PluginVersionRepository $wordpressPluginVersionRepository,
+        private readonly PluginVulnerabilityRepository $wordpressVulnerabilityRepository,
     ) {
     }
 
@@ -62,7 +62,7 @@ class SitePackageDetailsProvider
 
         $vulnerabilities = array_filter(
             $this->wordpressVulnerabilityRepository->findBySlug($package->getName(), $package->getPackageType()),
-            static fn (WordpressPluginVulnerability $v): bool => !$v->isInformational(),
+            static fn (PluginVulnerability $v): bool => !$v->isInformational(),
         );
 
         // like the TER versions: only what installs on the site's WordPress, unknown "requires" stays
@@ -78,7 +78,7 @@ class SitePackageDetailsProvider
 
             $newerVersions[] = $version;
             $versionStates[$version->getVersion()] = [
-                'insecure' => [] !== array_filter($vulnerabilities, static fn (WordpressPluginVulnerability $v): bool => $v->affects($version->getVersion())),
+                'insecure' => [] !== array_filter($vulnerabilities, static fn (PluginVulnerability $v): bool => $v->affects($version->getVersion())),
                 'compatible' => $compatible,
             ];
         }

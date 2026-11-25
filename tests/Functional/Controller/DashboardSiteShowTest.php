@@ -10,8 +10,8 @@ use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\SiteReport;
-use App\Entity\Typo3TerExtensionVersion;
-use App\Entity\WordpressPluginVersion;
+use App\Entity\Typo3\TerExtensionVersion;
+use App\Entity\Wordpress\PluginVersion;
 use App\Service\Typo3\SitePackageTerEvaluator;
 use App\Service\Wordpress\SitePackageEvaluator;
 use App\Tests\Functional\CreatesUserTrait;
@@ -96,9 +96,9 @@ class DashboardSiteShowTest extends WebTestCase
         $site->recordReport('6.5.2', '8.3.0', '10.11.0');
         $entityManager->persist($site);
         $entityManager->persist($package = new SitePackage($site, 'compat-plugin', 'Compat Plugin', '1.0.0', true));
-        $entityManager->persist(new WordpressPluginVersion('compat-plugin', '1.1.0', null, '6.4'));
-        $entityManager->persist(new WordpressPluginVersion('compat-plugin', '1.2.0', null, null));
-        $entityManager->persist(new WordpressPluginVersion('compat-plugin', '2.0.0', null, '6.6'));
+        $entityManager->persist(new PluginVersion('compat-plugin', '1.1.0', null, '6.4'));
+        $entityManager->persist(new PluginVersion('compat-plugin', '1.2.0', null, null));
+        $entityManager->persist(new PluginVersion('compat-plugin', '2.0.0', null, '6.6'));
         $entityManager->flush();
         static::getContainer()->get(SitePackageEvaluator::class)->evaluate($package);
         $entityManager->flush();
@@ -128,7 +128,7 @@ class DashboardSiteShowTest extends WebTestCase
         $site->recordReport('6.5.2', '8.3.0', '10.11.0');
         $entityManager->persist($site);
         $entityManager->persist(new SitePackage($site, 'shared-slug', 'Shared Theme', '1.0.0', true, null, PackageType::WordpressTheme));
-        $entityManager->persist(new WordpressPluginVersion('shared-slug', '9.0.0', null, null));
+        $entityManager->persist(new PluginVersion('shared-slug', '9.0.0', null, null));
         $entityManager->flush();
 
         $client->request('GET', '/projects/'.$site->getId());
@@ -155,7 +155,7 @@ class DashboardSiteShowTest extends WebTestCase
         $entityManager->persist($site);
         $entityManager->persist($package = new SitePackage($site, 'newer_core_ext', 'Newer Core Ext', '12.4.0', true));
         foreach ([['12.4.0', '12,13'], ['13.0.0', '14'], ['13.1.0', '14']] as [$version, $majors]) {
-            $entityManager->persist(new Typo3TerExtensionVersion(
+            $entityManager->persist(new TerExtensionVersion(
                 extensionKey: 'newer_core_ext',
                 version: $version,
                 title: 'Newer Core Ext',
