@@ -49,6 +49,29 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertStringContainsString('context.test, www.context.test', $systemInformation);
     }
 
+    public function testHidesARejectedReportOnceItIsOld(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('site-old-reject@example.test', 'Old Reject', 'password'));
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $site = new Site('Old Reject Site', CmsType::Typo3, 'https://old-reject.test', 'hash-old-reject');
+        $site->recordReport('13.4.0', '8.3.0', '10.11.0');
+        $site->recordRejectedReport(['staging.old-reject.test']);
+        $entityManager->persist($site);
+        $entityManager->flush();
+        $entityManager->getConnection()->executeStatement(
+            sprintf('UPDATE %s SET last_rejected_report_at = ? WHERE id = ?', $entityManager->getClassMetadata(Site::class)->getTableName()),
+            [new \DateTimeImmutable('-3 days')->format('Y-m-d H:i:s'), $site->getId()],
+        );
+        $entityManager->clear(); // the page must read the aged date, not the cached entity
+
+        $client->request('GET', '/projects/'.$site->getId());
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('.alert-warning');
+    }
+
     public function testLinksTheOrganization(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);

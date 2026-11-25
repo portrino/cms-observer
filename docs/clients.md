@@ -64,7 +64,7 @@ Production and staging of a site often share a database dump, and with it a
 scheduler task or the token. To keep a staging copy from overwriting the
 production data, a report whose `domains` don't contain the host of the
 project's URL is rejected with `409`. The project page then shows when and
-from which domains.
+from which domains, until no rejected report came in for two days.
 
 Reports without `domains` (older clients) or with an empty list (e.g. a
 TYPO3 site whose site configurations only have relative bases) are accepted

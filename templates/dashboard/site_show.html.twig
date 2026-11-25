@@ -31,7 +31,7 @@
             <span class="badge text-bg-warning ms-2">{{ m.icon_warning() }}{{ 'badge.stale_short'|trans }}</span>
         {% endif %}
     </p>
-    {% if site.lastRejectedReportAt %}
+    {% if site.hasRecentRejectedReport() %}
         <div class="alert alert-warning py-2 mb-3" role="alert">
             {{ 'project.rejected_report'|trans({domains: site.lastRejectedReportDomains|join(', '), date: site.lastRejectedReportAt|format_datetime('medium', 'short'), url: site.url}) }}
         </div>

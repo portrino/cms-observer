@@ -199,6 +199,15 @@ class Site implements UserInterface
         $this->lastRejectedReportDomains = $domains;
     }
 
+    /**
+     * Whether another instance rejected with this site's token reported lately; one that
+     * stopped (e.g. a staging copy that was fixed) no longer warns after STALE_AFTER.
+     */
+    public function hasRecentRejectedReport(): bool
+    {
+        return null !== $this->lastRejectedReportAt && $this->lastRejectedReportAt >= new \DateTimeImmutable(self::STALE_AFTER);
+    }
+
     public function getLastRejectedReportAt(): ?\DateTimeImmutable
     {
         return $this->lastRejectedReportAt;
