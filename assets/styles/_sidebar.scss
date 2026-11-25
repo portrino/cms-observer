@@ -17,15 +17,44 @@
 
     .sidebar-brand {
         height: $topbar-height;
+        border-bottom: 1px solid rgba($white, 0.1);
+    }
+
+    // opens the system information (_system-info.scss)
+    .sidebar-brand-toggle {
+        height: 100%;
         display: flex;
         align-items: center;
         gap: 0.5rem;
         padding: 0 1rem;
         font-weight: 600;
         color: $white;
-        border-bottom: 1px solid rgba($white, 0.1);
+        text-decoration: none;
         white-space: nowrap;
         overflow: hidden;
+
+        &:hover,
+        &[aria-expanded="true"] {
+            background-color: rgba($white, 0.08);
+        }
+    }
+
+    .sidebar-brand-logo {
+        position: relative;
+        flex-shrink: 0;
+        line-height: 0;
+    }
+
+    // a newer Observer release, details in the dropdown
+    .sidebar-brand-dot {
+        position: absolute;
+        top: -0.1rem;
+        right: -0.1rem;
+        width: 0.65rem;
+        height: 0.65rem;
+        border-radius: 50%;
+        background-color: $tertiary;
+        border: 2px solid $primary;
     }
 
     // only the navigation scrolls, so the user menu stays at the bottom on short screens

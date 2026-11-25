@@ -36,6 +36,24 @@ test('the user menu sits at the bottom of the sidebar, also when collapsed', asy
     await page.getByRole('button', { name: 'Toggle sidebar' }).click();
 });
 
+test('the brand opens the system information, also when collapsed', async ({ page }) => {
+    const brand = page.getByRole('button', { name: 'System information' });
+    const menu = page.locator('.system-info');
+
+    await brand.click();
+    await expect(menu.getByText('Application context')).toBeVisible();
+    await expect(menu).toBeInViewport({ ratio: 1 });
+    await page.keyboard.press('Escape');
+
+    await page.getByRole('button', { name: 'Toggle sidebar' }).click();
+    await brand.click();
+    // opens beyond the narrow sidebar instead of being cut off by it
+    await expect(menu).toBeInViewport({ ratio: 1 });
+    await page.keyboard.press('Escape');
+
+    await page.getByRole('button', { name: 'Toggle sidebar' }).click();
+});
+
 test('the filters stay in view while scrolling', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 400 });
     await page.goto('/');

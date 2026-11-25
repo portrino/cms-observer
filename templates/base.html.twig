@@ -24,9 +24,23 @@
         {% if loggedIn %}
             {% set currentRoute = app.request.attributes.get('_route') %}
             <aside class="sidebar">
-                <div class="sidebar-brand">
-                    <img src="{{ asset('images/logo.svg') }}" alt="" width="32" height="32">
-                    <span>CMS Observer</span>
+                {# easter egg like TYPO3's system information; fixed strategy as for the user menu #}
+                <div class="sidebar-brand dropdown">
+                    <a class="sidebar-brand-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" aria-label="{{ 'system_info.title'|trans }}">
+                        <span class="sidebar-brand-logo">
+                            <img src="{{ asset('images/logo.svg') }}" alt="" width="32" height="32">
+                            {% set observerUpdate = observer_update() %}
+                            {% if observerUpdate %}
+                                <b class="sidebar-brand-dot"><span class="visually-hidden">{{ 'system_info.update_available'|trans({version: observerUpdate.version}) }}</span></b>
+                            {% endif %}
+                        </span>
+                        <span>CMS Observer</span>
+                    </a>
+                    <div class="dropdown-menu system-info">
+                        <turbo-frame id="system-info" src="{{ path('app_status_system_info') }}" loading="lazy">
+                            <div class="text-center p-3"><span class="spinner-border spinner-border-sm text-secondary" role="status"></span></div>
+                        </turbo-frame>
+                    </div>
                 </div>
                 <nav class="nav flex-column flex-nowrap py-2 sidebar-nav">
                     <a class="nav-link {{ currentRoute starts with 'dashboard_site' or currentRoute == 'dashboard_index' ? 'active' }}" href="{{ path('dashboard_index') }}">

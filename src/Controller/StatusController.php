@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\MailTestType;
 use App\Service\MailTester;
 use App\Service\SyncMonitor;
+use App\Service\SystemInformation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,6 +42,15 @@ class StatusController extends AbstractController
             'mailTestForm' => $form,
             'mailTransport' => $mailTester->getTransport(),
             'mailFrom' => $mailTester->getFromAddress(),
+        ]);
+    }
+
+    /** Lazily loaded into the brand dropdown, so other pages don't pay for the queries */
+    #[Route('/status/system-info', name: 'app_status_system_info')]
+    public function systemInfo(Request $request, SystemInformation $systemInformation): Response
+    {
+        return $this->render('status/_system_info.html.twig', [
+            'info' => $systemInformation->collect($request),
         ]);
     }
 }

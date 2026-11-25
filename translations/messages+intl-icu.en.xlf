@@ -874,6 +874,50 @@
         <source>status.overdue</source>
         <target>Overdue</target>
       </trans-unit>
+      <trans-unit id="system_info.title" resname="system_info.title">
+        <source>system_info.title</source>
+        <target>System information</target>
+      </trans-unit>
+      <trans-unit id="system_info.observer" resname="system_info.observer">
+        <source>system_info.observer</source>
+        <target>CMS Observer</target>
+      </trans-unit>
+      <trans-unit id="system_info.symfony" resname="system_info.symfony">
+        <source>system_info.symfony</source>
+        <target>Symfony</target>
+      </trans-unit>
+      <trans-unit id="system_info.environment" resname="system_info.environment">
+        <source>system_info.environment</source>
+        <target>Application context</target>
+      </trans-unit>
+      <trans-unit id="system_info.php" resname="system_info.php">
+        <source>system_info.php</source>
+        <target>PHP</target>
+      </trans-unit>
+      <trans-unit id="system_info.database" resname="system_info.database">
+        <source>system_info.database</source>
+        <target>Database</target>
+      </trans-unit>
+      <trans-unit id="system_info.webserver" resname="system_info.webserver">
+        <source>system_info.webserver</source>
+        <target>Web server</target>
+      </trans-unit>
+      <trans-unit id="system_info.os" resname="system_info.os">
+        <source>system_info.os</source>
+        <target>Operating system</target>
+      </trans-unit>
+      <trans-unit id="system_info.messages" resname="system_info.messages">
+        <source>system_info.messages</source>
+        <target>Messages</target>
+      </trans-unit>
+      <trans-unit id="system_info.update_available" resname="system_info.update_available">
+        <source>system_info.update_available</source>
+        <target>Version {version} available</target>
+      </trans-unit>
+      <trans-unit id="system_info.release_notes" resname="system_info.release_notes">
+        <source>system_info.release_notes</source>
+        <target>Release notes</target>
+      </trans-unit>
       <trans-unit id="status.no_syncs" resname="status.no_syncs">
         <source>status.no_syncs</source>
         <target>No scheduled syncs.</target>

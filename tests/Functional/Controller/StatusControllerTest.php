@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\SyncStatus;
+use App\Service\ObserverRelease;
 use App\Service\SyncMonitor;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
+use Symfony\Component\HttpKernel\Kernel;
 
 class StatusControllerTest extends WebTestCase
 {
@@ -69,6 +74,46 @@ class StatusControllerTest extends WebTestCase
 
         $client->request('GET', '/status');
         self::assertSelectorTextContains('.alert-warning', "the scheduler's worker runs in {$otherTimezone}");
+    }
+
+    public function testTheBrandDropdownLoadsTheSystemInformation(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on', 'SERVER_SOFTWARE' => 'nginx/1.27.0']);
+        $client->loginUser($this->createUser('system-info@example.test', 'System Info', 'password'));
+
+        $crawler = $client->request('GET', '/');
+        $frame = $crawler->filter('.sidebar-brand turbo-frame#system-info');
+        self::assertSame('lazy', $frame->attr('loading'));
+
+        $client->request('GET', (string) $frame->attr('src'));
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('dl', 'Symfony '.Kernel::VERSION);
+        self::assertSelectorTextContains('dl', 'PHP '.PHP_VERSION);
+        self::assertSelectorTextContains('dl', 'Application context test');
+        self::assertSelectorTextContains('dl', 'Web server nginx/1.27.0');
+        // the syncs' state stays on the status page, only an update is a message here
+        self::assertSelectorNotExists('.system-info-update');
+    }
+
+    public function testMarksTheBrandWhenANewerObserverIsReleased(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->disableReboot(); // keeps the replaced service for both requests
+        $client->loginUser($this->createUser('observer-update@example.test', 'Observer Update', 'password'));
+
+        $release = new ObserverRelease(new MockHttpClient(new JsonMockResponse(['tag_name' => '0.13.0', 'html_url' => 'https://github.com/portrino/cms-observer/releases/tag/0.13.0'])), new ArrayAdapter(), '0.12.3');
+        static::getContainer()->set(ObserverRelease::class, $release);
+
+        $client->request('GET', '/');
+        self::assertSelectorNotExists('.sidebar-brand-dot');
+
+        $release->sync();
+        $client->request('GET', '/');
+        self::assertSelectorTextSame('.sidebar-brand-dot', 'Version 0.13.0 available');
+
+        $client->request('GET', '/status/system-info');
+        self::assertSelectorTextContains('.system-info-update', 'Version 0.13.0 available');
+        self::assertSelectorExists('.system-info-update a[href="https://github.com/portrino/cms-observer/releases/tag/0.13.0"]');
     }
 
     public function testSendsATestMail(): void

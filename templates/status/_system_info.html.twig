@@ -1,0 +1,22 @@
+<turbo-frame id="system-info">
+    {% set update = observer_update() %}
+    {% set icons ={observer: 'tag', symfony: 'box', environment: 'flag', php: 'code', database: 'database', webserver: 'server', os: 'monitor'} %}
+    <h6 class="dropdown-header">{{ 'system_info.title'|trans }}</h6>
+    <dl class="system-info-list">
+        {% for key, value in info %}
+            <div>
+                <dt>{{ icon(icons[key]) }} {{ ('system_info.' ~ key)|trans }}</dt>
+                <dd>{{ value }}</dd>
+            </div>
+        {% endfor %}
+    </dl>
+    {% if update %}
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">{{ 'system_info.messages'|trans }}</h6>
+        <p class="system-info-update">
+            {{ icon('circle-arrow-up') }}
+            <span><strong>{{ 'system_info.update_available'|trans({version: update.version}) }}</strong> – <a href="{{ update.url }}" target="_blank" rel="noopener">{{ 'system_info.release_notes'|trans }}</a></span>
+        </p>
+    {% endif %}
+    {# the syncs' state and the status page link are in the sidebar, not repeated here #}
+</turbo-frame>
