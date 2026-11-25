@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Service;
 
 use App\Entity\CmsType;
+use App\Entity\CoreReleaseInterface;
 use App\Entity\Site;
 use App\Entity\Typo3\CoreRelease as Typo3CoreRelease;
 use App\Entity\Typo3\ReleaseType;
@@ -39,7 +40,7 @@ class SiteCoreVersionEvaluatorTest extends KernelTestCase
         $evaluator = static::getContainer()->get(SiteCoreVersionEvaluator::class);
 
         $typo3Releases = $evaluator->newerReleases($typo3);
-        self::assertSame(['13.4.21'], array_map(static fn (Typo3CoreRelease|WordpressCoreRelease $release): string => $release->getVersion(), $typo3Releases['inMajor']));
+        self::assertSame(['13.4.21'], array_map(static fn (CoreReleaseInterface $release): string => $release->getVersion(), $typo3Releases['inMajor']));
         self::assertSame('14.1.0', $typo3Releases['newerMajor']?->getVersion());
 
         $wordpressReleases = $evaluator->newerReleases($wordpress);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Wordpress;
 
+use App\Entity\CoreReleaseInterface;
 use App\Repository\Wordpress\CoreReleaseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity(repositoryClass: CoreReleaseRepository::class)]
 #[ORM\Table(name: 'wordpress_core_release')]
-class CoreRelease
+class CoreRelease implements CoreReleaseInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

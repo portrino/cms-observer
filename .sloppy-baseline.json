@@ -3,16 +3,8 @@
     "tool": "sloppy",
     "generated_at": "2026-11-25T22:46:10+00:00",
     "score": 98,
-    "total": 3,
+    "total": 2,
     "entries": [
-        {
-            "id": "a3bf80aa374d61cf",
-            "rule": "SL111",
-            "file": "src/Repository/Wordpress/CoreReleaseRepository.php",
-            "fingerprint": "CoreReleaseRepository::findLatestInNewerMajor~CoreReleaseRepository::findLatestInNewerMajor",
-            "count": 1,
-            "message": "CoreReleaseRepository::findLatestInNewerMajor() differs from CoreReleaseRepository::findLatestInNewerMajor() at src/Repository/Typo3/CoreReleaseRepository.php:62 by 22 token(s) out of 324 -- 6.8% of the body."
-        },
         {
             "id": "875f0152fb562543",
             "rule": "SL113",

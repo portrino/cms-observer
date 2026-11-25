@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\CmsType;
+use App\Entity\CoreReleaseInterface;
 use App\Entity\Site;
-use App\Entity\Typo3\CoreRelease as Typo3CoreRelease;
-use App\Entity\Wordpress\CoreRelease as WordpressCoreRelease;
+use App\Repository\AbstractCoreReleaseRepository;
 use App\Repository\Typo3\CoreReleaseRepository as Typo3CoreReleaseRepository;
 use App\Repository\Wordpress\CoreReleaseRepository as WordpressCoreReleaseRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Cross-references a site's reported core version against the synced
- * core-release data (Typo3CoreRelease for TYPO3, WordpressCoreRelease for
- * WordPress) to determine whether it's insecure and/or outdated. Both
- * release entities expose the same isInsecure()/isLatest()/getLatestVersion()
- * shape, so the actual evaluation logic below is CMS-agnostic once the
- * right repository has resolved the release.
+ * core-release data of its CMS to determine whether it's insecure and/or
+ * outdated. Every CMS's release implements CoreReleaseInterface, so the
+ * evaluation below is CMS-agnostic once the right repository has resolved
+ * the release.
  */
 class SiteCoreVersionEvaluator
 {
@@ -87,7 +86,7 @@ class SiteCoreVersionEvaluator
      *
      * @param iterable<Site> $sites
      *
-     * @return array<int, array{outdated: ?bool, latestInMajor: ?string, newerMajor: Typo3CoreRelease|WordpressCoreRelease|null}>
+     * @return array<int, array{outdated: ?bool, latestInMajor: ?string, newerMajor: ?CoreReleaseInterface}>
      */
     public function majorStatusBySite(iterable $sites): array
     {
@@ -120,7 +119,7 @@ class SiteCoreVersionEvaluator
      * (newest first), and the latest release of the next major, both from the
      * release data of the site's own CMS.
      *
-     * @return array{inMajor: array<Typo3CoreRelease|WordpressCoreRelease>, newerMajor: Typo3CoreRelease|WordpressCoreRelease|null}
+     * @return array{inMajor: list<CoreReleaseInterface>, newerMajor: ?CoreReleaseInterface}
      */
     public function newerReleases(Site $site): array
     {
@@ -133,7 +132,10 @@ class SiteCoreVersionEvaluator
         ];
     }
 
-    private function releaseRepository(CmsType $type): Typo3CoreReleaseRepository|WordpressCoreReleaseRepository
+    /**
+     * @return AbstractCoreReleaseRepository<covariant CoreReleaseInterface>
+     */
+    private function releaseRepository(CmsType $type): AbstractCoreReleaseRepository
     {
         return match ($type) {
             CmsType::Typo3 => $this->typo3ReleaseRepository,

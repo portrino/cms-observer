@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity\Typo3;
 
+use App\Entity\CoreReleaseInterface;
 use App\Repository\Typo3\CoreReleaseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CoreReleaseRepository::class)]
 #[ORM\Table(name: 'typo3_core_release')]
-class CoreRelease
+class CoreRelease implements CoreReleaseInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

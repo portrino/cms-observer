@@ -4,89 +4,29 @@ declare(strict_types=1);
 
 namespace App\Repository\Typo3;
 
+use App\Entity\CoreReleaseInterface;
 use App\Entity\Typo3\CoreRelease;
 use App\Entity\Typo3\ReleaseType;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Repository\AbstractCoreReleaseRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CoreRelease>
+ * @extends AbstractCoreReleaseRepository<CoreRelease>
  */
-class CoreReleaseRepository extends ServiceEntityRepository
+class CoreReleaseRepository extends AbstractCoreReleaseRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CoreRelease::class);
     }
 
-    public function findOneByVersion(string $version): ?CoreRelease
-    {
-        return $this->findOneBy(['version' => $version]);
-    }
-
     /**
-     * Releases newer than $version within the same major line only (e.g. for
-     * "13.4.28", other 13.x releases - never 14.x; see findLatestInNewerMajor()
-     * for that). Newest first. Filtered/sorted in PHP via version_compare()
-     * rather than SQL string comparison - the table is small (a few hundred
-     * rows) and version strings don't sort correctly as plain strings (e.g.
-     * "12.4.9" > "12.4.10").
+     * A development release doesn't stand for the next major.
      *
-     * @return CoreRelease[]
+     * @param CoreRelease $release
      */
-    public function findNewerThan(?string $version): array
+    protected function countsForNewerMajor(CoreReleaseInterface $release): bool
     {
-        if (null === $version) {
-            return [];
-        }
-
-        $currentMajor = $this->majorOf($version);
-
-        $newer = array_filter(
-            $this->findAll(),
-            static fn (CoreRelease $release): bool => $release->getMajor() === $currentMajor
-                && version_compare($release->getVersion(), $version, '>'),
-        );
-
-        usort($newer, static fn (CoreRelease $a, CoreRelease $b): int => version_compare($b->getVersion(), $a->getVersion()));
-
-        return $newer;
-    }
-
-    /**
-     * The latest real (non-development) release of the next major line above
-     * $version, if one exists - e.g. for "13.4.28", the latest 14.x release.
-     * Used to hint "a newer major is available" without listing every 14.x
-     * release in the same-major "newer versions" list.
-     */
-    public function findLatestInNewerMajor(?string $version): ?CoreRelease
-    {
-        if (null === $version) {
-            return null;
-        }
-
-        $currentMajor = $this->majorOf($version);
-
-        $newerMajorReleases = array_filter(
-            $this->findAll(),
-            static fn (CoreRelease $release): bool => $release->getMajor() > $currentMajor
-                && ReleaseType::Development !== $release->getType(),
-        );
-
-        if ([] === $newerMajorReleases) {
-            return null;
-        }
-
-        $nextMajor = min(array_map(static fn (CoreRelease $r): int => $r->getMajor(), $newerMajorReleases));
-        $inNextMajor = array_filter($newerMajorReleases, static fn (CoreRelease $r): bool => $r->getMajor() === $nextMajor);
-
-        usort($inNextMajor, static fn (CoreRelease $a, CoreRelease $b): int => version_compare($b->getVersion(), $a->getVersion()));
-
-        return $inNextMajor[0];
-    }
-
-    private function majorOf(string $version): int
-    {
-        return (int) explode('.', $version)[0];
+        return ReleaseType::Development !== $release->getType();
     }
 }
