@@ -44,7 +44,7 @@
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ bodyId }}" aria-expanded="false" aria-controls="{{ bodyId }}">
                         <code class="me-2">{{ key }}</code>
-                        <span class="badge text-bg-neutral">{{ installs|length }}</span>
+                        {{ m.count_badge(installs|length, 'layout-dashboard', 'nav.projects'|trans) }}
                     </button>
                 </h2>
                 <div id="{{ bodyId }}" class="accordion-collapse collapse" data-bs-parent="#packagesAccordion">

@@ -33,6 +33,8 @@ class DashboardPackagesTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('code:contains("akismet")');
+        // the number of projects it is installed in, like the organization list
+        self::assertSelectorTextSame('#packagesAccordion .accordion-button .badge-count[title="Projects"]', '1');
         self::assertSelectorNotExists('code:contains("news")');
     }
 }
