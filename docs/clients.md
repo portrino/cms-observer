@@ -78,6 +78,8 @@ project's history: core, PHP, database and client version changes and
 installed, updated, removed, activated and deactivated packages. Packages no
 longer reported are removed from the project.
 
+![The history of a project](images/history.png)
+
 ## Supporting another CMS
 
 New CMS are welcome, as pull requests or as an issue to discuss them first.

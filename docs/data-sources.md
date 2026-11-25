@@ -19,6 +19,8 @@ Informational Wordfence entries (without real-world impact) are ignored.
 Packages that aren't on the TER or wordpress.org, e.g. a site's own
 extensions, stay "unknown".
 
+![A project rated against these sources: PHP, database, core releases and the versions of a package](images/project.png)
+
 ## How a site is rated
 
 In the project list a row is marked red when the core or a package is
@@ -36,6 +38,12 @@ A new finding (something that wasn't insecure before) also triggers the
 [security mail](configuration.md#email) and an entry in the project's history.
 When the core, PHP, database or application context is fine again, the
 history records that too, without a mail.
+
+The **Packages** page lists every package across all projects, with the
+version each project runs and its update and security status, e.g. to find
+all sites affected by a new advisory.
+
+![The packages page with the projects running bootstrap_package](images/packages.png)
 
 ## Licenses
 

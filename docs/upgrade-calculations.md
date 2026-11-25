@@ -8,6 +8,8 @@ project manager.
 Open it from a project's page: **⋮ → Upgrade calculations**, then pick the
 target major and **Start**.
 
+![An upgrade calculation from TYPO3 13 to 14 with its timeline, positions and versions](images/upgrade-calculation.png)
+
 ## What a calculation contains
 
 - **Positions**: the work of the upgrade, e.g. core upgrade, PHP upgrade,

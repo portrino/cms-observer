@@ -16,6 +16,8 @@ A small client in the CMS sends the report. Clients exist for TYPO3 and
 WordPress so far; more CMS can follow, and you're welcome to propose one via a
 pull request, see [supporting another CMS](docs/clients.md#supporting-another-cms).
 
+![The project list: core, package and security status of every site](docs/images/dashboard.png)
+
 | CMS | Client | Checked against |
 |---|---|---|
 | TYPO3 12.4 – 14.3 | [cms-observer-client-typo3](https://github.com/portrino/cms-observer-client-typo3) | get.typo3.org, TER, TYPO3 security advisories |

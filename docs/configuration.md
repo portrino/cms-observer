@@ -51,6 +51,8 @@ once per outage. If the worker itself stopped, no mail can go out, only the
 badge shows it. The page also shows the server time and warns when the worker
 runs in another timezone than the web server.
 
+![The status page with one overdue sync](images/status.png)
+
 Wordfence rate-limits strictly, so don't run its sync repeatedly by hand. A
 run that hits the limit keeps the last data and counts as failed, so a sync
 stuck in the limit shows up as overdue on the status page.
