@@ -12,10 +12,10 @@ export const credentials = {
     password: process.env.E2E_PASSWORD ?? 'e2e-password',
 };
 
-type Project = { name: string; url: string };
+type Project = { name: string; url: string; token: string };
 
 // logs in through the real form, so the JS double-submit CSRF cookie (csrf_protection_controller.js) is exercised too
-export const test = base.extend<{ loggedIn: void; createProject: (prefix: string) => Promise<Project> }>({
+export const test = base.extend<{ loggedIn: void; createProject: (prefix: string, cms?: 'TYPO3' | 'WordPress') => Promise<Project> }>({
     loggedIn: [async ({ page }, use) => {
         await page.goto('/login');
         await page.getByLabel('Email').fill(credentials.email);
@@ -29,16 +29,20 @@ export const test = base.extend<{ loggedIn: void; createProject: (prefix: string
     createProject: async ({ page }, use) => {
         const created: Project[] = [];
 
-        await use(async (prefix) => {
+        await use(async (prefix, cms = 'TYPO3') => {
             const name = `${prefix}-${Date.now()}`;
             await page.goto('/projects/new');
             await page.getByLabel('Name').fill(name);
             await page.getByLabel('Site URL').fill(`https://${prefix}.example.test`);
+            await page.getByLabel('Type').selectOption({ label: cms });
             await page.getByRole('button', { name: 'Create' }).click();
             await page.waitForURL(/\/projects\/\d+$/);
-            created.push({ name, url: page.url() });
+            // shown once after creating, for clients that push a report
+            const token = (await page.locator('.alert code').textContent()) ?? '';
+            const project = { name, url: page.url(), token };
+            created.push(project);
 
-            return { name, url: page.url() };
+            return project;
         });
 
         for (const project of created) {

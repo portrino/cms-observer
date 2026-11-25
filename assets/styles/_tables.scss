@@ -33,8 +33,9 @@
     padding-left: 0.75rem;
 }
 
-// Version numbers in the detail page version tables: fixed slot width and
-// tabular digits, so the Insecure badge / Latest label after them line up.
+// Version numbers in the project list and the detail page version tables:
+// fixed slot width and tabular digits, so the badges and labels after them
+// line up, also between TYPO3 and WordPress versions.
 .version-number {
     display: inline-block;
     min-width: 4.5em;

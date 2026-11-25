@@ -34,7 +34,7 @@
             {% endif %}
             <td>{{ m.cms_type_icon(site.type) }}</td>
             <td class="text-nowrap">
-                <small class="fw-bold">{{ site.currentCoreVersion ?? '—' }}</small>
+                <small class="fw-bold version-number">{{ site.currentCoreVersion ?? '—' }}</small>
                 {{ m.outdated_badge(coreStatus.outdated, coreStatus.latestInMajor) }}
                 {% if coreStatus.newerMajor %}
                     {{ m.newer_major_badge(site.type.label, coreStatus.newerMajor, 'ms-1') }}
