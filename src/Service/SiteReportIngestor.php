@@ -65,14 +65,16 @@ class SiteReportIngestor
         // Compare against the stored state before recordReport() overwrites it
         $isFirstReport = null === $site->getLastSeenAt();
         if ($isFirstReport) {
+            // current clients send packages, older ones extensions
+            $packageCount = count($request->packages ?? $request->extensions ?? []);
             $this->entityManager->persist(new SiteEvent(
                 $site,
                 SiteEventType::FirstReport,
                 null,
                 null,
                 sprintf('%s %s', $site->getType()->label(), $request->coreVersion),
-                sprintf('%d packages', count($request->extensions ?? [])),
-                SiteEvent::messagesOf(null, new TranslatableMessage('event.detail.packages', ['count' => count($request->extensions ?? [])])),
+                sprintf('%d packages', $packageCount),
+                SiteEvent::messagesOf(null, new TranslatableMessage('event.detail.packages', ['count' => $packageCount])),
             ));
         } else {
             $this->recordRuntimeChanges($site, $request, $dbPlatform.' '.$dbVersion);

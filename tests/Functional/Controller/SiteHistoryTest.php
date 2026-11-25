@@ -36,6 +36,19 @@ class SiteHistoryTest extends WebTestCase
         ], $this->events($site));
     }
 
+    public function testFirstReportCountsThePackagesOfOlderClients(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+
+        $this->postReport($client, $token, '13.4.20', [['name' => 'news', 'version' => '12.3.0'], ['name' => 'powermail', 'version' => '13.0.0']], field: 'extensions');
+
+        self::assertResponseStatusCodeSame(202);
+        self::assertSame([
+            ['first-report', null, null, 'TYPO3 13.4.20', '2 packages'],
+        ], $this->events($site));
+    }
+
     public function testChangesBetweenReportsAreRecorded(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);
@@ -200,10 +213,11 @@ class SiteHistoryTest extends WebTestCase
     }
 
     /**
-     * @param list<array{name: string, version: string, active?: bool}>|null $extensions
+     * @param list<array{name: string, version: string, active?: bool}>|null $packages
      * @param list<string>|null                                              $domains
+     * @param 'extensions'|'packages'                                        $field    current clients send packages, older ones extensions
      */
-    private function postReport(KernelBrowser $client, string $token, string $coreVersion, ?array $extensions, string $clientVersion = '1.0.0', string $phpVersion = '8.2.29', ?array $domains = null): void
+    private function postReport(KernelBrowser $client, string $token, string $coreVersion, ?array $packages, string $clientVersion = '1.0.0', string $phpVersion = '8.2.29', ?array $domains = null, string $field = 'packages'): void
     {
         $payload = [
             'coreVersion' => $coreVersion,
@@ -213,8 +227,8 @@ class SiteHistoryTest extends WebTestCase
             'clientVersion' => $clientVersion,
             'domains' => $domains,
         ];
-        if (null !== $extensions) {
-            $payload['extensions'] = array_map(static fn (array $extension): array => $extension + ['title' => $extension['name'], 'active' => true], $extensions);
+        if (null !== $packages) {
+            $payload[$field] = array_map(static fn (array $package): array => $package + ['title' => $package['name'], 'active' => true], $packages);
         }
 
         $client->request('POST', '/api/v1/sites/report', server: [
