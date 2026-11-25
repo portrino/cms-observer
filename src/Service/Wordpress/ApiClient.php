@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Wordpress;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -31,7 +31,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
  * without a User-Agent header, so one is set explicitly on every request
  * this client makes.
  */
-class WordpressApiClient
+class ApiClient
 {
     private const string STABLE_CHECK_URL = 'https://api.wordpress.org/core/stable-check/1.0/';
     private const string PLUGIN_INFO_URL = 'https://api.wordpress.org/plugins/info/1.2/';

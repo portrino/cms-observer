@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 use App\Entity\PackageType;
 use App\Entity\Typo3TerExtensionMeta;
@@ -10,6 +10,7 @@ use App\Entity\Typo3TerExtensionVersion;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3TerExtensionMetaRepository;
 use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Service\SiteCoreVersionEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -26,7 +27,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * read, so coupling it to ingestion would slow the endpoint down and risk
  * the rate limit under bursty traffic. Runs only via this periodic sync.
  */
-class Typo3ExtensionVersionSynchronizer
+class ExtensionVersionSynchronizer
 {
     /** Upper bound on distinct extension keys synced per run, to stay well under TER's rate limit. */
     private const int MAX_KEYS_PER_RUN = 20;

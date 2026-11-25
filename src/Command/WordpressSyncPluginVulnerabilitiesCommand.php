@@ -7,9 +7,9 @@ namespace App\Command;
 use App\Entity\PackageType;
 use App\Repository\SitePackageRepository;
 use App\Service\SecurityNotifier;
-use App\Service\SitePackageWordpressEvaluator;
-use App\Service\WordfenceApiClient;
-use App\Service\WordpressPluginVulnerabilitySynchronizer;
+use App\Service\Wordpress\PluginVulnerabilitySynchronizer;
+use App\Service\Wordpress\SitePackageEvaluator;
+use App\Service\Wordpress\WordfenceApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -28,8 +28,8 @@ class WordpressSyncPluginVulnerabilitiesCommand extends Command
 {
     public function __construct(
         private readonly WordfenceApiClient $apiClient,
-        private readonly WordpressPluginVulnerabilitySynchronizer $synchronizer,
-        private readonly SitePackageWordpressEvaluator $wordpressEvaluator,
+        private readonly PluginVulnerabilitySynchronizer $synchronizer,
+        private readonly SitePackageEvaluator $wordpressEvaluator,
         private readonly SitePackageRepository $sitePackageRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly SecurityNotifier $securityNotifier,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 use App\Entity\Typo3ExtensionAdvisory;
 use App\Repository\Typo3ExtensionAdvisoryRepository;
@@ -23,7 +23,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * window (~30 items), not full history, so old advisories predating first
  * sync are never backfilled.
  */
-class Typo3ExtensionAdvisorySynchronizer
+class ExtensionAdvisorySynchronizer
 {
     private const string FEED_URL = 'https://news.typo3.com/security/rss-security';
 

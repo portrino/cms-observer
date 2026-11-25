@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Typo3;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
@@ -10,12 +10,12 @@ use App\Entity\SitePackage;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3TerExtensionMetaRepository;
 use App\Repository\Typo3TerExtensionVersionRepository;
-use App\Service\TerExtensionApiClient;
-use App\Service\Typo3ExtensionVersionSynchronizer;
+use App\Service\Typo3\ExtensionVersionSynchronizer;
+use App\Service\Typo3\TerExtensionApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
-class Typo3ExtensionVersionSynchronizerTest extends TestCase
+class ExtensionVersionSynchronizerTest extends TestCase
 {
     // Regression: sync() used to array_slice() the first 20 keys every run,
     // so anything beyond that cutoff could never be reached.
@@ -50,7 +50,7 @@ class Typo3ExtensionVersionSynchronizerTest extends TestCase
         });
         $apiClient->method('getExtensionMeta')->willReturn(null);
 
-        $synchronizer = new Typo3ExtensionVersionSynchronizer(
+        $synchronizer = new ExtensionVersionSynchronizer(
             $apiClient,
             $sitePackageRepository,
             $versionRepository,
@@ -90,7 +90,7 @@ class Typo3ExtensionVersionSynchronizerTest extends TestCase
             return [];
         });
 
-        new Typo3ExtensionVersionSynchronizer(
+        new ExtensionVersionSynchronizer(
             $apiClient,
             $sitePackageRepository,
             self::createStub(Typo3TerExtensionVersionRepository::class),

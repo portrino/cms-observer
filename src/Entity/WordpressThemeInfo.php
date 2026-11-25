@@ -8,7 +8,7 @@ use App\Repository\WordpressThemeInfoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * The latest version of a wordpress.org theme, synced by WordpressThemeSynchronizer to rate
+ * The latest version of a wordpress.org theme, synced by Wordpress\ThemeSynchronizer to rate
  * reported themes as outdated. Unlike plugins no version history: themes only need "a newer
  * version exists and runs on the site's WordPress".
  */

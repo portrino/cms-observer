@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Wordpress;
 
 use App\Entity\PackageType;
 use App\Entity\SitePackage;
 use App\Entity\WordpressPluginVulnerability;
 use App\Repository\WordpressPluginVulnerabilityRepository;
+use App\Service\PackageUpdateResolver;
+use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
@@ -22,7 +24,7 @@ use Symfony\Component\Translation\TranslatableMessage;
  * vulnerabilities (no real-world impact) are ignored. Insecure stays null
  * (unknown) until the Wordfence feed was synced at least once.
  */
-class SitePackageWordpressEvaluator
+class SitePackageEvaluator
 {
     private bool $vulnerabilityFeedSynced = false;
 

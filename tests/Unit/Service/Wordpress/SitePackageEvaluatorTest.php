@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Wordpress;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
@@ -16,10 +16,10 @@ use App\Repository\WordpressPluginVulnerabilityRepository;
 use App\Repository\WordpressThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
-use App\Service\SitePackageWordpressEvaluator;
+use App\Service\Wordpress\SitePackageEvaluator;
 use PHPUnit\Framework\TestCase;
 
-class SitePackageWordpressEvaluatorTest extends TestCase
+class SitePackageEvaluatorTest extends TestCase
 {
     /**
      * @param list<WordpressPluginVulnerability>|null $vulnerabilities null: the Wordfence feed was never synced
@@ -28,7 +28,7 @@ class SitePackageWordpressEvaluatorTest extends TestCase
         WordpressPluginInfoRepository $pluginInfoRepository,
         ?array $vulnerabilities = null,
         ?SecurityNotifier $notifier = null,
-    ): SitePackageWordpressEvaluator {
+    ): SitePackageEvaluator {
         $vulnerabilityRepository = self::createStub(WordpressPluginVulnerabilityRepository::class);
         $vulnerabilityRepository->method('hasAny')->willReturn(null !== $vulnerabilities);
         $vulnerabilityRepository->method('findBySlug')->willReturn($vulnerabilities ?? []);
@@ -36,7 +36,7 @@ class SitePackageWordpressEvaluatorTest extends TestCase
         // without a synced version history the resolver falls back to the plugin info
         $resolver = new PackageUpdateResolver(self::createStub(Typo3TerExtensionVersionRepository::class), self::createStub(WordpressPluginVersionRepository::class), $pluginInfoRepository, self::createStub(WordpressThemeInfoRepository::class));
 
-        return new SitePackageWordpressEvaluator($resolver, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
+        return new SitePackageEvaluator($resolver, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
     }
 
     private function createVulnerability(string $toVersion, float $cvssScore, bool $informational = false): WordpressPluginVulnerability

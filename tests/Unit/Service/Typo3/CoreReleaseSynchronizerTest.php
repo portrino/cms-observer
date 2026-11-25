@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Typo3;
 
 use App\Entity\Typo3CoreRelease;
 use App\Repository\Typo3CoreReleaseRepository;
-use App\Service\Typo3CoreReleaseSynchronizer;
+use App\Service\Typo3\CoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 
-class Typo3CoreReleaseSynchronizerTest extends TestCase
+class CoreReleaseSynchronizerTest extends TestCase
 {
     public function testStoresTheSupportPhasesOfTheMajor(): void
     {
@@ -27,7 +27,7 @@ class Typo3CoreReleaseSynchronizerTest extends TestCase
         });
         $repository = self::createStub(Typo3CoreReleaseRepository::class);
 
-        new Typo3CoreReleaseSynchronizer($http, $entityManager, $repository)->sync();
+        new CoreReleaseSynchronizer($http, $entityManager, $repository)->sync();
 
         self::assertCount(1, $persisted);
         $release = $persisted[0];

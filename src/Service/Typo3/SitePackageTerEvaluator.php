@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 use App\Entity\SitePackage;
 use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Service\PackageUpdateResolver;
+use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
@@ -14,7 +16,7 @@ use Symfony\Component\Translation\TranslatableMessage;
  * the site's TYPO3 (PackageUpdateResolver). Callers are
  * responsible for only passing TYPO3 extension packages (e.g. via
  * SitePackageRepository::findByPackageType(PackageType::Typo3CmsExtension)) -
- * see SitePackageWordpressEvaluator for WordPress plugins, which use a
+ * see Wordpress\SitePackageEvaluator for WordPress plugins, which use a
  * different upstream (WordPress.org, not TER).
  */
 class SitePackageTerEvaluator

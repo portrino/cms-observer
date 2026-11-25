@@ -12,8 +12,8 @@ use App\Entity\SitePackage;
 use App\Entity\SiteReport;
 use App\Entity\Typo3TerExtensionVersion;
 use App\Entity\WordpressPluginVersion;
-use App\Service\SitePackageTerEvaluator;
-use App\Service\SitePackageWordpressEvaluator;
+use App\Service\Typo3\SitePackageTerEvaluator;
+use App\Service\Wordpress\SitePackageEvaluator;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -100,7 +100,7 @@ class DashboardSiteShowTest extends WebTestCase
         $entityManager->persist(new WordpressPluginVersion('compat-plugin', '1.2.0', null, null));
         $entityManager->persist(new WordpressPluginVersion('compat-plugin', '2.0.0', null, '6.6'));
         $entityManager->flush();
-        static::getContainer()->get(SitePackageWordpressEvaluator::class)->evaluate($package);
+        static::getContainer()->get(SitePackageEvaluator::class)->evaluate($package);
         $entityManager->flush();
 
         $client->request('GET', '/projects/'.$site->getId());

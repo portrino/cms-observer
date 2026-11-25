@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 use App\Entity\Typo3CoreRelease;
 use App\Entity\Typo3ReleaseType;
@@ -20,7 +20,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * a later patch in the same major.minor line was itself a security release
  * (ported from georgringer/t3monitoring's release-freshness logic).
  */
-class Typo3CoreReleaseSynchronizer
+class CoreReleaseSynchronizer
 {
     private const string RELEASES_URL = 'https://get.typo3.org/api/v1/release/';
     private const string MAJORS_URL = 'https://get.typo3.org/api/v1/major/';

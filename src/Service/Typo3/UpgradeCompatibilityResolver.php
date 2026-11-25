@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 use App\Dto\UpgradeItem;
 use App\Dto\UpgradeSupportPhase;
@@ -17,13 +17,15 @@ use App\Repository\SitePackageRepository;
 use App\Repository\Typo3CoreReleaseRepository;
 use App\Repository\Typo3TerExtensionMetaRepository;
 use App\Repository\Typo3TerExtensionVersionRepository;
+use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
+use App\Service\UpgradeTargets;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
  * Judges TYPO3 extensions by the TYPO3 majors of their TER versions.
  */
 #[AsTaggedItem(index: 'typo3')]
-final readonly class Typo3UpgradeCompatibilityResolver implements UpgradeCompatibilityResolver
+final readonly class UpgradeCompatibilityResolver implements CompatibilityResolver
 {
     public function __construct(
         private SitePackageRepository $packageRepository,

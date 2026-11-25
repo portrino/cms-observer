@@ -9,11 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Caches one WordPress plugin slug's info from
- * api.wordpress.org/plugins/info/1.2/ (WordpressPluginSynchronizer). One row
+ * api.wordpress.org/plugins/info/1.2/ (Wordpress\PluginSynchronizer). One row
  * per slug - unlike TER, this API only exposes rich detail for the latest
  * published version (no per-version compatibility/security history), so
  * there's no per-version equivalent of Typo3TerExtensionVersion here. It also
- * has no security/insecure signal at all - see SitePackageWordpressEvaluator
+ * has no security/insecure signal at all - see Wordpress\SitePackageEvaluator
  * for why that stays unknown for WordPress plugins.
  */
 #[ORM\Entity(repositoryClass: WordpressPluginInfoRepository::class)]
@@ -42,9 +42,9 @@ class WordpressPluginInfo
          * The plugin's bootstrap file name within its SVN tag folders, e.g.
          * "akismet.php" - not always "{slug}.php" (contact-form-7's is
          * wp-contact-form-7.php). Resolved once via
-         * WordpressApiClient::findBootstrapFilename() and cached here since it's
+         * Wordpress\ApiClient::findBootstrapFilename() and cached here since it's
          * stable across a plugin's versions, so per-version compatibility
-         * lookups (WordpressPluginVersionSynchronizer... see WordpressPluginSynchronizer)
+         * lookups (WordpressPluginVersionSynchronizer... see Wordpress\PluginSynchronizer)
          * don't need to rediscover it each time.
          */
         #[ORM\Column(length: 255, nullable: true)]

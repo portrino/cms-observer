@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Wordpress;
 
-use App\Service\WordpressApiClient;
+use App\Service\Wordpress\ApiClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-class WordpressApiClientTest extends TestCase
+class ApiClientTest extends TestCase
 {
     public function testReadsTheReleaseDatePerTagAndLogsAnUnreadableOne(): void
     {
         $logger = new BufferingLogger();
-        $client = new WordpressApiClient(new MockHttpClient(new MockResponse(<<<'XML'
+        $client = new ApiClient(new MockHttpClient(new MockResponse(<<<'XML'
             <?xml version="1.0" encoding="utf-8"?>
             <D:multistatus xmlns:D="DAV:">
               <D:response><D:href>/akismet/tags/</D:href><D:propstat><D:prop><D:getlastmodified>Mon, 01 Jan 2024 10:00:00 GMT</D:getlastmodified></D:prop></D:propstat></D:response>
@@ -37,7 +37,7 @@ class WordpressApiClientTest extends TestCase
     public function testLogsAnUnreadableTagListing(): void
     {
         $logger = new BufferingLogger();
-        $client = new WordpressApiClient(new MockHttpClient(new MockResponse('<html>maintenance</html')), $logger);
+        $client = new ApiClient(new MockHttpClient(new MockResponse('<html>maintenance</html')), $logger);
 
         self::assertSame([], $client->getCoreTagDates());
         $logs = $logger->cleanLogs();

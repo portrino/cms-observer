@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  * api.wordpress.org/core/stable-check/1.0/; the release date has no
  * equivalent in that feed, so it's scraped separately from
  * core.svn.wordpress.org's tags/ directory the same way plugin release
- * dates are (WordpressApiClient::getTagDates()) - see
- * WordpressCoreReleaseSynchronizer.
+ * dates are (Wordpress\ApiClient::getTagDates()) - see
+ * Wordpress\CoreReleaseSynchronizer.
  */
 #[ORM\Entity(repositoryClass: WordpressCoreReleaseRepository::class)]
 class WordpressCoreRelease

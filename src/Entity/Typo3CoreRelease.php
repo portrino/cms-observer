@@ -104,7 +104,7 @@ class Typo3CoreRelease
 
     /**
      * Whether this release's major/LTS line is still within its official
-     * maintenance window (see Typo3CoreReleaseSynchronizer).
+     * maintenance window (see Typo3\CoreReleaseSynchronizer).
      */
     public function isActive(): bool
     {

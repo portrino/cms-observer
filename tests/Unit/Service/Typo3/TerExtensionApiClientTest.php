@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Typo3;
 
-use App\Service\TerExtensionApiClient;
+use App\Service\Typo3\TerExtensionApiClient;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;

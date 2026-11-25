@@ -22,7 +22,7 @@ return RectorConfig::configure()
         // optional 3rd $operator param - PHPStan then rejects it against usort()'s stricter
         // callable(string, string): int shape. Keep the explicit arrow function here.
         ArrowFunctionDelegatingCallToFirstClassCallableRector::class => [
-            __DIR__ . '/../src/Service/WordpressPluginSynchronizer.php',
+            __DIR__ . '/../src/Service/Wordpress/PluginSynchronizer.php',
         ],
     ])
     ->withPhpSets()

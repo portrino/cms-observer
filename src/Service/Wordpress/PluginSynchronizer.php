@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Wordpress;
 
 use App\Entity\PackageType;
 use App\Entity\WordpressPluginInfo;
@@ -15,8 +15,8 @@ use Doctrine\ORM\EntityManagerInterface;
 /**
  * Syncs WordPress.org plugin info for every distinct plugin slug currently
  * reported by a WordPress site - one API request per slug
- * (WordpressApiClient::getPluginInfo()), mirroring
- * Typo3ExtensionVersionSynchronizer's per-key sync loop.
+ * (Wordpress\ApiClient::getPluginInfo()), mirroring
+ * Typo3\ExtensionVersionSynchronizer's per-key sync loop.
  *
  * Unlike TER, WordPress.org's plugin info API only exposes the latest
  * published version's metadata, so per-version release dates and
@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * MAX_VERSIONS_PER_SLUG_PER_RUN) - older tags are never shown to users, so
  * there's no reason to spend requests scraping them.
  */
-class WordpressPluginSynchronizer
+class PluginSynchronizer
 {
     /** Upper bound on distinct plugin slugs synced per run. */
     private const int MAX_SLUGS_PER_RUN = 40;
@@ -37,7 +37,7 @@ class WordpressPluginSynchronizer
     private const int MAX_VERSIONS_PER_SLUG_PER_RUN = 15;
 
     public function __construct(
-        private readonly WordpressApiClient $apiClient,
+        private readonly ApiClient $apiClient,
         private readonly SitePackageRepository $sitePackageRepository,
         private readonly WordpressPluginInfoRepository $pluginInfoRepository,
         private readonly WordpressPluginVersionRepository $versionRepository,

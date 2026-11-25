@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Caches one extension key's TER metadata (Packagist/repository/manual
  * links) - fetched via TerExtensionApiClient::getExtensionMeta() alongside
- * the version history in Typo3ExtensionVersionSynchronizer, since it lives
+ * the version history in Typo3\ExtensionVersionSynchronizer, since it lives
  * on the same per-key TER endpoint. One row per extension key, unlike
  * Typo3TerExtensionVersion which has one row per (key, version).
  */

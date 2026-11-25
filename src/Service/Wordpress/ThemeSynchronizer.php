@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Wordpress;
 
 use App\Entity\PackageType;
 use App\Entity\SitePackage;
@@ -15,10 +15,10 @@ use Doctrine\ORM\EntityManagerInterface;
  * Syncs the latest version of every reported theme from WordPress.org. One request per theme
  * slug; sites have few themes, so unlike the plugins all of them are synced in every run.
  */
-class WordpressThemeSynchronizer
+class ThemeSynchronizer
 {
     public function __construct(
-        private readonly WordpressApiClient $apiClient,
+        private readonly ApiClient $apiClient,
         private readonly SitePackageRepository $sitePackageRepository,
         private readonly WordpressThemeInfoRepository $themeInfoRepository,
         private readonly EntityManagerInterface $entityManager,

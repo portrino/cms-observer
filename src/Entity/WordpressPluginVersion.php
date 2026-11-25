@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Caches one (plugin slug, version) pair's release date and minimum-
  * WordPress requirement, scraped from the plugin's SVN mirror
- * (WordpressPluginSynchronizer / WordpressApiClient) since WordPress.org's
+ * (Wordpress\PluginSynchronizer / Wordpress\ApiClient) since WordPress.org's
  * plugin info API only exposes this for the single latest version. There's
  * no per-version "comment"/changelog field here (unlike
  * Typo3TerExtensionVersion's uploadComment) - no reliable structured source

@@ -8,7 +8,7 @@ use App\Entity\CmsType;
 use App\Repository\SiteRepository;
 use App\Service\SecurityNotifier;
 use App\Service\SiteCoreVersionEvaluator;
-use App\Service\Typo3CoreReleaseSynchronizer;
+use App\Service\Typo3\CoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
@@ -21,7 +21,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 class Typo3SyncCoreReleasesCommand extends AbstractSyncCommand
 {
     public function __construct(
-        private readonly Typo3CoreReleaseSynchronizer $synchronizer,
+        private readonly CoreReleaseSynchronizer $synchronizer,
         private readonly SiteCoreVersionEvaluator $coreVersionEvaluator,
         private readonly SiteRepository $siteRepository,
         EntityManagerInterface $entityManager,

@@ -7,8 +7,8 @@ namespace App\Command;
 use App\Entity\PackageType;
 use App\Repository\SitePackageRepository;
 use App\Service\SecurityNotifier;
-use App\Service\SitePackageTerEvaluator;
-use App\Service\Typo3ExtensionVersionSynchronizer;
+use App\Service\Typo3\ExtensionVersionSynchronizer;
+use App\Service\Typo3\SitePackageTerEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
@@ -21,7 +21,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 class Typo3SyncExtensionVersionsCommand extends AbstractSyncCommand
 {
     public function __construct(
-        private readonly Typo3ExtensionVersionSynchronizer $synchronizer,
+        private readonly ExtensionVersionSynchronizer $synchronizer,
         private readonly SitePackageTerEvaluator $terEvaluator,
         private readonly SitePackageRepository $sitePackageRepository,
         EntityManagerInterface $entityManager,

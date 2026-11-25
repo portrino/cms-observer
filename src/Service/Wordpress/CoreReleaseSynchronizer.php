@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Wordpress;
 
 use App\Entity\WordpressCoreRelease;
 use App\Repository\WordpressCoreReleaseRepository;
@@ -15,13 +15,13 @@ use Doctrine\ORM\EntityManagerInterface;
  * feed, this one already gives us insecure/outdated/latest directly per
  * version, so there's no separate maintenance-window logic to replicate.
  * Release dates aren't in that feed either, so they're scraped separately
- * from core.svn.wordpress.org (WordpressApiClient::getCoreTagDates()) - one
+ * from core.svn.wordpress.org (Wordpress\ApiClient::getCoreTagDates()) - one
  * extra request per sync run, not per version.
  */
-class WordpressCoreReleaseSynchronizer
+class CoreReleaseSynchronizer
 {
     public function __construct(
-        private readonly WordpressApiClient $apiClient,
+        private readonly ApiClient $apiClient,
         private readonly WordpressCoreReleaseRepository $repository,
         private readonly EntityManagerInterface $entityManager,
     ) {

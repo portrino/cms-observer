@@ -8,7 +8,7 @@ use App\Entity\CmsType;
 use App\Repository\SiteRepository;
 use App\Service\SecurityNotifier;
 use App\Service\SiteCoreVersionEvaluator;
-use App\Service\WordpressCoreReleaseSynchronizer;
+use App\Service\Wordpress\CoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
@@ -21,7 +21,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 class WordpressSyncCoreReleasesCommand extends AbstractSyncCommand
 {
     public function __construct(
-        private readonly WordpressCoreReleaseSynchronizer $synchronizer,
+        private readonly CoreReleaseSynchronizer $synchronizer,
         private readonly SiteCoreVersionEvaluator $coreVersionEvaluator,
         private readonly SiteRepository $siteRepository,
         EntityManagerInterface $entityManager,

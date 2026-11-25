@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 use App\Entity\SitePackage;
 use App\Entity\Typo3ExtensionAdvisory;
 use App\Repository\Typo3ExtensionAdvisoryRepository;
+use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**

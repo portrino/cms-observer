@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Typo3;
 
-use App\Service\AffectedVersionRangeMatcher;
+use App\Service\Typo3\AffectedVersionRangeMatcher;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

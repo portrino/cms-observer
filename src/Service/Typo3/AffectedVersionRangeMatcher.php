@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Typo3;
 
 /**
  * Parses the free-text "Affected Versions" field from a TYPO3 security

@@ -24,7 +24,7 @@ class SitePackage
     /**
      * Set only by the Observer's own version cross-reference (TER for TYPO3
      * extensions, WordPress.org's plugin API for WordPress plugins), never
-     * by the client - see SitePackageTerEvaluator/SitePackageWordpressEvaluator.
+     * by the client - see SitePackageTerEvaluator/Wordpress\SitePackageEvaluator.
      */
     #[ORM\Column(nullable: true)]
     private ?bool $insecure = null;

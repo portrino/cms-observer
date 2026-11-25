@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Typo3;
 
 use App\Entity\CmsType;
 use App\Entity\Site;
@@ -14,7 +14,7 @@ use App\Repository\WordpressPluginVersionRepository;
 use App\Repository\WordpressThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
-use App\Service\SitePackageTerEvaluator;
+use App\Service\Typo3\SitePackageTerEvaluator;
 use PHPUnit\Framework\TestCase;
 
 class SitePackageTerEvaluatorTest extends TestCase

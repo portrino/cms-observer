@@ -13,7 +13,7 @@ use App\Entity\Typo3TerExtensionVersion;
 use App\Repository\SiteEventRepository;
 use App\Repository\SitePackageRepository;
 use App\Security\SiteTokenFactory;
-use App\Service\SitePackageTerEvaluator;
+use App\Service\Typo3\SitePackageTerEvaluator;
 use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

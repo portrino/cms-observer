@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Wordpress;
 
 use App\Dto\UpgradeItem;
 use App\Entity\Site;
@@ -11,6 +11,8 @@ use App\Entity\UpgradeSection;
 use App\Entity\WordpressCoreRelease;
 use App\Repository\SitePackageRepository;
 use App\Repository\WordpressCoreReleaseRepository;
+use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
+use App\Service\UpgradeTargets;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
@@ -18,7 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * shortcut: every package is "check manually"; judge by "Requires at least" / "Tested up to" once WordPress calculations are used.
  */
 #[AsTaggedItem(index: 'wordpress')]
-final readonly class WordpressUpgradeCompatibilityResolver implements UpgradeCompatibilityResolver
+final readonly class UpgradeCompatibilityResolver implements CompatibilityResolver
 {
     public function __construct(
         private SitePackageRepository $packageRepository,

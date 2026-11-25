@@ -15,6 +15,8 @@ use App\Entity\SitePackage;
 use App\Entity\SiteReport;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
+use App\Service\Typo3\SitePackageAdvisoryEvaluator;
+use App\Service\Wordpress\SitePackageEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -26,7 +28,7 @@ class SiteReportIngestor
         private readonly SiteReportRepository $reportRepository,
         private readonly SiteCoreVersionEvaluator $coreVersionEvaluator,
         private readonly SitePackageAdvisoryEvaluator $packageAdvisoryEvaluator,
-        private readonly SitePackageWordpressEvaluator $wordpressEvaluator,
+        private readonly SitePackageEvaluator $wordpressEvaluator,
         private readonly SiteRuntimeVersionEvaluator $runtimeVersionEvaluator,
         private readonly SecurityNotifier $securityNotifier,
     ) {

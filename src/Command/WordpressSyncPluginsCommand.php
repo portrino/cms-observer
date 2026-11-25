@@ -7,8 +7,8 @@ namespace App\Command;
 use App\Entity\PackageType;
 use App\Repository\SitePackageRepository;
 use App\Service\SecurityNotifier;
-use App\Service\SitePackageWordpressEvaluator;
-use App\Service\WordpressPluginSynchronizer;
+use App\Service\Wordpress\PluginSynchronizer;
+use App\Service\Wordpress\SitePackageEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
@@ -21,8 +21,8 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 class WordpressSyncPluginsCommand extends AbstractSyncCommand
 {
     public function __construct(
-        private readonly WordpressPluginSynchronizer $synchronizer,
-        private readonly SitePackageWordpressEvaluator $wordpressEvaluator,
+        private readonly PluginSynchronizer $synchronizer,
+        private readonly SitePackageEvaluator $wordpressEvaluator,
         private readonly SitePackageRepository $sitePackageRepository,
         EntityManagerInterface $entityManager,
         SecurityNotifier $securityNotifier,

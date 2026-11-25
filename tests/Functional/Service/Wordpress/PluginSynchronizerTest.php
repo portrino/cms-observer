@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Service;
+namespace App\Tests\Functional\Service\Wordpress;
 
 use App\Entity\CmsType;
 use App\Entity\PackageType;
@@ -12,8 +12,8 @@ use App\Entity\WordpressPluginVersion;
 use App\Repository\SitePackageRepository;
 use App\Repository\WordpressPluginInfoRepository;
 use App\Repository\WordpressPluginVersionRepository;
-use App\Service\WordpressApiClient;
-use App\Service\WordpressPluginSynchronizer;
+use App\Service\Wordpress\ApiClient;
+use App\Service\Wordpress\PluginSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -21,7 +21,7 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-class WordpressPluginSynchronizerTest extends KernelTestCase
+class PluginSynchronizerTest extends KernelTestCase
 {
     private const string SVN = 'https://plugins.svn.wordpress.org/sync-plugin/tags/';
 
@@ -53,8 +53,8 @@ class WordpressPluginSynchronizerTest extends KernelTestCase
             };
         });
 
-        $synchronizer = new WordpressPluginSynchronizer(
-            new WordpressApiClient($api, new NullLogger()),
+        $synchronizer = new PluginSynchronizer(
+            new ApiClient($api, new NullLogger()),
             $container->get(SitePackageRepository::class),
             $container->get(WordpressPluginInfoRepository::class),
             $container->get(WordpressPluginVersionRepository::class),
