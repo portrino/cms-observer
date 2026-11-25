@@ -2,23 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Typo3;
 
+use App\Command\AbstractSyncCommand;
 use App\Entity\CmsType;
 use App\Repository\SiteRepository;
 use App\Service\SecurityNotifier;
 use App\Service\SiteCoreVersionEvaluator;
-use App\Service\Wordpress\CoreReleaseSynchronizer;
+use App\Service\Typo3\CoreReleaseSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
-    name: 'app:wordpress:sync-core-releases',
-    description: 'Fetch the WordPress core releases and which are insecure from api.wordpress.org, then re-rate the WordPress version of every project',
+    name: 'app:typo3:sync-core-releases',
+    description: 'Fetch the TYPO3 core releases and their security status from get.typo3.org, then re-rate the TYPO3 version of every project',
 )]
-#[AsCronTask('37 */6 * * *')] // every 6h - catches a new security release the same day it ships
-class WordpressSyncCoreReleasesCommand extends AbstractSyncCommand
+#[AsCronTask('23 */6 * * *')] // every 6h - catches a new security release the same day it ships
+class SyncCoreReleasesCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly CoreReleaseSynchronizer $synchronizer,
@@ -34,11 +35,11 @@ class WordpressSyncCoreReleasesCommand extends AbstractSyncCommand
     {
         $releaseCount = $this->synchronizer->sync();
 
-        $sites = $this->siteRepository->findBy(['type' => CmsType::WordPress]);
+        $sites = $this->siteRepository->findBy(['type' => CmsType::Typo3]);
         $this->coreVersionEvaluator->evaluateAll($sites);
 
         return sprintf(
-            'Synced %d WordPress core releases and re-evaluated %d sites.',
+            'Synced %d TYPO3 core releases and re-evaluated %d sites.',
             $releaseCount,
             count($sites),
         );

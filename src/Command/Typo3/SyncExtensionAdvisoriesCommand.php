@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Typo3;
 
+use App\Command\AbstractSyncCommand;
 use App\Entity\PackageType;
 use App\Repository\SitePackageRepository;
 use App\Service\SecurityNotifier;
@@ -18,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the TYPO3 security advisories for extensions, then re-rate every reported extension version',
 )]
 #[AsCronTask('11 * * * *')] // hourly - this is the security-advisory feed, worth checking often
-class Typo3SyncExtensionAdvisoriesCommand extends AbstractSyncCommand
+class SyncExtensionAdvisoriesCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly ExtensionAdvisorySynchronizer $synchronizer,

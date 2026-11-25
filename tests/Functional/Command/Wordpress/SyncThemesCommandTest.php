@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Command;
+namespace App\Tests\Functional\Command\Wordpress;
 
-use App\Command\WordpressSyncThemesCommand;
+use App\Command\Wordpress\SyncThemesCommand;
 use App\Entity\CmsType;
 use App\Entity\PackageType;
 use App\Entity\Site;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-class WordpressSyncThemesCommandTest extends KernelTestCase
+class SyncThemesCommandTest extends KernelTestCase
 {
     public function testRatesTheReportedThemesByTheirLatestVersion(): void
     {
@@ -50,7 +50,7 @@ class WordpressSyncThemesCommandTest extends KernelTestCase
             };
         });
 
-        $command = new WordpressSyncThemesCommand(
+        $command = new SyncThemesCommand(
             new ThemeSynchronizer(new ApiClient($api, new NullLogger()), $container->get(SitePackageRepository::class), $container->get(WordpressThemeInfoRepository::class), $entityManager),
             $container->get(SitePackageEvaluator::class),
             $container->get(SitePackageRepository::class),

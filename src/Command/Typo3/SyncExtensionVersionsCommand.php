@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Typo3;
 
+use App\Command\AbstractSyncCommand;
 use App\Entity\PackageType;
 use App\Repository\SitePackageRepository;
 use App\Service\SecurityNotifier;
@@ -18,7 +19,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the TER versions of a batch of reported extensions per run, then re-rate the reported extensions as insecure or outdated',
 )]
 #[AsCronTask('*/15 * * * *')] // every 15m - only MAX_KEYS_PER_RUN keys per run, so it needs frequent ticks to cover every extension
-class Typo3SyncExtensionVersionsCommand extends AbstractSyncCommand
+class SyncExtensionVersionsCommand extends AbstractSyncCommand
 {
     public function __construct(
         private readonly ExtensionVersionSynchronizer $synchronizer,

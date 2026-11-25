@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Wordpress;
 
 use App\Entity\PackageType;
 use App\Repository\SitePackageRepository;
@@ -24,7 +24,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
     description: 'Fetch the Wordfence Intelligence vulnerability feed (needs WORDFENCE_API_KEY), then re-rate every reported plugin version',
 )]
 #[AsCronTask('43 4 * * *')] // once a day - the feed is complete (~160 MB) and Wordfence rate-limits repeated downloads
-class WordpressSyncPluginVulnerabilitiesCommand extends Command
+class SyncPluginVulnerabilitiesCommand extends Command
 {
     public function __construct(
         private readonly WordfenceApiClient $apiClient,
