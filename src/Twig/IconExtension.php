@@ -7,7 +7,7 @@ namespace App\Twig;
 use Twig\Attribute\AsTwigFunction;
 
 /**
- * Inlines a Lucide icon (assets/icons/<name>.svg, ISC-licensed) as raw SVG
+ * Inlines a Lucide icon (assets/icons/<name>.svg, ISC-licensed, see LICENSE there) as raw SVG
  * markup - no icon font, no separate HTTP request, and it inherits color via
  * the icons' own stroke="currentColor" rather than needing per-icon CSS.
  */
