@@ -65,6 +65,8 @@ Three specifics worth spelling out, because they are easy to get wrong:
 
 - Run the app with `symfony serve -d`, and commands with `symfony console ...`
   (or `bin/console` when the Symfony CLI isn't available).
+- Run curl and other HTTP probes of external APIs inside the DDEV container
+  (`ddev exec curl ...`), not on the host; `ddev start` first if needed.
 - When something fails, read `var/log/dev.log` and the web profiler
   (`/_profiler`) before changing code.
 - If `maker-bundle` is installed, prefer `bin/console make:*` with every argument
