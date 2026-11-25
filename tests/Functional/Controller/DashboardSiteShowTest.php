@@ -141,7 +141,8 @@ class DashboardSiteShowTest extends WebTestCase
 
     /**
      * The newest extension version for the site's TYPO3 is installed, newer ones need TYPO3 14:
-     * not "Outdated" on the project page nor the packages page, but a hint at the TYPO3 14 version.
+     * not "Outdated" on the project page nor the packages page. Only the project page hints at the
+     * TYPO3 14 version: the packages page lists projects on different cores, so the hint lacks its context.
      */
     public function testAnUpdateForANewerCoreIsNotOutdated(): void
     {
@@ -170,12 +171,15 @@ class DashboardSiteShowTest extends WebTestCase
         static::getContainer()->get(SitePackageTerEvaluator::class)->evaluateAll([$package]);
         $entityManager->flush();
 
-        foreach (['/projects/'.$site->getId(), '/packages?q=newer_core_ext'] as $url) {
-            $client->request('GET', $url);
-            self::assertResponseIsSuccessful();
-            self::assertSelectorTextContains('body', 'TYPO3 14 compatible version (13.1.0)');
-            self::assertSelectorTextNotContains('body', 'Outdated');
-        }
+        $client->request('GET', '/projects/'.$site->getId());
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'TYPO3 14 compatible version (13.1.0)');
+        self::assertSelectorTextNotContains('body', 'Outdated');
+
+        $client->request('GET', '/packages?q=newer_core_ext');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Up to date');
+        self::assertSelectorTextNotContains('body', 'compatible version');
 
         // the project list counts the same: no compatible update
         $client->request('GET', '/?q=Newer+Core+Site');

@@ -66,7 +66,6 @@
                                     <td>{{ package.version }}</td>
                                     <td class="text-nowrap">
                                         {{ m.outdated_badge(package.outdated, package.latestVersion) }}
-                                        {{ m.newer_core_package_badge(package.site.type.label, package.newerCoreVersion, package.newerCorePackageVersion) }}
                                     </td>
                                     <td>{{ m.security_badge(package.insecure) }}</td>
                                 </tr>
