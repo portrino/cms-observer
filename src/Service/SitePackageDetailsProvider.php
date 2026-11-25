@@ -38,13 +38,13 @@ class SitePackageDetailsProvider
     public function forSite(Site $site, array $packages): array
     {
         $coreVersion = $site->getCurrentCoreVersion();
-        $isWordpress = CmsType::WordPress === $site->getType();
 
         $details = [];
         foreach ($packages as $package) {
-            $details[(int) $package->getId()] = $isWordpress
-                ? $this->wordpressDetails($package, $coreVersion)
-                : $this->typo3Details($package, $coreVersion);
+            $details[(int) $package->getId()] = match ($site->getType()) {
+                CmsType::Typo3 => $this->typo3Details($package, $coreVersion),
+                CmsType::WordPress => $this->wordpressDetails($package, $coreVersion),
+            };
         }
 
         return $details;

@@ -182,13 +182,10 @@
                         {# newest first, so the first release not known to be insecure is the update target #}
                         {% set latestRelease = newerCoreReleases|filter(r => r.insecure is not same as(true))|first %}
                         {% for release in newerCoreReleases %}
-                            {% set notesUrl = site.type.value == 'typo3'
-                                ? 'https://get.typo3.org/release-notes/' ~ release.version
-                                : 'https://wordpress.org/documentation/wordpress-version/version-' ~ release.version|replace({'.': '-'}) ~ '/' %}
                             <tr class="{{ release.insecure ? 'row-insecure' : (release is same as(latestRelease) ? 'row-latest' : 'row-secure') }}">
                                 <td class="text-nowrap"><span class="version-number">{{ release.version }}</span>{{ m.version_flag(release.insecure, release is same as(latestRelease)) }}</td>
                                 <td class="text-nowrap">{{ release.releaseDate ? release.releaseDate|format_date('medium') : '—' }}</td>
-                                <td><a href="{{ notesUrl }}" target="_blank" rel="noopener">{{ 'project.release_notes'|trans }}</a></td>
+                                <td><a href="{{ site.type.releaseNotesUrl(release.version) }}" target="_blank" rel="noopener">{{ 'project.release_notes'|trans }}</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -202,7 +199,7 @@
     </div>
     </div>
 
-    <h2 class="h4 mb-3">{{ 'nav.packages'|trans }} {{ m.package_count_badge(packages|length, site.type.value == 'typo3' ? 'package.label.extensions'|trans : 'package.label.plugins_themes'|trans) }}</h2>
+    <h2 class="h4 mb-3">{{ 'nav.packages'|trans }} {{ m.package_count_badge(packages|length, site.type.packagesLabel|trans) }}</h2>
     <div class="card mb-4">
     <div class="card-body p-0">
     <div class="accordion" id="packagesAccordion">
@@ -231,112 +228,7 @@
             </h3>
             <div id="{{ bodyId }}" class="accordion-collapse collapse" data-bs-parent="#packagesAccordion">
                 <div class="accordion-body">
-                {% if site.type.value == 'wordpress' %}
-                    <div class="mb-2">
-                        {% set wpKind = package.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
-                        <a href="https://wordpress.org/{{ wpKind }}/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'WordPress.org'}) }} {{ icon('external-link') }}</a>
-                        <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ package.name }}/" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
-                    </div>
-                    {% if details.wordpressPluginInfo.description ?? null %}
-                        <p>{{ details.wordpressPluginInfo.description }}</p>
-                    {% endif %}
-                    {% if package.composerName %}
-                        <p class="text-muted"><code>{{ package.composerName }}</code></p>
-                    {% endif %}
-                    {% set vulnerability = package.matchedWordpressVulnerability %}
-                    {% if vulnerability %}
-                        <p class="mb-1">
-                            <a href="{{ vulnerability.url }}" target="_blank" rel="noopener">{{ vulnerability.title }}</a>:
-                            {{ 'package.known_vulnerability'|trans({severity: vulnerability.cvssRating}) }} (CVSS {{ vulnerability.cvssScore }}).
-                            {{ vulnerability.patchedVersions is empty ? 'package.no_fix'|trans : 'package.fixed_in'|trans({versions: vulnerability.patchedVersions|join(', ')}) }}
-                        </p>
-                        {{ m.vulnerability_copyright(vulnerability.copyrightNotices) }}
-                    {% endif %}
-                    {% if details.newerVersions is empty %}
-                        <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
-                    {% else %}
-                        <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>{{ 'common.version'|trans }}</th>
-                                    <th>{{ 'package.comment'|trans }}</th>
-                                    <th>{{ 'common.date'|trans }}</th>
-                                    <th>{{ 'package.compatibility'|trans }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for version in details.newerVersions %}
-                                {% set state = details.versionStates[version.version] %}
-                                {% set isLatest = version.version == details.latestVersion %}
-                                <tr class="{{ state.insecure ? 'row-insecure' : (isLatest ? 'row-latest' : 'row-secure') }}">
-                                    <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(state.insecure, isLatest) }}</td>
-                                    <td>—</td>
-                                    <td class="text-nowrap">{{ version.releaseDate ? version.releaseDate|format_date('medium') : '—' }}</td>
-                                    <td class="text-nowrap">{{ version.requiresWpVersion ? m.wordpress_requires_badge(version.requiresWpVersion, state.compatible) : '—' }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <div class="mb-2">
-                        <a href="https://extensions.typo3.org/extension/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'TER'}) }} {{ icon('external-link') }}</a>
-                        {% if details.packagistUrl %}
-                            <a href="{{ details.packagistUrl }}" target="_blank" rel="noopener" class="ms-3">Packagist</a>
-                        {% endif %}
-                        {% if details.repositoryUrl %}
-                            <a href="{{ details.repositoryUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
-                        {% endif %}
-                        {% if details.manualUrl %}
-                            <a href="{{ details.manualUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'package.manual'|trans }}</a>
-                        {% endif %}
-                    </div>
-                    {% if details.description %}
-                        <p>{{ details.description }}</p>
-                    {% endif %}
-                    {% if package.composerName %}
-                        <p class="text-muted"><code>{{ package.composerName }}</code></p>
-                    {% endif %}
-                    {% if package.matchedAdvisory %}
-                        <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: {{ 'package.known_vulnerability'|trans({severity: package.matchedAdvisory.severity}) }}.</p>
-                    {% endif %}
-                    {% if details.newerVersions is empty %}
-                        <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
-                    {% else %}
-                        <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>{{ 'common.version'|trans }}</th>
-                                    <th>{{ 'package.comment'|trans }}</th>
-                                    <th>{{ 'common.date'|trans }}</th>
-                                    <th>{{ 'package.compatibility'|trans }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {# newest first and already limited to the site's TYPO3 major #}
-                            {% set latestVersion = details.newerVersions|filter(v => v.insecure is not same as(true))|first %}
-                            {% for version in details.newerVersions %}
-                                <tr class="{{ version.insecure ? 'row-insecure' : (version is same as(latestVersion) ? 'row-latest' : 'row-secure') }}">
-                                    <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}</td>
-                                    <td class="text-break">{{ version.uploadComment ?? '—' }}</td>
-                                    <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|format_date('medium') : '—' }}</td>
-                                    <td class="text-nowrap">
-                                        {% for major in version.typo3MajorVersions %}
-                                            {{ m.typo3_major_badge(major, typo3SupportStatus[major] ?? null, loop.last ? '' : 'me-1') }}
-                                        {% else %}
-                                            —
-                                        {% endfor %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        </div>
-                    {% endif %}
-                {% endif %}
+                {{ include('dashboard/_package_details_' ~ site.type.value ~ '.html.twig') }}
                 </div>
             </div>
         </div>

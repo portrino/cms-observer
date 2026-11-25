@@ -169,12 +169,11 @@ class SiteReportIngestor
             $sitePackage = $this->savePackage($site, $remaining[$reported->name] ?? null, $reported, $packageType, $recordEvents);
             unset($remaining[$reported->name]);
 
-            // WordPress plugins and themes are checked against the synced Wordfence data right away
-            if (CmsType::WordPress === $site->getType()) {
-                $this->wordpressEvaluator->evaluate($sitePackage);
-            } else {
-                $this->packageAdvisoryEvaluator->evaluate($sitePackage);
-            }
+            // checked against the synced advisories (TYPO3) or Wordfence data (WordPress) right away
+            match ($site->getType()) {
+                CmsType::Typo3 => $this->packageAdvisoryEvaluator->evaluate($sitePackage),
+                CmsType::WordPress => $this->wordpressEvaluator->evaluate($sitePackage),
+            };
         }
 
         // No longer reported means uninstalled; keeping it would keep alerting about software that's gone

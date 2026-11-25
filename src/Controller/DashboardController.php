@@ -112,14 +112,15 @@ class DashboardController extends AbstractController
     ): Response {
         $packages = $packageRepository->findBy(['site' => $site], ['name' => 'ASC']);
         $newerCoreReleases = $coreVersionEvaluator->newerReleases($site);
-        $isWordpress = CmsType::WordPress === $site->getType();
 
         // TYPO3 major => support status, to color the compatibility badges of TER versions
         $typo3SupportStatus = [];
-        if (!$isWordpress) {
-            foreach ($endOfLifeReleaseRepository->findBy(['product' => 'typo3']) as $release) {
-                $typo3SupportStatus[(int) $release->getCycle()] = $release->getSupportStatus();
-            }
+        $supportReleases = match ($site->getType()) {
+            CmsType::Typo3 => $endOfLifeReleaseRepository->findBy(['product' => 'typo3']),
+            CmsType::WordPress => [],
+        };
+        foreach ($supportReleases as $release) {
+            $typo3SupportStatus[(int) $release->getCycle()] = $release->getSupportStatus();
         }
 
         return $this->render('dashboard/site_show.html.twig', [

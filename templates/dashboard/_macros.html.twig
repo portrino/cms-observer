@@ -186,13 +186,9 @@
     {%- endif -%}
 {% endmacro %}
 
-{% macro cms_type_icon(type) %}
-    {%- if type.value == 'typo3' -%}
-        <span class="cms-type-icon" title="TYPO3"><img src="{{ asset('images/typo3-icon.svg') }}" alt="TYPO3" width="20" height="20"></span>
-    {%- else -%}
-        <span class="cms-type-icon" title="WordPress"><img src="{{ asset('images/wordpress-icon.svg') }}" alt="WordPress" width="20" height="20"></span>
-    {%- endif -%}
-{% endmacro %}
+{% macro cms_type_icon(type) -%}
+    <span class="cms-type-icon" title="{{ type.label }}"><img src="{{ asset(type.icon) }}" alt="{{ type.label }}" width="20" height="20"></span>
+{%- endmacro %}
 
 {% macro sla_status_icon(slaActive) %}
     {%- import _self as icons -%}

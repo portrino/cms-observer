@@ -1,0 +1,56 @@
+{% import 'dashboard/_macros.html.twig' as m %}
+<div class="mb-2">
+    <a href="https://extensions.typo3.org/extension/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'TER'}) }} {{ icon('external-link') }}</a>
+    {% if details.packagistUrl %}
+        <a href="{{ details.packagistUrl }}" target="_blank" rel="noopener" class="ms-3">Packagist</a>
+    {% endif %}
+    {% if details.repositoryUrl %}
+        <a href="{{ details.repositoryUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
+    {% endif %}
+    {% if details.manualUrl %}
+        <a href="{{ details.manualUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'package.manual'|trans }}</a>
+    {% endif %}
+</div>
+{% if details.description %}
+    <p>{{ details.description }}</p>
+{% endif %}
+{% if package.composerName %}
+    <p class="text-muted"><code>{{ package.composerName }}</code></p>
+{% endif %}
+{% if package.matchedAdvisory %}
+    <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: {{ 'package.known_vulnerability'|trans({severity: package.matchedAdvisory.severity}) }}.</p>
+{% endif %}
+{% if details.newerVersions is empty %}
+    <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
+{% else %}
+    <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+        <thead>
+            <tr>
+                <th>{{ 'common.version'|trans }}</th>
+                <th>{{ 'package.comment'|trans }}</th>
+                <th>{{ 'common.date'|trans }}</th>
+                <th>{{ 'package.compatibility'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {# newest first and already limited to the site's TYPO3 major #}
+        {% set latestVersion = details.newerVersions|filter(v => v.insecure is not same as(true))|first %}
+        {% for version in details.newerVersions %}
+            <tr class="{{ version.insecure ? 'row-insecure' : (version is same as(latestVersion) ? 'row-latest' : 'row-secure') }}">
+                <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}</td>
+                <td class="text-break">{{ version.uploadComment ?? '—' }}</td>
+                <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|format_date('medium') : '—' }}</td>
+                <td class="text-nowrap">
+                    {% for major in version.typo3MajorVersions %}
+                        {{ m.typo3_major_badge(major, typo3SupportStatus[major] ?? null, loop.last ? '' : 'me-1') }}
+                    {% else %}
+                        —
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endif %}
