@@ -47,8 +47,17 @@ The Observer side rates Craft sites from public sources only:
 
 Core and plugins are rated like the other CMS: insecure when the major
 version is past end of life or an advisory affects the version,
-outdated when a newer stable version exists. Plugins that aren't on
-Packagist stay "unknown".
+outdated when a newer stable version exists. Like TYPO3, Craft supports
+several majors at a time, so a core release is outdated only against
+the latest release of its own major. A plugin is outdated only by a
+version whose `require` of `craftcms/cms` the site's Craft satisfies.
+Plugins that aren't on Packagist, have no Composer name or are
+installed from a branch like `dev-main` stay "unknown"; a major that
+endoflife.date doesn't list yet doesn't count as end of life.
+
+The client supports Craft CMS 5 only: Craft 4 is past end of life since
+30.04.2026. Upgrade calculations stay hidden for Craft projects until
+a resolver for Craft exists.
 
 Requests to Packagist follow its rules: a User-Agent with a contact
 address that every operator sets in `app:setup`, at most a few
