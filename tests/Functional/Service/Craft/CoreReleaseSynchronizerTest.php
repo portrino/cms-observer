@@ -51,6 +51,17 @@ class CoreReleaseSynchronizerTest extends KernelTestCase
         self::assertNull($releases->findOneByVersion('6.0.0-beta.2'), 'pre-releases are left out');
     }
 
+    public function testStoresNoReleasesBeforeTheSupportCyclesAndAdvisoriesAreSynced(): void
+    {
+        $this->advisories = ['craftcms/cms' => [self::advisory('PKSA-rce', '>=5.0.0-RC1,<5.10.5')]];
+        [$advisorySynchronizer, $coreSynchronizer] = $this->synchronizers();
+        $advisorySynchronizer->sync();
+
+        // without the craft-cms cycles 4.18.9 would count as secure: the core stays unknown instead
+        self::assertSame(0, $coreSynchronizer->sync());
+        self::assertSame([], static::getContainer()->get(CoreReleaseRepository::class)->findAll());
+    }
+
     public function testStoresThePluginAdvisoriesAndDropsWithdrawnOnes(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);

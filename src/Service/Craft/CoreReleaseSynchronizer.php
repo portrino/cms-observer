@@ -27,19 +27,18 @@ class CoreReleaseSynchronizer
     }
 
     /**
-     * @return int number of releases synced
+     * @return int number of releases synced; none until the support cycles and the advisories
+     *             were synced once, so a site's core stays unknown instead of looking secure
      */
     public function sync(): int
     {
+        if (!$this->canRate()) {
+            return 0;
+        }
+
         $versions = $this->apiClient->versions(AdvisorySynchronizer::CORE_PACKAGE) ?? [];
 
-        $latestByMajor = [];
-        foreach ($versions as ['version' => $version]) {
-            $major = self::majorOf($version);
-            if (!isset($latestByMajor[$major]) || version_compare($version, $latestByMajor[$major], '>')) {
-                $latestByMajor[$major] = $version;
-            }
-        }
+        $latestByMajor = self::latestByMajor(array_column($versions, 'version'));
 
         $known = [];
         foreach ($this->repository->findAll() as $release) {
@@ -77,6 +76,30 @@ class CoreReleaseSynchronizer
             $release->update($release->getLatestVersion(), $insecure);
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * @param list<string> $versions
+     *
+     * @return array<int, string> the newest version of each major
+     */
+    private static function latestByMajor(array $versions): array
+    {
+        $latest = [];
+        foreach ($versions as $version) {
+            $major = self::majorOf($version);
+            if (!isset($latest[$major]) || version_compare($version, $latest[$major], '>')) {
+                $latest[$major] = $version;
+            }
+        }
+
+        return $latest;
+    }
+
+    private function canRate(): bool
+    {
+        return [] !== $this->endOfLifeReleaseRepository->findBy(['product' => 'craft-cms'], limit: 1)
+            && [] !== $this->advisoryRepository->findByPackageName(AdvisorySynchronizer::CORE_PACKAGE);
     }
 
     private static function majorOf(string $version): int
