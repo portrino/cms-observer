@@ -96,6 +96,20 @@ class SiteReportControllerTest extends WebTestCase
         self::assertFalse($site->isPhpOutdated());
     }
 
+    public function testTheReportedDomainsAreKeptForTheSearch(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'domains' => ['example.test', 'Shop.Example.test', 'shop.example.test']]);
+        // an older client without domains says nothing about them
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0']);
+
+        self::assertResponseStatusCodeSame(202);
+        $site = static::getContainer()->get(EntityManagerInterface::class)->find(Site::class, $site->getId());
+        self::assertSame(['example.test', 'shop.example.test'], $site?->getReportedDomains());
+    }
+
     public function testDbPlatformIsStored(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);

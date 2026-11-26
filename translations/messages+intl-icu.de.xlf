@@ -160,7 +160,7 @@
       </trans-unit>
       <trans-unit id="project.search" resname="project.search">
         <source>project.search</source>
-        <target>Name, URL, Organisation suchen…</target>
+        <target>Name, URL, Domain, Organisation suchen…</target>
       </trans-unit>
       <trans-unit id="project.any_security" resname="project.any_security">
         <source>project.any_security</source>

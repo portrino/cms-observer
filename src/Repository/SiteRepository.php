@@ -48,7 +48,7 @@ class SiteRepository extends ServiceEntityRepository
      * @return Site[]
      */
     /**
-     * @return Site[] ordered by name; $query matches name, URL and organization name
+     * @return Site[] ordered by name; $query matches name, URL, reported domains and organization name
      */
     public function search(?string $query, ?CmsType $type, ?bool $slaActive): array
     {
@@ -57,8 +57,11 @@ class SiteRepository extends ServiceEntityRepository
             ->orderBy('s.name', 'ASC');
 
         if (null !== $query) {
-            $builder->andWhere('s.name LIKE :query OR s.url LIKE :query OR o.name LIKE :query')
-                ->setParameter('query', '%'.addcslashes($query, '%_\\').'%');
+            $pattern = '%'.addcslashes($query, '%_\\').'%';
+            // the domains are stored lowercase, PostgreSQL's LIKE would miss "Shop.Example.com"
+            $builder->andWhere('s.name LIKE :query OR s.url LIKE :query OR s.reportedDomains LIKE :domainQuery OR o.name LIKE :query')
+                ->setParameter('query', $pattern)
+                ->setParameter('domainQuery', mb_strtolower($pattern));
         }
         if (null !== $type) {
             $builder->andWhere('s.type = :type')->setParameter('type', $type);

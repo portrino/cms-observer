@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SiteRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -77,6 +78,13 @@ class Site implements UserInterface
     /** @var list<string>|null */
     #[ORM\Column(nullable: true)]
     private ?array $lastRejectedReportDomains = null;
+
+    /**
+     * The domains of the last report, so the project search finds a multisite by any of them.
+     * Comma-separated text instead of JSON: LIKE on it works on every database.
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $reportedDomains = null;
 
     /** No report for this long and the site counts as stale (badge, notification) */
     public const string STALE_AFTER = '-2 days';
@@ -175,6 +183,24 @@ class Site implements UserInterface
         $this->currentDbVersion = $dbVersion;
         $this->currentDbPlatform = $dbPlatform;
         $this->lastSeenAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * @param list<string> $domains
+     */
+    public function recordReportedDomains(array $domains): void
+    {
+        // lowercase: PostgreSQL's LIKE is case-sensitive; a comma would split the entry in the column
+        $domains = array_filter(array_map(strtolower(...), $domains), static fn (string $domain): bool => '' !== $domain && !str_contains($domain, ','));
+        $this->reportedDomains = [] !== $domains ? implode(',', array_unique($domains)) : null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getReportedDomains(): array
+    {
+        return null !== $this->reportedDomains ? explode(',', $this->reportedDomains) : [];
     }
 
     /**

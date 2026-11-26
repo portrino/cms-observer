@@ -26,6 +26,8 @@ class DashboardProjectFilterTest extends WebTestCase
     {
         yield 'no filter' => ['', ['Filter Insecure Core', 'Filter Insecure Package', 'Filter Outdated PHP', 'Filter Secure WP']];
         yield 'search by name' => ['q=outdated', ['Filter Outdated PHP']];
+        // a multisite found by one of its other domains, in any case
+        yield 'search by a reported domain' => ['q=SECOND-brand', ['Filter Secure WP']];
         yield 'search by organization' => ['q=Filter+Customer', ['Filter Secure WP']];
         yield 'type' => ['type=wordpress', ['Filter Secure WP']];
         yield 'SLA' => ['sla=with', ['Filter Insecure Core']];
@@ -111,6 +113,7 @@ class DashboardProjectFilterTest extends WebTestCase
         $secureWp = new Site('Filter Secure WP', CmsType::WordPress, 'https://secure-wp.test', 'hash-f4', organization: $organization);
         $secureWp->recordReport('6.8.0', '8.3.0', '10.11.0');
         $secureWp->setPhpStatus(false, false, null, null);
+        $secureWp->recordReportedDomains(['secure-wp.test', 'Shop.Second-Brand.test']);
 
         foreach ([$insecureCore, $insecurePackage, $package, $outdatedPhp, $organization, $secureWp] as $entity) {
             $entityManager->persist($entity);

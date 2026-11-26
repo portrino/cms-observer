@@ -84,6 +84,9 @@ class SiteReportIngestor
         $this->entityManager->persist($report);
 
         $site->recordReport($request->coreVersion, $phpVersion, $dbVersion, $dbPlatform);
+        if (null !== $request->domains) { // older clients send none, which says nothing about them
+            $site->recordReportedDomains($request->domains);
+        }
         $this->evaluateApplicationContext($site, $request->applicationContext);
         $this->coreVersionEvaluator->evaluate($site);
         $this->runtimeVersionEvaluator->evaluate($site);
