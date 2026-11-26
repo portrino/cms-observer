@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\Craft;
 
 use App\Entity\Craft\PluginVersion;
+use App\Service\Craft\AdvisoryMatcher;
 use Composer\Semver\Comparator;
 use Composer\Semver\VersionParser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -35,14 +36,10 @@ class PluginVersionRepository extends ServiceEntityRepository
      */
     public function findNewerThan(string $packageName, string $installedVersion): ?array
     {
-        try {
-            $installed = new VersionParser()->normalize($installedVersion);
-        } catch (\UnexpectedValueException) {
-            return null; // not a version at all: whether it's outdated is unknown
+        if (!AdvisoryMatcher::canRate($installedVersion)) {
+            return null; // a branch or not a version at all: whether it's outdated is unknown
         }
-        if ('dev' === VersionParser::parseStability($installedVersion)) {
-            return null; // a branch: nothing says which release it contains
-        }
+        $installed = new VersionParser()->normalize($installedVersion);
 
         $newer = array_filter(
             $this->findByPackageName($packageName),

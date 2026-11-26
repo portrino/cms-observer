@@ -12,7 +12,7 @@ use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
-use Composer\Semver\Semver;
+use App\Service\Craft\AdvisoryMatcher;
 
 /**
  * The one rule for "is there an update?": a package is outdated only when a newer
@@ -176,11 +176,8 @@ class PackageUpdateResolver
         if (null === $coreVersion || null === $version->getCraftConstraint()) {
             return true;
         }
-        try {
-            return Semver::satisfies($coreVersion, $version->getCraftConstraint());
-        } catch (\UnexpectedValueException) {
-            // a constraint Composer can't parse says nothing against installing it
-            return true;
-        }
+
+        // a constraint Composer can't parse says nothing against installing it
+        return AdvisoryMatcher::satisfies($coreVersion, $version->getCraftConstraint()) ?? true;
     }
 }

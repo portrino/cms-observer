@@ -32,4 +32,18 @@ class AdvisoryMatcherTest extends TestCase
 
         self::assertSame($expected, AdvisoryMatcher::mostSevere($advisories, $version)?->getAdvisoryId());
     }
+
+    public function testRatesOnlyReleases(): void
+    {
+        self::assertTrue(AdvisoryMatcher::canRate('5.10.2'));
+        self::assertFalse(AdvisoryMatcher::canRate('dev-main'));
+        self::assertFalse(AdvisoryMatcher::canRate('not a version'));
+    }
+
+    public function testAMalformedConstraintIsUnknown(): void
+    {
+        self::assertTrue(AdvisoryMatcher::satisfies('5.8.0', '^5.0.0'));
+        self::assertFalse(AdvisoryMatcher::satisfies('5.8.0', '^4.0.0'));
+        self::assertNull(AdvisoryMatcher::satisfies('5.8.0', '>=5.0 <<5.4'));
+    }
 }

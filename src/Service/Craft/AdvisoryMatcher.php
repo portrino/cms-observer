@@ -31,23 +31,26 @@ final class AdvisoryMatcher
     /** Whether a version can be checked at all; a branch like "dev-main" can't */
     public static function canRate(string $version): bool
     {
-        try {
-            new VersionParser()->normalize($version);
-        } catch (\UnexpectedValueException) {
-            return false; // the caller treats it as unknown
-        }
-
         // Composer accepts branches as versions, but nothing says which release they contain
-        return 'dev' !== VersionParser::parseStability($version);
+        return new VersionParser()->isValid($version) && 'dev' !== VersionParser::parseStability($version);
+    }
+
+    /**
+     * Whether a version satisfies a Composer constraint, null if either can't be parsed
+     * (a malformed constraint from Packagist): each caller decides what unknown means.
+     */
+    public static function satisfies(string $version, string $constraint): ?bool
+    {
+        try {
+            return Semver::satisfies($version, $constraint);
+        } catch (\UnexpectedValueException) {
+            return null; // the callers treat it as unknown
+        }
     }
 
     private static function affects(Advisory $advisory, string $version): bool
     {
-        try {
-            return Semver::satisfies($version, $advisory->getAffectedVersions());
-        } catch (\UnexpectedValueException) {
-            // a branch like "dev-main" or a malformed constraint can't be rated: unknown, not insecure
-            return false;
-        }
+        // unknown is not insecure
+        return self::satisfies($version, $advisory->getAffectedVersions()) ?? false;
     }
 }
