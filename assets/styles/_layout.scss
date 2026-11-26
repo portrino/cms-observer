@@ -42,6 +42,9 @@
 .app-main {
     padding: 1rem;
     transition: margin-left 0.15s ease-in-out;
+    // the filter row's line reaches 100vmax beyond the page edges (see below); clip, not
+    // hidden, so it creates no scroll container and the filter row still sticks
+    overflow-x: clip;
 }
 
 // Filter row of list pages: sticks below the topbar, so the filters stay in view.

@@ -70,4 +70,6 @@ test('the filters stay in view while scrolling', async ({ page }) => {
     await expect.poll(lineOpacity).toBe('1');
     await expect(page.getByRole('searchbox', { name: 'Search' })).toBeInViewport();
     await expect(page.getByRole('heading', { name: 'Packages across all projects' })).toBeInViewport();
+    // the line reaches beyond the page edges, but must not make the page scroll sideways
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(1280);
 });
