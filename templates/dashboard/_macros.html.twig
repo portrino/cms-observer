@@ -54,9 +54,10 @@
         {%- if style[1] %} data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.wp.requires'|trans({version: requires}) }}: {{ style[1] }}"{% endif %}>{{ requires }}+</span>
 {%- endmacro %}
 
-{# Wordfence/MITRE license terms: their copyright notices (and a link to the record) must accompany the data. #}
+{# Wordfence/MITRE license terms: their copyright notices (and a link to the record) must accompany the data.
+   Rendered inside the vulnerability alert. #}
 {% macro vulnerability_copyright(notices) %}
-    <p class="small text-muted">
+    <p class="small mt-1 mb-0">
         {{ 'badge.vulnerability_data'|trans }}:
         {% for notice in notices -%}
             {{ notice.notice }}{% if notice.licenseUrl %} (<a href="{{ notice.licenseUrl }}" target="_blank" rel="noopener">{{ 'badge.license'|trans }}</a>){% endif %}{% if not loop.last %} · {% endif %}
@@ -220,4 +221,18 @@
     </dl>
     <hr>
     {%- endif %}
+{%- endmacro %}
+
+{# Known vulnerability of a package, above its version table: red like the insecure badge and rows.
+   summary follows the linked record, note (e.g. the fixed versions) gets its own line. #}
+{% macro vulnerability_alert(url, label, summary, note = null, notices = []) %}
+    {%- import _self as m -%}
+    <div class="alert alert-danger d-flex gap-2 py-2" role="alert">
+        <span class="flex-shrink-0">{{ m.icon_warning() }}</span>
+        <div>
+            <a href="{{ url }}" target="_blank" rel="noopener" class="alert-link d-inline-flex align-items-center gap-1">{{ label }} {{ icon('external-link') }}</a>: {{ summary }}
+            {%- if note %}<div>{{ note }}</div>{% endif %}
+            {%- if notices is not empty %}{{ m.vulnerability_copyright(notices) }}{% endif %}
+        </div>
+    </div>
 {%- endmacro %}

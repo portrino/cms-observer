@@ -6,10 +6,7 @@
 {% endif %}
 {% set advisory = package.matchedCraftAdvisory %}
 {% if advisory %}
-    <p>
-        <a href="{{ advisory.link }}" target="_blank" rel="noopener">{{ advisory.title }}</a>:
-        {{ 'package.known_vulnerability'|trans({severity: advisory.severity ?? 'unknown'}) }}{{ advisory.cve ? ' (' ~ advisory.cve ~ ')' }}.
-    </p>
+    {{ m.vulnerability_alert(advisory.link, advisory.title, 'package.known_vulnerability'|trans({severity: advisory.severity ?? 'unknown'}) ~ (advisory.cve ? ' (' ~ advisory.cve ~ ')') ~ '.') }}
 {% endif %}
 {% if details.newerVersions is empty %}
     <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>

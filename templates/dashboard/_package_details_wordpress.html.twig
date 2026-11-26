@@ -6,12 +6,13 @@
 ]) }}
 {% set vulnerability = package.matchedWordpressVulnerability %}
 {% if vulnerability %}
-    <p class="mb-1">
-        <a href="{{ vulnerability.url }}" target="_blank" rel="noopener">{{ vulnerability.title }}</a>:
-        {{ 'package.known_vulnerability'|trans({severity: vulnerability.cvssRating}) }} (CVSS {{ vulnerability.cvssScore }}).
-        {{ vulnerability.patchedVersions is empty ? 'package.no_fix'|trans : 'package.fixed_in'|trans({versions: vulnerability.patchedVersions|join(', ')}) }}
-    </p>
-    {{ m.vulnerability_copyright(vulnerability.copyrightNotices) }}
+    {{ m.vulnerability_alert(
+        vulnerability.url,
+        vulnerability.title,
+        'package.known_vulnerability'|trans({severity: vulnerability.cvssRating}) ~ ' (CVSS ' ~ vulnerability.cvssScore ~ ').',
+        vulnerability.patchedVersions is empty ? 'package.no_fix'|trans : 'package.fixed_in'|trans({versions: vulnerability.patchedVersions|join(', ')}),
+        vulnerability.copyrightNotices,
+    ) }}
 {% endif %}
 {% if details.newerVersions is empty %}
     <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>

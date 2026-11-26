@@ -7,7 +7,7 @@
 ]|filter(link => link.url) %}
 {{ m.package_header(details.description, package.composerName, links) }}
 {% if package.matchedAdvisory %}
-    <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: {{ 'package.known_vulnerability'|trans({severity: package.matchedAdvisory.severity}) }}.</p>
+    {{ m.vulnerability_alert(package.matchedAdvisory.url, package.matchedAdvisory.advisoryId, 'package.known_vulnerability'|trans({severity: package.matchedAdvisory.severity}) ~ '.') }}
 {% endif %}
 {% if details.newerVersions is empty %}
     <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
