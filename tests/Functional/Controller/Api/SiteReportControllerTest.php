@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\CmsType;
+use App\Entity\EndOfLifeRelease;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
@@ -71,6 +72,28 @@ class SiteReportControllerTest extends WebTestCase
         $site = static::getContainer()->get(EntityManagerInterface::class)->find(Site::class, $site->getId());
         self::assertSame('mariadb', $site?->getCurrentDbPlatform());
         self::assertSame('10.11.19', $site->getCurrentDbVersion());
+    }
+
+    public function testAPhpBuildSuffixIsCutSoTheLatestSecurityReleaseIsSecure(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+        $release = new EndOfLifeRelease('php', '8.3', false, '8.3.37', 'https://endoflife.date/php');
+        $release->setLatestSecurityVersion('8.3.37');
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($release);
+        $entityManager->flush();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'phpVersion' => '8.3.37-nmm1']);
+
+        self::assertResponseStatusCodeSame(202);
+        $report = static::getContainer()->get(SiteReportRepository::class)->findOneBy(['site' => $site]);
+        self::assertSame('8.3.37', $report?->getPhpVersion());
+        self::assertSame('8.3.37-nmm1', $report->getPayload()['phpVersion']);
+        $site = $entityManager->find(Site::class, $site->getId());
+        self::assertSame('8.3.37', $site?->getCurrentPhpVersion());
+        self::assertFalse($site->isPhpInsecure());
+        self::assertFalse($site->isPhpOutdated());
     }
 
     public function testDbPlatformIsStored(): void

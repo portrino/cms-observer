@@ -59,6 +59,8 @@ class SiteReportIngestor
 
         // The raw dbVersion (up to ~40 chars on TYPO3 12) is only kept in the payload
         [$dbPlatform, $dbVersion] = DbVersionNormalizer::normalize($request->dbPlatform, $request->dbVersion);
+        // likewise the raw PHP version: a build suffix ("8.3.37-nmm1") would sort before the plain release
+        $phpVersion = 1 === preg_match('/^\d+(?:\.\d+)*/', trim($request->phpVersion), $matches) ? $matches[0] : $request->phpVersion;
 
         // Compare against the stored state before recordReport() overwrites it
         $isFirstReport = null === $site->getLastSeenAt();
@@ -75,13 +77,13 @@ class SiteReportIngestor
                 SiteEvent::messagesOf(null, new TranslatableMessage('event.detail.packages', ['count' => $packageCount])),
             ));
         } else {
-            $this->recordRuntimeChanges($site, $request, $dbPlatform.' '.$dbVersion);
+            $this->recordRuntimeChanges($site, $request, $phpVersion, $dbPlatform.' '.$dbVersion);
         }
 
-        $report = new SiteReport($site, $request->coreVersion, $request->phpVersion, $dbVersion, $payload);
+        $report = new SiteReport($site, $request->coreVersion, $phpVersion, $dbVersion, $payload);
         $this->entityManager->persist($report);
 
-        $site->recordReport($request->coreVersion, $request->phpVersion, $dbVersion, $dbPlatform);
+        $site->recordReport($request->coreVersion, $phpVersion, $dbVersion, $dbPlatform);
         $this->evaluateApplicationContext($site, $request->applicationContext);
         $this->coreVersionEvaluator->evaluate($site);
         $this->runtimeVersionEvaluator->evaluate($site);
@@ -139,13 +141,13 @@ class SiteReportIngestor
         }
     }
 
-    private function recordRuntimeChanges(Site $site, SiteReportRequest $request, string $db): void
+    private function recordRuntimeChanges(Site $site, SiteReportRequest $request, string $phpVersion, string $db): void
     {
         $previousReport = $this->reportRepository->findOneBy(['site' => $site], ['receivedAt' => 'DESC', 'id' => 'DESC']);
         $previousClientVersion = $previousReport?->getPayload()['clientVersion'] ?? null;
 
         $this->recordChange($site, SiteEventType::CoreChanged, null, $site->getCurrentCoreVersion(), $request->coreVersion);
-        $this->recordChange($site, SiteEventType::PhpChanged, null, $site->getCurrentPhpVersion(), $request->phpVersion);
+        $this->recordChange($site, SiteEventType::PhpChanged, null, $site->getCurrentPhpVersion(), $phpVersion);
         $this->recordChange($site, SiteEventType::DbChanged, null, trim($site->getCurrentDbPlatform().' '.$site->getCurrentDbVersion()), $db);
         $this->recordChange($site, SiteEventType::ClientChanged, null, is_string($previousClientVersion) ? $previousClientVersion : null, $request->clientVersion);
     }
