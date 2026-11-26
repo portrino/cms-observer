@@ -6,12 +6,16 @@ import { totp } from '../totp';
 // own user and no auto-login fixture: a run aborted halfway must not lock the shared e2e user out
 const user = { email: 'e2e-2fa@example.test', password: 'e2e-password' };
 
-async function logIn(page: Page): Promise<void> {
+// returns the logo's box on the login page, the 2FA page must show it the same way
+async function logIn(page: Page): Promise<{ x: number; y: number; width: number; height: number } | null> {
     await page.goto('/logout');
     await page.goto('/login');
+    const logo = await page.getByAltText('CMS Observer').boundingBox();
     await page.getByLabel('Email').fill(user.email);
     await page.getByLabel('Password').fill(user.password);
     await page.getByRole('button', { name: 'Log in' }).click();
+
+    return logo;
 }
 
 async function submitCode(page: Page, code: string): Promise<void> {
@@ -34,7 +38,10 @@ test('set up two-factor authentication and log in with a code', async ({ page })
     const backupCodes = (await page.locator('#backup-codes li').allTextContents()).map(code => code.trim());
 
     try {
-        await logIn(page);
+        const loginLogo = await logIn(page);
+        await expect(page).toHaveURL('/2fa');
+        // same size and place, so switching from the login to the 2FA page doesn't jump
+        expect(await page.getByAltText('CMS Observer').boundingBox()).toEqual(loginLogo);
         await submitCode(page, totp(secret));
         await expect(page).toHaveURL('/');
         await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();

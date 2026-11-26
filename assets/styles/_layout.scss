@@ -87,6 +87,14 @@
     }
 }
 
+// Login and 2FA page: the card hangs at the same height on both instead of being
+// centered, so the logo doesn't jump between the two cards of different height
+.auth-page {
+    display: flex;
+    justify-content: center;
+    padding-top: 10vh;
+}
+
 .filter-count {
     min-width: 1.25rem;
     height: 1.25rem;

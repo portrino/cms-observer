@@ -3,11 +3,11 @@
 {% block title %}{{ 'two_factor.title'|trans }} - CMS Observer{% endblock %}
 
 {% block body %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+<div class="container auth-page">
     <div class="card shadow-sm" style="width: 100%; max-width: 380px;">
         <div class="card-body p-4">
             <div class="text-center mb-3">
-                <img src="{{ asset('images/logo.svg') }}" alt="CMS Observer" height="64">
+                <img src="{{ asset('images/logo.svg') }}" alt="CMS Observer" height="128">
             </div>
             {% if authenticationError %}
                 <div class="alert alert-danger">{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</div>
