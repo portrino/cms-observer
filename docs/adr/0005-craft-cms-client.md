@@ -1,7 +1,7 @@
 # ADR-0005: Craft CMS as the third client
 
-- Status: Proposed
-- Date: 2026-11-25
+- Status: Accepted
+- Date: 2026-11-26
 - Deciders: Maintainers
 
 ## Context
