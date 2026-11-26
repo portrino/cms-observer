@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\CmsType;
+use App\Entity\Craft\Advisory as CraftAdvisory;
+use App\Entity\Craft\PluginVersion as CraftPluginVersion;
 use App\Entity\Organization;
 use App\Entity\PackageType;
 use App\Entity\Site;
@@ -12,6 +14,7 @@ use App\Entity\SitePackage;
 use App\Entity\SiteReport;
 use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\Wordpress\PluginVersion;
+use App\Service\Craft\SitePackageEvaluator as CraftSitePackageEvaluator;
 use App\Service\Typo3\SitePackageTerEvaluator;
 use App\Service\Wordpress\SitePackageEvaluator;
 use App\Tests\Functional\CreatesUserTrait;
@@ -59,7 +62,12 @@ class DashboardSiteShowTest extends WebTestCase
         $site = new Site('Craft Site', CmsType::Craft, 'https://craft.test', 'hash-craft');
         $site->recordReport('5.12.4', '8.3.0', '10.11.0');
         $entityManager->persist($site);
-        $entityManager->persist(new SitePackage($site, 'seomatic', 'SEOmatic', '5.1.24', true, 'nystudio107/craft-seomatic'));
+        $entityManager->persist($package = new SitePackage($site, 'seomatic', 'SEOmatic', '5.1.24', true, 'nystudio107/craft-seomatic'));
+        $entityManager->persist(new CraftPluginVersion('nystudio107/craft-seomatic', '5.2.0', null, '^5.0.0'));
+        $entityManager->persist(new CraftPluginVersion('nystudio107/craft-seomatic', '6.0.0', null, '^6.0.0'));
+        $entityManager->persist(new CraftAdvisory('PKSA-seo-page', 'nystudio107/craft-seomatic', 'Stored XSS in SEOmatic', 'https://github.com/advisories/GHSA-test', '<5.2.0', null, 'high'));
+        $entityManager->flush();
+        static::getContainer()->get(CraftSitePackageEvaluator::class)->evaluate($package);
         $entityManager->flush();
 
         $client->request('GET', '/projects/'.$site->getId());
@@ -68,6 +76,10 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertSelectorExists('img[alt="Craft CMS"]');
         self::assertSelectorExists('a[href="https://packagist.org/packages/nystudio107/craft-seomatic"]');
         self::assertSelectorNotExists('a[href="/projects/'.$site->getId().'/calculations"]');
+        self::assertAnySelectorTextContains('.accordion-body', 'Stored XSS in SEOmatic');
+        $details = $client->getCrawler()->filter('.accordion-body table')->text();
+        self::assertStringContainsString('5.2.0', $details);
+        self::assertStringNotContainsString('6.0.0', $details, 'needs a newer Craft CMS');
 
         // no upgrade calculations for Craft yet: not drafted with another CMS's resolver
         $client->request('GET', '/projects/'.$site->getId().'/calculations');

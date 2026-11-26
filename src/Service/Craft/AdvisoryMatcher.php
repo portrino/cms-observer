@@ -6,6 +6,7 @@ namespace App\Service\Craft;
 
 use App\Entity\Craft\Advisory;
 use Composer\Semver\Semver;
+use Composer\Semver\VersionParser;
 
 /**
  * Which of a package's advisories affect an installed version.
@@ -25,6 +26,19 @@ final class AdvisoryMatcher
         usort($matches, static fn (Advisory $a, Advisory $b): int => $b->getSeverityRank() <=> $a->getSeverityRank());
 
         return $matches[0] ?? null;
+    }
+
+    /** Whether a version can be checked at all; a branch like "dev-main" can't */
+    public static function canRate(string $version): bool
+    {
+        try {
+            new VersionParser()->normalize($version);
+        } catch (\UnexpectedValueException) {
+            return false; // the caller treats it as unknown
+        }
+
+        // Composer accepts branches as versions, but nothing says which release they contain
+        return 'dev' !== VersionParser::parseStability($version);
     }
 
     private static function affects(Advisory $advisory, string $version): bool

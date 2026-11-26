@@ -13,12 +13,14 @@ synced at least once, the matching status stays "unknown" (gray), never
 | WordPress plugins | [Wordfence Intelligence](https://www.wordfence.com/threat-intel/) and [wordpress.org](https://wordpress.org/plugins/) | a Wordfence vulnerability affects the version | wordpress.org has a newer version |
 | WordPress themes | [Wordfence Intelligence](https://www.wordfence.com/threat-intel/) and [wordpress.org](https://wordpress.org/themes/) | a Wordfence vulnerability affects the version | wordpress.org has a newer version (unknown for themes not on wordpress.org) |
 | Craft CMS core | [Packagist](https://packagist.org/packages/craftcms/cms), its [security advisories](https://packagist.org/packages/craftcms/cms/advisories) and [endoflife.date](https://endoflife.date/craft-cms) | the major is past end of life or an advisory affects the version | a newer release exists in the major |
+| Craft plugins | [Packagist](https://packagist.org/) and its security advisories, by the plugin's Composer name | an advisory affects the version | Packagist has a newer version that installs on the site's Craft CMS |
 | PHP | [endoflife.date](https://endoflife.date/php) | the cycle is past end of life or misses a security release | a newer release exists in the cycle |
 | MariaDB, MySQL, PostgreSQL | [endoflife.date](https://endoflife.date/) | the cycle is past end of life | a newer release exists in the cycle |
 
 Informational Wordfence entries (without real-world impact) are ignored.
-Packages that aren't on the TER or wordpress.org, e.g. a site's own
-extensions, stay "unknown".
+Packages that aren't on the TER, wordpress.org or Packagist, e.g. a site's own
+extensions, stay "unknown", and so do Craft plugins installed from a branch
+like `dev-main`.
 
 ![A project rated against these sources: PHP, database, core releases and the versions of a package](images/project.png)
 

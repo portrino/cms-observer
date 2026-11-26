@@ -434,6 +434,10 @@
         <source>package.fixed_in</source>
         <target>Behoben in {versions}.</target>
       </trans-unit>
+      <trans-unit id="package.no_composer_name" resname="package.no_composer_name">
+        <source>package.no_composer_name</source>
+        <target>Ohne Composer-Namen gemeldet, daher nicht mit Packagist abgeglichen.</target>
+      </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>
         <target>Keine neueren Versionen bekannt.</target>

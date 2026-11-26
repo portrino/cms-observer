@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Craft\Advisory as CraftAdvisory;
 use App\Entity\Typo3\ExtensionAdvisory;
 use App\Entity\Wordpress\PluginVulnerability;
 use App\Repository\SitePackageRepository;
@@ -52,6 +53,11 @@ class SitePackage
     #[ORM\ManyToOne(targetEntity: PluginVulnerability::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?PluginVulnerability $matchedWordpressVulnerability = null;
+
+    // most severe Packagist advisory affecting this Craft plugin version
+    #[ORM\ManyToOne(targetEntity: CraftAdvisory::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?CraftAdvisory $matchedCraftAdvisory = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
@@ -174,6 +180,16 @@ class SitePackage
     public function setMatchedWordpressVulnerability(?PluginVulnerability $vulnerability): void
     {
         $this->matchedWordpressVulnerability = $vulnerability;
+    }
+
+    public function getMatchedCraftAdvisory(): ?CraftAdvisory
+    {
+        return $this->matchedCraftAdvisory;
+    }
+
+    public function setMatchedCraftAdvisory(?CraftAdvisory $advisory): void
+    {
+        $this->matchedCraftAdvisory = $advisory;
     }
 
     public function update(string $title, string $version, bool $active, ?string $composerName = null): void

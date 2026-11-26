@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Dto\PackageReport;
 use App\Dto\SiteReportRequest;
-use App\Entity\CmsType;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
@@ -15,8 +14,6 @@ use App\Entity\SitePackage;
 use App\Entity\SiteReport;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
-use App\Service\Typo3\SitePackageAdvisoryEvaluator;
-use App\Service\Wordpress\SitePackageEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -27,8 +24,7 @@ class SiteReportIngestor
         private readonly SitePackageRepository $packageRepository,
         private readonly SiteReportRepository $reportRepository,
         private readonly SiteCoreVersionEvaluator $coreVersionEvaluator,
-        private readonly SitePackageAdvisoryEvaluator $packageAdvisoryEvaluator,
-        private readonly SitePackageEvaluator $wordpressEvaluator,
+        private readonly ReportedPackageEvaluator $packageEvaluator,
         private readonly SiteRuntimeVersionEvaluator $runtimeVersionEvaluator,
         private readonly SecurityNotifier $securityNotifier,
     ) {
@@ -169,13 +165,7 @@ class SiteReportIngestor
             $sitePackage = $this->savePackage($site, $remaining[$reported->name] ?? null, $reported, $packageType, $recordEvents);
             unset($remaining[$reported->name]);
 
-            // checked against the synced advisories (TYPO3) or Wordfence data (WordPress) right away
-            match ($site->getType()) {
-                CmsType::Typo3 => $this->packageAdvisoryEvaluator->evaluate($sitePackage),
-                CmsType::WordPress => $this->wordpressEvaluator->evaluate($sitePackage),
-                // shortcut: rated once the Packagist syncs exist
-                CmsType::Craft => null,
-            };
+            $this->packageEvaluator->evaluate($sitePackage);
         }
 
         // No longer reported means uninstalled; keeping it would keep alerting about software that's gone
