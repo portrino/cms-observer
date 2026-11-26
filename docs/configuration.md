@@ -39,6 +39,8 @@ syncs. Each can also be run by hand, e.g. right after the installation:
 | `app:wordpress:sync-plugins` | every 15 minutes | wordpress.org versions of the reported plugins, 40 per run |
 | `app:wordpress:sync-themes` | every 6 hours | wordpress.org versions of the reported themes |
 | `app:wordpress:sync-plugin-vulnerabilities` | daily | the Wordfence vulnerability feed (needs `WORDFENCE_API_KEY`) |
+| `app:craft:sync-core-releases` | every 6 hours | Craft CMS releases from Packagist |
+| `app:craft:sync-advisories` | hourly | Packagist security advisories of Craft CMS and the reported plugins |
 | `app:sync-endoflife-releases` | daily | PHP, MariaDB, MySQL, PostgreSQL, TYPO3 and Craft CMS support cycles |
 | `app:sync-observer-release` | daily | the latest CMS Observer release on GitHub; a newer one marks the logo, details in its dropdown |
 | `app:check-stale-sites` | hourly | nothing; mails projects that stopped sending reports |
