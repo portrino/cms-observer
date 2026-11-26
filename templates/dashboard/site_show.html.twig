@@ -48,7 +48,7 @@
                         <tbody>
                             <tr>
                                 <th class="w-25">{{ 'common.type'|trans }}</th>
-                                <td>{{ m.cms_type_icon(site.type) }} {{ site.type.label }}</td>
+                                <td><span class="d-inline-flex align-items-center gap-2">{{ m.cms_type_icon(site.type) }}{{ site.type.label }}</span></td>
                             </tr>
                             {% if lastReport %}
                                 <tr>
