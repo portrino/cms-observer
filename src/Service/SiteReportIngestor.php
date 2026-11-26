@@ -194,12 +194,12 @@ class SiteReportIngestor
             if ($recordEvents) {
                 $this->recordPackageChanges($known, $reported, $version);
             }
-            $known->update($reported->title, $version, $reported->active, $reported->composerName);
+            $known->update($reported->displayTitle(), $version, $reported->active, $reported->composerName);
 
             return $known;
         }
 
-        $sitePackage = new SitePackage($site, $reported->name, $reported->title, $version, $reported->active, $reported->composerName, $packageType);
+        $sitePackage = new SitePackage($site, $reported->name, $reported->displayTitle(), $version, $reported->active, $reported->composerName, $packageType);
         $this->entityManager->persist($sitePackage);
         if ($recordEvents) {
             $this->entityManager->persist(new SiteEvent($site, SiteEventType::PackageInstalled, $this->eventSubject($sitePackage), null, $version));

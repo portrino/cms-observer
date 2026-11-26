@@ -35,7 +35,7 @@ Content-Type: application/json
 | `dbPlatform` | no | `mariadb`, `mysql` or `postgresql`; without it the platform is guessed from `dbVersion` |
 | `clientVersion`, `applicationContext` | no | shown on the project page, e.g. `Production` or `staging` |
 | `domains` | no | all hosts of the instance, lowercase, without scheme and port, see [domain check](#domain-check) |
-| `packages` | no | all installed packages. `type` is `extension` (TYPO3), `plugin` or `theme` (WordPress), without it the CMS's default (`extension`, `plugin`); entries of an unknown type are left out. `name` is the TYPO3 extension key or the wordpress.org slug (for a theme its directory). The list is complete for every type: a WordPress site without themes in it has none. Without the field the packages stay as they are |
+| `packages` | no | all installed packages. `type` is `extension` (TYPO3), `plugin` or `theme` (WordPress), without it the CMS's default (`extension`, `plugin`); entries of an unknown type are left out. `name` is the TYPO3 extension key or the wordpress.org slug (for a theme its directory); `name` and `version` are required, a missing or empty `title` shows the name instead. The list is complete for every type: a WordPress site without themes in it has none. Without the field the packages stay as they are |
 | `extensions` | no | sent by older clients instead of `packages`, still accepted: the packages of the default type only, so WordPress themes stay as they are |
 
 The token belongs to one project and is shown once when the project is

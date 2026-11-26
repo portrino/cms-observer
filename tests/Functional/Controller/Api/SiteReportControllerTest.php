@@ -300,6 +300,39 @@ class SiteReportControllerTest extends WebTestCase
         self::assertNotNull($packages->findOneBySiteAndName($site, 'powermail'));
     }
 
+    /**
+     * Older clients send an extension's empty ext_emconf.php title as is; one such package mustn't block the report.
+     */
+    public function testPackagesWithoutTitleAreShownByName(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'packages' => [
+            ['name' => 'site_package', 'type' => 'extension', 'title' => '', 'version' => '1.0.0'],
+            ['name' => 'site_blog', 'type' => 'extension', 'title' => null, 'version' => '1.0.0'],
+            ['name' => 'site_shop', 'type' => 'extension', 'version' => '1.0.0'],
+        ]]);
+
+        self::assertResponseStatusCodeSame(202);
+        $packages = static::getContainer()->get(SitePackageRepository::class);
+        foreach (['site_package', 'site_blog', 'site_shop'] as $name) {
+            self::assertSame($name, $packages->findOneBySiteAndName($site, $name)?->getTitle());
+        }
+    }
+
+    public function testAPackageWithoutVersionIsStillRejected(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token] = $this->createSite();
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'packages' => [
+            ['name' => 'news', 'type' => 'extension', 'title' => 'News', 'version' => ''],
+        ]]);
+
+        self::assertResponseStatusCodeSame(422);
+    }
+
     public function testANonProductionContextIsMailedOnceAndItsFixRecorded(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);
