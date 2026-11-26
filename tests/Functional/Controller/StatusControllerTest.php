@@ -131,4 +131,25 @@ class StatusControllerTest extends WebTestCase
         $client->followRedirect();
         self::assertSelectorTextContains('.alert-success', 'accepted the test mail to someone@example.test');
     }
+
+    public function testShowsABrokenMailerDsnAndItsErrorOnTheTestMail(): void
+    {
+        // read when the mailer is first used, so it must stay set until the last request
+        $previous = $_ENV['MAILER_DSN'] ?? null;
+        $_ENV['MAILER_DSN'] = 'no-scheme';
+        try {
+            $client = static::createClient([], ['HTTPS' => 'on']);
+            $client->loginUser($this->createUser('broken-mail@example.test', 'Broken Mail', 'password'));
+
+            $client->request('GET', '/status');
+            self::assertResponseIsSuccessful();
+            self::assertSelectorTextContains('body', 'invalid MAILER_DSN: The mailer DSN must contain a scheme.');
+
+            $client->submitForm('Send test mail', ['mail_test[recipient]' => 'someone@example.test']);
+            $client->followRedirect();
+            self::assertSelectorTextContains('.alert-danger', 'The mailer DSN must contain a scheme.');
+        } finally {
+            $_ENV['MAILER_DSN'] = $previous;
+        }
+    }
 }

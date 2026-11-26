@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,6 +35,8 @@ class SecurityNotifier
     private array $findings = [];
 
     public function __construct(
+        // lazy: the transport is built on the first send(), inside its catch, so a broken MAILER_DSN can't break the report API
+        #[Autowire(lazy: true)]
         private readonly MailerInterface $mailer,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,

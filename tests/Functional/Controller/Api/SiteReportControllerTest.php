@@ -423,4 +423,26 @@ class SiteReportControllerTest extends WebTestCase
 
         return [$token, $site];
     }
+
+    public function testAReportIsAcceptedWithABrokenMailer(): void
+    {
+        $previous = $_ENV['MAILER_DSN'] ?? null;
+        $_ENV['MAILER_DSN'] = 'unsupported://mail.example.test';
+        try {
+            $client = static::createClient([], ['HTTPS' => 'on']);
+            $this->createUser('broken-mailer@example.test', 'Broken Mailer', 'password');
+            [$token, $site] = $this->createSite();
+
+            // a finding, so the notifier tries to send
+            $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'applicationContext' => 'Development']);
+
+            self::assertResponseStatusCodeSame(202);
+            self::assertEmailCount(0);
+            $events = static::getContainer()->get(SiteEventRepository::class)->findBy(['site' => $site]);
+            self::assertContains('became-insecure', array_map(static fn (SiteEvent $event): string => $event->getType()->value, $events));
+        } finally {
+            // read when the mailer is first used, so it stays set until the assertions are done
+            $_ENV['MAILER_DSN'] = $previous;
+        }
+    }
 }

@@ -18,6 +18,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class MailTester
 {
     public function __construct(
+        // lazy, so the status page still shows a broken MAILER_DSN and the test mail its error
+        #[Autowire(lazy: true)]
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
         #[Autowire('%env(default:cms_observer.default_mailer_from_address:MAILER_FROM_ADDRESS)%')]
@@ -68,9 +70,9 @@ class MailTester
     {
         try {
             $dsn = Dsn::fromString($this->mailerDsn);
-        } catch (\InvalidArgumentException) {
-            // only a label for display; sending through the broken DSN reports the actual error
-            return 'invalid MAILER_DSN';
+        } catch (\InvalidArgumentException $e) {
+            // a label for display; sending the test mail reports the same error
+            return 'invalid MAILER_DSN: '.$e->getMessage();
         }
 
         return $dsn->getScheme().'://'.$dsn->getHost().(null !== $dsn->getPort() ? ':'.$dsn->getPort() : '');

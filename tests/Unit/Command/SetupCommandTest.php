@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Mailer\Exception\UnsupportedSchemeException;
 
 class SetupCommandTest extends TestCase
 {
@@ -95,6 +96,17 @@ class SetupCommandTest extends TestCase
         self::assertSame('old-secret', $env['APP_SECRET']);
         self::assertSame('old-key', $env['TOTP_ENCRYPTION_KEY']);
         self::assertSame('smtp://localhost:25', $env['MAILER_DSN']);
+    }
+
+    public function testRejectsAMailerDsnWithAnUnsupportedScheme(): void
+    {
+        try {
+            $this->createTester('8.0.46')->execute(['--mailer-dsn' => 'unsupported://mail.example.test'] + $this->options(), ['interactive' => false]);
+            self::fail('Expected the mailer DSN check to fail');
+        } catch (UnsupportedSchemeException $e) {
+            self::assertStringContainsString('"unsupported" scheme is not supported', $e->getMessage());
+        }
+        self::assertFileDoesNotExist($this->envFile);
     }
 
     public function testNeedsTheRequiredOptionsWithoutInteraction(): void

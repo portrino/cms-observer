@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Dotenv\Dotenv;
-use Symfony\Component\Mailer\Transport\Dsn;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * First step of an installation (bin/setup runs it): asks for the instance's settings,
@@ -65,7 +65,8 @@ class SetupCommand extends Command
         });
         $databaseUrl = $this->askRequired($io, 'Database URL (mysql://user:password@host:3306/database)', $this->option($input, 'database-url') ?? $existing['DATABASE_URL'] ?? null, $this->checkDatabaseUrl(...));
         $mailerDsn = $this->askRequired($io, 'Mailer DSN (smtp://user:password@host:587)', $this->option($input, 'mailer-dsn') ?? $existing['MAILER_DSN'] ?? null, static function (string $dsn): string {
-            Dsn::fromString($dsn);
+            // builds the transport without connecting, so an unsupported scheme fails here and not on every request
+            Transport::fromDsn($dsn);
 
             return $dsn;
         });
