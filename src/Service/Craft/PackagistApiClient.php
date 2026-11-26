@@ -34,6 +34,8 @@ class PackagistApiClient
      */
     public function versions(string $packageName): ?array
     {
+        // shortcut: fetches the whole p2 file every run (gzip: ~80 KB core, ~25 KB per plugin) instead of
+        // If-Modified-Since with a stored Last-Modified; upgrade at hundreds of plugins or shorter sync intervals
         $response = $this->httpClient->request('GET', 'https://repo.packagist.org/p2/'.$packageName.'.json', ['headers' => $this->headers()]);
         if (404 === $response->getStatusCode()) {
             return null;
