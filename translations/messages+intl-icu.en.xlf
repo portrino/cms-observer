@@ -382,6 +382,10 @@
         <source>package.label.extensions</source>
         <target>extensions</target>
       </trans-unit>
+      <trans-unit id="package.label.plugins" resname="package.label.plugins">
+        <source>package.label.plugins</source>
+        <target>plugins</target>
+      </trans-unit>
       <trans-unit id="package.label.plugins_themes" resname="package.label.plugins_themes">
         <source>package.label.plugins_themes</source>
         <target>plugins and themes</target>
@@ -429,6 +433,10 @@
       <trans-unit id="package.fixed_in" resname="package.fixed_in">
         <source>package.fixed_in</source>
         <target>Fixed in {versions}.</target>
+      </trans-unit>
+      <trans-unit id="package.no_composer_name" resname="package.no_composer_name">
+        <source>package.no_composer_name</source>
+        <target>Reported without a Composer name, so not checked against Packagist.</target>
       </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>

@@ -17,7 +17,10 @@ class PackageTypeTest extends TestCase
         self::assertSame(PackageType::WordpressPlugin, PackageType::fromReport(CmsType::WordPress, 'plugin'));
         self::assertSame(PackageType::WordpressPlugin, PackageType::fromReport(CmsType::WordPress, null));
         self::assertSame(PackageType::WordpressTheme, PackageType::fromReport(CmsType::WordPress, 'theme'));
+        self::assertSame(PackageType::CraftPlugin, PackageType::fromReport(CmsType::Craft, 'plugin'));
+        self::assertSame(PackageType::CraftPlugin, PackageType::fromReport(CmsType::Craft, null));
         self::assertNull(PackageType::fromReport(CmsType::Typo3, 'theme'));
+        self::assertNull(PackageType::fromReport(CmsType::Craft, 'theme'));
         self::assertNull(PackageType::fromReport(CmsType::WordPress, 'block-pattern'));
     }
 
@@ -25,5 +28,6 @@ class PackageTypeTest extends TestCase
     {
         self::assertSame([PackageType::Typo3CmsExtension], PackageType::allOf(CmsType::Typo3));
         self::assertSame([PackageType::WordpressPlugin, PackageType::WordpressTheme], PackageType::allOf(CmsType::WordPress));
+        self::assertSame([PackageType::CraftPlugin], PackageType::allOf(CmsType::Craft));
     }
 }

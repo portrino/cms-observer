@@ -6,6 +6,7 @@
         "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "composer/semver": "^3.6",
         "doctrine/doctrine-bundle": "^3.4.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.8.0",

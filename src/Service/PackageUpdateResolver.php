@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Craft\PluginVersion as CraftPluginVersion;
 use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\Wordpress\PluginVersion;
+use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
 use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
+use Composer\Semver\Semver;
 
 /**
  * The one rule for "is there an update?": a package is outdated only when a newer
@@ -23,6 +26,7 @@ class PackageUpdateResolver
         private readonly PluginVersionRepository $wordpressPluginVersionRepository,
         private readonly PluginInfoRepository $wordpressPluginInfoRepository,
         private readonly ThemeInfoRepository $wordpressThemeInfoRepository,
+        private readonly CraftPluginVersionRepository $craftPluginVersionRepository,
     ) {
     }
 
@@ -139,5 +143,44 @@ class PackageUpdateResolver
         }
 
         return new PackageUpdate(false, null, $requires, $info->getLatestVersion());
+    }
+
+    /**
+     * Composer decides what a Craft site can install: a version whose "require" of craftcms/cms
+     * the site's Craft doesn't satisfy needs a newer Craft, an unknown "require" counts as installable.
+     */
+    public function forCraftPlugin(string $composerName, string $installedVersion, ?string $coreVersion): PackageUpdate
+    {
+        $newer = $this->craftPluginVersionRepository->findNewerThan($composerName, $installedVersion);
+        if (null === $newer || [] === $this->craftPluginVersionRepository->findByPackageName($composerName)) {
+            return new PackageUpdate(); // an installed branch, or the versions aren't synced (yet)
+        }
+        if ([] === $newer) {
+            return new PackageUpdate(false);
+        }
+
+        $compatible = array_values(array_filter($newer, static fn (CraftPluginVersion $v): bool => self::installsOnCraft($v, $coreVersion)));
+        $needsNewerCore = array_values(array_filter($newer, static fn (CraftPluginVersion $v): bool => !in_array($v, $compatible, true)));
+
+        return new PackageUpdate(
+            [] !== $compatible,
+            ($compatible[0] ?? null)?->getVersion(),
+            // "^6.0.0" => "6": the Craft major the newest version needs
+            1 === preg_match('/\d+/', (string) ($needsNewerCore[0] ?? null)?->getCraftConstraint(), $major) ? $major[0] : null,
+            ($needsNewerCore[0] ?? null)?->getVersion(),
+        );
+    }
+
+    public static function installsOnCraft(CraftPluginVersion $version, ?string $coreVersion): bool
+    {
+        if (null === $coreVersion || null === $version->getCraftConstraint()) {
+            return true;
+        }
+        try {
+            return Semver::satisfies($coreVersion, $version->getCraftConstraint());
+        } catch (\UnexpectedValueException) {
+            // a constraint Composer can't parse says nothing against installing it
+            return true;
+        }
     }
 }

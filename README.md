@@ -12,8 +12,8 @@ installed extensions or plugins; the Observer checks them against release,
 end-of-life and vulnerability data and emails you when something becomes
 insecure.
 
-A small client in the CMS sends the report. Clients exist for TYPO3 and
-WordPress so far; more CMS can follow, and you're welcome to propose one via a
+A small client in the CMS sends the report. Clients exist for TYPO3,
+WordPress and Craft CMS so far; more CMS can follow, and you're welcome to propose one via a
 pull request, see [supporting another CMS](docs/clients.md#supporting-another-cms).
 
 ![The project list: core, package and security status of every site](docs/images/dashboard.png)
@@ -22,6 +22,7 @@ pull request, see [supporting another CMS](docs/clients.md#supporting-another-cm
 |---|---|---|
 | TYPO3 12.4 – 14.3 | [cms-observer-client-typo3](https://github.com/portrino/cms-observer-client-typo3) | get.typo3.org, TER, TYPO3 security advisories |
 | WordPress 6.4+ | [cms-observer-client-wordpress](https://github.com/portrino/cms-observer-client-wordpress) | wordpress.org, Wordfence Intelligence |
+| Craft CMS 5 | [cms-observer-client-craftcms](https://github.com/portrino/cms-observer-client-craftcms) | Packagist and its security advisories |
 | PHP, MariaDB, MySQL, PostgreSQL | (part of every report) | endoflife.date |
 
 ## ✨ Features

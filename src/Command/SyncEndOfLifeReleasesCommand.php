@@ -14,7 +14,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:sync-endoflife-releases',
-    description: 'Fetch the support cycles of PHP, MariaDB, MySQL, PostgreSQL and TYPO3 from endoflife.date, then re-rate the PHP and database version of every project',
+    description: 'Fetch the support cycles of PHP, MariaDB, MySQL, PostgreSQL, TYPO3 and Craft CMS from endoflife.date, then re-rate the PHP and database version of every project',
 )]
 #[AsCronTask('17 3 * * *')] // once a day - EOL cycles change on the order of months, not hours
 class SyncEndOfLifeReleasesCommand extends AbstractSyncCommand

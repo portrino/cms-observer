@@ -9,6 +9,7 @@ use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Wordpress\PluginInfo;
 use App\Entity\Wordpress\PluginVulnerability;
+use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
 use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
@@ -34,7 +35,7 @@ class SitePackageEvaluatorTest extends TestCase
         $vulnerabilityRepository->method('findBySlug')->willReturn($vulnerabilities ?? []);
 
         // without a synced version history the resolver falls back to the plugin info
-        $resolver = new PackageUpdateResolver(self::createStub(TerExtensionVersionRepository::class), self::createStub(PluginVersionRepository::class), $pluginInfoRepository, self::createStub(ThemeInfoRepository::class));
+        $resolver = new PackageUpdateResolver(self::createStub(TerExtensionVersionRepository::class), self::createStub(PluginVersionRepository::class), $pluginInfoRepository, self::createStub(ThemeInfoRepository::class), self::createStub(CraftPluginVersionRepository::class));
 
         return new SitePackageEvaluator($resolver, $vulnerabilityRepository, $notifier ?? self::createStub(SecurityNotifier::class));
     }

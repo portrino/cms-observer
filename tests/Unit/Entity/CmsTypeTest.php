@@ -13,6 +13,7 @@ class CmsTypeTest extends TestCase
     {
         self::assertSame('https://get.typo3.org/release-notes/13.4.21', CmsType::Typo3->releaseNotesUrl('13.4.21'));
         self::assertSame('https://wordpress.org/documentation/wordpress-version/version-6-8-1/', CmsType::WordPress->releaseNotesUrl('6.8.1'));
+        self::assertSame('https://github.com/craftcms/cms/releases/tag/5.12.4', CmsType::Craft->releaseNotesUrl('5.12.4'));
     }
 
     public function testEveryCmsHasAnExistingIcon(): void

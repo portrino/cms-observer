@@ -5,6 +5,7 @@ site. Available clients:
 
 - TYPO3: [cms-observer-client-typo3](https://github.com/portrino/cms-observer-client-typo3)
 - WordPress: [cms-observer-client-wordpress](https://github.com/portrino/cms-observer-client-wordpress)
+- Craft CMS: [cms-observer-client-craftcms](https://github.com/portrino/cms-observer-client-craftcms)
 
 ## Report API
 
@@ -35,7 +36,7 @@ Content-Type: application/json
 | `dbPlatform` | no | `mariadb`, `mysql` or `postgresql`; without it the platform is guessed from `dbVersion` |
 | `clientVersion`, `applicationContext` | no | shown on the project page, e.g. `Production` or `staging` |
 | `domains` | no | all hosts of the instance, lowercase, without scheme and port, see [domain check](#domain-check) |
-| `packages` | no | all installed packages. `type` is `extension` (TYPO3), `plugin` or `theme` (WordPress), without it the CMS's default (`extension`, `plugin`); entries of an unknown type are left out. `name` is the TYPO3 extension key or the wordpress.org slug (for a theme its directory); `name` and `version` are required, a missing or empty `title` shows the name instead, a `title` over 255 characters is shortened, a `version` over 64 characters (only branch names get that long) is cut off. The list is complete for every type: a WordPress site without themes in it has none. Without the field the packages stay as they are |
+| `packages` | no | all installed packages. `type` is `extension` (TYPO3), `plugin` or `theme` (WordPress) or `plugin` (Craft CMS), without it the CMS's default (`extension`, `plugin`, `plugin`); entries of an unknown type are left out. `name` is the TYPO3 extension key, the wordpress.org slug (for a theme its directory) or the Craft plugin handle; Craft plugins are looked up on Packagist by `composerName`; `name` and `version` are required, a missing or empty `title` shows the name instead, a `title` over 255 characters is shortened, a `version` over 64 characters (only branch names get that long) is cut off. The list is complete for every type: a WordPress site without themes in it has none. Without the field the packages stay as they are |
 | `extensions` | no | sent by older clients instead of `packages`, still accepted: the packages of the default type only, so WordPress themes stay as they are |
 
 The token belongs to one project and is shown once when the project is

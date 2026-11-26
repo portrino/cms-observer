@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\CmsType;
+use App\Entity\Craft\PluginVersion as CraftPluginVersion;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Wordpress\PluginVulnerability;
+use App\Repository\Craft\AdvisoryRepository as CraftAdvisoryRepository;
+use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
 use App\Repository\Typo3\TerExtensionMetaRepository;
 use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\PluginVulnerabilityRepository;
+use App\Service\Craft\AdvisoryMatcher;
 
 /**
  * The per-package details of a project's detail page: newer versions with
- * their security and compatibility state, and the TER or WordPress.org metadata.
+ * their security and compatibility state, and the TER or WordPress.org metadata (Craft: Packagist).
  */
 class SitePackageDetailsProvider
 {
@@ -27,6 +31,8 @@ class SitePackageDetailsProvider
         private readonly PluginInfoRepository $wordpressPluginInfoRepository,
         private readonly PluginVersionRepository $wordpressPluginVersionRepository,
         private readonly PluginVulnerabilityRepository $wordpressVulnerabilityRepository,
+        private readonly CraftPluginVersionRepository $craftPluginVersionRepository,
+        private readonly CraftAdvisoryRepository $craftAdvisoryRepository,
     ) {
     }
 
@@ -44,6 +50,7 @@ class SitePackageDetailsProvider
             $details[(int) $package->getId()] = match ($site->getType()) {
                 CmsType::Typo3 => $this->typo3Details($package, $coreVersion),
                 CmsType::WordPress => $this->wordpressDetails($package, $coreVersion),
+                CmsType::Craft => $this->craftDetails($package, $coreVersion),
             };
         }
 
@@ -88,6 +95,31 @@ class SitePackageDetailsProvider
             'newerVersions' => $newerVersions,
             'versionStates' => $versionStates,
             // newest first: the first version without a known vulnerability
+            'latestVersion' => array_find_key($versionStates, static fn (array $state): bool => !$state['insecure']),
+        ];
+    }
+
+    /**
+     * Like WordPress: only the newer versions that install on the site's Craft.
+     *
+     * @return array<string, mixed>
+     */
+    private function craftDetails(SitePackage $package, ?string $coreVersion): array
+    {
+        $composerName = $package->getComposerName();
+        $newer = null !== $composerName ? $this->craftPluginVersionRepository->findNewerThan($composerName, $package->getVersion()) ?? [] : [];
+        $newerVersions = array_values(array_filter($newer, static fn (CraftPluginVersion $v): bool => PackageUpdateResolver::installsOnCraft($v, $coreVersion)));
+        $advisories = null !== $composerName ? $this->craftAdvisoryRepository->findByPackageName($composerName) : [];
+
+        $versionStates = [];
+        foreach ($newerVersions as $version) {
+            $versionStates[$version->getVersion()] = ['insecure' => null !== AdvisoryMatcher::mostSevere($advisories, $version->getVersion())];
+        }
+
+        return [
+            'newerVersions' => $newerVersions,
+            'versionStates' => $versionStates,
+            // newest first: the first version without a known advisory
             'latestVersion' => array_find_key($versionStates, static fn (array $state): bool => !$state['insecure']),
         ];
     }
