@@ -77,7 +77,8 @@
                         <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_profile') }}">{{ icon('user') }} {{ 'nav.profile'|trans }}</a></li>
                         <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_settings') }}">{{ icon('settings') }} {{ 'nav.settings'|trans }}</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_logout') }}" data-turbo-prefetch="false">{{ icon('log-out') }} {{ 'nav.logout'|trans }}</a></li>
+                        {# a full page load, so no Turbo fetch or prefetch runs alongside the logout #}
+                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('app_logout') }}" data-turbo="false">{{ icon('log-out') }} {{ 'nav.logout'|trans }}</a></li>
                     </ul>
                 </div>
             </aside>

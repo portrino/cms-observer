@@ -73,8 +73,9 @@ valid key the profile doesn't offer the setup.
 
 A login session ends after 2 hours of inactivity; expired sessions are
 removed from the database now and then on a later request. "Remember me" on the login
-form keeps a user logged in for 30 days; changing the password or resetting
-two-factor authentication logs out every remembered browser.
+form keeps a user logged in for 30 days. Logging out ends it for that browser
+only (its token is deleted from the database); changing the password or
+resetting two-factor authentication logs out every remembered browser.
 
 ## Language
 

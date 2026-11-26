@@ -74,6 +74,32 @@ class SecurityControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Projects');
     }
 
+    public function testARequestWithTheOldCookiesAfterLogoutStaysLoggedOut(): void
+    {
+        $client = $this->createLoginClient();
+        $this->createUser('logout-remember@example.test', 'Logout Remember', 'correct-password');
+
+        $client->request('GET', '/login');
+        $client->submitForm('Log in', [
+            '_username' => 'logout-remember@example.test',
+            '_password' => 'correct-password',
+            '_remember_me' => true,
+        ]);
+        $oldCookies = $client->getCookieJar()->all();
+
+        $client->request('GET', '/logout');
+        self::assertResponseRedirects('/login');
+
+        // e.g. a Turbo prefetch that left the browser before the logout answered
+        foreach ($oldCookies as $cookie) {
+            $client->getCookieJar()->set($cookie);
+        }
+        $client->request('GET', '/status');
+
+        self::assertResponseRedirects('/login');
+        self::assertNull($client->getCookieJar()->get('REMEMBERME'));
+    }
+
     public function testLoginWithoutRememberMeSetsNoRememberMeCookie(): void
     {
         $client = $this->createLoginClient();

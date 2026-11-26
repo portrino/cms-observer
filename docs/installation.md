@@ -41,7 +41,7 @@ settings, checks them and writes `.env.local`:
 | Timezone | `APP_TIMEZONE` | e.g. `Europe/Berlin`, defaults to PHP's; used by the web server and the scheduler's worker alike, whose `php.ini` often differ |
 | Wordfence API key | `WORDFENCE_API_KEY` | optional, free key from wordfence.com → Account → Integrations; without it WordPress plugins aren't checked for vulnerabilities |
 | Packagist contact | `PACKAGIST_CONTACT_EMAIL` | optional; sent in the User-Agent of the requests for Craft CMS versions and advisories, as Packagist asks API users for a contact address |
-| (generated) | `APP_SECRET`, `TOTP_ENCRYPTION_KEY` | back up `TOTP_ENCRYPTION_KEY`: without it every two-factor login has to be reset. `app:upgrade` stops if `APP_SECRET` is empty: it signs the "Remember me" logins |
+| (generated) | `APP_SECRET`, `TOTP_ENCRYPTION_KEY` | back up `TOTP_ENCRYPTION_KEY`: without it every two-factor login has to be reset. `app:upgrade` stops if `APP_SECRET` is empty: it is Symfony's `kernel.secret` |
 
 Then it creates the database schema, builds the assets, asks for the first
 login and prints the cron job to add:

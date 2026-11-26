@@ -40,10 +40,14 @@ security:
                 enable_csrf: true
             # opt-in via the login form's checkbox; scheb/2fa only sets the cookie once the 2FA code passed
             remember_me:
-                secret: '%kernel.secret%'
                 lifetime: 2592000 # 30 days
                 # changing the password or (re)setting 2FA invalidates existing cookies
                 signature_properties: [password, encryptedTotpSecret]
+                # tokens in the database (rememberme_token), so logging out deletes this device's
+                # token: a request still on its way with the old cookie (e.g. a Turbo prefetch)
+                # can't log in again, as a signed cookie stays valid until it expires
+                token_provider:
+                    doctrine: true
             logout:
                 path: app_logout
                 target: app_login

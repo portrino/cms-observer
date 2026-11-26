@@ -25,7 +25,7 @@ class UpgradeCommand extends Command
         private readonly ConsoleRunner $consoleRunner,
         #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
-        // signs the "Remember me" cookies; without it every page fails with a 500
+        // Symfony's kernel.secret, which it expects to be set
         #[Autowire(env: 'APP_SECRET')]
         private readonly string $appSecret,
     ) {
