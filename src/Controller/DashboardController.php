@@ -23,6 +23,7 @@ use App\Repository\SiteRepository;
 use App\Security\SiteTokenFactory;
 use App\Service\SiteCoreVersionEvaluator;
 use App\Service\SitePackageDetailsProvider;
+use App\Service\UpgradeCalculationDrafter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,6 +110,7 @@ class DashboardController extends AbstractController
         EndOfLifeReleaseRepository $endOfLifeReleaseRepository,
         SiteReportRepository $reportRepository,
         SitePackageDetailsProvider $packageDetailsProvider,
+        UpgradeCalculationDrafter $drafter,
     ): Response {
         $packages = $packageRepository->findBy(['site' => $site], ['name' => 'ASC']);
         $newerCoreReleases = $coreVersionEvaluator->newerReleases($site);
@@ -117,7 +119,7 @@ class DashboardController extends AbstractController
         $typo3SupportStatus = [];
         $supportReleases = match ($site->getType()) {
             CmsType::Typo3 => $endOfLifeReleaseRepository->findBy(['product' => 'typo3']),
-            CmsType::WordPress => [],
+            CmsType::WordPress, CmsType::Craft => [],
         };
         foreach ($supportReleases as $release) {
             $typo3SupportStatus[(int) $release->getCycle()] = $release->getSupportStatus();
@@ -131,6 +133,7 @@ class DashboardController extends AbstractController
             'packageDetails' => $packageDetailsProvider->forSite($site, $packages),
             'newerCoreReleases' => $newerCoreReleases['inMajor'],
             'newerMajorCoreRelease' => $newerCoreReleases['newerMajor'],
+            'upgradeCalculations' => $drafter->supports($site),
         ]);
     }
 

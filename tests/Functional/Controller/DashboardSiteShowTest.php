@@ -43,10 +43,37 @@ class DashboardSiteShowTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('.alert-warning', 'Rejected report from staging.context.test');
+        self::assertSelectorExists('a[href="/projects/'.$site->getId().'/calculations"]');
         $systemInformation = $client->getCrawler()->filter('table')->first()->text();
         self::assertStringContainsString('Production/Live', $systemInformation);
         self::assertStringContainsString('1.1.0', $systemInformation);
         self::assertStringContainsString('context.test, www.context.test', $systemInformation);
+    }
+
+    public function testCraftProjectLinksItsPluginsAndHasNoCalculations(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('site-craft@example.test', 'Site Craft', 'password'));
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $site = new Site('Craft Site', CmsType::Craft, 'https://craft.test', 'hash-craft');
+        $site->recordReport('5.12.4', '8.3.0', '10.11.0');
+        $entityManager->persist($site);
+        $entityManager->persist(new SitePackage($site, 'seomatic', 'SEOmatic', '5.1.24', true, 'nystudio107/craft-seomatic'));
+        $entityManager->flush();
+
+        $client->request('GET', '/projects/'.$site->getId());
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('img[alt="Craft CMS"]');
+        self::assertSelectorExists('a[href="https://packagist.org/packages/nystudio107/craft-seomatic"]');
+        self::assertSelectorNotExists('a[href="/projects/'.$site->getId().'/calculations"]');
+
+        // no upgrade calculations for Craft yet: not drafted with another CMS's resolver
+        $client->request('GET', '/projects/'.$site->getId().'/calculations');
+        self::assertResponseStatusCodeSame(404);
+        $client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=6');
+        self::assertResponseStatusCodeSame(404);
     }
 
     public function testHidesARejectedReportOnceItIsOld(): void

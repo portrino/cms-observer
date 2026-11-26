@@ -382,6 +382,10 @@
         <source>package.label.extensions</source>
         <target>Extensions</target>
       </trans-unit>
+      <trans-unit id="package.label.plugins" resname="package.label.plugins">
+        <source>package.label.plugins</source>
+        <target>Plugins</target>
+      </trans-unit>
       <trans-unit id="package.label.plugins_themes" resname="package.label.plugins_themes">
         <source>package.label.plugins_themes</source>
         <target>Plugins und Themes</target>

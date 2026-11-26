@@ -40,6 +40,8 @@ class UpgradeCalculationController extends AbstractController
     #[Route('/projects/{id}/calculations', name: 'upgrade_calculation_index', methods: ['GET'])]
     public function index(Site $site, UpgradeCalculationRepository $repository): Response
     {
+        $this->denyUnsupported($site);
+
         return $this->render('upgrade_calculation/index.html.twig', [
             'site' => $site,
             'calculations' => $repository->findBy(['site' => $site], ['createdAt' => 'DESC']),
@@ -55,6 +57,7 @@ class UpgradeCalculationController extends AbstractController
         AgencySettingsRepository $settingsRepository,
         #[MapQueryParameter] int $target,
     ): Response {
+        $this->denyUnsupported($site);
         if (!in_array($target, $this->drafter->targetMajors($site), true)) {
             throw $this->createNotFoundException('No upgrade to this major is possible.');
         }
@@ -191,6 +194,13 @@ class UpgradeCalculationController extends AbstractController
     }
 
     /** The given version of this calculation, or its latest one */
+    private function denyUnsupported(Site $site): void
+    {
+        if (!$this->drafter->supports($site)) {
+            throw $this->createNotFoundException(sprintf('No upgrade calculations for %s projects yet.', $site->getType()->label()));
+        }
+    }
+
     private function findVersion(UpgradeCalculation $calculation, ?int $versionId): UpgradeCalculationVersion
     {
         foreach ($calculation->getVersions() as $version) {

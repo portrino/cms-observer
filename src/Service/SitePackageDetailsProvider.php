@@ -44,6 +44,8 @@ class SitePackageDetailsProvider
             $details[(int) $package->getId()] = match ($site->getType()) {
                 CmsType::Typo3 => $this->typo3Details($package, $coreVersion),
                 CmsType::WordPress => $this->wordpressDetails($package, $coreVersion),
+                // shortcut: no Packagist versions synced yet, the partial only links the package
+                CmsType::Craft => [],
             };
         }
 

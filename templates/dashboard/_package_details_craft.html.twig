@@ -1,0 +1,6 @@
+{% if package.composerName %}
+    <div class="mb-2">
+        <a href="https://packagist.org/packages/{{ package.composerName }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'Packagist'}) }} {{ icon('external-link') }}</a>
+    </div>
+    <p class="text-muted"><code>{{ package.composerName }}</code></p>
+{% endif %}

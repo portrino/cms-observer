@@ -8,12 +8,14 @@
 {% block page_actions %}
     {{ m.topbar_link(path('dashboard_site_history', {id: site.id}), 'history', 'project.history'|trans) }}
     {{ m.topbar_link(path('dashboard_site_edit', {id: site.id}), 'pencil', 'common.edit'|trans) }}
+    {% if upgradeCalculations %}
     <div class="dropdown">
         <button type="button" class="btn btn-tertiary" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ 'common.more_actions'|trans }}">{{ icon('ellipsis-vertical') }}</button>
         <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ path('upgrade_calculation_index', {id: site.id}) }}">{{ icon('calculator') }} {{ 'calculation.plural'|trans }}</a></li>
         </ul>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block body %}

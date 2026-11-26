@@ -321,6 +321,22 @@ class SiteReportControllerTest extends WebTestCase
         }
     }
 
+    public function testCraftPluginsAreStoredWithTheirComposerName(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite(CmsType::Craft);
+
+        $this->postReport($client, $token, ['coreVersion' => '5.12.4', 'dbVersion' => '10.11.0', 'packages' => [
+            ['name' => 'seomatic', 'type' => 'plugin', 'title' => 'SEOmatic', 'version' => '5.1.24', 'active' => true, 'composerName' => 'nystudio107/craft-seomatic'],
+        ]]);
+
+        self::assertResponseStatusCodeSame(202);
+        $plugin = static::getContainer()->get(SitePackageRepository::class)->findOneBySiteAndName($site, 'seomatic');
+        self::assertSame(PackageType::CraftPlugin, $plugin?->getPackageType());
+        self::assertSame('nystudio107/craft-seomatic', $plugin->getComposerName());
+        self::assertSame('5.12.4', $site->getCurrentCoreVersion());
+    }
+
     public function testAPackageWithoutVersionIsStillRejected(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);

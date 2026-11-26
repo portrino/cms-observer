@@ -173,6 +173,8 @@ class SiteReportIngestor
             match ($site->getType()) {
                 CmsType::Typo3 => $this->packageAdvisoryEvaluator->evaluate($sitePackage),
                 CmsType::WordPress => $this->wordpressEvaluator->evaluate($sitePackage),
+                // shortcut: rated once the Packagist syncs exist
+                CmsType::Craft => null,
             };
         }
 

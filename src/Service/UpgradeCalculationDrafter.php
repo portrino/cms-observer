@@ -78,6 +78,12 @@ final readonly class UpgradeCalculationDrafter
         return $this->resolver($site)->packageItems($site, $targetMajor);
     }
 
+    /** Whether the site's CMS has a resolver, i.e. calculations can be drafted for it */
+    public function supports(Site $site): bool
+    {
+        return $this->resolvers->has($site->getType()->value);
+    }
+
     private function resolver(Site $site): UpgradeCompatibilityResolver
     {
         return $this->resolvers->get($site->getType()->value);

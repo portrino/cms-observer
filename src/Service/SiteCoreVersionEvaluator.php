@@ -8,6 +8,7 @@ use App\Entity\CmsType;
 use App\Entity\CoreReleaseInterface;
 use App\Entity\Site;
 use App\Repository\AbstractCoreReleaseRepository;
+use App\Repository\Craft\CoreReleaseRepository as CraftCoreReleaseRepository;
 use App\Repository\Typo3\CoreReleaseRepository as Typo3CoreReleaseRepository;
 use App\Repository\Wordpress\CoreReleaseRepository as WordpressCoreReleaseRepository;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -24,6 +25,7 @@ class SiteCoreVersionEvaluator
     public function __construct(
         private readonly Typo3CoreReleaseRepository $typo3ReleaseRepository,
         private readonly WordpressCoreReleaseRepository $wordpressReleaseRepository,
+        private readonly CraftCoreReleaseRepository $craftReleaseRepository,
         private readonly SecurityNotifier $securityNotifier,
     ) {
     }
@@ -140,6 +142,7 @@ class SiteCoreVersionEvaluator
         return match ($type) {
             CmsType::Typo3 => $this->typo3ReleaseRepository,
             CmsType::WordPress => $this->wordpressReleaseRepository,
+            CmsType::Craft => $this->craftReleaseRepository,
         };
     }
 }
