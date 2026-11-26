@@ -79,8 +79,10 @@ class ApiClient
 
         try {
             $data = $response->toArray();
-        } catch (ClientExceptionInterface) {
-            // any other 4xx counts as unknown slug: the existing data stays and the next sync tries again
+        } catch (ClientExceptionInterface $e) {
+            // not the usual unknown slug (404 or no version) but e.g. a block or rate limit: the existing data stays and the next sync tries again
+            $this->logClientError('plugin', $slug, $e);
+
             return null;
         }
 
@@ -116,8 +118,10 @@ class ApiClient
 
         try {
             $data = $response->toArray();
-        } catch (ClientExceptionInterface) {
-            // any other 4xx counts as unknown slug: the existing data stays and the next sync tries again
+        } catch (ClientExceptionInterface $e) {
+            // not the usual unknown slug (404 or no version) but e.g. a block or rate limit: the existing data stays and the next sync tries again
+            $this->logClientError('theme', $slug, $e);
+
             return null;
         }
 
@@ -333,6 +337,15 @@ class ApiClient
         $text = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5);
 
         return trim(preg_replace('/\s+/', ' ', $text) ?? $text);
+    }
+
+    private function logClientError(string $kind, string $slug, ClientExceptionInterface $e): void
+    {
+        $this->logger->error('WordPress.org answered {status} for the {kind} {slug}, kept the known data', [
+            'status' => $e->getResponse()->getStatusCode(),
+            'kind' => $kind,
+            'slug' => $slug,
+        ]);
     }
 
     /**

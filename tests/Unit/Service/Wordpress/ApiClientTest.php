@@ -45,4 +45,22 @@ class ApiClientTest extends TestCase
         self::assertSame('warning', $logs[0][0]);
         self::assertSame('https://core.svn.wordpress.org/tags/', $logs[0][2]['url']);
     }
+
+    public function testLogsABlockedRequestButKeepsTheKnownData(): void
+    {
+        $logger = new BufferingLogger();
+        $client = new ApiClient(new MockHttpClient([
+            new MockResponse('{}', ['http_code' => 429]),
+            new MockResponse('{}', ['http_code' => 403]),
+            new MockResponse('{}', ['http_code' => 404]),
+        ]), $logger);
+
+        self::assertNull($client->getPluginInfo('akismet'));
+        self::assertNull($client->getThemeInfo('astra'));
+        self::assertNull($client->getPluginInfo('premium-plugin')); // the usual unknown slug, not logged
+        $logs = $logger->cleanLogs();
+        self::assertCount(2, $logs);
+        self::assertSame(['error', 429, 'plugin', 'akismet'], [$logs[0][0], $logs[0][2]['status'], $logs[0][2]['kind'], $logs[0][2]['slug']]);
+        self::assertSame(['error', 403, 'theme', 'astra'], [$logs[1][0], $logs[1][2]['status'], $logs[1][2]['kind'], $logs[1][2]['slug']]);
+    }
 }
