@@ -70,7 +70,7 @@ class SitePackage
         private string $name,
         #[ORM\Column(length: 255)]
         private string $title,
-        #[ORM\Column(length: 32)]
+        #[ORM\Column(length: 64)]
         private string $version,
         #[ORM\Column]
         private bool $active,

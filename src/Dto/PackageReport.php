@@ -22,9 +22,14 @@ final readonly class PackageReport
     ) {
     }
 
-    /** The title, or the name when the package has none */
+    // length of the title column; TYPO3 falls back to a package's description, which can be longer
+    private const int MAX_TITLE_LENGTH = 255;
+
+    /** The title, or the name when the package has none; shortened to what the Observer stores */
     public function displayTitle(): string
     {
-        return null !== $this->title && '' !== trim($this->title) ? $this->title : $this->name;
+        $title = null !== $this->title && '' !== trim($this->title) ? trim($this->title) : $this->name;
+
+        return mb_strlen($title) > self::MAX_TITLE_LENGTH ? mb_substr($title, 0, self::MAX_TITLE_LENGTH - 1).'…' : $title;
     }
 }

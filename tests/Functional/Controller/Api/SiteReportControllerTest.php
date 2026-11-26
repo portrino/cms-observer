@@ -337,6 +337,29 @@ class SiteReportControllerTest extends WebTestCase
         self::assertSame('5.12.4', $site->getCurrentCoreVersion());
     }
 
+    /**
+     * TYPO3 falls back to a package's composer.json description as its title, which can be
+     * longer than the column (e.g. codingms/modules); one such package mustn't fail the report.
+     */
+    public function testOverlongTitlesAndBranchVersionsAreShortened(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        [$token, $site] = $this->createSite();
+        $branch = 'dev-feature/'.str_repeat('a-very-long-branch-name-', 4);
+
+        $this->postReport($client, $token, ['dbVersion' => '10.11.0', 'packages' => [
+            ['name' => 'modules', 'type' => 'extension', 'title' => str_repeat('TYPO3 Modules by coding.ms: ', 16), 'version' => '8.7.0'],
+            ['name' => 'site_package', 'type' => 'extension', 'title' => 'Site Package', 'version' => $branch],
+        ]]);
+
+        self::assertResponseStatusCodeSame(202);
+        $packages = static::getContainer()->get(SitePackageRepository::class);
+        $title = (string) $packages->findOneBySiteAndName($site, 'modules')?->getTitle();
+        self::assertSame(255, mb_strlen($title));
+        self::assertStringEndsWith('…', $title);
+        self::assertSame(mb_substr($branch, 0, 64), $packages->findOneBySiteAndName($site, 'site_package')?->getVersion());
+    }
+
     public function testAPackageWithoutVersionIsStillRejected(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);
