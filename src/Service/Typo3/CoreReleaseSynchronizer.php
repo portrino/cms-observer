@@ -19,6 +19,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * window (get.typo3.org/api/v1/major/'s maintained_until) has passed, or if
  * a later patch in the same major.minor line was itself a security release
  * (ported from georgringer/t3monitoring's release-freshness logic).
+ *
+ * Releases published after maintained_until only come with ELTS, so a site
+ * reporting one has ELTS: they count as maintained until elts_until. The
+ * public releases of such a major stay insecure, nothing says the site has ELTS.
  */
 class CoreReleaseSynchronizer
 {
@@ -140,15 +144,18 @@ class CoreReleaseSynchronizer
             $majorData = $majors[$line] ?? $majors["{$major}.0"] ?? null;
             $maintainedUntil = $majorData['maintainedUntil'] ?? null;
             $isActive = null !== $maintainedUntil && $maintainedUntil >= $now && ReleaseType::Development !== $type;
+            $releaseDate = new \DateTimeImmutable((string) $item['date']);
+            $eltsUntil = $majorData['eltsUntil'] ?? null;
 
             $releases[$version] = [
-                'releaseDate' => new \DateTimeImmutable((string) $item['date']),
+                'releaseDate' => $releaseDate,
                 'type' => $type,
                 'isActive' => $isActive,
                 'maintainedUntil' => $maintainedUntil,
-                'eltsUntil' => $majorData['eltsUntil'] ?? null,
+                'eltsUntil' => $eltsUntil,
                 'ltsReleaseDate' => $majorData['ltsReleaseDate'] ?? null,
-                'insecure' => false,
+                // flagInsecureReleases() adds the releases a later security release fixed
+                'insecure' => !$isActive && !self::isEltsRelease($releaseDate, $maintainedUntil, $eltsUntil, $now),
                 'line' => $line,
             ];
 
@@ -168,17 +175,19 @@ class CoreReleaseSynchronizer
         return $releases;
     }
 
+    /** Published after the public maintenance, so only with ELTS, and ELTS still runs */
+    private static function isEltsRelease(\DateTimeImmutable $releaseDate, ?\DateTimeImmutable $maintainedUntil, ?\DateTimeImmutable $eltsUntil, \DateTimeImmutable $now): bool
+    {
+        return null !== $maintainedUntil && $releaseDate > $maintainedUntil && null !== $eltsUntil && $eltsUntil >= $now;
+    }
+
     /**
      * @param array<string, array{releaseDate: \DateTimeImmutable, type: ReleaseType, latestVersion: string, isActive: bool, maintainedUntil: ?\DateTimeImmutable, eltsUntil: ?\DateTimeImmutable, ltsReleaseDate: ?\DateTimeImmutable, insecure: bool}> $releases
      */
     private function flagInsecureReleases(array &$releases): void
     {
-        foreach ($releases as &$release) {
-            $release['insecure'] = $release['insecure'] || !$release['isActive'];
-        }
-        unset($release);
-
-        $securityReleases = array_filter($releases, static fn (array $release): bool => $release['isActive'] && ReleaseType::Security === $release['type']);
+        // maintained ones only: a security release of an unsupported major says nothing new
+        $securityReleases = array_filter($releases, static fn (array $release): bool => !$release['insecure'] && ReleaseType::Security === $release['type']);
         foreach (array_keys($securityReleases) as $version) {
             foreach (self::earlierPatchVersions($version) as $earlierVersion) {
                 if (isset($releases[$earlierVersion])) {
