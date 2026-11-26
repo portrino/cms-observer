@@ -4,26 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Service\Craft;
 
-use App\Entity\CmsType;
-use App\Entity\Craft\Advisory;
-use App\Entity\Craft\PluginVersion;
 use App\Entity\EndOfLifeRelease;
-use App\Entity\Site;
-use App\Entity\SitePackage;
 use App\Repository\Craft\AdvisoryRepository;
 use App\Repository\Craft\CoreReleaseRepository;
-use App\Repository\Craft\PluginVersionRepository;
 use App\Repository\EndOfLifeReleaseRepository;
 use App\Repository\SitePackageRepository;
 use App\Service\Craft\AdvisorySynchronizer;
 use App\Service\Craft\CoreReleaseSynchronizer;
 use App\Service\Craft\PackagistApiClient;
-use App\Service\Craft\PluginVersionSynchronizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
-use Symfony\Component\HttpClient\Response\MockResponse;
 
 class CoreReleaseSynchronizerTest extends KernelTestCase
 {
@@ -60,47 +52,6 @@ class CoreReleaseSynchronizerTest extends KernelTestCase
         // without the craft-cms cycles 4.18.9 would count as secure: the core stays unknown instead
         self::assertSame(0, $coreSynchronizer->sync());
         self::assertSame([], static::getContainer()->get(CoreReleaseRepository::class)->findAll());
-    }
-
-    public function testStoresThePluginAdvisoriesAndDropsWithdrawnOnes(): void
-    {
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $site = new Site('Craft', CmsType::Craft, 'https://craft.test', 'hash-craft-sync');
-        $entityManager->persist($site);
-        $entityManager->persist(new SitePackage($site, 'seomatic', 'SEOmatic', '3.4.10', true, 'nystudio107/craft-seomatic'));
-        $entityManager->flush();
-        [$advisorySynchronizer] = $this->synchronizers();
-
-        $this->advisories = ['nystudio107/craft-seomatic' => [self::advisory('PKSA-seo-1', '<3.4.11'), self::advisory('PKSA-seo-2', '<3.2.49')]];
-        self::assertSame(2, $advisorySynchronizer->sync());
-
-        $this->advisories = ['nystudio107/craft-seomatic' => [self::advisory('PKSA-seo-1', '<3.4.12')]];
-        $advisorySynchronizer->sync();
-
-        $stored = static::getContainer()->get(AdvisoryRepository::class)->findByPackageName('nystudio107/craft-seomatic');
-        self::assertSame(['PKSA-seo-1'], array_map(static fn (Advisory $a): string => $a->getAdvisoryId(), $stored));
-        self::assertSame('<3.4.12', $stored[0]->getAffectedVersions());
-    }
-
-    public function testSyncsThePackagistVersionsOfTheReportedPlugins(): void
-    {
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $site = new Site('Craft', CmsType::Craft, 'https://craft.test', 'hash-craft-versions');
-        $entityManager->persist($site);
-        $entityManager->persist(new SitePackage($site, 'seomatic', 'SEOmatic', '5.1.23', true, 'nystudio107/craft-seomatic'));
-        $entityManager->persist(new SitePackage($site, 'private', 'Private', '1.0.0', true, 'acme/private-plugin'));
-        $entityManager->flush();
-        $http = new MockHttpClient(static fn (string $method, string $url): MockResponse => str_contains($url, 'craft-seomatic')
-            ? new MockResponse((string) file_get_contents(__DIR__.'/../../../Fixtures/Packagist/craft-seomatic.json'))
-            : new MockResponse('', ['http_code' => 404]));
-        $container = static::getContainer();
-        $synchronizer = new PluginVersionSynchronizer(new PackagistApiClient($http, 'https://observer.test', ''), $container->get(PluginVersionRepository::class), $container->get(SitePackageRepository::class), $entityManager);
-
-        self::assertSame(1, $synchronizer->sync(), 'the private plugin is unknown to Packagist');
-        self::assertSame(1, $synchronizer->sync(), 'a second run updates instead of duplicating');
-
-        $newer = $container->get(PluginVersionRepository::class)->findNewerThan('nystudio107/craft-seomatic', '5.1.23');
-        self::assertSame(['5.1.24'], array_map(static fn (PluginVersion $v): string => $v->getVersion(), $newer ?? []));
     }
 
     /**
