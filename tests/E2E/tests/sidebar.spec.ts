@@ -46,6 +46,9 @@ test('the brand opens the system information, also when collapsed', async ({ pag
     await page.keyboard.press('Escape');
 
     await page.getByRole('button', { name: 'Toggle sidebar' }).click();
+    // only the name goes, the logo stays
+    await expect(brand.locator('img')).toBeVisible();
+    await expect(brand.getByText('CMS Observer')).toBeHidden();
     await brand.click();
     // opens beyond the narrow sidebar instead of being cut off by it
     await expect(menu).toBeInViewport({ ratio: 1 });

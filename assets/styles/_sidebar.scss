@@ -214,7 +214,7 @@ body:has(.sf-toolbar-opened) .sidebar {
         .sidebar {
             width: $sidebar-width-collapsed;
 
-            .sidebar-brand span,
+            .sidebar-brand-name,
             .nav-link span,
             .sidebar-user-name {
                 display: none;

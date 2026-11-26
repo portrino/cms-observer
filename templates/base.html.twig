@@ -34,7 +34,7 @@
                                 <b class="sidebar-brand-dot"><span class="visually-hidden">{{ 'system_info.update_available'|trans({version: observerUpdate.version}) }}</span></b>
                             {% endif %}
                         </span>
-                        <span>CMS Observer</span>
+                        <span class="sidebar-brand-name">CMS Observer</span>
                     </a>
                     <div class="dropdown-menu system-info">
                         <turbo-frame id="system-info" src="{{ path('app_status_system_info') }}" loading="lazy">
