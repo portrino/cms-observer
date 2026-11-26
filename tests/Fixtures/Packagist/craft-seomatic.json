@@ -1,0 +1,1075 @@
+{
+ "minified": "composer/2.0",
+ "packages": {
+  "nystudio107/craft-seomatic": [
+   {
+    "name": "nystudio107/craft-seomatic",
+    "description": "SEOmatic facilitates modern SEO best practices & implementation for Craft CMS 5. It is a turnkey SEO system that is comprehensive, powerful, and flexible.",
+    "keywords": [
+     "cms",
+     "twitter",
+     "Sitemap",
+     "facebook",
+     "seo",
+     "tags",
+     "JSON-LD",
+     "meta",
+     "Craft",
+     "craftcms",
+     "craft-plugin",
+     "seomatic"
+    ],
+    "homepage": "",
+    "version": "5.1.24",
+    "version_normalized": "5.1.24.0",
+    "license": [
+     "proprietary"
+    ],
+    "authors": [
+     {
+      "name": "nystudio107",
+      "homepage": "https://nystudio107.com"
+     }
+    ],
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "e57efa597ec058b71cbe959a3b96c78d4bbc7c84"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/e57efa597ec058b71cbe959a3b96c78d4bbc7c84",
+     "type": "zip",
+     "shasum": "",
+     "reference": "e57efa597ec058b71cbe959a3b96c78d4bbc7c84"
+    },
+    "type": "craft-plugin",
+    "support": {
+     "docs": "https://nystudio107.com/docs/seomatic/",
+     "issues": "https://nystudio107.com/plugins/seomatic/support",
+     "source": "https://github.com/nystudio107/craft-seomatic"
+    },
+    "funding": [
+     {
+      "url": "https://github.com/khalwat",
+      "type": "github"
+     }
+    ],
+    "time": "2026-11-24T05:54:35+00:00",
+    "published-time": "2026-11-24T05:54:45+00:00",
+    "autoload": {
+     "psr-4": {
+      "nystudio107\\seomatic\\": "src/"
+     }
+    },
+    "extra": {
+     "name": "SEOmatic",
+     "class": "nystudio107\\seomatic\\Seomatic",
+     "handle": "seomatic"
+    },
+    "require": {
+     "php": "^8.2",
+     "craftcms/cms": "^5.0.0",
+     "nystudio107/craft-plugin-vite": "^5.0.0",
+     "nystudio107/craft-code-editor": "^1.0.14",
+     "nystudio107/craft-twig-sandbox": "^5.0.5",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    },
+    "require-dev": {
+     "codeception/codeception": "^5.0.11",
+     "codeception/module-asserts": "^3.0.0",
+     "codeception/module-datafactory": "^3.0.0",
+     "codeception/module-phpbrowser": "^3.0.0",
+     "codeception/module-rest": "^3.3.2",
+     "codeception/module-yii2": "^1.1.9",
+     "vlucas/phpdotenv": "^5.4.0",
+     "craftcms/commerce": "^5.0.0",
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main",
+     "craftcms/ckeditor": "^4.0.0",
+     "craftcms/digital-products": "^4.0.0",
+     "craftcms/feed-me": "^6.0.0",
+     "craftcms/redactor": "^4.0.0",
+     "craftcms/shopify": "^5.0.0",
+     "nystudio107/craft-fastcgicachebust": "^5.0.0",
+     "nystudio107/craft-minify": "^5.0.0",
+     "putyourlightson/craft-blitz": "^5.0.0",
+     "putyourlightson/craft-campaign": "^3.0.0",
+     "solspace/craft-calendar": "^5.0.0",
+     "spicyweb/craft-neo": "^5.0.0",
+     "verbb/doxter": "^6.0.0"
+    }
+   },
+   {
+    "version": "5.1.23",
+    "version_normalized": "5.1.23.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "a8db3684a8be6189847cd71a5af7333379f007e5"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/a8db3684a8be6189847cd71a5af7333379f007e5",
+     "type": "zip",
+     "shasum": "",
+     "reference": "a8db3684a8be6189847cd71a5af7333379f007e5"
+    },
+    "time": "2026-11-23T20:26:41+00:00",
+    "published-time": "2026-11-23T20:26:53+00:00"
+   },
+   {
+    "version": "5.1.22",
+    "version_normalized": "5.1.22.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "cab0fe84ec5317172fd5627999b5b5b5067ab38d"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/cab0fe84ec5317172fd5627999b5b5b5067ab38d",
+     "type": "zip",
+     "shasum": "",
+     "reference": "cab0fe84ec5317172fd5627999b5b5b5067ab38d"
+    },
+    "time": "2026-07-30T19:56:33+00:00",
+    "published-time": "2026-07-30T19:56:46+00:00"
+   },
+   {
+    "version": "5.1.21",
+    "version_normalized": "5.1.21.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "c52bff4d874cb52e5cf30345b5654f2bf8c70445"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/c52bff4d874cb52e5cf30345b5654f2bf8c70445",
+     "type": "zip",
+     "shasum": "",
+     "reference": "c52bff4d874cb52e5cf30345b5654f2bf8c70445"
+    },
+    "time": "2026-03-13T20:00:36+00:00",
+    "published-time": "2026-03-13T20:00:48+00:00"
+   },
+   {
+    "version": "5.1.20",
+    "version_normalized": "5.1.20.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "c88261b04a6078c8caba9e57091833ab7dab2621"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/c88261b04a6078c8caba9e57091833ab7dab2621",
+     "type": "zip",
+     "shasum": "",
+     "reference": "c88261b04a6078c8caba9e57091833ab7dab2621"
+    },
+    "time": "2026-01-20T22:33:38+00:00",
+    "published-time": "2026-01-20T22:33:48+00:00"
+   },
+   {
+    "version": "5.1.19",
+    "version_normalized": "5.1.19.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "527085a71a051be17dc72d31cb7ea96953992947"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/527085a71a051be17dc72d31cb7ea96953992947",
+     "type": "zip",
+     "shasum": "",
+     "reference": "527085a71a051be17dc72d31cb7ea96953992947"
+    },
+    "time": "2025-10-23T20:41:21+00:00",
+    "published-time": "2025-10-23T20:41:51+00:00"
+   },
+   {
+    "version": "5.1.18",
+    "version_normalized": "5.1.18.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "567dd39be372e8d4e919105bb89f449a01119fe6"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/567dd39be372e8d4e919105bb89f449a01119fe6",
+     "type": "zip",
+     "shasum": "",
+     "reference": "567dd39be372e8d4e919105bb89f449a01119fe6"
+    },
+    "time": "2025-10-07T03:41:58+00:00",
+    "published-time": "2025-10-07T03:42:08+00:00"
+   },
+   {
+    "version": "5.1.17",
+    "version_normalized": "5.1.17.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "172631306d30d2ee4c40bc7372f31704c9ad399b"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/172631306d30d2ee4c40bc7372f31704c9ad399b",
+     "type": "zip",
+     "shasum": "",
+     "reference": "172631306d30d2ee4c40bc7372f31704c9ad399b"
+    },
+    "time": "2025-08-17T22:24:55+00:00",
+    "published-time": "2025-08-17T22:25:07+00:00",
+    "require": {
+     "php": "^8.2",
+     "craftcms/cms": "^5.0.0",
+     "nystudio107/craft-plugin-vite": "^5.0.0",
+     "nystudio107/craft-code-editor": "^1.0.14",
+     "nystudio107/craft-twig-sandbox": "^5.0.3",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    }
+   },
+   {
+    "version": "5.1.16",
+    "version_normalized": "5.1.16.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "c328ca7a70f0a551c4f853a021d6ec1b46b9bb1a"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/c328ca7a70f0a551c4f853a021d6ec1b46b9bb1a",
+     "type": "zip",
+     "shasum": "",
+     "reference": "c328ca7a70f0a551c4f853a021d6ec1b46b9bb1a"
+    },
+    "time": "2025-06-11T21:30:41+00:00",
+    "published-time": "2025-06-11T21:30:51+00:00"
+   },
+   {
+    "version": "5.1.15",
+    "version_normalized": "5.1.15.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "415e21efc18fa14fa5a4753e2ef3afbf183d1875"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/415e21efc18fa14fa5a4753e2ef3afbf183d1875",
+     "type": "zip",
+     "shasum": "",
+     "reference": "415e21efc18fa14fa5a4753e2ef3afbf183d1875"
+    },
+    "time": "2025-06-11T09:44:22+00:00",
+    "published-time": "2025-06-11T09:44:31+00:00"
+   },
+   {
+    "version": "5.1.14",
+    "version_normalized": "5.1.14.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "0b16b127090848e0398b49fbe40a462bc9ff3597"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/0b16b127090848e0398b49fbe40a462bc9ff3597",
+     "type": "zip",
+     "shasum": "",
+     "reference": "0b16b127090848e0398b49fbe40a462bc9ff3597"
+    },
+    "time": "2025-06-10T22:55:08+00:00",
+    "published-time": "2025-06-10T22:55:16+00:00"
+   },
+   {
+    "version": "5.1.13",
+    "version_normalized": "5.1.13.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "cc9616d067f1650845603eeb0adacf685e0565ab"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/cc9616d067f1650845603eeb0adacf685e0565ab",
+     "type": "zip",
+     "shasum": "",
+     "reference": "cc9616d067f1650845603eeb0adacf685e0565ab"
+    },
+    "time": "2025-04-24T23:56:25+00:00",
+    "published-time": "2025-04-24T23:56:33+00:00",
+    "require": {
+     "php": "^8.2",
+     "craftcms/cms": "^5.0.0",
+     "nystudio107/craft-plugin-vite": "^5.0.0",
+     "nystudio107/craft-code-editor": "^1.0.14",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    }
+   },
+   {
+    "version": "5.1.12",
+    "version_normalized": "5.1.12.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "a2f6fe4ec2fafb747735deafb72a2b929b80d60e"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/a2f6fe4ec2fafb747735deafb72a2b929b80d60e",
+     "type": "zip",
+     "shasum": "",
+     "reference": "a2f6fe4ec2fafb747735deafb72a2b929b80d60e"
+    },
+    "time": "2025-04-04T02:36:35+00:00",
+    "published-time": "2025-04-04T02:36:44+00:00"
+   },
+   {
+    "version": "5.1.11",
+    "version_normalized": "5.1.11.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "12fc48603978506e2386686f8151e6b2fab3707e"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/12fc48603978506e2386686f8151e6b2fab3707e",
+     "type": "zip",
+     "shasum": "",
+     "reference": "12fc48603978506e2386686f8151e6b2fab3707e"
+    },
+    "time": "2025-01-23T12:12:01+00:00",
+    "published-time": "2025-01-23T12:12:10+00:00"
+   },
+   {
+    "version": "5.1.10",
+    "version_normalized": "5.1.10.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "be19dddcdba7f516fb0ba9b9ce865b3d5622ef9e"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/be19dddcdba7f516fb0ba9b9ce865b3d5622ef9e",
+     "type": "zip",
+     "shasum": "",
+     "reference": "be19dddcdba7f516fb0ba9b9ce865b3d5622ef9e"
+    },
+    "time": "2025-01-16T21:26:22+00:00",
+    "published-time": "2025-01-16T21:26:38+00:00"
+   },
+   {
+    "version": "5.1.9",
+    "version_normalized": "5.1.9.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "ba4c33a1b7878ccd5ce9585eabc1d3c153a2128e"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/ba4c33a1b7878ccd5ce9585eabc1d3c153a2128e",
+     "type": "zip",
+     "shasum": "",
+     "reference": "ba4c33a1b7878ccd5ce9585eabc1d3c153a2128e"
+    },
+    "time": "2025-01-09T02:02:41+00:00",
+    "published-time": "2025-01-09T02:02:51+00:00"
+   },
+   {
+    "version": "5.1.8",
+    "version_normalized": "5.1.8.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "faead4dd1b5656975253c42eaf3cd3e09ac664aa"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/faead4dd1b5656975253c42eaf3cd3e09ac664aa",
+     "type": "zip",
+     "shasum": "",
+     "reference": "faead4dd1b5656975253c42eaf3cd3e09ac664aa"
+    },
+    "time": "2024-12-21T23:33:37+00:00",
+    "published-time": "2024-12-21T23:33:46+00:00"
+   },
+   {
+    "version": "5.1.7",
+    "version_normalized": "5.1.7.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "cddd2a50c715c04c8d2a1ea76d059bf67130ac05"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/cddd2a50c715c04c8d2a1ea76d059bf67130ac05",
+     "type": "zip",
+     "shasum": "",
+     "reference": "cddd2a50c715c04c8d2a1ea76d059bf67130ac05"
+    },
+    "time": "2024-11-20T18:33:28+00:00",
+    "published-time": "2024-11-20T18:33:46+00:00"
+   },
+   {
+    "version": "5.1.6",
+    "version_normalized": "5.1.6.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "55df5c4532ebc16889923b94b9337904c26cd09f"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/55df5c4532ebc16889923b94b9337904c26cd09f",
+     "type": "zip",
+     "shasum": "",
+     "reference": "55df5c4532ebc16889923b94b9337904c26cd09f"
+    },
+    "time": "2024-11-13T03:54:52+00:00",
+    "published-time": "2024-11-13T03:55:00+00:00"
+   },
+   {
+    "version": "5.1.5",
+    "version_normalized": "5.1.5.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "2ac2e093c39c72d7b95cf03c4481d5ca66476ff2"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/2ac2e093c39c72d7b95cf03c4481d5ca66476ff2",
+     "type": "zip",
+     "shasum": "",
+     "reference": "2ac2e093c39c72d7b95cf03c4481d5ca66476ff2"
+    },
+    "time": "2024-10-21T23:19:03+00:00",
+    "published-time": "2024-10-21T23:19:19+00:00"
+   },
+   {
+    "version": "5.1.4",
+    "version_normalized": "5.1.4.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "d70c6fd10f7fee7c450ac9098f69661f9933d337"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/d70c6fd10f7fee7c450ac9098f69661f9933d337",
+     "type": "zip",
+     "shasum": "",
+     "reference": "d70c6fd10f7fee7c450ac9098f69661f9933d337"
+    },
+    "time": "2024-09-29T23:30:19+00:00",
+    "published-time": "2024-09-29T23:30:38+00:00"
+   },
+   {
+    "version": "5.1.3",
+    "version_normalized": "5.1.3.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "2d891a086df6035cf202898f423e1ca6eb730c22"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/2d891a086df6035cf202898f423e1ca6eb730c22",
+     "type": "zip",
+     "shasum": "",
+     "reference": "2d891a086df6035cf202898f423e1ca6eb730c22"
+    },
+    "time": "2024-09-11T03:42:04+00:00",
+    "published-time": "2024-09-11T03:42:12+00:00"
+   },
+   {
+    "version": "5.1.2",
+    "version_normalized": "5.1.2.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "50a9bb7058cfb089758ca869b3096007eb222b94"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/50a9bb7058cfb089758ca869b3096007eb222b94",
+     "type": "zip",
+     "shasum": "",
+     "reference": "50a9bb7058cfb089758ca869b3096007eb222b94"
+    },
+    "time": "2024-08-15T15:36:50+00:00",
+    "published-time": "2024-08-15T15:37:12+00:00"
+   },
+   {
+    "version": "5.1.1",
+    "version_normalized": "5.1.1.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "de66abcb8709f9ffe0aace20a5c541e45e516118"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/de66abcb8709f9ffe0aace20a5c541e45e516118",
+     "type": "zip",
+     "shasum": "",
+     "reference": "de66abcb8709f9ffe0aace20a5c541e45e516118"
+    },
+    "time": "2024-07-19T09:20:12+00:00",
+    "published-time": "2024-07-19T09:20:21+00:00"
+   },
+   {
+    "version": "5.1.0",
+    "version_normalized": "5.1.0.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "ec28e0083d69421027232b9848d05f247aab1811"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/ec28e0083d69421027232b9848d05f247aab1811",
+     "type": "zip",
+     "shasum": "",
+     "reference": "ec28e0083d69421027232b9848d05f247aab1811"
+    },
+    "time": "2024-07-12T04:36:04+00:00",
+    "published-time": "2024-07-12T04:36:13+00:00"
+   },
+   {
+    "version": "5.0.4",
+    "version_normalized": "5.0.4.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "ab4dc818160f772f9ce4744797405c6872cda911"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/ab4dc818160f772f9ce4744797405c6872cda911",
+     "type": "zip",
+     "shasum": "",
+     "reference": "ab4dc818160f772f9ce4744797405c6872cda911"
+    },
+    "time": "2024-06-13T22:58:31+00:00",
+    "published-time": "2024-06-13T22:58:42+00:00"
+   },
+   {
+    "version": "5.0.3",
+    "version_normalized": "5.0.3.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "339624bbbc751d9e01a0eb2b3d770909750f5ca3"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/339624bbbc751d9e01a0eb2b3d770909750f5ca3",
+     "type": "zip",
+     "shasum": "",
+     "reference": "339624bbbc751d9e01a0eb2b3d770909750f5ca3"
+    },
+    "time": "2024-05-20T19:45:47+00:00",
+    "published-time": "2024-05-20T19:46:10+00:00",
+    "require-dev": {
+     "codeception/codeception": "^5.0.11",
+     "codeception/module-asserts": "^3.0.0",
+     "codeception/module-datafactory": "^3.0.0",
+     "codeception/module-phpbrowser": "^3.0.0",
+     "codeception/module-rest": "^3.3.2",
+     "codeception/module-yii2": "^1.1.9",
+     "vlucas/phpdotenv": "^5.4.0",
+     "craftcms/commerce": "^5.0.0-beta.1",
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main",
+     "craftcms/ckeditor": "^4.0.0",
+     "craftcms/digital-products": "^4.0.0",
+     "craftcms/feed-me": "^6.0.0",
+     "craftcms/redactor": "4.0.x-dev",
+     "craftcms/shopify": "^5.0.0",
+     "nystudio107/craft-minify": "^5.0.0",
+     "putyourlightson/craft-blitz": "^5.0.0",
+     "putyourlightson/craft-campaign": "^3.0.0",
+     "spicyweb/craft-neo": "^5.0.0-beta.1",
+     "verbb/doxter": "^6.0.0-beta.1"
+    }
+   },
+   {
+    "version": "5.0.2",
+    "version_normalized": "5.0.2.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "195f47d962ad9853066206972dab6841bd82b3c5"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/195f47d962ad9853066206972dab6841bd82b3c5",
+     "type": "zip",
+     "shasum": "",
+     "reference": "195f47d962ad9853066206972dab6841bd82b3c5"
+    },
+    "time": "2024-04-10T18:17:57+00:00",
+    "published-time": "2024-04-10T18:18:13+00:00",
+    "require": {
+     "php": "^8.2",
+     "craftcms/cms": "^5.0.0",
+     "nystudio107/craft-plugin-vite": "^5.0.0-beta.1",
+     "nystudio107/craft-code-editor": "^1.0.14",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    },
+    "require-dev": {
+     "codeception/codeception": "^5.0.11",
+     "codeception/module-asserts": "^3.0.0",
+     "codeception/module-datafactory": "^3.0.0",
+     "codeception/module-phpbrowser": "^3.0.0",
+     "codeception/module-rest": "^3.3.2",
+     "codeception/module-yii2": "^1.1.9",
+     "craftcms/commerce": "^5.0.0-beta.1",
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main",
+     "craftcms/ckeditor": "^4.0.0-beta.1",
+     "craftcms/digital-products": "^4.0.0",
+     "craftcms/feed-me": "^6.0.0",
+     "craftcms/redactor": "4.0.x-dev",
+     "craftcms/shopify": "^5.0.0",
+     "nystudio107/craft-minify": "^5.0.0-beta.1",
+     "putyourlightson/craft-blitz": "^5.0.0-beta.1",
+     "putyourlightson/craft-campaign": "^3.0.0-beta.1",
+     "spicyweb/craft-neo": "^5.0.0-beta.1",
+     "verbb/doxter": "^6.0.0-beta.1"
+    }
+   },
+   {
+    "version": "5.0.1",
+    "version_normalized": "5.0.1.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "62a625e7cf68644ff55d7899760c62fd38837e18"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/62a625e7cf68644ff55d7899760c62fd38837e18",
+     "type": "zip",
+     "shasum": "",
+     "reference": "62a625e7cf68644ff55d7899760c62fd38837e18"
+    },
+    "time": "2024-04-10T18:08:27+00:00",
+    "published-time": "2024-04-10T18:08:48+00:00"
+   },
+   {
+    "version": "5.0.0-beta.8",
+    "version_normalized": "5.0.0.0-beta8",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "f1783db29d942b300afaca93c8d3784cd4dc1e51"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/f1783db29d942b300afaca93c8d3784cd4dc1e51",
+     "type": "zip",
+     "shasum": "",
+     "reference": "f1783db29d942b300afaca93c8d3784cd4dc1e51"
+    },
+    "time": "2024-03-22T20:37:16+00:00",
+    "published-time": "2024-03-22T20:37:35+00:00",
+    "require": {
+     "php": "^8.0.2",
+     "craftcms/cms": "^5.0.0-beta.1",
+     "nystudio107/craft-plugin-vite": "^5.0.0-beta.1",
+     "nystudio107/craft-code-editor": "^1.0.14",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    },
+    "require-dev": {
+     "codeception/codeception": "^5.0.11",
+     "codeception/module-asserts": "^3.0.0",
+     "codeception/module-datafactory": "^3.0.0",
+     "codeception/module-phpbrowser": "^3.0.0",
+     "codeception/module-rest": "^3.3.2",
+     "codeception/module-yii2": "^1.1.9",
+     "craftcms/commerce": "^5.0.0-beta.1",
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main",
+     "craftcms/ckeditor": "^4.0.0-beta.1",
+     "craftcms/digital-products": "4.0.x-dev",
+     "craftcms/feed-me": "^6.0.0",
+     "craftcms/redactor": "4.0.x-dev",
+     "craftcms/shopify": "^5.0.0",
+     "nystudio107/craft-minify": "^5.0.0-beta.1",
+     "putyourlightson/craft-blitz": "^5.0.0-beta.1",
+     "putyourlightson/craft-campaign": "^3.0.0-beta.1",
+     "spicyweb/craft-neo": "^5.0.0-beta.1",
+     "verbb/doxter": "^6.0.0-beta.1"
+    }
+   },
+   {
+    "version": "5.0.0-beta.7",
+    "version_normalized": "5.0.0.0-beta7",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "ebcc8b750b20d258ca938562587050e0883eeb5a"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/ebcc8b750b20d258ca938562587050e0883eeb5a",
+     "type": "zip",
+     "shasum": "",
+     "reference": "ebcc8b750b20d258ca938562587050e0883eeb5a"
+    },
+    "time": "2024-03-15T03:27:41+00:00",
+    "published-time": "2024-03-15T03:27:50+00:00",
+    "require-dev": {
+     "codeception/codeception": "^5.0.11",
+     "codeception/module-asserts": "^3.0.0",
+     "codeception/module-datafactory": "^3.0.0",
+     "codeception/module-phpbrowser": "^3.0.0",
+     "codeception/module-rest": "^3.3.2",
+     "codeception/module-yii2": "^1.1.9",
+     "craftcms/commerce": "^5.0.0-beta.1",
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main",
+     "craftcms/ckeditor": "4.0.0-beta.1",
+     "craftcms/redactor": "4.0.x-dev",
+     "nystudio107/craft-minify": "^5.0.0-beta.1",
+     "putyourlightson/craft-blitz": "^5.0.0-beta.1"
+    }
+   },
+   {
+    "version": "5.0.0-beta.6",
+    "version_normalized": "5.0.0.0-beta6",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "4bc0e4d37770cb5f49ccd3749e91f43bb2ec7183"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/4bc0e4d37770cb5f49ccd3749e91f43bb2ec7183",
+     "type": "zip",
+     "shasum": "",
+     "reference": "4bc0e4d37770cb5f49ccd3749e91f43bb2ec7183"
+    },
+    "time": "2024-03-08T22:03:10+00:00",
+    "published-time": "2024-03-08T22:03:30+00:00"
+   },
+   {
+    "version": "5.0.0-beta.5",
+    "version_normalized": "5.0.0.0-beta5",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "ae0ae22c09a42a304ec825d9c4f524ffdbcf8a6c"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/ae0ae22c09a42a304ec825d9c4f524ffdbcf8a6c",
+     "type": "zip",
+     "shasum": "",
+     "reference": "ae0ae22c09a42a304ec825d9c4f524ffdbcf8a6c"
+    },
+    "time": "2024-02-20T21:29:54+00:00",
+    "published-time": "2024-02-20T21:31:44+00:00",
+    "require-dev": {
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main",
+     "nystudio107/craft-minify": "^5.0.0-beta.1",
+     "putyourlightson/craft-blitz": "^5.0.0-beta.1"
+    }
+   },
+   {
+    "version": "5.0.0-beta.4",
+    "version_normalized": "5.0.0.0-beta4",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "055e63a38cf45904e0a3b93717e54081c3d878d4"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/055e63a38cf45904e0a3b93717e54081c3d878d4",
+     "type": "zip",
+     "shasum": "",
+     "reference": "055e63a38cf45904e0a3b93717e54081c3d878d4"
+    },
+    "time": "2024-02-13T20:41:17+00:00",
+    "published-time": "2024-02-13T20:41:35+00:00",
+    "require-dev": {
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/rector": "dev-main"
+    }
+   },
+   {
+    "version": "5.0.0-beta.3",
+    "version_normalized": "5.0.0.0-beta3",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "6370f10408c2df910cb162d8754de5eab33e6016"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/6370f10408c2df910cb162d8754de5eab33e6016",
+     "type": "zip",
+     "shasum": "",
+     "reference": "6370f10408c2df910cb162d8754de5eab33e6016"
+    },
+    "time": "2024-02-09T19:59:12+00:00",
+    "published-time": "2024-02-09T19:59:33+00:00"
+   },
+   {
+    "version": "5.0.0-beta.2",
+    "version_normalized": "5.0.0.0-beta2",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "e886657e2100933f635a2bdc685a73427c31d1f7"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/e886657e2100933f635a2bdc685a73427c31d1f7",
+     "type": "zip",
+     "shasum": "",
+     "reference": "e886657e2100933f635a2bdc685a73427c31d1f7"
+    },
+    "time": "2024-01-23T15:15:40+00:00",
+    "published-time": "2024-01-23T15:16:20+00:00",
+    "require": {
+     "php": "^8.0.2",
+     "craftcms/cms": "^5.0.0-alpha.1",
+     "nystudio107/craft-plugin-vite": "^5.0.0-beta.1",
+     "nystudio107/craft-code-editor": "^1.0.14",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    },
+    "require-dev": "__unset"
+   },
+   {
+    "version": "5.0.0-beta.1",
+    "version_normalized": "5.0.0.0-beta1",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "7733f0c532e8a6c977cc8b7368117002af6b3f13"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/7733f0c532e8a6c977cc8b7368117002af6b3f13",
+     "type": "zip",
+     "shasum": "",
+     "reference": "7733f0c532e8a6c977cc8b7368117002af6b3f13"
+    },
+    "time": "2024-01-22T20:13:31+00:00",
+    "published-time": "2024-01-22T20:13:49+00:00"
+   },
+   {
+    "description": "SEOmatic facilitates modern SEO best practices & implementation for Craft CMS 4. It is a turnkey SEO system that is comprehensive, powerful, and flexible.",
+    "version": "4.1.23",
+    "version_normalized": "4.1.23.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "29ebdaf139c26f081a623b5d675353bbd603b78e"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/29ebdaf139c26f081a623b5d675353bbd603b78e",
+     "type": "zip",
+     "shasum": "",
+     "reference": "29ebdaf139c26f081a623b5d675353bbd603b78e"
+    },
+    "time": "2026-11-24T05:53:40+00:00",
+    "published-time": "2026-11-24T05:53:50+00:00",
+    "require": {
+     "php": "^8.0.2",
+     "craftcms/cms": "^4.0.0",
+     "nystudio107/craft-plugin-vite": "^4.0.7",
+     "nystudio107/craft-code-editor": "^1.0.0",
+     "nystudio107/craft-twig-sandbox": "^4.0.5",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    },
+    "require-dev": {
+     "besteadfast/craft-preparse-field": "^2.0.0",
+     "codeception/codeception": "^4.1.29",
+     "codeception/module-asserts": "^1.3.1",
+     "codeception/module-datafactory": "^1.1.0",
+     "codeception/module-phpbrowser": "^1.0.2",
+     "codeception/module-rest": "^1.4.2",
+     "codeception/module-yii2": "^1.1.5",
+     "craftcms/ecs": "dev-main",
+     "craftcms/phpstan": "dev-main",
+     "craftcms/ckeditor": "^3.0.0",
+     "craftcms/commerce": "^4.0.0",
+     "craftcms/digital-products": "^3.0.0",
+     "craftcms/feed-me": "^5.0.0",
+     "craftcms/rector": "dev-main",
+     "craftcms/redactor": "^3.0.0",
+     "craftcms/shopify": "^3.0.0",
+     "nystudio107/craft-fastcgicachebust": "^4.0.0",
+     "nystudio107/craft-minify": "^4.0.0",
+     "putyourlightson/craft-blitz": "^4.0.0",
+     "putyourlightson/craft-campaign": "^2.0.0",
+     "solspace/craft-calendar": "^4.0.0",
+     "spicyweb/craft-neo": "^4.0.0",
+     "verbb/doxter": "^5.0.0",
+     "verbb/super-table": "^3.0.0",
+     "vlucas/phpdotenv": "^3.0"
+    }
+   },
+   {
+    "version": "4.1.22",
+    "version_normalized": "4.1.22.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "2b9c4e0a45cb60d51023183652e06af6abdec8c8"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/2b9c4e0a45cb60d51023183652e06af6abdec8c8",
+     "type": "zip",
+     "shasum": "",
+     "reference": "2b9c4e0a45cb60d51023183652e06af6abdec8c8"
+    },
+    "time": "2026-11-23T20:25:51+00:00",
+    "published-time": "2026-11-23T20:26:03+00:00"
+   },
+   {
+    "version": "4.1.21",
+    "version_normalized": "4.1.21.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "53534d67510512504dbb6b00611e592b41c7dc16"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/53534d67510512504dbb6b00611e592b41c7dc16",
+     "type": "zip",
+     "shasum": "",
+     "reference": "53534d67510512504dbb6b00611e592b41c7dc16"
+    },
+    "time": "2026-07-30T19:55:43+00:00",
+    "published-time": "2026-07-30T19:55:56+00:00"
+   },
+   {
+    "version": "4.1.20",
+    "version_normalized": "4.1.20.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "8465d4334defcb3a714b3b8e773947b372805e90"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/8465d4334defcb3a714b3b8e773947b372805e90",
+     "type": "zip",
+     "shasum": "",
+     "reference": "8465d4334defcb3a714b3b8e773947b372805e90"
+    },
+    "time": "2026-01-20T22:32:32+00:00",
+    "published-time": "2026-01-20T22:32:42+00:00"
+   },
+   {
+    "version": "4.1.19",
+    "version_normalized": "4.1.19.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "f3e8ca1a14381a7e735df8a84a39d8a8d8405a7f"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/f3e8ca1a14381a7e735df8a84a39d8a8d8405a7f",
+     "type": "zip",
+     "shasum": "",
+     "reference": "f3e8ca1a14381a7e735df8a84a39d8a8d8405a7f"
+    },
+    "time": "2025-10-23T20:40:38+00:00",
+    "published-time": "2025-10-23T20:40:59+00:00"
+   },
+   {
+    "version": "4.1.18",
+    "version_normalized": "4.1.18.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "ca6617be30869e789c2e05becff3992dc4ccaffd"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/ca6617be30869e789c2e05becff3992dc4ccaffd",
+     "type": "zip",
+     "shasum": "",
+     "reference": "ca6617be30869e789c2e05becff3992dc4ccaffd"
+    },
+    "time": "2025-10-07T03:40:32+00:00",
+    "published-time": "2025-10-07T03:40:42+00:00"
+   },
+   {
+    "version": "4.1.17",
+    "version_normalized": "4.1.17.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "12fad0cada54db620d068f35b754c5bbb87a8d9a"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/12fad0cada54db620d068f35b754c5bbb87a8d9a",
+     "type": "zip",
+     "shasum": "",
+     "reference": "12fad0cada54db620d068f35b754c5bbb87a8d9a"
+    },
+    "time": "2025-08-17T22:24:02+00:00",
+    "published-time": "2025-08-17T22:24:11+00:00",
+    "require": {
+     "php": "^8.0.2",
+     "craftcms/cms": "^4.0.0",
+     "nystudio107/craft-plugin-vite": "^4.0.7",
+     "nystudio107/craft-code-editor": "^1.0.0",
+     "nystudio107/craft-twig-sandbox": "^4.0.3",
+     "php-science/textrank": "^1.0.3",
+     "davechild/textstatistics": "^1.0.3",
+     "sunra/php-simple-html-dom-parser": "^1.5.2"
+    }
+   },
+   {
+    "version": "4.1.16",
+    "version_normalized": "4.1.16.0",
+    "source": {
+     "url": "https://github.com/nystudio107/craft-seomatic.git",
+     "type": "git",
+     "reference": "696893e4212c0f7e1af98a8007da87806dc0e24a"
+    },
+    "dist": {
+     "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/696893e4212c0f7e1af98a8007da87806dc0e24a",
+     "type": "zip",
+     "shasum": "",
+     "reference": "696893e4212c0f7e1af98a8007da87806dc0e24a"
+    },
+    "time": "2025-06-11T21:30:03+00:00",
+    "published-time": "2025-06-11T21:30:11+00:00"
+   }
+  ]
+ },
+ "security-advisories": [
+  {
+   "advisoryId": "PKSA-npg9-j2nn-yb7x",
+   "affectedVersions": "<3.1.4"
+  },
+  {
+   "advisoryId": "PKSA-s2nx-8pfw-s5kw",
+   "affectedVersions": "<3.2.49"
+  },
+  {
+   "advisoryId": "PKSA-4h4m-cqt4-4k1m",
+   "affectedVersions": "<3.3.0"
+  },
+  {
+   "advisoryId": "PKSA-1tv4-chp4-8yrs",
+   "affectedVersions": "<3.4.11"
+  },
+  {
+   "advisoryId": "PKSA-qjqb-kc24-g3w4",
+   "affectedVersions": "<3.4.11"
+  },
+  {
+   "advisoryId": "PKSA-hdyh-qjzr-3vbt",
+   "affectedVersions": "<3.4.12"
+  },
+  {
+   "advisoryId": "PKSA-ngnx-y48m-n4vc",
+   "affectedVersions": "<3.3.0"
+  }
+ ]
+}

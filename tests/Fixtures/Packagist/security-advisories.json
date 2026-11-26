@@ -1,0 +1,217 @@
+{
+ "advisories": {
+  "nystudio107/craft-seomatic": [
+   {
+    "advisoryId": "PKSA-1tv4-chp4-8yrs",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "GHSA-g7xr-v82w-qggq",
+    "title": "Code Injection in SEOmatic",
+    "link": "https://github.com/advisories/GHSA-g7xr-v82w-qggq",
+    "cve": "CVE-2021-41749",
+    "affectedVersions": "<3.4.11",
+    "source": "GitHub",
+    "reportedAt": "2022-06-13 00:00:19",
+    "composerRepository": "https://packagist.org",
+    "severity": "critical",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-g7xr-v82w-qggq"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-qjqb-kc24-g3w4",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "GHSA-6hjc-m38h-7jhh",
+    "title": "Cross-site Scripting in SEOmatic plugin",
+    "link": "https://github.com/advisories/GHSA-6hjc-m38h-7jhh",
+    "cve": "CVE-2021-41750",
+    "affectedVersions": "<3.4.11",
+    "source": "GitHub",
+    "reportedAt": "2022-06-13 00:00:19",
+    "composerRepository": "https://packagist.org",
+    "severity": "medium",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-6hjc-m38h-7jhh"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-s2nx-8pfw-s5kw",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "GHSA-23q7-59jj-2pj4",
+    "title": "SEOmatic for CraftCMS allows Server-Side Template Injection",
+    "link": "https://github.com/advisories/GHSA-23q7-59jj-2pj4",
+    "cve": "CVE-2020-12790",
+    "affectedVersions": "<3.2.49",
+    "source": "GitHub",
+    "reportedAt": "2022-05-24 17:17:37",
+    "composerRepository": "https://packagist.org",
+    "severity": "high",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-23q7-59jj-2pj4"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-4h4m-cqt4-4k1m",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "GHSA-6q4j-8pjm-5mgc",
+    "title": "SEOmatic for CraftCMS allows Server-Side Template Injection",
+    "link": "https://github.com/advisories/GHSA-6q4j-8pjm-5mgc",
+    "cve": "CVE-2020-9757",
+    "affectedVersions": "<3.3.0",
+    "source": "GitHub",
+    "reportedAt": "2022-05-24 17:10:09",
+    "composerRepository": "https://packagist.org",
+    "severity": "critical",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-6q4j-8pjm-5mgc"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-npg9-j2nn-yb7x",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "GHSA-6j9m-rp7m-3gfg",
+    "title": "SEOmatic plugin for Craft CMS SSTI Vulnerability",
+    "link": "https://github.com/advisories/GHSA-6j9m-rp7m-3gfg",
+    "cve": "CVE-2018-14716",
+    "affectedVersions": "<3.1.4",
+    "source": "GitHub",
+    "reportedAt": "2022-05-13 01:19:08",
+    "composerRepository": "https://packagist.org",
+    "severity": "high",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-6j9m-rp7m-3gfg"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-hdyh-qjzr-3vbt",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "GHSA-m3xv-x3ph-mq22",
+    "title": "Server-side Template Injection in nystudio107/craft-seomatic",
+    "link": "https://github.com/advisories/GHSA-m3xv-x3ph-mq22",
+    "cve": "CVE-2021-44618",
+    "affectedVersions": "<3.4.12",
+    "source": "GitHub",
+    "reportedAt": "2022-03-12 00:00:34",
+    "composerRepository": "https://packagist.org",
+    "severity": "high",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-m3xv-x3ph-mq22"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-ngnx-y48m-n4vc",
+    "packageName": "nystudio107/craft-seomatic",
+    "remoteId": "nystudio107/craft-seomatic/2020-04-28-1.yaml",
+    "title": "SSTI Vulnerability",
+    "link": "https://twitter.com/nystudio107/status/1268736336200171520?lang=en",
+    "cve": null,
+    "affectedVersions": "<3.3.0",
+    "source": "FriendsOfPHP/security-advisories",
+    "reportedAt": "2020-04-28 00:00:00",
+    "composerRepository": "https://packagist.org",
+    "severity": null,
+    "sources": [
+     {
+      "name": "FriendsOfPHP/security-advisories",
+      "remoteId": "nystudio107/craft-seomatic/2020-04-28-1.yaml"
+     }
+    ]
+   }
+  ],
+  "craftcms/cms": [
+   {
+    "advisoryId": "PKSA-jk69-ryht-534b",
+    "packageName": "craftcms/cms",
+    "remoteId": "GHSA-wg23-69c2-gjc8",
+    "title": "Craft CMS: Passkey login accepts replayed WebAuthn assertions",
+    "link": "https://github.com/advisories/GHSA-wg23-69c2-gjc8",
+    "cve": null,
+    "affectedVersions": ">=5.0.0-RC1,<5.10.5",
+    "source": "GitHub",
+    "reportedAt": "2026-08-07 14:57:29",
+    "composerRepository": "https://packagist.org",
+    "severity": "critical",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-wg23-69c2-gjc8"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-19kf-75v5-vy76",
+    "packageName": "craftcms/cms",
+    "remoteId": "GHSA-957r-qf9p-67xw",
+    "title": "Craft CMS: Arbitrary file read via SplFileObject in non-sandboxed template contexts",
+    "link": "https://github.com/advisories/GHSA-957r-qf9p-67xw",
+    "cve": "CVE-2026-72779",
+    "affectedVersions": ">=4.0.0-RC1,<4.18.2|>=5.0.0-RC1,<5.10.6",
+    "source": "GitHub",
+    "reportedAt": "2026-08-06 21:54:45",
+    "composerRepository": "https://packagist.org",
+    "severity": "medium",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-957r-qf9p-67xw"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-4q3g-gxhk-813s",
+    "packageName": "craftcms/cms",
+    "remoteId": "GHSA-596p-6jv8-775v",
+    "title": "Craft CMS: Authenticated leak of secret environment variables",
+    "link": "https://github.com/advisories/GHSA-596p-6jv8-775v",
+    "cve": "CVE-2026-72782",
+    "affectedVersions": ">=4.0.0-RC1,<4.18.2|>=5.0.0-RC1,<5.10.6",
+    "source": "GitHub",
+    "reportedAt": "2026-08-06 21:53:31",
+    "composerRepository": "https://packagist.org",
+    "severity": "medium",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-596p-6jv8-775v"
+     }
+    ]
+   },
+   {
+    "advisoryId": "PKSA-gh5w-x99g-b53n",
+    "packageName": "craftcms/cms",
+    "remoteId": "GHSA-xxpx-f366-4xpq",
+    "title": "Craft CMS: Authorization bypass: view-only Categories user can modify category structure via structures/move-element",
+    "link": "https://github.com/advisories/GHSA-xxpx-f366-4xpq",
+    "cve": "CVE-2026-72785",
+    "affectedVersions": ">=5.0.0-RC1,<5.10.6",
+    "source": "GitHub",
+    "reportedAt": "2026-08-06 21:43:54",
+    "composerRepository": "https://packagist.org",
+    "severity": "medium",
+    "sources": [
+     {
+      "name": "GitHub",
+      "remoteId": "GHSA-xxpx-f366-4xpq"
+     }
+    ]
+   }
+  ]
+ }
+}

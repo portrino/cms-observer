@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class EndOfLifeReleaseSynchronizer
 {
-    private const array PRODUCTS = ['php', 'mariadb', 'mysql', 'postgresql', 'typo3'];
+    private const array PRODUCTS = ['php', 'mariadb', 'mysql', 'postgresql', 'typo3', 'craft-cms'];
 
     public function __construct(
         private readonly EndOfLifeApiClient $apiClient,
