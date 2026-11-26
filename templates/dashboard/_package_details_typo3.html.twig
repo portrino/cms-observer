@@ -1,22 +1,11 @@
 {% import 'dashboard/_macros.html.twig' as m %}
-<div class="mb-2">
-    <a href="https://extensions.typo3.org/extension/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'TER'}) }} {{ icon('external-link') }}</a>
-    {% if details.packagistUrl %}
-        <a href="{{ details.packagistUrl }}" target="_blank" rel="noopener" class="ms-3">Packagist</a>
-    {% endif %}
-    {% if details.repositoryUrl %}
-        <a href="{{ details.repositoryUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
-    {% endif %}
-    {% if details.manualUrl %}
-        <a href="{{ details.manualUrl }}" target="_blank" rel="noopener" class="ms-3">{{ 'package.manual'|trans }}</a>
-    {% endif %}
-</div>
-{% if details.description %}
-    <p>{{ details.description }}</p>
-{% endif %}
-{% if package.composerName %}
-    <p class="text-muted"><code>{{ package.composerName }}</code></p>
-{% endif %}
+{% set links = [
+    {url: 'https://extensions.typo3.org/extension/' ~ package.name ~ '/', label: 'TER'},
+    {url: details.packagistUrl, label: 'Packagist'},
+    {url: details.repositoryUrl, label: 'project.repository'|trans},
+    {url: details.manualUrl, label: 'package.manual'|trans},
+]|filter(link => link.url) %}
+{{ m.package_header(details.description, package.composerName, links) }}
 {% if package.matchedAdvisory %}
     <p><a href="{{ package.matchedAdvisory.url }}" target="_blank" rel="noopener">{{ package.matchedAdvisory.advisoryId }}</a>: {{ 'package.known_vulnerability'|trans({severity: package.matchedAdvisory.severity}) }}.</p>
 {% endif %}

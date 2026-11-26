@@ -1,0 +1,33 @@
+// Head of a package's details (an <hr> after each part spaces them): long descriptions (e.g. WordPress.org's) end after a few lines
+.package-description {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-bottom: 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+// Labels in their own column, so the values line up
+.package-meta {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.25rem 1rem;
+    margin-bottom: 0;
+
+    dt {
+        font-weight: $font-weight-normal;
+        color: var(--bs-secondary-color);
+    }
+
+    dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+}
+
+.package-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+}

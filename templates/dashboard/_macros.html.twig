@@ -198,3 +198,26 @@
         <span class="status-icon text-bg-neutral ms-1" data-controller="tooltip" data-bs-toggle="tooltip" title="SLA: {{ 'badge.sla.inactive'|trans }}">{{ icons.icon_dash() }}</span>
     {%- endif -%}
 {% endmacro %}
+
+{# Head of a package's details: description cut to a few lines (the sources have the rest),
+   Composer name and source links, the same for every CMS. links: list of {url, label}, official source first. #}
+{% macro package_header(description, composerName, links) %}
+    {%- if description %}<p class="package-description">{{ description }}</p><hr>{% endif -%}
+    {%- if composerName or links is not empty %}
+    <dl class="package-meta">
+        {%- if composerName %}
+        <dt>{{ 'package.composer'|trans }}</dt>
+        <dd><code>{{ composerName }}</code></dd>
+        {%- endif %}
+        {%- if links is not empty %}
+        <dt>{{ 'package.links'|trans }}</dt>
+        <dd class="package-links">
+            {%- for link in links %}
+            <a href="{{ link.url }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ link.label }} {{ icon('external-link') }}</a>
+            {%- endfor %}
+        </dd>
+        {%- endif %}
+    </dl>
+    <hr>
+    {%- endif %}
+{%- endmacro %}

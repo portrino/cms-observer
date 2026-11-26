@@ -1,15 +1,9 @@
 {% import 'dashboard/_macros.html.twig' as m %}
-<div class="mb-2">
-    {% set wpKind = package.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
-    <a href="https://wordpress.org/{{ wpKind }}/{{ package.name }}/" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">{{ 'package.view_on'|trans({site: 'WordPress.org'}) }} {{ icon('external-link') }}</a>
-    <a href="https://{{ wpKind }}.trac.wordpress.org/browser/{{ package.name }}/" target="_blank" rel="noopener" class="ms-3">{{ 'project.repository'|trans }}</a>
-</div>
-{% if details.wordpressPluginInfo.description ?? null %}
-    <p>{{ details.wordpressPluginInfo.description }}</p>
-{% endif %}
-{% if package.composerName %}
-    <p class="text-muted"><code>{{ package.composerName }}</code></p>
-{% endif %}
+{% set wpKind = package.packageType.value == 'wordpress-theme' ? 'themes' : 'plugins' %}
+{{ m.package_header(details.wordpressPluginInfo.description ?? null, package.composerName, [
+    {url: 'https://wordpress.org/' ~ wpKind ~ '/' ~ package.name ~ '/', label: 'WordPress.org'},
+    {url: 'https://' ~ wpKind ~ '.trac.wordpress.org/browser/' ~ package.name ~ '/', label: 'project.repository'|trans},
+]) }}
 {% set vulnerability = package.matchedWordpressVulnerability %}
 {% if vulnerability %}
     <p class="mb-1">

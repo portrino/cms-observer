@@ -418,9 +418,13 @@
         <source>package.vulnerability</source>
         <target>Sicherheitslücke</target>
       </trans-unit>
-      <trans-unit id="package.view_on" resname="package.view_on">
-        <source>package.view_on</source>
-        <target>Auf {site} ansehen</target>
+      <trans-unit id="package.composer" resname="package.composer">
+        <source>package.composer</source>
+        <target>Composer</target>
+      </trans-unit>
+      <trans-unit id="package.links" resname="package.links">
+        <source>package.links</source>
+        <target>Links</target>
       </trans-unit>
       <trans-unit id="package.known_vulnerability" resname="package.known_vulnerability">
         <source>package.known_vulnerability</source>
