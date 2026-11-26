@@ -113,7 +113,11 @@ class SitePackageDetailsProvider
 
         $versionStates = [];
         foreach ($newerVersions as $version) {
-            $versionStates[$version->getVersion()] = ['insecure' => null !== AdvisoryMatcher::mostSevere($advisories, $version->getVersion())];
+            $versionStates[$version->getVersion()] = [
+                'insecure' => null !== AdvisoryMatcher::mostSevere($advisories, $version->getVersion()),
+                // only versions that install are listed, so known means compatible
+                'compatible' => null !== $coreVersion && null !== $version->getCraftConstraint() ? true : null,
+            ];
         }
 
         return [

@@ -61,3 +61,25 @@ test('package details show a known vulnerability as an alert above the version t
     expect(alertBottom).toBeLessThanOrEqual((await details.locator('table').boundingBox())!.y);
 });
 
+// relies on the Packagist sync in the dev DB: verbb/formie 3.1.25 has a critical advisory and newer versions for Craft 5
+test('Craft CMS package details show the required Craft as a badge', async ({ page, createProject }) => {
+    await page.setViewportSize({ width: 1600, height: 900 });
+    const project = await createProject('e2e-package-craft', 'Craft CMS');
+    const response = await page.request.post('/api/v1/sites/report', {
+        headers: { Authorization: `Bearer ${project.token}` },
+        data: {
+            coreVersion: '5.8.0', phpVersion: '8.3.14', dbVersion: '8.0.40', dbPlatform: 'mysql', domains: ['e2e-package-craft.example.test'],
+            packages: [{ name: 'formie', title: 'Formie', version: '3.1.25', active: true, composerName: 'verbb/formie', type: 'plugin' }],
+        },
+    });
+    expect(response.status()).toBe(202);
+
+    await page.goto(project.url);
+    await page.getByRole('button', { name: /formie/ }).click();
+    const details = page.locator('.accordion-collapse.show');
+
+    await expect(details.locator('.alert-danger')).toBeVisible();
+    const compatibility = details.locator('tbody td:nth-child(3)');
+    await expect(compatibility.first().locator('.badge.text-bg-success')).toHaveText(/^\d+\.\d+\+$/);
+    await expect(compatibility.filter({ hasText: 'Craft CMS' })).toHaveCount(0);
+});

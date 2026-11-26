@@ -15,7 +15,7 @@ export const credentials = {
 type Project = { name: string; url: string; token: string };
 
 // logs in through the real form, so the JS double-submit CSRF cookie (csrf_protection_controller.js) is exercised too
-export const test = base.extend<{ loggedIn: void; createProject: (prefix: string, cms?: 'TYPO3' | 'WordPress') => Promise<Project> }>({
+export const test = base.extend<{ loggedIn: void; createProject: (prefix: string, cms?: 'TYPO3' | 'WordPress' | 'Craft CMS') => Promise<Project> }>({
     loggedIn: [async ({ page }, use) => {
         await page.goto('/login');
         await page.getByLabel('Email').fill(credentials.email);

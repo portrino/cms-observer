@@ -486,6 +486,14 @@
         <source>badge.typo3.unsupported</source>
         <target>nicht mehr unterstützt</target>
       </trans-unit>
+      <trans-unit id="badge.craft.requires" resname="badge.craft.requires">
+        <source>badge.craft.requires</source>
+        <target>Benötigt Craft CMS {constraint}</target>
+      </trans-unit>
+      <trans-unit id="badge.craft.compatible" resname="badge.craft.compatible">
+        <source>badge.craft.compatible</source>
+        <target>läuft mit dem installierten Craft CMS</target>
+      </trans-unit>
       <trans-unit id="badge.wp.compatible" resname="badge.wp.compatible">
         <source>badge.wp.compatible</source>
         <target>läuft mit dem installierten WordPress</target>

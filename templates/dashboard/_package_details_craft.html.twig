@@ -27,7 +27,7 @@
             <tr class="{{ state.insecure ? 'row-insecure' : (isLatest ? 'row-latest' : 'row-secure') }}">
                 <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(state.insecure, isLatest) }}</td>
                 <td class="text-nowrap">{{ version.releaseDate ? version.releaseDate|format_date('medium') : '—' }}</td>
-                <td class="text-nowrap">{{ version.craftConstraint ? 'Craft CMS ' ~ version.craftConstraint : '—' }}</td>
+                <td class="text-nowrap">{{ version.craftConstraint ? m.craft_requires_badge(version.craftConstraint, state.compatible) : '—' }}</td>
             </tr>
         {% endfor %}
         </tbody>
