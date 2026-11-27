@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Typo3\ExtensionVersion;
 use App\Entity\Craft\PluginVersion as CraftPluginVersion;
-use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\Wordpress\PluginVersion;
 use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
-use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
+use App\Service\Typo3\ExtensionVersionCatalog;
 
 /**
  * The one rule for "is there an update?": a package is outdated only when a newer
@@ -21,7 +21,7 @@ use App\Repository\Wordpress\ThemeInfoRepository;
 class PackageUpdateResolver
 {
     public function __construct(
-        private readonly TerExtensionVersionRepository $terVersionRepository,
+        private readonly ExtensionVersionCatalog $typo3VersionCatalog,
         private readonly PluginVersionRepository $wordpressPluginVersionRepository,
         private readonly PluginInfoRepository $wordpressPluginInfoRepository,
         private readonly ThemeInfoRepository $wordpressThemeInfoRepository,
@@ -29,46 +29,46 @@ class PackageUpdateResolver
     ) {
     }
 
-    public function forTypo3Extension(string $extensionKey, string $installedVersion, ?string $coreVersion): PackageUpdate
+    public function forTypo3Extension(string $extensionKey, ?string $composerName, string $installedVersion, ?string $coreVersion): PackageUpdate
     {
-        $versions = $this->terVersionRepository->findBy(['extensionKey' => $extensionKey]);
+        $versions = $this->typo3VersionCatalog->versionsOf($extensionKey, $composerName);
         if ([] === $versions) {
             return new PackageUpdate();
         }
 
-        $newer = array_filter($versions, static fn (TerExtensionVersion $v): bool => version_compare($v->getVersion(), $installedVersion, '>'));
-        usort($newer, static fn (TerExtensionVersion $a, TerExtensionVersion $b): int => version_compare($b->getVersion(), $a->getVersion()));
+        // newest first, like the catalog
+        $newer = array_values(array_filter($versions, static fn (ExtensionVersion $v): bool => version_compare($v->version, $installedVersion, '>')));
         if (null === $coreVersion) {
-            return new PackageUpdate([] !== $newer, ($newer[0] ?? null)?->getVersion());
+            return new PackageUpdate([] !== $newer, ($newer[0] ?? null)?->version);
         }
 
         $coreMajor = (int) explode('.', $coreVersion)[0];
-        $compatible = array_values(array_filter($newer, static fn (TerExtensionVersion $v): bool => in_array($coreMajor, $v->getTypo3MajorVersions(), true)));
+        $compatible = array_values(array_filter($newer, static fn (ExtensionVersion $v): bool => $v->supports($coreMajor)));
 
         // The next major the installed or a newer version supports, so a list of packages shows at a
         // glance which ones are ready for a core upgrade: the installed version if it supports it
         // already, otherwise the newest version that does.
-        $installed = array_find($versions, static fn (TerExtensionVersion $v): bool => $v->getVersion() === $installedVersion);
+        $installed = array_find($versions, static fn (ExtensionVersion $v): bool => $v->version === $installedVersion);
         $nextMajor = self::nextMajor(null === $installed ? $newer : [$installed, ...$newer], $coreMajor);
         $forNextMajor = null === $nextMajor ? null : self::firstSupporting($nextMajor, $installed, $newer);
 
         return new PackageUpdate(
             [] !== $compatible,
-            ($compatible[0] ?? null)?->getVersion(),
+            ($compatible[0] ?? null)?->version,
             null === $forNextMajor ? null : (string) $nextMajor,
-            $forNextMajor?->getVersion(),
+            $forNextMajor?->version,
         );
     }
 
     /**
      * The lowest TYPO3 major above the site's one that any of the versions supports.
      *
-     * @param list<TerExtensionVersion> $versions
+     * @param list<ExtensionVersion> $versions
      */
     private static function nextMajor(array $versions, int $coreMajor): ?int
     {
         $majors = array_filter(
-            array_merge(...array_map(static fn (TerExtensionVersion $v): array => $v->getTypo3MajorVersions(), $versions)),
+            array_merge(...array_map(static fn (ExtensionVersion $v): array => $v->typo3MajorVersions, $versions)),
             static fn (int $major): bool => $major > $coreMajor,
         );
 
@@ -78,16 +78,15 @@ class PackageUpdateResolver
     /**
      * The installed version if it supports the major already, otherwise the newest version that does.
      *
-     * @param list<TerExtensionVersion> $newer newest first
+     * @param list<ExtensionVersion> $newer newest first
      */
-    private static function firstSupporting(int $major, ?TerExtensionVersion $installed, array $newer): ?TerExtensionVersion
+    private static function firstSupporting(int $major, ?ExtensionVersion $installed, array $newer): ?ExtensionVersion
     {
-        $supports = static fn (TerExtensionVersion $v): bool => in_array($major, $v->getTypo3MajorVersions(), true);
-        if (null !== $installed && $supports($installed)) {
+        if (null !== $installed && $installed->supports($major)) {
             return $installed;
         }
 
-        return array_find($newer, $supports);
+        return array_find($newer, static fn (ExtensionVersion $v): bool => $v->supports($major));
     }
 
     /**

@@ -8,7 +8,7 @@ synced at least once, the matching status stays "unknown" (gray), never
 | What | Source | Insecure when | Outdated when |
 |---|---|---|---|
 | TYPO3 core | [get.typo3.org](https://get.typo3.org/) | the version is no longer maintained or a newer security release exists | a newer release exists |
-| TYPO3 extensions | [TER](https://extensions.typo3.org/) and the [TYPO3 security advisories](https://typo3.org/help/security-advisories) | the TER marks the exact version insecure or an advisory affects it | the TER has a newer version |
+| TYPO3 extensions | [TER](https://extensions.typo3.org/), [Packagist](https://packagist.org/) (by the Composer name) and the [TYPO3 security advisories](https://typo3.org/help/security-advisories) | the TER marks the exact version insecure or an advisory affects it | the TER or Packagist has a newer version that runs on the site's TYPO3 |
 | WordPress core | [wordpress.org](https://wordpress.org/download/releases/) | wordpress.org marks the version insecure | a newer release exists |
 | WordPress plugins | [Wordfence Intelligence](https://www.wordfence.com/threat-intel/) and [wordpress.org](https://wordpress.org/plugins/) | a Wordfence vulnerability affects the version | wordpress.org has a newer version |
 | WordPress themes | [Wordfence Intelligence](https://www.wordfence.com/threat-intel/) and [wordpress.org](https://wordpress.org/themes/) | a Wordfence vulnerability affects the version | wordpress.org has a newer version (unknown for themes not on wordpress.org) |
@@ -18,6 +18,11 @@ synced at least once, the matching status stays "unknown" (gray), never
 | MariaDB, MySQL, PostgreSQL | [endoflife.date](https://endoflife.date/) | the cycle is past end of life | a newer release exists in the cycle |
 
 Informational Wordfence entries (without real-world impact) are ignored.
+Authors often update the TER late or never, so TYPO3 packages are also
+checked against Packagist (ADR-0006). The TYPO3 majors of a Packagist
+version come from its requirements of the core packages (`typo3/cms-*`):
+a major counts when every one of them admits it. A version in both sources
+takes its majors from Packagist, its security flag from the TER.
 Packages that aren't on the TER, wordpress.org or Packagist, e.g. a site's own
 extensions, stay "unknown", and so do Craft plugins installed from a branch
 like `dev-main`.

@@ -111,7 +111,7 @@ class TerExtensionVersion
     /**
      * Parses the stored "12, 13" string back into [12, 13].
      *
-     * @return int[]
+     * @return list<int>
      */
     public function getTypo3MajorVersions(): array
     {

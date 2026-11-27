@@ -13,7 +13,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 /**
  * Applies cached TER data (Typo3\TerExtensionVersion) to a set of SitePackage
  * rows: insecure from the exact version, outdated only by versions that run on
- * the site's TYPO3 (PackageUpdateResolver). Callers are
+ * the site's TYPO3, from the TER and Packagist (PackageUpdateResolver). Callers are
  * responsible for only passing TYPO3 extension packages (e.g. via
  * SitePackageRepository::findByPackageType(PackageType::Typo3CmsExtension)) -
  * see Wordpress\SitePackageEvaluator for WordPress plugins, which use a
@@ -40,7 +40,7 @@ class SitePackageTerEvaluator
             $insecure = $cached?->isInsecure();
 
             $package->setVersionStatus($insecure, null, null);
-            $package->applyUpdate($this->updateResolver->forTypo3Extension($package->getName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
+            $package->applyUpdate($this->updateResolver->forTypo3Extension($package->getName(), $package->getComposerName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
 
             if (true === $insecure && true !== $wasInsecure) {
                 $this->securityNotifier->addFinding(

@@ -21,6 +21,19 @@ class CoreReleaseRepository extends AbstractCoreReleaseRepository
     }
 
     /**
+     * Every TYPO3 major with a release, ascending.
+     *
+     * @return list<int>
+     */
+    public function findMajors(): array
+    {
+        $majors = array_unique(array_map(static fn (CoreRelease $release): int => $release->getMajor(), $this->findAll()));
+        sort($majors);
+
+        return $majors;
+    }
+
+    /**
      * A development release doesn't stand for the next major.
      *
      * @param CoreRelease $release
