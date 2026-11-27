@@ -25,6 +25,10 @@ class AgencySettings
     #[ORM\Column(nullable: true)]
     private ?float $defaultManagementPercent = null;
 
+    // the agency's own vendors on Packagist, comma-separated, e.g. "portrino"
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $packagistVendors = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -38,6 +42,33 @@ class AgencySettings
     public function getDefaultManagementPercent(): ?float
     {
         return $this->defaultManagementPercent;
+    }
+
+    /**
+     * @return list<string> lowercase
+     */
+    public function getPackagistVendors(): array
+    {
+        // stored as setPackagistVendors() left it
+        return null !== $this->packagistVendors ? explode(', ', $this->packagistVendors) : [];
+    }
+
+    /**
+     * @param list<string> $vendors
+     */
+    public function setPackagistVendors(array $vendors): void
+    {
+        $vendors = array_unique(array_filter(array_map(static fn (string $vendor): string => strtolower(trim($vendor)), $vendors), static fn (string $vendor): bool => '' !== $vendor));
+        $this->packagistVendors = [] !== $vendors ? implode(', ', $vendors) : null;
+    }
+
+    /**
+     * Whether a package is the agency's own, published or not: its Composer vendor is one of
+     * the agency's, so its upgrade is the agency's work like that of a site's own extensions.
+     */
+    public function isAgencyPackage(?string $composerName): bool
+    {
+        return null !== $composerName && in_array(strtolower(explode('/', $composerName)[0]), $this->getPackagistVendors(), true);
     }
 
     public function setUpgradeCalculationDefaults(?float $hourlyRate, ?float $managementPercent): void

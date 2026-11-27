@@ -7,11 +7,13 @@ namespace App\Service\Typo3;
 use App\Dto\Typo3\ExtensionVersion;
 use App\Dto\UpgradeItem;
 use App\Dto\UpgradeSupportPhase;
+use App\Entity\AgencySettings;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Typo3\CoreRelease;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
+use App\Repository\AgencySettingsRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\CoreReleaseRepository;
 use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
@@ -28,6 +30,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
         private SitePackageRepository $packageRepository,
         private CoreReleaseRepository $coreReleaseRepository,
         private ExtensionVersionCatalog $versionCatalog,
+        private AgencySettingsRepository $agencySettingsRepository,
         private UpgradeNoteDrafter $noteDrafter,
     ) {
     }
@@ -43,9 +46,10 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     public function packageItems(Site $site, int $targetMajor): array
     {
         $currentMajor = (int) $site->getCurrentCoreVersion();
+        $settings = $this->agencySettingsRepository->get();
 
         return array_map(
-            fn (SitePackage $package): UpgradeItem => $this->packageItem($package, $currentMajor, $targetMajor),
+            fn (SitePackage $package): UpgradeItem => $this->packageItem($package, $currentMajor, $targetMajor, $settings),
             $this->packageRepository->findBy(['site' => $site], ['name' => 'ASC']),
         );
     }
@@ -71,25 +75,28 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
         return $phases;
     }
 
-    private function packageItem(SitePackage $package, int $currentMajor, int $targetMajor): UpgradeItem
+    private function packageItem(SitePackage $package, int $currentMajor, int $targetMajor, AgencySettings $settings): UpgradeItem
     {
         $key = $package->getName();
         $installed = $package->getVersion();
-        $versions = $this->versionCatalog->versionsOf($key, $package->getComposerName());
+        $composerName = $this->versionCatalog->composerNameOf($key, $package->getComposerName());
+        $versions = $this->versionCatalog->versionsOf($key, $composerName);
+        // the agency's own packages are its work to upgrade, though published like third-party ones
+        $section = [] === $versions || $settings->isAgencyPackage($composerName) ? UpgradeSection::OwnPackages : UpgradeSection::Packages;
 
-        [$section, $status, $target] = match (true) {
+        [$status, $target] = match (true) {
             // neither in the TER nor on Packagist; also a package whose sync hasn't come up yet
-            [] === $versions => [UpgradeSection::OwnPackages, UpgradeItemStatus::Manual, null],
+            [] === $versions => [UpgradeItemStatus::Manual, null],
             // e.g. "dev-main": can't be compared with released versions
-            !UpgradeTargets::isRelease($installed) => [UpgradeSection::Packages, UpgradeItemStatus::Manual, null],
-            default => [UpgradeSection::Packages, ...self::judgeRelease($installed, $versions, $currentMajor, $targetMajor)],
+            !UpgradeTargets::isRelease($installed) => [UpgradeItemStatus::Manual, null],
+            default => self::judgeRelease($installed, $versions, $currentMajor, $targetMajor),
         };
 
         $note = $this->noteDrafter->draft($status, $installed, $target, $versions, $targetMajor);
 
         return new UpgradeItem(
             $section,
-            $this->versionCatalog->composerNameOf($key, $package->getComposerName()) ?? $key,
+            $composerName ?? $key,
             $key,
             $package->getPackageType(),
             $installed,

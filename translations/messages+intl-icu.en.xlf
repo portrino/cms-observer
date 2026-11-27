@@ -1570,6 +1570,14 @@
         <source>settings.field.management</source>
         <target>Default project management (%)</target>
       </trans-unit>
+      <trans-unit id="settings.field.vendors" resname="settings.field.vendors">
+        <source>settings.field.vendors</source>
+        <target>Agency vendor name on Packagist</target>
+      </trans-unit>
+      <trans-unit id="settings.help.vendors" resname="settings.help.vendors">
+        <source>settings.help.vendors</source>
+        <target>Composer vendor of the agency's own packages, e.g. "portrino", several separated by commas. Upgrade calculations list such packages as custom packages, even when they are published on Packagist: their upgrade is the agency's work.</target>
+      </trans-unit>
       <trans-unit id="profile.title" resname="profile.title">
         <source>profile.title</source>
         <target>My Profile</target>

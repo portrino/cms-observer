@@ -24,6 +24,7 @@ class SettingsController extends AbstractController
         $form = $this->createForm(AgencySettingsType::class, [
             'defaultHourlyRate' => $settings->getDefaultHourlyRate(),
             'defaultManagementPercent' => $settings->getDefaultManagementPercent(),
+            'packagistVendors' => implode(', ', $settings->getPackagistVendors()),
         ]);
         $form->handleRequest($request);
 
@@ -33,6 +34,7 @@ class SettingsController extends AbstractController
                 null !== $data['defaultHourlyRate'] ? (float) $data['defaultHourlyRate'] : null,
                 null !== $data['defaultManagementPercent'] ? (float) $data['defaultManagementPercent'] : null,
             );
+            $settings->setPackagistVendors(explode(',', (string) $data['packagistVendors']));
             $entityManager->persist($settings);
             $entityManager->flush();
             $this->addFlash('success', 'settings.saved');

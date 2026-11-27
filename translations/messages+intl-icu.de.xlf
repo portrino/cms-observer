@@ -1570,6 +1570,14 @@
         <source>settings.field.management</source>
         <target>Standard-Projektmanagement (%)</target>
       </trans-unit>
+      <trans-unit id="settings.field.vendors" resname="settings.field.vendors">
+        <source>settings.field.vendors</source>
+        <target>Agentur-Vendor auf Packagist</target>
+      </trans-unit>
+      <trans-unit id="settings.help.vendors" resname="settings.help.vendors">
+        <source>settings.help.vendors</source>
+        <target>Composer-Vendor der agentureigenen Pakete, z. B. „portrino“, mehrere durch Komma getrennt. Solche Pakete stehen in Upgrade-Kalkulationen unter „Eigene Pakete“, auch wenn sie auf Packagist veröffentlicht sind: Ihr Upgrade übernimmt die Agentur.</target>
+      </trans-unit>
       <trans-unit id="profile.title" resname="profile.title">
         <source>profile.title</source>
         <target>Mein Profil</target>
