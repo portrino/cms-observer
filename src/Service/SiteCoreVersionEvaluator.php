@@ -135,6 +135,17 @@ class SiteCoreVersionEvaluator
     }
 
     /**
+     * Every release of the majors above the site's core version, newest first: listed on the
+     * project page for planning an upgrade.
+     *
+     * @return list<CoreReleaseInterface>
+     */
+    public function releasesInNewerMajors(Site $site): array
+    {
+        return $this->releaseRepository($site->getType())->findInNewerMajors($site->getCurrentCoreVersion());
+    }
+
+    /**
      * @return AbstractCoreReleaseRepository<covariant CoreReleaseInterface>
      */
     private function releaseRepository(CmsType $type): AbstractCoreReleaseRepository

@@ -90,6 +90,16 @@
     }
 }
 
+// Project page section heading with a switch on its right; on phones the switch wraps below
+.section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin-bottom: 1rem;
+}
+
 // Login and 2FA page: the card hangs at the same height on both instead of being
 // centered, so the logo doesn't jump between the two cards of different height
 .auth-page {

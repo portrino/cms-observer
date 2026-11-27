@@ -133,6 +133,7 @@ class DashboardController extends AbstractController
             'packageDetails' => $packageDetailsProvider->forSite($site, $packages),
             'newerCoreReleases' => $newerCoreReleases['inMajor'],
             'newerMajorCoreRelease' => $newerCoreReleases['newerMajor'],
+            'newerMajorCoreReleases' => $coreVersionEvaluator->releasesInNewerMajors($site),
             'upgradeCalculations' => $drafter->supports($site),
         ]);
     }

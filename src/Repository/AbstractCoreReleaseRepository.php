@@ -54,6 +54,26 @@ abstract class AbstractCoreReleaseRepository extends ServiceEntityRepository
     }
 
     /**
+     * Every release of the major lines above $version, e.g. for "13.4.28" all 14.x releases;
+     * listed for planning an upgrade. Newest first.
+     *
+     * @return list<T>
+     */
+    public function findInNewerMajors(?string $version): array
+    {
+        if (null === $version) {
+            return [];
+        }
+
+        $currentMajor = $this->majorOf($version);
+
+        return $this->newestFirst(array_filter(
+            $this->findAll(),
+            fn (CoreReleaseInterface $release): bool => $release->getMajor() > $currentMajor && $this->countsForNewerMajor($release),
+        ));
+    }
+
+    /**
      * The latest release of the next major line above $version, if one
      * exists - e.g. for "13.4.28", the latest 14.x release. Used to hint "a
      * newer major is available" without listing every 14.x release in the

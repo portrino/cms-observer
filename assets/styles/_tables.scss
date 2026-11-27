@@ -27,9 +27,26 @@
     --bs-table-bg: #{$gray-100};
 }
 
-// A version that needs a newer core: shown for planning the upgrade, but not installable yet
+// A version that needs a newer core: shown for planning the upgrade, but not installable yet,
+// and only when its section's switch is on (newer_core_controller.js)
 .row-newer-core > td {
     color: var(--bs-secondary-color);
+}
+
+[data-controller~="newer-core"]:not(.show-newer-core) {
+    .row-newer-core {
+        display: none;
+    }
+
+    // a table with nothing but such versions goes with them, its hint above stays
+    .table-responsive:not(:has(tbody tr:not(.row-newer-core))) {
+        display: none;
+    }
+}
+
+// what only says there's nothing newer, while the switch shows the newer cores
+.show-newer-core .newer-core-hidden {
+    display: none;
 }
 
 // Compact release/version tables in the detail page accordions: room between

@@ -258,6 +258,10 @@
         <source>project.repository</source>
         <target>Repository</target>
       </trans-unit>
+      <trans-unit id="project.show_newer_core" resname="project.show_newer_core">
+        <source>project.show_newer_core</source>
+        <target>Show newer cores</target>
+      </trans-unit>
       <trans-unit id="project.no_newer_core" resname="project.no_newer_core">
         <source>project.no_newer_core</source>
         <target>No newer core releases known.</target>
@@ -448,7 +452,7 @@
       </trans-unit>
       <trans-unit id="package.no_update_for_core" resname="package.no_update_for_core">
         <source>package.no_update_for_core</source>
-        <target>No newer version known for {cms} {version}. The newer versions below need a newer core.</target>
+        <target>No newer version known for {cms} {version}, only for newer cores.</target>
       </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>

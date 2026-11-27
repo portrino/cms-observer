@@ -303,7 +303,7 @@ class DashboardSiteShowTest extends WebTestCase
         $client->request('GET', '/projects/'.$site->getId());
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('#packagesAccordion .alert-info', 'No newer version known for TYPO3 13.4.20.');
+        self::assertSelectorTextContains('#packagesAccordion .alert-info', 'No newer version known for TYPO3 13.4.20, only for newer cores.');
         self::assertSelectorExists('#packagesAccordion tr.row-newer-core .version-number:contains("4.1.0")');
         self::assertSelectorNotExists('#packagesAccordion tr.row-latest', 'nothing installs on TYPO3 13');
         self::assertSelectorTextNotContains('#packagesAccordion .accordion-body', 'No newer versions known');

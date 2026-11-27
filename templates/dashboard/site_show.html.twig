@@ -149,7 +149,8 @@
         </div>
     </div>
 
-    <h2 class="h4 mb-3">Core</h2>
+    <div data-controller="newer-core" data-newer-core-key-value="core">
+    {{ m.section_heading('Core', 'coreNewerCore') }}
     <div class="card mb-4">
     <div class="card-body p-0">
     <div class="accordion" id="coreAccordion">
@@ -169,8 +170,9 @@
             <div id="coreAccordionBody" class="accordion-collapse collapse" data-bs-parent="#coreAccordion">
                 <div class="accordion-body">
                 {% if newerCoreReleases is empty %}
-                    <p class="text-muted mb-0">{{ 'project.no_newer_core'|trans }}</p>
-                {% else %}
+                    <p class="text-muted mb-0 newer-core-hidden">{{ 'project.no_newer_core'|trans }}</p>
+                {% endif %}
+                {% if newerCoreReleases is not empty or newerMajorCoreReleases is not empty %}
                     <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0">
                         <thead>
@@ -183,6 +185,14 @@
                         <tbody>
                         {# newest first, so the first release not known to be insecure is the update target #}
                         {% set latestRelease = newerCoreReleases|filter(r => r.insecure is not same as(true))|first %}
+                        {# the newer majors first, as all newest first; behind the section's switch: the upgrade itself #}
+                        {% for release in newerMajorCoreReleases %}
+                            <tr class="{{ release.insecure ? 'row-insecure' : 'row-secure' }} row-newer-core">
+                                <td class="text-nowrap"><span class="version-number">{{ release.version }}</span>{{ m.version_flag(release.insecure, false) }}</td>
+                                <td class="text-nowrap">{{ release.releaseDate ? release.releaseDate|format_date('medium') : '—' }}</td>
+                                <td><a href="{{ site.type.releaseNotesUrl(release.version) }}" target="_blank" rel="noopener">{{ 'project.release_notes'|trans }}</a></td>
+                            </tr>
+                        {% endfor %}
                         {% for release in newerCoreReleases %}
                             <tr class="{{ release.insecure ? 'row-insecure' : (release is same as(latestRelease) ? 'row-latest' : 'row-secure') }}">
                                 <td class="text-nowrap"><span class="version-number">{{ release.version }}</span>{{ m.version_flag(release.insecure, release is same as(latestRelease)) }}</td>
@@ -200,8 +210,10 @@
     </div>
     </div>
     </div>
+    </div>
 
-    <h2 class="h4 mb-3">{{ 'nav.packages'|trans }} {{ m.package_count_badge(packages|length, site.type.packagesLabel|trans) }}</h2>
+    <div data-controller="newer-core" data-newer-core-key-value="packages">
+    {{ m.section_heading('nav.packages'|trans ~ ' ', 'packagesNewerCore', m.package_count_badge(packages|length, site.type.packagesLabel|trans)) }}
     <div class="card mb-4">
     <div class="card-body p-0">
     <div class="accordion" id="packagesAccordion">
@@ -237,6 +249,7 @@
     {% else %}
         <p class="text-muted">{{ 'package.none_reported'|trans }}</p>
     {% endfor %}
+    </div>
     </div>
     </div>
     </div>

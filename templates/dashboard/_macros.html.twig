@@ -257,3 +257,15 @@
         </div>
     </div>
 {%- endmacro %}
+
+{# A section heading of the project page with the switch for the versions that need a newer
+   core (newer_core_controller.js): off by default, the browser remembers it #}
+{% macro section_heading(title, switchId, badge = '') %}
+    <div class="section-heading">
+        <h2 class="h4 mb-0">{{ title }}{{ badge }}</h2>
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" role="switch" id="{{ switchId }}" data-newer-core-target="switch" data-action="newer-core#toggle">
+            <label class="form-check-label" for="{{ switchId }}">{{ 'project.show_newer_core'|trans }}</label>
+        </div>
+    </div>
+{%- endmacro %}
