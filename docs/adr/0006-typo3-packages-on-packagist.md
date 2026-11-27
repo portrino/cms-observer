@@ -1,6 +1,6 @@
 # ADR-0006: TYPO3 packages also rated by Packagist
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-27
 - Deciders: Maintainers
 
@@ -38,6 +38,12 @@ versions:
 - A package is outdated when either source has a newer version for the
   site's TYPO3; the upgrade calculation and the package details use the
   versions of both, the details show where a version comes from.
+- Without a reported Composer name (older clients) the name comes from
+  the TER's Packagist link.
+- In an upgrade calculation a package only on Packagist is a
+  third-party package, unless its vendor is one of the agency's own
+  (Settings): those are custom packages, as their upgrade is the
+  agency's work.
 - The security rating stays with the TER and the TYPO3 security
   advisories.
 
@@ -46,7 +52,8 @@ versions:
 - Positive: Packages updated on Packagist only, and packages not in the
   TER at all, are rated and calculated correctly.
 - Negative: One more sync against Packagist, for many more packages
-  than Craft's; the p2 files are then fetched with `If-Modified-Since`.
+  than Craft's; the p2 files are cached and revalidated
+  (`If-None-Match` / `If-Modified-Since`).
 - Neutral: Packagist has no changelog or commit messages, so breaking
   changes of Packagist-only versions are only recognized by a new major
   of the package. Commit messages from GitHub would need a token and
