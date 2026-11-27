@@ -19,6 +19,15 @@ use Doctrine\ORM\Mapping as ORM;
 class PackagistVersion extends AbstractPackagistVersion
 {
     /**
+     * The commits since the previous version that mention breaking changes, from GitHub
+     * (CommitSynchronizer); null until checked, empty when checked and nothing was found.
+     *
+     * @var list<array{sha: string, subject: string, url: string}>|null
+     */
+    #[ORM\Column(nullable: true)]
+    private ?array $breakingCommits = null;
+
+    /**
      * @param list<int>|null $typo3Majors null when the version requires no core package
      */
     public function __construct(
@@ -27,6 +36,11 @@ class PackagistVersion extends AbstractPackagistVersion
         ?\DateTimeImmutable $releaseDate,
         #[ORM\Column(nullable: true)]
         private ?array $typo3Majors,
+        // the repository and commit of the version, e.g. "https://github.com/b13/http2.git"
+        #[ORM\Column(length: 255, nullable: true)]
+        private ?string $sourceUrl = null,
+        #[ORM\Column(length: 64, nullable: true)]
+        private ?string $sourceReference = null,
     ) {
         parent::__construct($packageName, $version, $releaseDate);
     }
@@ -34,10 +48,41 @@ class PackagistVersion extends AbstractPackagistVersion
     /**
      * @param list<int>|null $typo3Majors
      */
-    public function update(?\DateTimeImmutable $releaseDate, ?array $typo3Majors): void
+    public function update(?\DateTimeImmutable $releaseDate, ?array $typo3Majors, ?string $sourceUrl, ?string $sourceReference): void
     {
         $this->setReleaseDate($releaseDate);
         $this->typo3Majors = $typo3Majors;
+        if ($sourceReference !== $this->sourceReference) {
+            $this->breakingCommits = null; // a moved tag: its commits are checked anew
+        }
+        $this->sourceUrl = $sourceUrl;
+        $this->sourceReference = $sourceReference;
+    }
+
+    /**
+     * @param list<array{sha: string, subject: string, url: string}> $commits
+     */
+    public function recordBreakingCommits(array $commits): void
+    {
+        $this->breakingCommits = $commits;
+    }
+
+    /**
+     * @return list<array{sha: string, subject: string, url: string}>|null null until checked
+     */
+    public function getBreakingCommits(): ?array
+    {
+        return $this->breakingCommits;
+    }
+
+    public function getSourceUrl(): ?string
+    {
+        return $this->sourceUrl;
+    }
+
+    public function getSourceReference(): ?string
+    {
+        return $this->sourceReference;
     }
 
     /**

@@ -40,6 +40,7 @@ settings, checks them and writes `.env.local`:
 | Sender address | `MAILER_FROM_ADDRESS` | defaults to `no-reply@<host of the URL>` |
 | Timezone | `APP_TIMEZONE` | e.g. `Europe/Berlin`, defaults to PHP's; used by the web server and the scheduler's worker alike, whose `php.ini` often differ |
 | Wordfence API key | `WORDFENCE_API_KEY` | optional, free key from wordfence.com → Account → Integrations; without it WordPress plugins aren't checked for vulnerabilities |
+| GitHub token | `GITHUB_API_TOKEN` | optional; a token without any permissions (fine-grained: "Public repositories (read-only)", no permissions). Reads the commits between versions of TYPO3 packages for breaking changes (ADR-0007); without it the upgrade calculation notes rely on the TER comments |
 | Packagist contact | `PACKAGIST_CONTACT_EMAIL` | optional; sent in the User-Agent of the requests for Craft CMS versions and advisories, as Packagist asks API users for a contact address |
 | (generated) | `APP_SECRET`, `TOTP_ENCRYPTION_KEY` | back up `TOTP_ENCRYPTION_KEY`: without it every two-factor login has to be reset. `app:upgrade` stops if `APP_SECRET` is empty: it is Symfony's `kernel.secret` |
 

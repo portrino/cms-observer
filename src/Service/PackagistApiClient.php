@@ -33,7 +33,7 @@ class PackagistApiClient
     /**
      * Stable versions of a package, newest first, with the packages they require.
      *
-     * @return list<array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>}>|null null if Packagist doesn't know the package
+     * @return list<array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>, sourceUrl: ?string, sourceReference: ?string}>|null null if Packagist doesn't know the package
      */
     public function versions(string $packageName): ?array
     {
@@ -48,7 +48,7 @@ class PackagistApiClient
     /**
      * @param array<string, mixed> $data one expanded version of a p2 file
      *
-     * @return array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>}|null null for a pre-release or dev version
+     * @return array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>, sourceUrl: ?string, sourceReference: ?string}|null null for a pre-release or dev version
      */
     private static function stableVersion(array $data): ?array
     {
@@ -62,6 +62,9 @@ class PackagistApiClient
             'version' => $version,
             'releaseDate' => is_string($data['time'] ?? null) ? new \DateTimeImmutable($data['time']) : null,
             'require' => array_filter($require, static fn (mixed $constraint, mixed $package): bool => is_string($package) && is_string($constraint), ARRAY_FILTER_USE_BOTH),
+            // the repository and commit of the version, e.g. to compare two versions on GitHub
+            'sourceUrl' => is_string($data['source']['url'] ?? null) ? $data['source']['url'] : null,
+            'sourceReference' => is_string($data['source']['reference'] ?? null) ? $data['source']['reference'] : null,
         ];
     }
 

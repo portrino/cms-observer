@@ -13,6 +13,9 @@ use App\Utility\StringUtility;
  */
 final class ExtensionUtility
 {
+    /** TYPO3's "!!!" commit prefix (also as "[!!!]") and the usual words for a breaking change */
+    private const string BREAKING_CHANGE = '/!!!|breaking|incompatib|inkompatib/i';
+
     /** the core of TYPO3 8 and older as one package */
     private const string LEGACY_CORE = 'typo3/cms';
 
@@ -49,6 +52,12 @@ final class ExtensionUtility
             $constraints,
             static fn (string $constraint): bool => !ComposerUtility::admitsMajor($constraint, $major),
         )));
+    }
+
+    /** Whether a changelog line or commit message mentions a breaking change */
+    public static function mentionsBreakingChange(?string $text): bool
+    {
+        return 1 === preg_match(self::BREAKING_CHANGE, (string) $text);
     }
 
     /**

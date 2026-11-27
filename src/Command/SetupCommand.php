@@ -41,6 +41,7 @@ class SetupCommand extends Command
             ->addOption('mailer-dsn', null, InputOption::VALUE_REQUIRED, 'Mailer DSN, e.g. smtp://user:pass@smtp.example.com:587')
             ->addOption('mailer-from', null, InputOption::VALUE_REQUIRED, 'Sender address of the security mails')
             ->addOption('wordfence-api-key', null, InputOption::VALUE_REQUIRED, 'Wordfence Intelligence API key (optional)')
+            ->addOption('github-api-token', null, InputOption::VALUE_REQUIRED, 'GitHub token without permissions (optional)')
             ->addOption('packagist-contact-email', null, InputOption::VALUE_REQUIRED, 'Contact address sent to Packagist with its API requests (optional)')
             ->addOption('timezone', null, InputOption::VALUE_REQUIRED, 'Timezone of the times the Observer records and shows, e.g. Europe/Berlin')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Overwrite an existing .env.local (its secrets are kept)');
@@ -78,6 +79,7 @@ class SetupCommand extends Command
             return $address;
         });
         $wordfenceApiKey = (string) $io->ask('Wordfence Intelligence API key (optional, checks WordPress plugins for vulnerabilities)', $this->option($input, 'wordfence-api-key') ?? $existing['WORDFENCE_API_KEY'] ?? '');
+        $githubApiToken = (string) $io->ask('GitHub token without permissions (optional, reads the commits of TYPO3 packages for breaking changes)', $this->option($input, 'github-api-token') ?? $existing['GITHUB_API_TOKEN'] ?? '');
         // Packagist asks API users for a contact; the Observer asks it for Craft CMS versions and advisories
         $packagistContactEmail = (string) $io->ask('Contact address for Packagist (optional, sent with the Craft CMS version and advisory requests)', $this->option($input, 'packagist-contact-email') ?? $existing['PACKAGIST_CONTACT_EMAIL'] ?? '', self::checkOptionalEmail(...));
         $timezone = $this->askRequired($io, 'Timezone of the times the Observer records and shows', $this->option($input, 'timezone') ?? $existing['APP_TIMEZONE'] ?? date_default_timezone_get(), static function (string $timezone): string {
@@ -98,6 +100,7 @@ class SetupCommand extends Command
             'MAILER_DSN' => $mailerDsn,
             'MAILER_FROM_ADDRESS' => $mailerFrom,
             'WORDFENCE_API_KEY' => trim($wordfenceApiKey),
+            'GITHUB_API_TOKEN' => trim($githubApiToken),
             'PACKAGIST_CONTACT_EMAIL' => $packagistContactEmail,
             // the same for the web server and the scheduler's worker, whatever their php.ini says
             'APP_TIMEZONE' => $timezone,

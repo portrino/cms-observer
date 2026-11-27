@@ -47,7 +47,7 @@ class SetupCommandTest extends TestCase
     public function testAsksInteractively(): void
     {
         $tester = $this->createTester('8.0.46');
-        $tester->setInputs(['https://observer.example.test/', 'mysql://u:p@db:3306/observer', 'smtp://localhost:25', 'alerts@example.test', 'wf-key', 'not-an-address', 'ops@example.test', 'Not/AZone', 'Europe/Berlin']);
+        $tester->setInputs(['https://observer.example.test/', 'mysql://u:p@db:3306/observer', 'smtp://localhost:25', 'alerts@example.test', 'wf-key', ' gh-token ', 'not-an-address', 'ops@example.test', 'Not/AZone', 'Europe/Berlin']);
 
         self::assertSame(Command::SUCCESS, $tester->execute([]));
 
@@ -56,6 +56,7 @@ class SetupCommandTest extends TestCase
         self::assertStringContainsString('serverVersion=8.0.46', $env['DATABASE_URL']);
         self::assertSame('alerts@example.test', $env['MAILER_FROM_ADDRESS']);
         self::assertSame('wf-key', $env['WORDFENCE_API_KEY']);
+        self::assertSame('gh-token', $env['GITHUB_API_TOKEN']);
         self::assertSame('ops@example.test', $env['PACKAGIST_CONTACT_EMAIL']);
         self::assertSame('Europe/Berlin', $env['APP_TIMEZONE']);
     }
