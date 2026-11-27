@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Craft;
+namespace App\Utility\Craft;
 
 use App\Entity\Craft\Advisory;
-use App\Service\ComposerVersion;
+use App\Utility\ComposerUtility;
 
 /**
  * Which of a package's advisories affect an installed version.
  */
-final class AdvisoryMatcher
+final class AdvisoryUtility
 {
     private function __construct()
     {
@@ -30,6 +30,6 @@ final class AdvisoryMatcher
     private static function affects(Advisory $advisory, string $version): bool
     {
         // unknown is not insecure
-        return ComposerVersion::satisfies($version, $advisory->getAffectedVersions()) ?? false;
+        return ComposerUtility::satisfies($version, $advisory->getAffectedVersions()) ?? false;
     }
 }

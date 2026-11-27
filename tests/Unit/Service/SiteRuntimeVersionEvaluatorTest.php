@@ -8,9 +8,9 @@ use App\Entity\CmsType;
 use App\Entity\EndOfLifeRelease;
 use App\Entity\Site;
 use App\Repository\EndOfLifeReleaseRepository;
-use App\Service\DbVersionNormalizer;
 use App\Service\SecurityNotifier;
 use App\Service\SiteRuntimeVersionEvaluator;
+use App\Utility\VersionUtility;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -138,7 +138,7 @@ class SiteRuntimeVersionEvaluatorTest extends TestCase
     #[DataProvider('dbVersions')]
     public function testDbVersionIsNormalized(?string $platform, string $raw, string $expectedProduct, string $expectedVersion): void
     {
-        self::assertSame([$expectedProduct, $expectedVersion], DbVersionNormalizer::normalize($platform, $raw));
+        self::assertSame([$expectedProduct, $expectedVersion], VersionUtility::normalizeDbVersion($platform, $raw));
     }
 
     public function testLegacyTypo3V12DbVersionFindsTheMariadbRelease(): void

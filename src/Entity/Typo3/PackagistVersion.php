@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A stable version of a TYPO3 package on Packagist, with the TYPO3 majors it installs on
- * (CoreRequirement), synced by PackagistVersionSynchronizer. Authors often update the TER
+ * (ExtensionUtility::supportedCoreMajors()), synced by PackagistVersionSynchronizer. Authors often update the TER
  * late or never, so these complement the TER versions (ADR-0006).
  */
 #[ORM\Entity(repositoryClass: PackagistVersionRepository::class)]

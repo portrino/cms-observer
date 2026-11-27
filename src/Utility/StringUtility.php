@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Utility;
 
 /**
- * Splits lists people type or systems store, like TYPO3's GeneralUtility::trimExplode():
- * "a,  b , ,c" is ["a", "b", "c"], whatever the spaces around the delimiter.
+ * String helpers, like TYPO3's GeneralUtility::trimExplode().
  */
-final class StringList
+final class StringUtility
 {
     private function __construct()
     {
     }
 
     /**
+     * Splits lists people type or systems store: "a,  b , ,c" is ["a", "b", "c"].
+     *
      * @param non-empty-string $delimiter
      *
      * @return list<string> trimmed, without empty parts

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\AgencySettingsRepository;
-use App\Service\StringList;
+use App\Utility\StringUtility;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -50,13 +50,13 @@ class AgencySettings
      */
     public function getPackagistVendors(): array
     {
-        return StringList::trimExplode(',', $this->packagistVendors);
+        return StringUtility::trimExplode(',', $this->packagistVendors);
     }
 
     /** @param ?string $vendors comma-separated, as typed */
     public function setPackagistVendors(?string $vendors): void
     {
-        $vendors = array_unique(StringList::trimExplode(',', strtolower((string) $vendors)));
+        $vendors = array_unique(StringUtility::trimExplode(',', strtolower((string) $vendors)));
         $this->packagistVendors = [] !== $vendors ? implode(', ', $vendors) : null;
     }
 

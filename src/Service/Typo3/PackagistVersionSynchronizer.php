@@ -13,6 +13,7 @@ use App\Repository\Typo3\CoreReleaseRepository;
 use App\Repository\Typo3\PackagistVersionRepository;
 use App\Service\AbstractPackagistVersionSynchronizer;
 use App\Service\PackagistApiClient;
+use App\Utility\Typo3\ExtensionUtility;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -59,11 +60,11 @@ class PackagistVersionSynchronizer extends AbstractPackagistVersionSynchronizer
 
     protected function create(string $packageName, array $data): PackagistVersion
     {
-        return new PackagistVersion($packageName, $data['version'], $data['releaseDate'], CoreRequirement::supportedMajors($data['require'], $this->majors ?? []));
+        return new PackagistVersion($packageName, $data['version'], $data['releaseDate'], ExtensionUtility::supportedCoreMajors($data['require'], $this->majors ?? []));
     }
 
     protected function update(AbstractPackagistVersion $known, array $data): void
     {
-        $known->update($data['releaseDate'], CoreRequirement::supportedMajors($data['require'], $this->majors ?? []));
+        $known->update($data['releaseDate'], ExtensionUtility::supportedCoreMajors($data['require'], $this->majors ?? []));
     }
 }

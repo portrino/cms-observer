@@ -12,6 +12,7 @@ use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
 use App\Service\Typo3\ExtensionVersionCatalog;
+use App\Utility\ComposerUtility;
 
 /**
  * The one rule for "is there an update?": a package is outdated only when a newer
@@ -176,6 +177,6 @@ class PackageUpdateResolver
         }
 
         // a constraint Composer can't parse says nothing against installing it
-        return ComposerVersion::satisfies($coreVersion, $version->getCraftConstraint()) ?? true;
+        return ComposerUtility::satisfies($coreVersion, $version->getCraftConstraint()) ?? true;
     }
 }

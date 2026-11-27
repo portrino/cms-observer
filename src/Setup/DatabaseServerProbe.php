@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Setup;
 
-use App\Service\DbVersionNormalizer;
+use App\Utility\VersionUtility;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Tools\DsnParser;
 
@@ -37,7 +37,7 @@ class DatabaseServerProbe
      */
     public static function serverVersionFor(string $rawVersion): string
     {
-        [$product, $version] = DbVersionNormalizer::normalize(null, $rawVersion);
+        [$product, $version] = VersionUtility::normalizeDbVersion(null, $rawVersion);
 
         return 'mariadb' === $product ? $version.'-MariaDB' : $version;
     }

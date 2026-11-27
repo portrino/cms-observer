@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\AbstractPackagistVersion;
-use App\Service\ComposerVersion;
+use App\Utility\ComposerUtility;
 use Composer\Semver\Comparator;
 use Composer\Semver\VersionParser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -34,7 +34,7 @@ abstract class AbstractPackagistVersionRepository extends ServiceEntityRepositor
      */
     public function findNewerThan(string $packageName, string $installedVersion): ?array
     {
-        if (!ComposerVersion::canRate($installedVersion)) {
+        if (!ComposerUtility::canRate($installedVersion)) {
             return null; // a branch or not a version at all: whether it's outdated is unknown
         }
         $installed = new VersionParser()->normalize($installedVersion);

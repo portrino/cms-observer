@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Utility;
 
-use App\Service\ComposerVersion;
+use App\Utility\ComposerUtility;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class ComposerVersionTest extends TestCase
+class ComposerUtilityTest extends TestCase
 {
     public function testRatesOnlyReleases(): void
     {
-        self::assertTrue(ComposerVersion::canRate('5.10.2'));
-        self::assertFalse(ComposerVersion::canRate('dev-main'));
-        self::assertFalse(ComposerVersion::canRate('not a version'));
+        self::assertTrue(ComposerUtility::canRate('5.10.2'));
+        self::assertFalse(ComposerUtility::canRate('dev-main'));
+        self::assertFalse(ComposerUtility::canRate('not a version'));
     }
 
     public function testAMalformedConstraintIsUnknown(): void
     {
-        self::assertTrue(ComposerVersion::satisfies('5.8.0', '^5.0.0'));
-        self::assertFalse(ComposerVersion::satisfies('5.8.0', '^4.0.0'));
-        self::assertNull(ComposerVersion::satisfies('5.8.0', '>=5.0 <<5.4'));
+        self::assertTrue(ComposerUtility::satisfies('5.8.0', '^5.0.0'));
+        self::assertFalse(ComposerUtility::satisfies('5.8.0', '^4.0.0'));
+        self::assertNull(ComposerUtility::satisfies('5.8.0', '>=5.0 <<5.4'));
     }
 
     /**
@@ -42,6 +42,6 @@ class ComposerVersionTest extends TestCase
     #[DataProvider('majors')]
     public function testAdmitsAMajorWhenAnyOfItsReleasesFits(string $constraint, int $major, bool $admits): void
     {
-        self::assertSame($admits, ComposerVersion::admitsMajor($constraint, $major));
+        self::assertSame($admits, ComposerUtility::admitsMajor($constraint, $major));
     }
 }

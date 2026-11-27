@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Utility;
 
 use Composer\Semver\Constraint\Constraint;
 use Composer\Semver\Constraint\ConstraintInterface;
@@ -11,7 +11,7 @@ use Composer\Semver\VersionParser;
 /**
  * Composer's version rules for the packages from Packagist, as Composer itself would apply them.
  */
-final class ComposerVersion
+final class ComposerUtility
 {
     private function __construct()
     {

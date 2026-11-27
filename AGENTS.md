@@ -40,6 +40,11 @@ Symfony:
   of several implementations of an interface). A YAML service definition is the
   last resort, not the first.
 - Controllers extend `AbstractController`, stay thin, and delegate to services.
+- `src/Service/` holds services, i.e. classes the container instantiates.
+  Static helpers without dependencies go to `src/Utility/` with the suffix
+  `Utility` and the CMS subfolders of the services (`Utility\Typo3\...`),
+  grouped by topic (`VersionUtility`, `ComposerUtility`, ...); the container
+  excludes that folder.
 - Use the framework for what it already does: Form for server-rendered forms,
   Validator for validation, Serializer for JSON, Messenger for async work,
   Security (voters, authenticators) for access control, Twig `path()`/`url()`

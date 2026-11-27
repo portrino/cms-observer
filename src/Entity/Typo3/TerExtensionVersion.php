@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Typo3;
 
 use App\Repository\Typo3\TerExtensionVersionRepository;
-use App\Service\StringList;
+use App\Utility\StringUtility;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -116,7 +116,7 @@ class TerExtensionVersion
      */
     public function getTypo3MajorVersions(): array
     {
-        return array_map(intval(...), StringList::trimExplode(',', $this->typo3Versions));
+        return array_map(intval(...), StringUtility::trimExplode(',', $this->typo3Versions));
     }
 
     public function getUploadDate(): ?\DateTimeImmutable

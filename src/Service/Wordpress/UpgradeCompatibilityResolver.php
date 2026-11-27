@@ -12,7 +12,7 @@ use App\Entity\Wordpress\CoreRelease;
 use App\Repository\SitePackageRepository;
 use App\Repository\Wordpress\CoreReleaseRepository;
 use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
-use App\Service\UpgradeTargets;
+use App\Utility\VersionUtility;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
@@ -30,7 +30,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
 
     public function targetMajors(Site $site): array
     {
-        return UpgradeTargets::above(
+        return VersionUtility::majorsAbove(
             $site->getCurrentCoreVersion(),
             array_map(static fn (CoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
         );

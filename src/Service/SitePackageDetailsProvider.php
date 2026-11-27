@@ -18,8 +18,8 @@ use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\PluginVulnerabilityRepository;
-use App\Service\Craft\AdvisoryMatcher;
 use App\Service\Typo3\ExtensionVersionCatalog;
+use App\Utility\Craft\AdvisoryUtility;
 
 /**
  * The per-package details of a project's detail page: newer versions with
@@ -117,7 +117,7 @@ class SitePackageDetailsProvider
         $versionStates = [];
         foreach ($newerVersions as $version) {
             $versionStates[$version->getVersion()] = [
-                'insecure' => null !== AdvisoryMatcher::mostSevere($advisories, $version->getVersion()),
+                'insecure' => null !== AdvisoryUtility::mostSevere($advisories, $version->getVersion()),
                 // only versions that install are listed, so known means compatible
                 'compatible' => null !== $coreVersion && null !== $version->getCraftConstraint() ? true : null,
             ];

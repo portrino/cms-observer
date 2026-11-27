@@ -143,7 +143,7 @@ class ExtensionAdvisorySynchronizer
     /**
      * Decodes HTML entities (e.g. &nbsp;, &amp;) and collapses the result to
      * plain single spaces, since a literal non-breaking space would silently
-     * break AffectedVersionRangeMatcher's whitespace-sensitive regexes.
+     * break ExtensionUtility::matchesAffectedVersions()' whitespace-sensitive regexes.
      */
     private function normalizeText(string $text): string
     {

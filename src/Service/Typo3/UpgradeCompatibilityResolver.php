@@ -17,7 +17,7 @@ use App\Repository\AgencySettingsRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\CoreReleaseRepository;
 use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
-use App\Service\UpgradeTargets;
+use App\Utility\VersionUtility;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
@@ -37,7 +37,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
 
     public function targetMajors(Site $site): array
     {
-        return UpgradeTargets::above(
+        return VersionUtility::majorsAbove(
             $site->getCurrentCoreVersion(),
             array_map(static fn (CoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
         );
@@ -88,7 +88,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
             // neither in the TER nor on Packagist; also a package whose sync hasn't come up yet
             [] === $versions => [UpgradeItemStatus::Manual, null],
             // e.g. "dev-main": can't be compared with released versions
-            !UpgradeTargets::isRelease($installed) => [UpgradeItemStatus::Manual, null],
+            !VersionUtility::isRelease($installed) => [UpgradeItemStatus::Manual, null],
             default => self::judgeRelease($installed, $versions, $currentMajor, $targetMajor),
         };
 
