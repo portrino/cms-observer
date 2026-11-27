@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Typo3;
 
+use App\Service\StringList;
+
 /**
  * Parses the free-text "Affected Versions" field from a TYPO3 security
  * advisory (e.g. "10.9.2 and below, 11.0.0 - 12.6.0, 13.0.0 - 13.2.0") and
@@ -26,7 +28,7 @@ final class AffectedVersionRangeMatcher
      */
     public static function matches(string $affectedVersionsRaw, string $version): ?bool
     {
-        $segments = array_filter(array_map(trim(...), explode(',', $affectedVersionsRaw)), static fn (string $s): bool => '' !== $s);
+        $segments = StringList::trimExplode(',', $affectedVersionsRaw);
 
         if ([] === $segments) {
             return null;

@@ -34,7 +34,7 @@ class SettingsController extends AbstractController
                 null !== $data['defaultHourlyRate'] ? (float) $data['defaultHourlyRate'] : null,
                 null !== $data['defaultManagementPercent'] ? (float) $data['defaultManagementPercent'] : null,
             );
-            $settings->setPackagistVendors(explode(',', (string) $data['packagistVendors']));
+            $settings->setPackagistVendors($data['packagistVendors']);
             $entityManager->persist($settings);
             $entityManager->flush();
             $this->addFlash('success', 'settings.saved');
