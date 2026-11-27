@@ -4,66 +4,41 @@ declare(strict_types=1);
 
 namespace App\Service\Craft;
 
+use App\Entity\AbstractPackagistVersion;
 use App\Entity\Craft\PluginVersion;
 use App\Entity\PackageType;
-use App\Entity\SitePackage;
 use App\Repository\Craft\PluginVersionRepository;
 use App\Repository\SitePackageRepository;
+use App\Service\AbstractPackagistVersionSynchronizer;
+use App\Service\PackagistApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Syncs the Packagist versions of every plugin a Craft site reports with a Composer name.
- * Packagist serves the p2 files from a CDN, so all plugins are synced in one run.
+ * The Packagist versions of the reported Craft plugins, with the Craft CMS versions they
+ * require (craftcms/cms).
+ *
+ * @extends AbstractPackagistVersionSynchronizer<PluginVersion>
  */
-class PluginVersionSynchronizer
+class PluginVersionSynchronizer extends AbstractPackagistVersionSynchronizer
 {
-    public function __construct(
-        private readonly PackagistApiClient $apiClient,
-        private readonly PluginVersionRepository $repository,
-        private readonly SitePackageRepository $sitePackageRepository,
-        private readonly EntityManagerInterface $entityManager,
-    ) {
+    // the concrete repository, for autowiring
+    public function __construct(PackagistApiClient $apiClient, PluginVersionRepository $versionRepository, SitePackageRepository $sitePackageRepository, EntityManagerInterface $entityManager)
+    {
+        parent::__construct($apiClient, $versionRepository, $sitePackageRepository, $entityManager);
     }
 
-    /**
-     * @return int number of plugins synced; plugins unknown to Packagist are left out
-     */
-    public function sync(): int
+    protected function packageType(): PackageType
     {
-        $packageNames = array_unique(array_filter(
-            array_map(static fn (SitePackage $package): ?string => $package->getComposerName(), $this->sitePackageRepository->findByPackageType(PackageType::CraftPlugin)),
-            is_string(...),
-        ));
-
-        $synced = 0;
-        foreach ($packageNames as $packageName) {
-            $versions = $this->apiClient->versions($packageName);
-            if (null === $versions) {
-                continue; // e.g. a private plugin: its versions stay unknown
-            }
-            $this->store($packageName, $versions);
-            ++$synced;
-        }
-        $this->entityManager->flush();
-
-        return $synced;
+        return PackageType::CraftPlugin;
     }
 
-    /**
-     * @param list<array{version: string, releaseDate: ?\DateTimeImmutable, craftConstraint: ?string}> $versions
-     */
-    private function store(string $packageName, array $versions): void
+    protected function create(string $packageName, array $data): PluginVersion
     {
-        $known = [];
-        foreach ($this->repository->findByPackageName($packageName) as $version) {
-            $known[$version->getVersion()] = $version;
-        }
-        foreach ($versions as ['version' => $version, 'releaseDate' => $releaseDate, 'craftConstraint' => $constraint]) {
-            if (isset($known[$version])) {
-                $known[$version]->update($releaseDate, $constraint);
-            } else {
-                $this->entityManager->persist(new PluginVersion($packageName, $version, $releaseDate, $constraint));
-            }
-        }
+        return new PluginVersion($packageName, $data['version'], $data['releaseDate'], $data['require']['craftcms/cms'] ?? null);
+    }
+
+    protected function update(AbstractPackagistVersion $known, array $data): void
+    {
+        $known->update($data['releaseDate'], $data['require']['craftcms/cms'] ?? null);
     }
 }

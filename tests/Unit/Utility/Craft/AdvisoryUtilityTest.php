@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service\Craft;
+namespace App\Tests\Unit\Utility\Craft;
 
 use App\Entity\Craft\Advisory;
-use App\Service\Craft\AdvisoryMatcher;
+use App\Utility\Craft\AdvisoryUtility;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class AdvisoryMatcherTest extends TestCase
+class AdvisoryUtilityTest extends TestCase
 {
     /**
      * @return iterable<string, array{string, ?string}>
@@ -30,20 +30,6 @@ class AdvisoryMatcherTest extends TestCase
             new Advisory('PKSA-critical', 'craftcms/cms', 'RCE', 'https://example.test/2', '>=5.0.0-RC1,<5.10.5', 'CVE-2026-1', 'critical'),
         ];
 
-        self::assertSame($expected, AdvisoryMatcher::mostSevere($advisories, $version)?->getAdvisoryId());
-    }
-
-    public function testRatesOnlyReleases(): void
-    {
-        self::assertTrue(AdvisoryMatcher::canRate('5.10.2'));
-        self::assertFalse(AdvisoryMatcher::canRate('dev-main'));
-        self::assertFalse(AdvisoryMatcher::canRate('not a version'));
-    }
-
-    public function testAMalformedConstraintIsUnknown(): void
-    {
-        self::assertTrue(AdvisoryMatcher::satisfies('5.8.0', '^5.0.0'));
-        self::assertFalse(AdvisoryMatcher::satisfies('5.8.0', '^4.0.0'));
-        self::assertNull(AdvisoryMatcher::satisfies('5.8.0', '>=5.0 <<5.4'));
+        self::assertSame($expected, AdvisoryUtility::mostSevere($advisories, $version)?->getAdvisoryId());
     }
 }

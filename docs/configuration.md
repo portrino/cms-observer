@@ -35,6 +35,7 @@ syncs. Each can also be run by hand, e.g. right after the installation:
 | `app:typo3:sync-core-releases` | every 6 hours | TYPO3 releases and their security/support status |
 | `app:typo3:sync-extension-advisories` | hourly | TYPO3 extension security advisories |
 | `app:typo3:sync-extension-versions` | every 15 minutes | TER versions of the reported extensions, 20 per run |
+| `app:typo3:sync-packagist-versions` | every 6 hours | Packagist versions of the reported TYPO3 packages |
 | `app:wordpress:sync-core-releases` | every 6 hours | WordPress releases and which are insecure |
 | `app:wordpress:sync-plugins` | every 15 minutes | wordpress.org versions of the reported plugins, 40 per run |
 | `app:wordpress:sync-themes` | every 6 hours | wordpress.org versions of the reported themes |

@@ -11,6 +11,15 @@ framework:
         # Debian/Ubuntu ship gc_probability = 0 and only clean session files by cron, never the database
         gc_probability: 1
 
+    http_client:
+        scoped_clients:
+            # Packagist (PackagistApiClient): responses are cached and revalidated with
+            # If-None-Match / If-Modified-Since, as Packagist asks of regular syncs
+            packagist.client:
+                scope: 'https://(repo\.)?packagist\.org/'
+                caching:
+                    enabled: true
+
     #esi: true
     #fragments: true
 

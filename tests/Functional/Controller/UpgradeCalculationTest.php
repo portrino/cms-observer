@@ -9,6 +9,7 @@ use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Typo3\CoreRelease as Typo3CoreRelease;
+use App\Entity\Typo3\PackagistVersion;
 use App\Entity\Typo3\ReleaseType;
 use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\UpgradeCalculation;
@@ -243,6 +244,30 @@ class UpgradeCalculationTest extends WebTestCase
         $this->createCalculation($site, 'JD');
         $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
         self::assertInputValueSame('upgrade_calculation_version[hourlyRate]', '100.00');
+    }
+
+    public function testTheAgencysOwnPublishedPackagesAreCustomPackages(): void
+    {
+        $crawler = $this->client->request('GET', '/settings');
+        $this->client->submit($crawler->selectButton('Save')->form(['agency_settings[packagistVendors]' => 'not a vendor!']));
+        self::assertSelectorTextContains('.invalid-feedback', 'Enter Composer vendor names like "portrino"');
+        $crawler = $this->client->submit($crawler->selectButton('Save')->form(['agency_settings[packagistVendors]' => ' Portrino ,acme']));
+        self::assertResponseRedirects('/settings');
+        $this->client->followRedirect();
+        self::assertInputValueSame('agency_settings[packagistVendors]', 'portrino, acme');
+
+        $site = $this->typo3Site();
+        $this->entityManager->persist(new SitePackage($site, 'px_dbsequencer', 'DB Sequencer', '1.0.0', true, 'portrino/px_dbsequencer'));
+        $this->entityManager->persist(new SitePackage($site, 'http2', 'HTTP/2', '4.1.0', true, 'b13/http2'));
+        $this->entityManager->persist(new PackagistVersion('portrino/px_dbsequencer', '1.0.0', null, [13]));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '4.1.0', null, [13, 14]));
+        $this->entityManager->flush();
+
+        $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
+
+        self::assertSelectorExists('#upgrade-own-packages input[value="portrino/px_dbsequencer"]', 'the agency upgrades it, though it is on Packagist');
+        self::assertSelectorExists('#upgrade-own-packages tr:has(input[value="portrino/px_dbsequencer"]) option[value="blocker"]:checked', 'judged by its versions all the same');
+        self::assertSelectorExists('#upgrade-packages input[value="b13/http2"]');
     }
 
     public function testShowsTheTimelineOfTheUpgrade(): void

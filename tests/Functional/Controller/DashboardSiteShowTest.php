@@ -12,6 +12,7 @@ use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\SiteReport;
+use App\Entity\Typo3\PackagistVersion;
 use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\Wordpress\PluginVersion;
 use App\Service\Craft\SitePackageEvaluator as CraftSitePackageEvaluator;
@@ -246,5 +247,33 @@ class DashboardSiteShowTest extends WebTestCase
         // the project list counts the same: no compatible update
         $client->request('GET', '/?q=Newer+Core+Site');
         self::assertSelectorExists('#projects-results .badge-count.text-bg-success');
+    }
+
+    public function testTheDetailsListPackagistVersionsTheTerLacks(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('site-packagist@example.test', 'Site Packagist', 'password'));
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $site = new Site('Packagist Site', CmsType::Typo3, 'https://packagist-site.test', 'hash-packagist-site');
+        $site->recordReport('13.4.20', '8.3.0', '10.11.0');
+        $entityManager->persist($site);
+        $entityManager->persist($package = new SitePackage($site, 'packagist_ext', 'Packagist Ext', '2.0.0', true, 'vendor/packagist-ext'));
+        $entityManager->persist(new TerExtensionVersion('packagist_ext', '2.0.0', 'Packagist Ext', false, null, null, 'stable', '13', null));
+        $entityManager->persist(new PackagistVersion('vendor/packagist-ext', '2.1.0', null, [13]));
+        $entityManager->persist(new PackagistVersion('vendor/packagist-ext', '3.0.0', null, [14]));
+        $entityManager->flush();
+        static::getContainer()->get(SitePackageTerEvaluator::class)->evaluateAll([$package]);
+        $entityManager->flush();
+
+        $crawler = $client->request('GET', '/projects/'.$site->getId());
+
+        self::assertResponseIsSuccessful();
+        $details = $crawler->filter('#packagesAccordion .accordion-collapse')->text();
+        self::assertStringContainsString('2.1.0', $details, 'only on Packagist, for the site\'s TYPO3');
+        self::assertStringNotContainsString('3.0.0', $details, 'needs TYPO3 14');
+        self::assertSelectorTextContains('#packagesAccordion .accordion-collapse tbody .badge', 'Packagist');
+        self::assertSelectorExists('.package-links a[href="https://packagist.org/packages/vendor/packagist-ext"]');
+        self::assertSelectorExists('#packagesAccordion [title="Outdated (2.1.0 available)"]');
     }
 }

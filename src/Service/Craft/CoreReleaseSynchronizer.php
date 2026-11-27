@@ -8,6 +8,8 @@ use App\Entity\Craft\CoreRelease;
 use App\Repository\Craft\AdvisoryRepository;
 use App\Repository\Craft\CoreReleaseRepository;
 use App\Repository\EndOfLifeReleaseRepository;
+use App\Service\PackagistApiClient;
+use App\Utility\Craft\AdvisoryUtility;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -72,7 +74,7 @@ class CoreReleaseSynchronizer
 
         foreach ($this->repository->findAll() as $release) {
             // a major endoflife.date doesn't list yet (e.g. right after its release) isn't end of life
-            $insecure = ($endOfLifeMajors[$release->getMajor()] ?? false) || null !== AdvisoryMatcher::mostSevere($advisories, $release->getVersion());
+            $insecure = ($endOfLifeMajors[$release->getMajor()] ?? false) || null !== AdvisoryUtility::mostSevere($advisories, $release->getVersion());
             $release->update($release->getLatestVersion(), $insecure);
         }
         $this->entityManager->flush();

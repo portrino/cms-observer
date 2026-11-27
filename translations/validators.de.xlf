@@ -18,6 +18,10 @@
         <source>The maximum must not be below the minimum.</source>
         <target>Das Maximum darf nicht unter dem Minimum liegen.</target>
       </trans-unit>
+      <trans-unit id="Enter Composer vendor names like &quot;portrino&quot;, separated by commas." resname="Enter Composer vendor names like &quot;portrino&quot;, separated by commas.">
+        <source>Enter Composer vendor names like "portrino", separated by commas.</source>
+        <target>Composer-Vendor-Namen wie „portrino“ eingeben, durch Komma getrennt.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

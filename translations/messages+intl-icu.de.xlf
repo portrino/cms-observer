@@ -442,6 +442,10 @@
         <source>package.no_composer_name</source>
         <target>Ohne Composer-Namen gemeldet, daher nicht mit Packagist abgeglichen.</target>
       </trans-unit>
+      <trans-unit id="package.packagist_only" resname="package.packagist_only">
+        <source>package.packagist_only</source>
+        <target>Nur bei Packagist, nicht im TER</target>
+      </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>
         <target>Keine neueren Versionen bekannt.</target>
@@ -1565,6 +1569,14 @@
       <trans-unit id="settings.field.management" resname="settings.field.management">
         <source>settings.field.management</source>
         <target>Standard-Projektmanagement (%)</target>
+      </trans-unit>
+      <trans-unit id="settings.field.vendors" resname="settings.field.vendors">
+        <source>settings.field.vendors</source>
+        <target>Agentur-Vendor auf Packagist</target>
+      </trans-unit>
+      <trans-unit id="settings.help.vendors" resname="settings.help.vendors">
+        <source>settings.help.vendors</source>
+        <target>Composer-Vendor der agentureigenen Pakete, z. B. „portrino“, mehrere durch Komma getrennt. Solche Pakete stehen in Upgrade-Kalkulationen unter „Eigene Pakete“, auch wenn sie auf Packagist veröffentlicht sind: Ihr Upgrade übernimmt die Agentur.</target>
       </trans-unit>
       <trans-unit id="profile.title" resname="profile.title">
         <source>profile.title</source>

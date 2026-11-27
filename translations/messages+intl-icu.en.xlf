@@ -442,6 +442,10 @@
         <source>package.no_composer_name</source>
         <target>Reported without a Composer name, so not checked against Packagist.</target>
       </trans-unit>
+      <trans-unit id="package.packagist_only" resname="package.packagist_only">
+        <source>package.packagist_only</source>
+        <target>Only on Packagist, not in the TER</target>
+      </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>
         <target>No newer versions known.</target>
@@ -1565,6 +1569,14 @@
       <trans-unit id="settings.field.management" resname="settings.field.management">
         <source>settings.field.management</source>
         <target>Default project management (%)</target>
+      </trans-unit>
+      <trans-unit id="settings.field.vendors" resname="settings.field.vendors">
+        <source>settings.field.vendors</source>
+        <target>Agency vendor name on Packagist</target>
+      </trans-unit>
+      <trans-unit id="settings.help.vendors" resname="settings.help.vendors">
+        <source>settings.help.vendors</source>
+        <target>Composer vendor of the agency's own packages, e.g. "portrino", several separated by commas. Upgrade calculations list such packages as custom packages, even when they are published on Packagist: their upgrade is the agency's work.</target>
       </trans-unit>
       <trans-unit id="profile.title" resname="profile.title">
         <source>profile.title</source>

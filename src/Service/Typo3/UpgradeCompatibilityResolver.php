@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Service\Typo3;
 
+use App\Dto\Typo3\ExtensionVersion;
 use App\Dto\UpgradeItem;
 use App\Dto\UpgradeSupportPhase;
+use App\Entity\AgencySettings;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Typo3\CoreRelease;
-use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
+use App\Repository\AgencySettingsRepository;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\CoreReleaseRepository;
-use App\Repository\Typo3\TerExtensionMetaRepository;
-use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Service\UpgradeCompatibilityResolver as CompatibilityResolver;
-use App\Service\UpgradeTargets;
+use App\Utility\VersionUtility;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
- * Judges TYPO3 extensions by the TYPO3 majors of their TER versions.
+ * Judges TYPO3 extensions by the TYPO3 majors of their TER and Packagist versions.
  */
 #[AsTaggedItem(index: 'typo3')]
 final readonly class UpgradeCompatibilityResolver implements CompatibilityResolver
@@ -29,15 +29,15 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     public function __construct(
         private SitePackageRepository $packageRepository,
         private CoreReleaseRepository $coreReleaseRepository,
-        private TerExtensionVersionRepository $terVersionRepository,
-        private TerExtensionMetaRepository $terMetaRepository,
+        private ExtensionVersionCatalog $versionCatalog,
+        private AgencySettingsRepository $agencySettingsRepository,
         private UpgradeNoteDrafter $noteDrafter,
     ) {
     }
 
     public function targetMajors(Site $site): array
     {
-        return UpgradeTargets::above(
+        return VersionUtility::majorsAbove(
             $site->getCurrentCoreVersion(),
             array_map(static fn (CoreRelease $release): int => $release->getMajor(), $this->coreReleaseRepository->findAll()),
         );
@@ -46,9 +46,10 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     public function packageItems(Site $site, int $targetMajor): array
     {
         $currentMajor = (int) $site->getCurrentCoreVersion();
+        $settings = $this->agencySettingsRepository->get();
 
         return array_map(
-            fn (SitePackage $package): UpgradeItem => $this->packageItem($package, $currentMajor, $targetMajor),
+            fn (SitePackage $package): UpgradeItem => $this->packageItem($package, $currentMajor, $targetMajor, $settings),
             $this->packageRepository->findBy(['site' => $site], ['name' => 'ASC']),
         );
     }
@@ -74,25 +75,28 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
         return $phases;
     }
 
-    private function packageItem(SitePackage $package, int $currentMajor, int $targetMajor): UpgradeItem
+    private function packageItem(SitePackage $package, int $currentMajor, int $targetMajor, AgencySettings $settings): UpgradeItem
     {
         $key = $package->getName();
         $installed = $package->getVersion();
-        $terVersions = $this->terVersionRepository->findBy(['extensionKey' => $key]);
+        $composerName = $this->versionCatalog->composerNameOf($key, $package->getComposerName());
+        $versions = $this->versionCatalog->versionsOf($key, $composerName);
+        // the agency's own packages are its work to upgrade, though published like third-party ones
+        $section = [] === $versions || $settings->isAgencyPackage($composerName) ? UpgradeSection::OwnPackages : UpgradeSection::Packages;
 
-        [$section, $status, $target] = match (true) {
-            // also a TER extension whose sync slot hasn't come up yet
-            [] === $terVersions => [UpgradeSection::OwnPackages, UpgradeItemStatus::Manual, null],
-            // e.g. "dev-main": can't be compared with TER versions
-            !UpgradeTargets::isRelease($installed) => [UpgradeSection::Packages, UpgradeItemStatus::Manual, null],
-            default => [UpgradeSection::Packages, ...$this->judgeRelease($key, $installed, $terVersions, $currentMajor, $targetMajor)],
+        [$status, $target] = match (true) {
+            // neither in the TER nor on Packagist; also a package whose sync hasn't come up yet
+            [] === $versions => [UpgradeItemStatus::Manual, null],
+            // e.g. "dev-main": can't be compared with released versions
+            !VersionUtility::isRelease($installed) => [UpgradeItemStatus::Manual, null],
+            default => self::judgeRelease($installed, $versions, $currentMajor, $targetMajor),
         };
 
-        $note = $this->noteDrafter->draft($status, $installed, $target, $terVersions, $targetMajor);
+        $note = $this->noteDrafter->draft($status, $installed, $target, $versions, $targetMajor);
 
         return new UpgradeItem(
             $section,
-            $package->getComposerName() ?? $this->composerNameFromTer($key) ?? $key,
+            $composerName ?? $key,
             $key,
             $package->getPackageType(),
             $installed,
@@ -106,34 +110,31 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
     }
 
     /**
-     * The to-do for an installed TER release, and the version to update to.
+     * The to-do for an installed release, and the version to update to.
      *
-     * @param list<TerExtensionVersion> $terVersions
+     * @param non-empty-list<ExtensionVersion> $versions newest first, from the TER and Packagist
      *
      * @return array{UpgradeItemStatus, ?string}
      */
-    private function judgeRelease(string $key, string $installed, array $terVersions, int $currentMajor, int $targetMajor): array
+    private static function judgeRelease(string $installed, array $versions, int $currentMajor, int $targetMajor): array
     {
         // newest first, so the last one is the lowest version to update to
-        $forTarget = $this->terVersionRepository->findNewerCompatibleWith($key, $installed, $targetMajor);
-        $installedMajors = $this->terVersionRepository->findOneByExtensionKeyAndVersion($key, $installed)?->getTypo3MajorVersions() ?? [];
-        if (in_array($targetMajor, $installedMajors, true)) {
+        $forTarget = array_values(array_filter($versions, static fn (ExtensionVersion $v): bool => version_compare($v->version, $installed, '>') && $v->supports($targetMajor)));
+        if (true === array_find($versions, static fn (ExtensionVersion $v): bool => $v->version === $installed)?->supports($targetMajor)) {
             // already compatible: the newest version for the target major, if there's a newer one
-            return [UpgradeItemStatus::Compatible, ($forTarget[0] ?? null)?->getVersion() ?? $installed];
+            return [UpgradeItemStatus::Compatible, [] !== $forTarget ? $forTarget[0]->version : $installed];
         }
 
-        $forBoth = array_filter($forTarget, static fn (TerExtensionVersion $v): bool => in_array($currentMajor, $v->getTypo3MajorVersions(), true));
+        $forBoth = array_filter($forTarget, static fn (ExtensionVersion $v): bool => $v->supports($currentMajor));
         if ([] !== $forBoth) {
-            return [UpgradeItemStatus::UpdateFirst, end($forBoth)->getVersion()];
+            return [UpgradeItemStatus::UpdateFirst, end($forBoth)->version];
         }
         if ([] !== $forTarget) {
-            return [UpgradeItemStatus::Update, end($forTarget)->getVersion()];
+            return [UpgradeItemStatus::Update, end($forTarget)->version];
         }
 
-        $newest = array_reduce($terVersions, static fn (?TerExtensionVersion $carry, TerExtensionVersion $v): TerExtensionVersion => null === $carry || version_compare($v->getVersion(), $carry->getVersion(), '>') ? $v : $carry);
-
         // without TYPO3 versions on the newest release there's nothing to judge by
-        return [[] === $newest?->getTypo3MajorVersions() ? UpgradeItemStatus::Manual : UpgradeItemStatus::Blocker, null];
+        return [[] === $versions[0]->typo3MajorVersions ? UpgradeItemStatus::Manual : UpgradeItemStatus::Blocker, null];
     }
 
     /**
@@ -164,13 +165,5 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
                 array_filter($releases, static fn (CoreRelease $r): bool => str_ends_with($r->getVersion(), '.0') && (null === $lts || $r->getReleaseDate() < $lts)),
             )),
         );
-    }
-
-    /** For reports without composer names, e.g. from older clients: "georgringer/news" from TER's Packagist link */
-    private function composerNameFromTer(string $key): ?string
-    {
-        $url = $this->terMetaRepository->findOneByExtensionKey($key)?->getPackagistUrl();
-
-        return null !== $url && 1 === preg_match('~/packages/([^/]+/[^/?#]+)~', $url, $match) ? $match[1] : null;
     }
 }

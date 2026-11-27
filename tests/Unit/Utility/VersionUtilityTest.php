@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Utility;
 
-use App\Service\PackageVersion;
+use App\Utility\VersionUtility;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class PackageVersionTest extends TestCase
+class VersionUtilityTest extends TestCase
 {
     /**
      * @return iterable<string, array{string, string}>
@@ -26,6 +26,6 @@ class PackageVersionTest extends TestCase
     #[DataProvider('versions')]
     public function testStripsTheVPrefix(string $reported, string $expected): void
     {
-        self::assertSame($expected, PackageVersion::normalize($reported));
+        self::assertSame($expected, VersionUtility::normalizePackageVersion($reported));
     }
 }

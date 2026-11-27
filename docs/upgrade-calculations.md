@@ -20,12 +20,16 @@ target major and **Start**.
   calculation; the two sums always show in the reader's language.
 - **Third-party packages**: packages the Observer has release data for. For
   TYPO3 each extension gets the lowest version for the target major from the
-  TER and a to-do: compatible, update before the core (a version supports
+  TER and Packagist and a to-do: compatible, update before the core (a version supports
   both majors, e.g. in the monthly maintenance), update with the core,
   show-stopper (no version for the target yet) or check manually.
   "Replace" and "Remove" are set by hand. WordPress packages are checked
   manually for now.
-- **Custom packages**: packages without release data, e.g. a site package.
+- **Custom packages**: packages without release data, e.g. a site package,
+  and the agency's own packages even when published: their Composer vendor
+  is one of the **Agency vendor names on Packagist** in **Settings** (user
+  menu), e.g. `portrino`. They are judged by their versions like
+  third-party packages, but their upgrade is the agency's work.
 - **Optional**: work offered separately, with its own sum.
 - **Notes** per row, with a color: green (compatible or simple update),
   yellow (migration or manual changes needed), red (no compatible version

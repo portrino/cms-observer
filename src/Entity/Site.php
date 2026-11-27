@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SiteRepository;
+use App\Utility\StringUtility;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -200,7 +201,7 @@ class Site implements UserInterface
      */
     public function getReportedDomains(): array
     {
-        return null !== $this->reportedDomains ? explode(',', $this->reportedDomains) : [];
+        return StringUtility::trimExplode(',', $this->reportedDomains);
     }
 
     /**

@@ -11,7 +11,7 @@ use App\Repository\EndOfLifeReleaseRepository;
 use App\Repository\SitePackageRepository;
 use App\Service\Craft\AdvisorySynchronizer;
 use App\Service\Craft\CoreReleaseSynchronizer;
-use App\Service\Craft\PackagistApiClient;
+use App\Service\PackagistApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;

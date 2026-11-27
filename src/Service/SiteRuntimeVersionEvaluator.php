@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\EndOfLifeRelease;
 use App\Entity\Site;
 use App\Repository\EndOfLifeReleaseRepository;
+use App\Utility\VersionUtility;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
@@ -80,7 +81,7 @@ class SiteRuntimeVersionEvaluator
 
         $wasInsecure = $site->isDbInsecure();
         // Rows stored before the platform was recorded hold the raw version, normalize() handles both
-        [$product, $plainVersion] = DbVersionNormalizer::normalize($site->getCurrentDbPlatform(), $version);
+        [$product, $plainVersion] = VersionUtility::normalizeDbVersion($site->getCurrentDbPlatform(), $version);
         $release = $this->releaseRepository->findOneByProductAndCycle($product, $this->cycleOf($plainVersion, $product));
 
         if (null === $release) {

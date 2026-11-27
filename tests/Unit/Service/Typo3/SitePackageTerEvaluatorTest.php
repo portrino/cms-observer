@@ -7,14 +7,18 @@ namespace App\Tests\Unit\Service\Typo3;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
+use App\Entity\Typo3\PackagistVersion;
 use App\Entity\Typo3\TerExtensionVersion;
 use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
+use App\Repository\Typo3\PackagistVersionRepository;
+use App\Repository\Typo3\TerExtensionMetaRepository;
 use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
+use App\Service\Typo3\ExtensionVersionCatalog;
 use App\Service\Typo3\SitePackageTerEvaluator;
 use PHPUnit\Framework\TestCase;
 
@@ -88,6 +92,34 @@ class SitePackageTerEvaluatorTest extends TestCase
         self::assertTrue($package->isInsecure());
     }
 
+    /**
+     * b13/http2: the TER stopped at 3.0.0 for TYPO3 12 and 13, Packagist has 4.x for TYPO3 14.
+     */
+    public function testPackagistVersionsTheTerLacksCountToo(): void
+    {
+        $package = $this->evaluate('3.0.0', [['3.0.0', '12,13']], [['v4.0.0', [14]], ['4.1.0', [14]], ['3.0.0', [12, 13]]]);
+
+        self::assertFalse($package->isOutdated(), 'nothing newer for TYPO3 13');
+        self::assertSame('14', $package->getNewerCoreVersion());
+        self::assertSame('4.1.0', $package->getNewerCorePackageVersion());
+    }
+
+    public function testAVersionInBothTakesItsMajorsFromPackagist(): void
+    {
+        // the TER claims TYPO3 13 for 2.0.0, but its composer.json requires 12 only
+        $package = $this->evaluate('1.0.0', [['1.0.0', '12,13'], ['2.0.0', '12,13']], [['2.0.0', [12]]]);
+
+        self::assertFalse($package->isOutdated());
+    }
+
+    public function testAPackageOnlyOnPackagistIsRated(): void
+    {
+        $package = $this->evaluate('1.0.0', [], [['1.0.0', [13]], ['1.1.0', [13]]]);
+
+        self::assertTrue($package->isOutdated());
+        self::assertSame('1.1.0', $package->getLatestVersion());
+    }
+
     public function testUnsyncedExtensionsStayUnknown(): void
     {
         $package = $this->evaluate('8.3.1', []);
@@ -96,13 +128,14 @@ class SitePackageTerEvaluatorTest extends TestCase
     }
 
     /**
-     * @param list<array{0: string, 1: string, 2?: bool}> $versions version, TYPO3 majors, insecure
+     * @param list<array{0: string, 1: string, 2?: bool}> $versions          version, TYPO3 majors, insecure
+     * @param list<array{0: string, 1: list<int>}>        $packagistVersions version, TYPO3 majors
      */
-    private function evaluate(string $installed, array $versions): SitePackage
+    private function evaluate(string $installed, array $versions, array $packagistVersions = []): SitePackage
     {
         $site = new Site('Example', CmsType::Typo3, 'https://example.test', 'token-hash');
         $site->recordReport('13.4.20', '8.3.0', '10.11.0');
-        $package = new SitePackage($site, 'typo3_console', 'TYPO3 Console', $installed, true);
+        $package = new SitePackage($site, 'typo3_console', 'TYPO3 Console', $installed, true, 'vendor/typo3-console');
 
         $entities = array_map(
             static fn (array $v): TerExtensionVersion => new TerExtensionVersion(
@@ -124,7 +157,13 @@ class SitePackageTerEvaluatorTest extends TestCase
             static fn (string $key, string $version): ?TerExtensionVersion => array_find($entities, static fn (TerExtensionVersion $v): bool => $v->getVersion() === $version),
         );
 
-        $resolver = new PackageUpdateResolver($versionRepository, self::createStub(PluginVersionRepository::class), self::createStub(PluginInfoRepository::class), self::createStub(ThemeInfoRepository::class), self::createStub(CraftPluginVersionRepository::class));
+        $packagistRepository = self::createStub(PackagistVersionRepository::class);
+        $packagistRepository->method('findByPackageName')->willReturn(array_map(
+            static fn (array $v): PackagistVersion => new PackagistVersion('vendor/typo3-console', $v[0], null, $v[1]),
+            $packagistVersions,
+        ));
+
+        $resolver = new PackageUpdateResolver(new ExtensionVersionCatalog($versionRepository, $packagistRepository, self::createStub(TerExtensionMetaRepository::class)), self::createStub(PluginVersionRepository::class), self::createStub(PluginInfoRepository::class), self::createStub(ThemeInfoRepository::class), self::createStub(CraftPluginVersionRepository::class));
         new SitePackageTerEvaluator($versionRepository, $resolver, self::createStub(SecurityNotifier::class))->evaluateAll([$package]);
 
         return $package;

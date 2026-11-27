@@ -14,6 +14,7 @@ use App\Entity\SitePackage;
 use App\Entity\SiteReport;
 use App\Repository\SitePackageRepository;
 use App\Repository\SiteReportRepository;
+use App\Utility\VersionUtility;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -58,7 +59,7 @@ class SiteReportIngestor
         ];
 
         // The raw dbVersion (up to ~40 chars on TYPO3 12) is only kept in the payload
-        [$dbPlatform, $dbVersion] = DbVersionNormalizer::normalize($request->dbPlatform, $request->dbVersion);
+        [$dbPlatform, $dbVersion] = VersionUtility::normalizeDbVersion($request->dbPlatform, $request->dbVersion);
         // likewise the raw PHP version: a build suffix ("8.3.37-nmm1") would sort before the plain release
         $phpVersion = 1 === preg_match('/^\d+(?:\.\d+)*/', trim($request->phpVersion), $matches) ? $matches[0] : $request->phpVersion;
 
@@ -185,7 +186,7 @@ class SiteReportIngestor
      */
     private function savePackage(Site $site, ?SitePackage $known, PackageReport $reported, PackageType $packageType, bool $recordEvents): SitePackage
     {
-        $version = PackageVersion::normalize($reported->version);
+        $version = VersionUtility::normalizePackageVersion($reported->version);
 
         if (null !== $known) {
             if ($recordEvents) {

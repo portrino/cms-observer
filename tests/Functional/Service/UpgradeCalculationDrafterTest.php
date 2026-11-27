@@ -9,6 +9,7 @@ use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Typo3\CoreRelease;
+use App\Entity\Typo3\PackagistVersion;
 use App\Entity\Typo3\ReleaseType;
 use App\Entity\Typo3\TerExtensionMeta;
 use App\Entity\Typo3\TerExtensionVersion;
@@ -103,6 +104,31 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
             null,
         ], $notes['compatible_outdated'], 'only the comments that mention breaking changes, on one line');
         self::assertSame([null, null, null, null], $notes['no_data'], 'nothing to judge by');
+    }
+
+    /**
+     * b13/http2: the TER stopped at 3.0.0 for TYPO3 12 and 13, Packagist has 4.x for TYPO3 14.
+     */
+    public function testPackagistVersionsTheTerLacksAreUpdatesToo(): void
+    {
+        $site = $this->site(CmsType::Typo3, '13.4.20', []);
+        $this->entityManager->persist(new SitePackage($site, 'http2', 'HTTP/2', '3.0.0', true, 'b13/http2'));
+        $this->entityManager->persist(new SitePackage($site, 'packagist_only', 'Packagist only', '1.0.0', true, 'vendor/packagist-only'));
+        $this->terVersions('http2', ['3.0.0' => '12, 13']);
+        foreach ([['b13/http2', '3.0.0', [12, 13]], ['b13/http2', '4.0.0', [14]], ['b13/http2', '4.1.0', [14]], ['vendor/packagist-only', '1.0.0', [13, 14]]] as [$name, $version, $majors]) {
+            $this->entityManager->persist(new PackagistVersion($name, $version, null, $majors));
+        }
+        $this->entityManager->flush();
+
+        $items = [];
+        foreach (static::getContainer()->get(UpgradeCalculationDrafter::class)->draft($site, 14) as $item) {
+            if (null !== $item->package) {
+                $items[$item->package] = [$item->section, $item->status, $item->targetVersion, $item->noteLevel];
+            }
+        }
+
+        self::assertSame([UpgradeSection::Packages, UpgradeItemStatus::Update, '4.0.0', UpgradeNoteLevel::Warning], $items['http2'], 'with the core, a new major of the package');
+        self::assertSame([UpgradeSection::Packages, UpgradeItemStatus::Compatible, '1.0.0', UpgradeNoteLevel::Success], $items['packagist_only'], 'a third-party package, though not in the TER');
     }
 
     public function testTargetsAreTheKnownMajorsAboveTheCurrentOne(): void

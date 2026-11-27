@@ -8,6 +8,7 @@ use App\Entity\SitePackage;
 use App\Entity\Typo3\ExtensionAdvisory;
 use App\Repository\Typo3\ExtensionAdvisoryRepository;
 use App\Service\SecurityNotifier;
+use App\Utility\Typo3\ExtensionUtility;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
@@ -28,7 +29,7 @@ class SitePackageAdvisoryEvaluator
         $previousAdvisory = $package->getMatchedAdvisory();
         $matched = array_find(
             $this->advisoryRepository->findByExtensionKey($package->getName()),
-            fn (ExtensionAdvisory $advisory): bool => true === AffectedVersionRangeMatcher::matches($advisory->getAffectedVersionsRaw(), $package->getVersion()),
+            fn (ExtensionAdvisory $advisory): bool => true === ExtensionUtility::matchesAffectedVersions($advisory->getAffectedVersionsRaw(), $package->getVersion()),
         );
 
         $package->setMatchedAdvisory($matched);
