@@ -8,6 +8,7 @@ use App\Entity\Craft\CoreRelease;
 use App\Repository\Craft\AdvisoryRepository;
 use App\Repository\Craft\CoreReleaseRepository;
 use App\Repository\EndOfLifeReleaseRepository;
+use App\Service\PackagistApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**

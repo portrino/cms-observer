@@ -6,6 +6,7 @@ namespace App\Service\Craft;
 
 use App\Entity\SitePackage;
 use App\Repository\Craft\AdvisoryRepository;
+use App\Service\ComposerVersion;
 use App\Service\PackageUpdate;
 use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
@@ -34,7 +35,7 @@ class SitePackageEvaluator
         $wasInsecure = $package->isInsecure();
 
         $advisory = null !== $composerName ? AdvisoryMatcher::mostSevere($this->advisoryRepository->findByPackageName($composerName), $package->getVersion()) : null;
-        $insecure = null !== $composerName && AdvisoryMatcher::canRate($package->getVersion()) && $this->areAdvisoriesSynced() ? null !== $advisory : null;
+        $insecure = null !== $composerName && ComposerVersion::canRate($package->getVersion()) && $this->areAdvisoriesSynced() ? null !== $advisory : null;
 
         $package->setVersionStatus($insecure, null, null);
         $package->setMatchedCraftAdvisory($advisory);

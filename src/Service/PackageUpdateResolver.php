@@ -12,7 +12,6 @@ use App\Repository\Typo3\TerExtensionVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
-use App\Service\Craft\AdvisoryMatcher;
 
 /**
  * The one rule for "is there an update?": a package is outdated only when a newer
@@ -178,6 +177,6 @@ class PackageUpdateResolver
         }
 
         // a constraint Composer can't parse says nothing against installing it
-        return AdvisoryMatcher::satisfies($coreVersion, $version->getCraftConstraint()) ?? true;
+        return ComposerVersion::satisfies($coreVersion, $version->getCraftConstraint()) ?? true;
     }
 }

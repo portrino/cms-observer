@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service\Craft;
+namespace App\Tests\Unit\Service;
 
-use App\Service\Craft\PackagistApiClient;
+use App\Service\PackagistApiClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
 class PackagistApiClientTest extends TestCase
 {
-    private const string FIXTURES = __DIR__.'/../../../Fixtures/Packagist/';
+    private const string FIXTURES = __DIR__.'/../../Fixtures/Packagist/';
 
     /** @var list<array{url: string, headers: list<string>}> */
     private array $requests = [];
@@ -23,10 +23,10 @@ class PackagistApiClientTest extends TestCase
         self::assertNotNull($versions);
         $byVersion = array_column($versions, null, 'version');
         self::assertSame('5.1.24', $versions[0]['version']);
-        self::assertSame('^5.0.0', $byVersion['5.1.24']['craftConstraint']);
+        self::assertSame('^5.0.0', $byVersion['5.1.24']['require']['craftcms/cms']);
         // 5.1.23 lists no "require" of its own: it inherits the one of 5.1.24
-        self::assertSame('^5.0.0', $byVersion['5.1.23']['craftConstraint']);
-        self::assertSame('^4.0.0', $byVersion['4.1.23']['craftConstraint']);
+        self::assertSame('^5.0.0', $byVersion['5.1.23']['require']['craftcms/cms']);
+        self::assertSame('^4.0.0', $byVersion['4.1.23']['require']['craftcms/cms']);
         self::assertArrayNotHasKey('5.0.0-beta.8', $byVersion);
         self::assertInstanceOf(\DateTimeImmutable::class, $byVersion['5.1.24']['releaseDate']);
         self::assertSame('https://repo.packagist.org/p2/nystudio107/craft-seomatic.json', $this->requests[0]['url']);

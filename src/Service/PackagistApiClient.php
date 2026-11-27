@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Craft;
+namespace App\Service;
 
 use Composer\Semver\VersionParser;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -12,6 +12,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * Versions and security advisories of Composer packages from Packagist
  * (https://packagist.org/apidoc). Packagist asks API users for a User-Agent with
  * a contact address, at most a few parallel requests and no jobs at the full hour.
+ * The packagist.client (config/packages/framework.yaml) caches the responses and
+ * revalidates them with If-None-Match / If-Modified-Since, so an unchanged p2 file
+ * costs a 304 only.
  */
 class PackagistApiClient
 {
@@ -19,7 +22,7 @@ class PackagistApiClient
     private const int ADVISORY_PACKAGES_PER_REQUEST = 50;
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
+        private readonly HttpClientInterface $packagistClient,
         #[Autowire(env: 'DEFAULT_URI')]
         private readonly string $observerUrl,
         #[Autowire(env: 'PACKAGIST_CONTACT_EMAIL')]
@@ -28,15 +31,13 @@ class PackagistApiClient
     }
 
     /**
-     * Stable versions of a package, newest first, with the Craft CMS version they require.
+     * Stable versions of a package, newest first, with the packages they require.
      *
-     * @return list<array{version: string, releaseDate: ?\DateTimeImmutable, craftConstraint: ?string}>|null null if Packagist doesn't know the package
+     * @return list<array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>}>|null null if Packagist doesn't know the package
      */
     public function versions(string $packageName): ?array
     {
-        // shortcut: fetches the whole p2 file every run (gzip: ~80 KB core, ~25 KB per plugin) instead of
-        // If-Modified-Since with a stored Last-Modified; upgrade at hundreds of plugins or shorter sync intervals
-        $response = $this->httpClient->request('GET', 'https://repo.packagist.org/p2/'.$packageName.'.json', ['headers' => $this->headers()]);
+        $response = $this->packagistClient->request('GET', 'https://repo.packagist.org/p2/'.$packageName.'.json', ['headers' => $this->headers()]);
         if (404 === $response->getStatusCode()) {
             return null;
         }
@@ -47,7 +48,7 @@ class PackagistApiClient
     /**
      * @param array<string, mixed> $data one expanded version of a p2 file
      *
-     * @return array{version: string, releaseDate: ?\DateTimeImmutable, craftConstraint: ?string}|null null for a pre-release or dev version
+     * @return array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>}|null null for a pre-release or dev version
      */
     private static function stableVersion(array $data): ?array
     {
@@ -60,7 +61,7 @@ class PackagistApiClient
         return [
             'version' => $version,
             'releaseDate' => is_string($data['time'] ?? null) ? new \DateTimeImmutable($data['time']) : null,
-            'craftConstraint' => is_string($require['craftcms/cms'] ?? null) ? $require['craftcms/cms'] : null,
+            'require' => array_filter($require, static fn (mixed $constraint, mixed $package): bool => is_string($package) && is_string($constraint), ARRAY_FILTER_USE_BOTH),
         ];
     }
 
@@ -75,7 +76,7 @@ class PackagistApiClient
     {
         $advisories = [];
         foreach (array_chunk(array_values(array_unique($packageNames)), self::ADVISORY_PACKAGES_PER_REQUEST) as $chunk) {
-            $response = $this->httpClient->request('GET', 'https://packagist.org/api/security-advisories/', [
+            $response = $this->packagistClient->request('GET', 'https://packagist.org/api/security-advisories/', [
                 'headers' => $this->headers(),
                 'query' => ['packages' => $chunk],
             ]);

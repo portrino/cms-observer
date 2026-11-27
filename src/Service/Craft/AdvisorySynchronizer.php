@@ -9,6 +9,7 @@ use App\Entity\PackageType;
 use App\Entity\SitePackage;
 use App\Repository\Craft\AdvisoryRepository;
 use App\Repository\SitePackageRepository;
+use App\Service\PackagistApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
