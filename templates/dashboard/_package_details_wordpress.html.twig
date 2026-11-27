@@ -17,6 +17,7 @@
 {% if details.newerVersions is empty %}
     <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
 {% else %}
+    {% if not details.updateForCore %}{{ m.no_update_for_core(package.site) }}{% endif %}
     <div class="table-responsive">
     <table class="table table-sm table-hover mb-0">
         <thead>
@@ -31,7 +32,7 @@
         {% for version in details.newerVersions %}
             {% set state = details.versionStates[version.version] %}
             {% set isLatest = version.version == details.latestVersion %}
-            <tr class="{{ state.insecure ? 'row-insecure' : (isLatest ? 'row-latest' : 'row-secure') }}">
+            <tr class="{{ m.version_row_class(state, isLatest) }}">
                 <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(state.insecure, isLatest) }}</td>
                 <td>—</td>
                 <td class="text-nowrap">{{ version.releaseDate ? version.releaseDate|format_date('medium') : '—' }}</td>

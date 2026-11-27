@@ -58,8 +58,21 @@
    a plain "^5.3.0" shows as "5.3+", any other constraint as it is. #}
 {% macro craft_requires_badge(constraint, compatible) %}
     {%- set label = constraint matches '/^\\^\\d+\\.\\d+(\\.\\d+)?$/' ? constraint|slice(1)|split('.')|slice(0, 2)|join('.') ~ '+' : constraint -%}
-    <span class="badge text-bg-{{ compatible is same as(true) ? 'success' : 'neutral' }}"
-        {%- if compatible is same as(true) %} data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.craft.requires'|trans({constraint: constraint}) }}: {{ 'badge.craft.compatible'|trans }}"{% endif %}>{{ label }}</span>
+    {%- set style = compatible is same as(true) ? ['success', 'badge.craft.compatible'|trans]
+        : (compatible is same as(false) ? ['warning', 'badge.craft.needs_newer'|trans] : ['neutral', null]) -%}
+    <span class="badge text-bg-{{ style[0] }}"
+        {%- if style[1] %} data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'badge.craft.requires'|trans({constraint: constraint}) }}: {{ style[1] }}"{% endif %}>{{ label }}</span>
+{%- endmacro %}
+
+{# Row of a version table: insecure red, the latest that installs on the site's core green,
+   one for a newer core muted, as only an upgrade of the core makes it installable #}
+{% macro version_row_class(state, isLatest) -%}
+    {{ state.insecure ? 'row-insecure' : (isLatest ? 'row-latest' : 'row-secure') }}{{ state.compatible is same as(false) ? ' row-newer-core' }}
+{%- endmacro %}
+
+{# Above a version table whose newer versions all need a newer core #}
+{% macro no_update_for_core(site) %}
+    <div class="alert alert-info py-2" role="status">{{ 'package.no_update_for_core'|trans({cms: site.type.label, version: site.currentCoreVersion}) }}</div>
 {%- endmacro %}
 
 {# Wordfence/MITRE license terms: their copyright notices (and a link to the record) must accompany the data.

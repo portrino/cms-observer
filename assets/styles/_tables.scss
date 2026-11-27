@@ -27,6 +27,11 @@
     --bs-table-bg: #{$gray-100};
 }
 
+// A version that needs a newer core: shown for planning the upgrade, but not installable yet
+.row-newer-core > td {
+    color: var(--bs-secondary-color);
+}
+
 // Compact release/version tables in the detail page accordions: room between
 // the accent bar and the first column's text.
 .accordion-body .table-sm > :not(caption) > * > :first-child {

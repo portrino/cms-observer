@@ -446,6 +446,10 @@
         <source>package.packagist_only</source>
         <target>Nur bei Packagist, nicht im TER</target>
       </trans-unit>
+      <trans-unit id="package.no_update_for_core" resname="package.no_update_for_core">
+        <source>package.no_update_for_core</source>
+        <target>Keine neuere Version für {cms} {version} bekannt. Die neueren Versionen unten benötigen einen neueren Core.</target>
+      </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>
         <target>Keine neueren Versionen bekannt.</target>
@@ -493,6 +497,10 @@
       <trans-unit id="badge.craft.requires" resname="badge.craft.requires">
         <source>badge.craft.requires</source>
         <target>Benötigt Craft CMS {constraint}</target>
+      </trans-unit>
+      <trans-unit id="badge.craft.needs_newer" resname="badge.craft.needs_newer">
+        <source>badge.craft.needs_newer</source>
+        <target>benötigt ein neueres Craft CMS</target>
       </trans-unit>
       <trans-unit id="badge.craft.compatible" resname="badge.craft.compatible">
         <source>badge.craft.compatible</source>

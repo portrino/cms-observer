@@ -80,7 +80,10 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertAnySelectorTextContains('.accordion-body', 'Stored XSS in SEOmatic');
         $details = $client->getCrawler()->filter('.accordion-body table')->text();
         self::assertStringContainsString('5.2.0', $details);
-        self::assertStringNotContainsString('6.0.0', $details, 'needs a newer Craft CMS');
+        // shown for planning the upgrade, muted: it needs a newer Craft CMS
+        self::assertSelectorExists('.accordion-body tr.row-newer-core .version-number:contains("6.0.0")');
+        self::assertSelectorExists('.accordion-body tr.row-latest .version-number:contains("5.2.0")');
+        self::assertSelectorNotExists('.accordion-body .alert-info', 'a newer version installs on the site\'s Craft CMS');
 
         // no upgrade calculations for Craft yet: not drafted with another CMS's resolver
         $client->request('GET', '/projects/'.$site->getId().'/calculations');
@@ -149,7 +152,7 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertSelectorNotExists('.alert-warning');
     }
 
-    public function testWordpressPluginVersionsNeedingANewerWordpressAreHidden(): void
+    public function testWordpressPluginVersionsNeedingANewerWordpressAreMuted(): void
     {
         $client = static::createClient([], ['HTTPS' => 'on']);
         $client->loginUser($this->createUser('site-show@example.test', 'Site Show', 'password'));
@@ -172,7 +175,8 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertSelectorExists('.version-number:contains("1.1.0")');
         // unknown "requires": shown, it may well run
         self::assertSelectorExists('.version-number:contains("1.2.0")');
-        self::assertSelectorNotExists('.version-number:contains("2.0.0")');
+        self::assertSelectorExists('tr.row-newer-core .version-number:contains("2.0.0")');
+        self::assertSelectorExists('tr.row-latest .version-number:contains("1.2.0")', 'the latest one that installs');
         self::assertSelectorTextContains('#packagesAccordion .accordion-button', 'Outdated (1.2.0 available)');
         self::assertSelectorTextContains('#packagesAccordion .accordion-button', 'WordPress 6.6 compatible version (2.0.0)');
     }
@@ -271,9 +275,37 @@ class DashboardSiteShowTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $details = $crawler->filter('#packagesAccordion .accordion-collapse')->text();
         self::assertStringContainsString('2.1.0', $details, 'only on Packagist, for the site\'s TYPO3');
-        self::assertStringNotContainsString('3.0.0', $details, 'needs TYPO3 14');
+        self::assertSelectorExists('#packagesAccordion tr.row-newer-core .version-number:contains("3.0.0")', 'needs TYPO3 14, muted');
         self::assertSelectorTextContains('#packagesAccordion .accordion-collapse tbody .badge', 'Packagist');
         self::assertSelectorExists('.package-links a[href="https://packagist.org/packages/vendor/packagist-ext"]');
         self::assertSelectorExists('#packagesAccordion [title="Outdated (2.1.0 available)"]');
+    }
+
+    /**
+     * b13/http2 3.0.0 on TYPO3 13: the newer versions all need TYPO3 14.
+     */
+    public function testNewerVersionsForANewerCoreOnlyAreListedBelowAHint(): void
+    {
+        $client = static::createClient([], ['HTTPS' => 'on']);
+        $client->loginUser($this->createUser('site-core-hint@example.test', 'Site Core Hint', 'password'));
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $site = new Site('Core Hint Site', CmsType::Typo3, 'https://core-hint.test', 'hash-core-hint');
+        $site->recordReport('13.4.20', '8.3.0', '10.11.0');
+        $entityManager->persist($site);
+        $entityManager->persist($package = new SitePackage($site, 'http2', 'HTTP/2', '3.0.0', true, 'b13/http2'));
+        $entityManager->persist(new PackagistVersion('b13/http2', '3.0.0', null, [12, 13]));
+        $entityManager->persist(new PackagistVersion('b13/http2', '4.1.0', null, [14]));
+        $entityManager->flush();
+        static::getContainer()->get(SitePackageTerEvaluator::class)->evaluateAll([$package]);
+        $entityManager->flush();
+
+        $client->request('GET', '/projects/'.$site->getId());
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#packagesAccordion .alert-info', 'No newer version known for TYPO3 13.4.20.');
+        self::assertSelectorExists('#packagesAccordion tr.row-newer-core .version-number:contains("4.1.0")');
+        self::assertSelectorNotExists('#packagesAccordion tr.row-latest', 'nothing installs on TYPO3 13');
+        self::assertSelectorTextNotContains('#packagesAccordion .accordion-body', 'No newer versions known');
     }
 }

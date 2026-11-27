@@ -12,6 +12,7 @@
 {% if details.newerVersions is empty %}
     <p class="text-muted mb-0">{{ 'package.no_newer'|trans }}</p>
 {% else %}
+    {% if not details.updateForCore %}{{ m.no_update_for_core(package.site) }}{% endif %}
     <div class="table-responsive">
     <table class="table table-sm table-hover mb-0">
         <thead>
@@ -23,11 +24,11 @@
             </tr>
         </thead>
         <tbody>
-        {# newest first and already limited to the site's TYPO3 major #}
-        {% set latestVersion = details.newerVersions|filter(v => v.insecure is not same as(true))|first %}
         {% for version in details.newerVersions %}
-            <tr class="{{ version.insecure ? 'row-insecure' : (version is same as(latestVersion) ? 'row-latest' : 'row-secure') }}">
-                <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}
+            {% set state = details.versionStates[version.version] %}
+            {% set isLatest = version.version == details.latestVersion %}
+            <tr class="{{ m.version_row_class(state, isLatest) }}">
+                <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(state.insecure, isLatest) }}
                     {%- if not version.inTer %} <span class="badge text-bg-neutral ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'package.packagist_only'|trans }}">Packagist</span>{% endif %}</td>
                 <td class="text-break">{{ version.uploadComment ?? '—' }}</td>
                 <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|format_date('medium') : '—' }}</td>

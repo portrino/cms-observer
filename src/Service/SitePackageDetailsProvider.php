@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Dto\Typo3\ExtensionVersion;
 use App\Entity\CmsType;
-use App\Entity\Craft\PluginVersion as CraftPluginVersion;
 use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\SitePackage;
@@ -67,7 +66,7 @@ class SitePackageDetailsProvider
     {
         if (PackageType::WordpressTheme === $package->getPackageType()) {
             // no theme versions or info synced, and the plugin data of the same slug isn't this theme's
-            return ['wordpressPluginInfo' => null, 'newerVersions' => [], 'versionStates' => [], 'latestVersion' => null];
+            return ['wordpressPluginInfo' => null] + self::versionTable([], []);
         }
 
         $vulnerabilities = array_filter(
@@ -75,60 +74,42 @@ class SitePackageDetailsProvider
             static fn (PluginVulnerability $v): bool => !$v->isInformational(),
         );
 
-        // like the TER versions: only what installs on the site's WordPress, unknown "requires" stays
-        $newerVersions = [];
+        // every newer version, also those for a newer WordPress; an unknown "requires" counts as installable
+        $newerVersions = array_values($this->wordpressPluginVersionRepository->findNewerThan($package->getName(), $package->getVersion()));
         $versionStates = [];
-        foreach ($this->wordpressPluginVersionRepository->findNewerThan($package->getName(), $package->getVersion()) as $version) {
-            $compatible = null !== $coreVersion && null !== $version->getRequiresWpVersion()
-                ? version_compare($coreVersion, $version->getRequiresWpVersion(), '>=')
-                : null;
-            if (false === $compatible) {
-                continue;
-            }
-
-            $newerVersions[] = $version;
+        foreach ($newerVersions as $version) {
             $versionStates[$version->getVersion()] = [
                 'insecure' => [] !== array_filter($vulnerabilities, static fn (PluginVulnerability $v): bool => $v->affects($version->getVersion())),
-                'compatible' => $compatible,
+                'compatible' => null !== $coreVersion && null !== $version->getRequiresWpVersion()
+                    ? version_compare($coreVersion, $version->getRequiresWpVersion(), '>=')
+                    : null,
             ];
         }
 
-        return [
-            'wordpressPluginInfo' => $this->wordpressPluginInfoRepository->findOneBySlug($package->getName()),
-            'newerVersions' => $newerVersions,
-            'versionStates' => $versionStates,
-            // newest first: the first version without a known vulnerability
-            'latestVersion' => array_find_key($versionStates, static fn (array $state): bool => !$state['insecure']),
-        ];
+        return ['wordpressPluginInfo' => $this->wordpressPluginInfoRepository->findOneBySlug($package->getName())]
+            + self::versionTable($newerVersions, $versionStates);
     }
 
     /**
-     * Like WordPress: only the newer versions that install on the site's Craft.
+     * Like WordPress: every newer version, also those for a newer Craft CMS.
      *
      * @return array<string, mixed>
      */
     private function craftDetails(SitePackage $package, ?string $coreVersion): array
     {
         $composerName = $package->getComposerName();
-        $newer = null !== $composerName ? $this->craftPluginVersionRepository->findNewerThan($composerName, $package->getVersion()) ?? [] : [];
-        $newerVersions = array_values(array_filter($newer, static fn (CraftPluginVersion $v): bool => PackageUpdateResolver::installsOnCraft($v, $coreVersion)));
+        $newerVersions = null !== $composerName ? $this->craftPluginVersionRepository->findNewerThan($composerName, $package->getVersion()) ?? [] : [];
         $advisories = null !== $composerName ? $this->craftAdvisoryRepository->findByPackageName($composerName) : [];
 
         $versionStates = [];
         foreach ($newerVersions as $version) {
             $versionStates[$version->getVersion()] = [
                 'insecure' => null !== AdvisoryUtility::mostSevere($advisories, $version->getVersion()),
-                // only versions that install are listed, so known means compatible
-                'compatible' => null !== $coreVersion && null !== $version->getCraftConstraint() ? true : null,
+                'compatible' => null !== $coreVersion && null !== $version->getCraftConstraint() ? PackageUpdateResolver::installsOnCraft($version, $coreVersion) : null,
             ];
         }
 
-        return [
-            'newerVersions' => $newerVersions,
-            'versionStates' => $versionStates,
-            // newest first: the first version without a known advisory
-            'latestVersion' => array_find_key($versionStates, static fn (array $state): bool => !$state['insecure']),
-        ];
+        return self::versionTable($newerVersions, $versionStates);
     }
 
     /**
@@ -139,17 +120,47 @@ class SitePackageDetailsProvider
         $cached = $this->terVersionRepository->findOneByExtensionKeyAndVersion($package->getName(), $package->getVersion());
         $meta = $this->terMetaRepository->findOneByExtensionKey($package->getName());
 
+        // from the TER and Packagist, also those for a newer TYPO3
+        $newerVersions = array_values(array_filter(
+            $this->typo3VersionCatalog->versionsOf($package->getName(), $package->getComposerName()),
+            static fn (ExtensionVersion $v): bool => version_compare($v->version, $package->getVersion(), '>'),
+        ));
+        $versionStates = [];
+        foreach ($newerVersions as $version) {
+            $versionStates[$version->version] = [
+                'insecure' => $version->insecure,
+                'compatible' => null === $coreVersion || [] === $version->typo3MajorVersions ? null : $version->supports((int) explode('.', $coreVersion)[0]),
+            ];
+        }
+
         return [
             'description' => $cached?->getDescription(),
             'packagistUrl' => $meta?->getPackagistUrl() ?? (null !== $package->getComposerName() ? 'https://packagist.org/packages/'.$package->getComposerName() : null),
             'repositoryUrl' => $meta?->getRepositoryUrl(),
             'manualUrl' => $meta?->getManualUrl(),
-            // from the TER and Packagist, only what installs on the site's TYPO3 if it's known
-            'newerVersions' => array_values(array_filter(
-                $this->typo3VersionCatalog->versionsOf($package->getName(), $package->getComposerName()),
-                static fn (ExtensionVersion $v): bool => version_compare($v->version, $package->getVersion(), '>')
-                    && (null === $coreVersion || $v->supports((int) explode('.', $coreVersion)[0])),
-            )),
+        ] + self::versionTable($newerVersions, $versionStates);
+    }
+
+    /**
+     * The version table of the package details: every newer version, newest first, each with
+     * whether it's insecure and whether it installs on the site's core (null when unknown).
+     *
+     * @param list<object>                                            $newerVersions
+     * @param array<string, array{insecure: bool, compatible: ?bool}> $versionStates by version
+     *
+     * @return array{newerVersions: list<object>, versionStates: array<string, array{insecure: bool, compatible: ?bool}>, latestVersion: ?string, updateForCore: bool}
+     */
+    private static function versionTable(array $newerVersions, array $versionStates): array
+    {
+        $installable = array_filter($versionStates, static fn (array $state): bool => false !== $state['compatible']);
+
+        return [
+            'newerVersions' => $newerVersions,
+            'versionStates' => $versionStates,
+            // newest first: the first that installs on the site's core without a known vulnerability
+            'latestVersion' => array_find_key($installable, static fn (array $state): bool => !$state['insecure']),
+            // false: newer versions exist, but all need a newer core
+            'updateForCore' => [] !== $installable,
         ];
     }
 }
