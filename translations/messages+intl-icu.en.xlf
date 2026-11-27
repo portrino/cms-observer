@@ -442,6 +442,10 @@
         <source>package.no_composer_name</source>
         <target>Reported without a Composer name, so not checked against Packagist.</target>
       </trans-unit>
+      <trans-unit id="package.packagist_only" resname="package.packagist_only">
+        <source>package.packagist_only</source>
+        <target>Only on Packagist, not in the TER</target>
+      </trans-unit>
       <trans-unit id="package.no_newer" resname="package.no_newer">
         <source>package.no_newer</source>
         <target>No newer versions known.</target>

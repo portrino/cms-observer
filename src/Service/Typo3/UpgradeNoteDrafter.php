@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Typo3;
 
-use App\Entity\Typo3\TerExtensionVersion;
+use App\Dto\Typo3\ExtensionVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeNoteLevel;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,29 +26,29 @@ final readonly class UpgradeNoteDrafter
     }
 
     /**
-     * @param list<TerExtensionVersion> $terVersions all versions of the extension
+     * @param list<ExtensionVersion> $versions all versions of the extension
      *
      * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float}
      */
-    public function draft(UpgradeItemStatus $status, string $installed, ?string $target, array $terVersions, int $targetMajor): array
+    public function draft(UpgradeItemStatus $status, string $installed, ?string $target, array $versions, int $targetMajor): array
     {
         return match ($status) {
             UpgradeItemStatus::Blocker => self::note(UpgradeNoteLevel::Danger, $this->translator->trans('calculation.note.no_compatible', ['major' => $targetMajor])),
             UpgradeItemStatus::Compatible, UpgradeItemStatus::UpdateFirst, UpgradeItemStatus::Update => null === $target || $target === $installed
                 ? self::note(UpgradeNoteLevel::Success, $this->translator->trans('calculation.note.latest'), 0.0)
-                : $this->updateNote($installed, $target, $terVersions),
+                : $this->updateNote($installed, $target, $versions),
             default => self::note(null, null),
         };
     }
 
     /**
-     * @param list<TerExtensionVersion> $terVersions
+     * @param list<ExtensionVersion> $versions
      *
      * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float}
      */
-    private function updateNote(string $installed, string $target, array $terVersions): array
+    private function updateNote(string $installed, string $target, array $versions): array
     {
-        $breaking = $this->breakingComments($installed, $target, $terVersions);
+        $breaking = $this->breakingComments($installed, $target, $versions);
         $range = ['installed' => $installed, 'target' => $target];
 
         if ([] !== $breaking) {
@@ -65,21 +65,21 @@ final readonly class UpgradeNoteDrafter
     /**
      * Upload comments that mention breaking changes, of the versions after the installed one up to the target.
      *
-     * @param list<TerExtensionVersion> $terVersions
+     * @param list<ExtensionVersion> $versions
      *
      * @return list<string> Markdown list items, oldest first
      */
-    private function breakingComments(string $installed, string $target, array $terVersions): array
+    private function breakingComments(string $installed, string $target, array $versions): array
     {
-        $crossed = array_filter($terVersions, static fn (TerExtensionVersion $v): bool => version_compare($v->getVersion(), $installed, '>')
-            && version_compare($v->getVersion(), $target, '<=')
-            && 1 === preg_match(self::BREAKING, (string) $v->getUploadComment()));
-        usort($crossed, static fn (TerExtensionVersion $a, TerExtensionVersion $b): int => version_compare($a->getVersion(), $b->getVersion()));
+        $crossed = array_filter($versions, static fn (ExtensionVersion $v): bool => version_compare($v->version, $installed, '>')
+            && version_compare($v->version, $target, '<=')
+            && 1 === preg_match(self::BREAKING, (string) $v->uploadComment));
+        usort($crossed, static fn (ExtensionVersion $a, ExtensionVersion $b): int => version_compare($a->version, $b->version));
 
-        return array_map(static function (TerExtensionVersion $v): string {
-            $comment = trim((string) preg_replace('/\s+/', ' ', (string) $v->getUploadComment()));
+        return array_map(static function (ExtensionVersion $v): string {
+            $comment = trim((string) preg_replace('/\s+/', ' ', (string) $v->uploadComment));
 
-            return sprintf('- **%s**: %s', $v->getVersion(), mb_strlen($comment) > self::COMMENT_LENGTH ? mb_substr($comment, 0, self::COMMENT_LENGTH - 1).'…' : $comment);
+            return sprintf('- **%s**: %s', $v->version, mb_strlen($comment) > self::COMMENT_LENGTH ? mb_substr($comment, 0, self::COMMENT_LENGTH - 1).'…' : $comment);
         }, $crossed);
     }
 

@@ -37,7 +37,7 @@ abstract class AbstractPackagistVersionSynchronizer
     public function sync(): int
     {
         $packageNames = array_unique(array_filter(
-            array_map(static fn (SitePackage $package): ?string => $package->getComposerName(), $this->sitePackageRepository->findByPackageType($this->packageType())),
+            array_map($this->composerName(...), $this->sitePackageRepository->findByPackageType($this->packageType())),
             is_string(...),
         ));
 
@@ -56,6 +56,12 @@ abstract class AbstractPackagistVersionSynchronizer
     }
 
     abstract protected function packageType(): PackageType;
+
+    /** The name to look a reported package up by on Packagist */
+    protected function composerName(SitePackage $package): ?string
+    {
+        return $package->getComposerName();
+    }
 
     /**
      * @param array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>} $data

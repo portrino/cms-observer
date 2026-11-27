@@ -6,6 +6,7 @@ namespace App\Service\Typo3;
 
 use App\Entity\AbstractPackagistVersion;
 use App\Entity\PackageType;
+use App\Entity\SitePackage;
 use App\Entity\Typo3\PackagistVersion;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\CoreReleaseRepository;
@@ -32,6 +33,7 @@ class PackagistVersionSynchronizer extends AbstractPackagistVersionSynchronizer
         SitePackageRepository $sitePackageRepository,
         EntityManagerInterface $entityManager,
         private readonly CoreReleaseRepository $coreReleaseRepository,
+        private readonly ExtensionVersionCatalog $versionCatalog,
     ) {
         parent::__construct($apiClient, $versionRepository, $sitePackageRepository, $entityManager);
     }
@@ -47,6 +49,12 @@ class PackagistVersionSynchronizer extends AbstractPackagistVersionSynchronizer
     protected function packageType(): PackageType
     {
         return PackageType::Typo3CmsExtension;
+    }
+
+    // older clients report no Composer name, the TER's Packagist link has it
+    protected function composerName(SitePackage $package): ?string
+    {
+        return $this->versionCatalog->composerNameOf($package->getName(), $package->getComposerName());
     }
 
     protected function create(string $packageName, array $data): PackagistVersion

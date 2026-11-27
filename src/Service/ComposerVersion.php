@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Composer\Semver\Constraint\Constraint;
-use Composer\Semver\Semver;
+use Composer\Semver\Constraint\ConstraintInterface;
 use Composer\Semver\VersionParser;
 
 /**
@@ -30,11 +30,13 @@ final class ComposerVersion
      */
     public static function satisfies(string $version, string $constraint): ?bool
     {
-        try {
-            return Semver::satisfies($version, $constraint);
-        } catch (\UnexpectedValueException) {
+        $parser = new VersionParser();
+        $parsed = self::parse($constraint);
+        if (null === $parsed || !$parser->isValid($version)) {
             return null; // the callers treat it as unknown
         }
+
+        return $parsed->matches(new Constraint('==', $parser->normalize($version)));
     }
 
     /**
@@ -43,12 +45,18 @@ final class ComposerVersion
      */
     public static function admitsMajor(string $constraint, int $major): bool
     {
-        $parser = new VersionParser();
-        $majorRange = $parser->parseConstraints(sprintf('>=%d.0.0.0-dev <%d.0.0.0-dev', $major, $major + 1));
+        $majorRange = new VersionParser()->parseConstraints(sprintf('>=%d.0.0.0-dev <%d.0.0.0-dev', $major, $major + 1));
+
+        // nothing to install by
+        return self::parse($constraint)?->matches($majorRange) ?? false;
+    }
+
+    private static function parse(string $constraint): ?ConstraintInterface
+    {
         try {
-            return $parser->parseConstraints($constraint)->matches($majorRange);
+            return new VersionParser()->parseConstraints($constraint);
         } catch (\UnexpectedValueException) {
-            return false; // nothing to install by
+            return null; // a malformed constraint, each caller decides what that means
         }
     }
 }

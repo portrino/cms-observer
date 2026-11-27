@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\Typo3\ExtensionVersion;
 use App\Entity\CmsType;
 use App\Entity\Craft\PluginVersion as CraftPluginVersion;
 use App\Entity\PackageType;
@@ -18,6 +19,7 @@ use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\PluginVulnerabilityRepository;
 use App\Service\Craft\AdvisoryMatcher;
+use App\Service\Typo3\ExtensionVersionCatalog;
 
 /**
  * The per-package details of a project's detail page: newer versions with
@@ -28,6 +30,7 @@ class SitePackageDetailsProvider
     public function __construct(
         private readonly TerExtensionVersionRepository $terVersionRepository,
         private readonly TerExtensionMetaRepository $terMetaRepository,
+        private readonly ExtensionVersionCatalog $typo3VersionCatalog,
         private readonly PluginInfoRepository $wordpressPluginInfoRepository,
         private readonly PluginVersionRepository $wordpressPluginVersionRepository,
         private readonly PluginVulnerabilityRepository $wordpressVulnerabilityRepository,
@@ -138,12 +141,15 @@ class SitePackageDetailsProvider
 
         return [
             'description' => $cached?->getDescription(),
-            'packagistUrl' => $meta?->getPackagistUrl(),
+            'packagistUrl' => $meta?->getPackagistUrl() ?? (null !== $package->getComposerName() ? 'https://packagist.org/packages/'.$package->getComposerName() : null),
             'repositoryUrl' => $meta?->getRepositoryUrl(),
             'manualUrl' => $meta?->getManualUrl(),
-            'newerVersions' => null !== $coreVersion
-                ? $this->terVersionRepository->findNewerCompatibleWith($package->getName(), $package->getVersion(), (int) explode('.', $coreVersion)[0])
-                : $this->terVersionRepository->findNewerThan($package->getName(), $package->getVersion()),
+            // from the TER and Packagist, only what installs on the site's TYPO3 if it's known
+            'newerVersions' => array_values(array_filter(
+                $this->typo3VersionCatalog->versionsOf($package->getName(), $package->getComposerName()),
+                static fn (ExtensionVersion $v): bool => version_compare($v->version, $package->getVersion(), '>')
+                    && (null === $coreVersion || $v->supports((int) explode('.', $coreVersion)[0])),
+            )),
         ];
     }
 }

@@ -27,7 +27,8 @@
         {% set latestVersion = details.newerVersions|filter(v => v.insecure is not same as(true))|first %}
         {% for version in details.newerVersions %}
             <tr class="{{ version.insecure ? 'row-insecure' : (version is same as(latestVersion) ? 'row-latest' : 'row-secure') }}">
-                <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}</td>
+                <td class="text-nowrap"><span class="version-number">{{ version.version }}</span>{{ m.version_flag(version.insecure, version is same as(latestVersion)) }}
+                    {%- if not version.inTer %} <span class="badge text-bg-neutral ms-2" data-controller="tooltip" data-bs-toggle="tooltip" title="{{ 'package.packagist_only'|trans }}">Packagist</span>{% endif %}</td>
                 <td class="text-break">{{ version.uploadComment ?? '—' }}</td>
                 <td class="text-nowrap">{{ version.uploadDate ? version.uploadDate|format_date('medium') : '—' }}</td>
                 <td class="text-nowrap">
