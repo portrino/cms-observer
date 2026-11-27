@@ -75,7 +75,7 @@ class BreakingCommitSynchronizer
         return null === $commits ? null : array_values(array_filter(
             $commits,
             // a merge commit repeats the subject of the commit it merges
-            static fn (array $commit): bool => !str_starts_with($commit['subject'], 'Merge ') && ExtensionUtility::mentionsBreakingChange($commit['subject']),
+            static fn (array $commit): bool => !str_starts_with($commit['subject'], 'Merge ') && ExtensionUtility::marksBreakingCommit($commit['subject']),
         ));
     }
 

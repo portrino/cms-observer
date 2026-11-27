@@ -16,6 +16,13 @@ final class ExtensionUtility
     /** TYPO3's "!!!" commit prefix (also as "[!!!]") and the usual words for a breaking change */
     private const string BREAKING_CHANGE = '/!!!|breaking|incompatib|inkompatib/i';
 
+    /**
+     * In a commit subject only the markers: "!!!" (TYPO3), "BREAKING CHANGE" and "feat!:"
+     * (Conventional Commits); "breaking" alone also stands in "non-breaking" or "respect a
+     * breaking change of the core".
+     */
+    private const string BREAKING_COMMIT = '/!!!|BREAKING[ -]CHANGE|^\w+(\([^)]*\))?!:/';
+
     /** the core of TYPO3 8 and older as one package */
     private const string LEGACY_CORE = 'typo3/cms';
 
@@ -54,10 +61,16 @@ final class ExtensionUtility
         )));
     }
 
-    /** Whether a changelog line or commit message mentions a breaking change */
+    /** Whether a changelog text, e.g. a TER upload comment, mentions a breaking change */
     public static function mentionsBreakingChange(?string $text): bool
     {
         return 1 === preg_match(self::BREAKING_CHANGE, (string) $text);
+    }
+
+    /** Whether a commit subject marks the commit as a breaking change */
+    public static function marksBreakingCommit(string $subject): bool
+    {
+        return 1 === preg_match(self::BREAKING_COMMIT, $subject);
     }
 
     /**

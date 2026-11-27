@@ -25,9 +25,12 @@ The commits between two versions are read from GitHub, optionally:
 - A sync (`app:typo3:sync-breaking-commits`, hourly, a batch per run)
   compares each Packagist version of a reported TYPO3 package with its
   previous version, for the versions newer than the oldest installed
-  one, and stores the commits whose subject mentions a breaking change
-  ("!!!", "breaking", "incompatible"). Commits between two versions
-  never change, so each version is checked once.
+  one, and stores the commits whose subject marks a breaking change:
+  "!!!" (TYPO3's convention, also "[!!!]"), "BREAKING CHANGE" and
+  "feat!:" (Conventional Commits). The word "breaking" alone doesn't
+  count in a commit, it also stands in "non-breaking". Commits between
+  two versions never change, so each version is checked once; one GitHub
+  can't compare stays unknown and isn't asked for again.
 - It needs `GITHUB_API_TOKEN`: a token without any permissions
   (public repositories, read-only), as GitHub allows 60 requests an
   hour without one. Without a token the sync is skipped.
