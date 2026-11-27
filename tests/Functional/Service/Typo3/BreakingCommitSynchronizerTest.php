@@ -61,10 +61,19 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
 
     public function testARateLimitLeavesTheRestUnchecked(): void
     {
-        $synchronizer = $this->synchronizer(new MockHttpClient(new MockResponse('', ['http_code' => 403]), 'https://api.github.com/'));
+        $synchronizer = $this->synchronizer(new MockHttpClient(new MockResponse('', ['http_code' => 403, 'response_headers' => ['x-ratelimit-remaining' => '0']]), 'https://api.github.com/'));
 
         self::assertSame(0, $synchronizer->sync());
         self::assertNull($this->breakingCommits()['4.0.0']);
+    }
+
+    public function testAPairGitHubCantCompareStaysUnknownButIsntAskedAgain(): void
+    {
+        $synchronizer = $this->synchronizer(new MockHttpClient(static fn (): MockResponse => new MockResponse('', ['http_code' => 404]), 'https://api.github.com/'));
+
+        self::assertSame(2, $synchronizer->sync());
+        self::assertSame(0, $synchronizer->sync(), 'not asked again');
+        self::assertNull($this->breakingCommits()['4.0.0'], 'unknown, not "nothing breaking"');
     }
 
     public function testWithoutATokenNothingIsRead(): void

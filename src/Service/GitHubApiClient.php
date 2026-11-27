@@ -39,29 +39,29 @@ class GitHubApiClient
     /**
      * The commits after $base up to $head, oldest first, with their first line.
      *
-     * shortcut: the first page only, up to 250 commits, which is plenty between two releases;
-     * page through "Link" headers if a package releases more than that at once.
+     * shortcut: GitHub lists up to 250 commits without paging, which is plenty between two
+     * releases; page through "Link" headers if a package releases more than that at once.
      *
-     * @return list<array{sha: string, subject: string, url: string}> empty also when GitHub
-     *                                                                doesn't know the repository or commits
+     * @return list<array{sha: string, subject: string, url: string}>|null null when GitHub can't
+     *                                                                     compare them, e.g. a deleted repository or a moved tag
      *
      * @throws GitHubRateLimitException when GitHub declines further requests for now
      */
-    public function commitsBetween(string $repository, string $base, string $head): array
+    public function commitsBetween(string $repository, string $base, string $head): ?array
     {
         $response = $this->githubClient->request('GET', sprintf('repos/%s/compare/%s...%s', $repository, $base, $head), [
             'headers' => [
                 'User-Agent' => sprintf('CMS Observer (+%s)', $this->observerUrl),
                 'Authorization' => 'Bearer '.trim($this->token),
             ],
-            'query' => ['per_page' => 250],
         ]);
         $status = $response->getStatusCode();
-        if (403 === $status || 429 === $status) {
+        $headers = $response->getHeaders(false);
+        if (in_array($status, [403, 429], true) && ('0' === ($headers['x-ratelimit-remaining'][0] ?? null) || isset($headers['retry-after']))) {
             throw new GitHubRateLimitException(sprintf('GitHub answered %d for %s', $status, $repository));
         }
-        if (404 === $status || 422 === $status) {
-            return []; // a repository or commit GitHub doesn't know (anymore): nothing to read
+        if (in_array($status, [403, 404, 422], true)) {
+            return null; // this pair only: e.g. a deleted or blocked repository, an unknown commit
         }
 
         $commits = $response->toArray()['commits'] ?? [];

@@ -27,6 +27,10 @@ class PackagistVersion extends AbstractPackagistVersion
     #[ORM\Column(nullable: true)]
     private ?array $breakingCommits = null;
 
+    // GitHub couldn't compare it, e.g. a deleted repository or a moved tag: not checked again
+    #[ORM\Column(options: ['default' => false])]
+    private bool $commitsUnreadable = false;
+
     /**
      * @param list<int>|null $typo3Majors null when the version requires no core package
      */
@@ -53,7 +57,9 @@ class PackagistVersion extends AbstractPackagistVersion
         $this->setReleaseDate($releaseDate);
         $this->typo3Majors = $typo3Majors;
         if ($sourceReference !== $this->sourceReference) {
-            $this->breakingCommits = null; // a moved tag: its commits are checked anew
+            // a moved tag: its commits are checked anew
+            $this->breakingCommits = null;
+            $this->commitsUnreadable = false;
         }
         $this->sourceUrl = $sourceUrl;
         $this->sourceReference = $sourceReference;
@@ -67,8 +73,20 @@ class PackagistVersion extends AbstractPackagistVersion
         $this->breakingCommits = $commits;
     }
 
+    /** Its commits couldn't be read: still unknown, but not asked for again */
+    public function recordUnreadableCommits(): void
+    {
+        $this->commitsUnreadable = true;
+    }
+
+    /** Whether the sync is done with it, whatever it found */
+    public function areCommitsRead(): bool
+    {
+        return null !== $this->breakingCommits || $this->commitsUnreadable;
+    }
+
     /**
-     * @return list<array{sha: string, subject: string, url: string}>|null null until checked
+     * @return list<array{sha: string, subject: string, url: string}>|null null until checked, and when unreadable
      */
     public function getBreakingCommits(): ?array
     {

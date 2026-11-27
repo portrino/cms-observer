@@ -50,25 +50,30 @@ class BreakingCommitSynchronizer
                 if ($checked >= self::MAX_VERSIONS_PER_RUN) {
                     break; // the next run goes on
                 }
-                $version->recordBreakingCommits($this->breakingCommits($repository, $previous, $version));
+                $commits = $this->breakingCommits($repository, $previous, $version);
+                null === $commits ? $version->recordUnreadableCommits() : $version->recordBreakingCommits($commits);
                 ++$checked;
             }
         } catch (GitHubRateLimitException $e) {
             // the versions not checked yet stay unchecked, the next run goes on
             $this->logger->warning('Stopped reading commits from GitHub: {message}', ['message' => $e->getMessage()]);
+        } finally {
+            // also when e.g. an expired token (401) fails the run: what was read is kept
+            $this->entityManager->flush();
         }
-        $this->entityManager->flush();
 
         return $checked;
     }
 
     /**
-     * @return list<array{sha: string, subject: string, url: string}>
+     * @return list<array{sha: string, subject: string, url: string}>|null null when GitHub can't compare them
      */
-    private function breakingCommits(string $repository, PackagistVersion $previous, PackagistVersion $version): array
+    private function breakingCommits(string $repository, PackagistVersion $previous, PackagistVersion $version): ?array
     {
-        return array_values(array_filter(
-            $this->gitHub->commitsBetween($repository, (string) $previous->getSourceReference(), (string) $version->getSourceReference()),
+        $commits = $this->gitHub->commitsBetween($repository, (string) $previous->getSourceReference(), (string) $version->getSourceReference());
+
+        return null === $commits ? null : array_values(array_filter(
+            $commits,
             // a merge commit repeats the subject of the commit it merges
             static fn (array $commit): bool => !str_starts_with($commit['subject'], 'Merge ') && ExtensionUtility::mentionsBreakingChange($commit['subject']),
         ));
@@ -114,7 +119,7 @@ class BreakingCommitSynchronizer
         $previous = null;
         foreach ($versions as $version) {
             $repository = GitHubApiClient::repositoryOf($version->getSourceUrl());
-            if (null !== $previous && null === $version->getBreakingCommits() && null !== $repository
+            if (null !== $previous && !$version->areCommitsRead() && null !== $repository
                 && null !== $previous->getSourceReference() && null !== $version->getSourceReference()
                 && version_compare(ltrim($version->getVersion(), 'vV'), $installed, '>')) {
                 yield [$previous, $version, $repository];

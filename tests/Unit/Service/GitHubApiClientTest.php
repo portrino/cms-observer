@@ -54,16 +54,26 @@ class GitHubApiClientTest extends TestCase
         self::assertContains('Authorization: Bearer secret-token', $requests[0]['headers']);
     }
 
-    public function testAnUnknownRepositoryHasNoCommits(): void
+    public function testWhatGitHubCantCompareIsUnreadableNotEmpty(): void
     {
-        $client = new GitHubApiClient(new MockHttpClient(new MockResponse('', ['http_code' => 404])), 'https://observer.example.com', 'secret-token');
+        foreach ([404, 422, 403] as $status) {
+            $client = new GitHubApiClient(new MockHttpClient(new MockResponse('', ['http_code' => $status])), 'https://observer.example.com', 'secret-token');
 
-        self::assertSame([], $client->commitsBetween('vendor/gone', 'a', 'b'));
+            self::assertNull($client->commitsBetween('vendor/gone', 'a', 'b'), "HTTP {$status}, e.g. a 403 for a blocked repository");
+        }
     }
 
     public function testARateLimitStopsTheCaller(): void
     {
-        $client = new GitHubApiClient(new MockHttpClient(new MockResponse('', ['http_code' => 403])), 'https://observer.example.com', 'secret-token');
+        $client = new GitHubApiClient(new MockHttpClient(new MockResponse('', ['http_code' => 403, 'response_headers' => ['x-ratelimit-remaining' => '0']])), 'https://observer.example.com', 'secret-token');
+
+        $this->expectException(GitHubRateLimitException::class);
+        $client->commitsBetween('b13/http2', 'a', 'b');
+    }
+
+    public function testASecondaryRateLimitStopsTheCallerToo(): void
+    {
+        $client = new GitHubApiClient(new MockHttpClient(new MockResponse('', ['http_code' => 429, 'response_headers' => ['retry-after' => '60']])), 'https://observer.example.com', 'secret-token');
 
         $this->expectException(GitHubRateLimitException::class);
         $client->commitsBetween('b13/http2', 'a', 'b');
