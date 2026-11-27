@@ -35,6 +35,13 @@ target major and **Start**.
   yellow (migration or manual changes needed), red (no compatible version
   yet). Notes, the calculation notes in the head and the remarks below the
   totals are written in Markdown.
+  For TYPO3 a package row starts with a note and color: 0 hours and green
+  when the latest compatible version is installed, red without a version
+  for the target major, else the update with what its changelog says. The
+  changelog is the TER upload comments of the versions crossed and, with
+  `GITHUB_API_TOKEN` set, their commits on GitHub marked "!!!" (ADR-0007);
+  a new major of the package is yellow too. Refreshing a calculation
+  judges the rows anew whose versions or to-do changed.
 
 Efforts are entered as minimum and maximum hours. Prices are calculated with
 the maximum; the range is only shown on screen as a hint that a row was hard

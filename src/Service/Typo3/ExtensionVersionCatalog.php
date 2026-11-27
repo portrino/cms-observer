@@ -78,6 +78,7 @@ class ExtensionVersionCatalog
             $ter?->getUploadDate() ?? $packagist?->getReleaseDate(),
             null !== $ter,
             null !== $packagist,
+            $packagist?->getBreakingCommits(),
         );
     }
 }

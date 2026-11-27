@@ -1508,7 +1508,11 @@
       </trans-unit>
       <trans-unit id="calculation.note.update" resname="calculation.note.update">
         <source>calculation.note.update</source>
-        <target>Update {installed} → {target}, laut TER-Changelog ohne Breaking Changes</target>
+        <target>Update {installed} → {target}, laut Changelog ohne Breaking Changes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.update_unchecked" resname="calculation.note.update_unchecked">
+        <source>calculation.note.update_unchecked</source>
+        <target>Update {installed} → {target}, nicht für jede Version ist ein Changelog bekannt</target>
       </trans-unit>
       <trans-unit id="calculation.note.major_update" resname="calculation.note.major_update">
         <source>calculation.note.major_update</source>
@@ -1516,7 +1520,7 @@
       </trans-unit>
       <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
         <source>calculation.note.breaking</source>
-        <target>Update {installed} → {target}, Breaking Changes laut TER-Changelog:</target>
+        <target>Update {installed} → {target}, Breaking Changes laut Changelog:</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

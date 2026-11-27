@@ -7,18 +7,16 @@ namespace App\Service\Typo3;
 use App\Dto\Typo3\ExtensionVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeNoteLevel;
+use App\Utility\Typo3\ExtensionUtility;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The notes, their color and hours a TYPO3 package row starts with: done for the latest
- * compatible version, a hint at breaking changes from the TER upload comments of the
- * versions to update across, red without a version for the target major.
+ * compatible version, a hint at breaking changes from the TER upload comments and the GitHub
+ * commits of the versions to update across (ADR-0007), red without a version for the target major.
  */
 final readonly class UpgradeNoteDrafter
 {
-    /** TYPO3's "[!!!]" commit prefix and the usual words for it */
-    private const string BREAKING = '/\[!!!\]|breaking|incompatib|inkompatib/i';
-
     private const int COMMENT_LENGTH = 300;
 
     public function __construct(private TranslatorInterface $translator)
@@ -48,7 +46,10 @@ final readonly class UpgradeNoteDrafter
      */
     private function updateNote(string $installed, string $target, array $versions): array
     {
-        $breaking = $this->breakingComments($installed, $target, $versions);
+        // the versions after the installed one up to the target, oldest first
+        $crossed = array_values(array_filter($versions, static fn (ExtensionVersion $v): bool => version_compare($v->version, $installed, '>') && version_compare($v->version, $target, '<=')));
+        usort($crossed, static fn (ExtensionVersion $a, ExtensionVersion $b): int => version_compare($a->version, $b->version));
+        $breaking = array_merge(...array_map(self::breakingChanges(...), $crossed));
         $range = ['installed' => $installed, 'target' => $target];
 
         if ([] !== $breaking) {
@@ -58,29 +59,30 @@ final readonly class UpgradeNoteDrafter
         if ((int) $target > (int) $installed) {
             return self::note(UpgradeNoteLevel::Warning, $this->translator->trans('calculation.note.major_update', $range));
         }
+        // only claim "no breaking changes" when every version crossed tells
+        $unknown = array_filter($crossed, static fn (ExtensionVersion $v): bool => !$v->hasChangelog());
 
-        return self::note(UpgradeNoteLevel::Success, $this->translator->trans('calculation.note.update', $range));
+        return self::note(UpgradeNoteLevel::Success, $this->translator->trans([] === $unknown ? 'calculation.note.update' : 'calculation.note.update_unchecked', $range));
     }
 
     /**
-     * Upload comments that mention breaking changes, of the versions after the installed one up to the target.
+     * What a version's TER comment and GitHub commits say about breaking changes.
      *
-     * @param list<ExtensionVersion> $versions
-     *
-     * @return list<string> Markdown list items, oldest first
+     * @return list<string> Markdown list items
      */
-    private function breakingComments(string $installed, string $target, array $versions): array
+    private static function breakingChanges(ExtensionVersion $version): array
     {
-        $crossed = array_filter($versions, static fn (ExtensionVersion $v): bool => version_compare($v->version, $installed, '>')
-            && version_compare($v->version, $target, '<=')
-            && 1 === preg_match(self::BREAKING, (string) $v->uploadComment));
-        usort($crossed, static fn (ExtensionVersion $a, ExtensionVersion $b): int => version_compare($a->version, $b->version));
+        $changes = [];
+        if (ExtensionUtility::mentionsBreakingChange($version->uploadComment)) {
+            $comment = trim((string) preg_replace('/\s+/', ' ', (string) $version->uploadComment));
+            $changes[] = sprintf('- **%s**: %s', $version->version, mb_strlen($comment) > self::COMMENT_LENGTH ? mb_substr($comment, 0, self::COMMENT_LENGTH - 1).'…' : $comment);
+        }
+        foreach ($version->breakingCommits ?? [] as $commit) {
+            // a subject is a single line; brackets would end the link text early
+            $changes[] = sprintf('- **%s**: [%s](%s)', $version->version, str_replace(['[', ']'], ['\\[', '\\]'], $commit['subject']), $commit['url']);
+        }
 
-        return array_map(static function (ExtensionVersion $v): string {
-            $comment = trim((string) preg_replace('/\s+/', ' ', (string) $v->uploadComment));
-
-            return sprintf('- **%s**: %s', $v->version, mb_strlen($comment) > self::COMMENT_LENGTH ? mb_substr($comment, 0, self::COMMENT_LENGTH - 1).'…' : $comment);
-        }, $crossed);
+        return $changes;
     }
 
     /**
