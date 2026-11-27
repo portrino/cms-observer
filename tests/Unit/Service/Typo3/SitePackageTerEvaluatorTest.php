@@ -9,16 +9,12 @@ use App\Entity\Site;
 use App\Entity\SitePackage;
 use App\Entity\Typo3\PackagistVersion;
 use App\Entity\Typo3\TerExtensionVersion;
-use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
 use App\Repository\Typo3\PackagistVersionRepository;
 use App\Repository\Typo3\TerExtensionMetaRepository;
 use App\Repository\Typo3\TerExtensionVersionRepository;
-use App\Repository\Wordpress\PluginInfoRepository;
-use App\Repository\Wordpress\PluginVersionRepository;
-use App\Repository\Wordpress\ThemeInfoRepository;
-use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use App\Service\Typo3\ExtensionVersionCatalog;
+use App\Service\Typo3\PackageUpdateResolver;
 use App\Service\Typo3\SitePackageTerEvaluator;
 use PHPUnit\Framework\TestCase;
 
@@ -163,7 +159,7 @@ class SitePackageTerEvaluatorTest extends TestCase
             $packagistVersions,
         ));
 
-        $resolver = new PackageUpdateResolver(new ExtensionVersionCatalog($versionRepository, $packagistRepository, self::createStub(TerExtensionMetaRepository::class)), self::createStub(PluginVersionRepository::class), self::createStub(PluginInfoRepository::class), self::createStub(ThemeInfoRepository::class), self::createStub(CraftPluginVersionRepository::class));
+        $resolver = new PackageUpdateResolver(new ExtensionVersionCatalog($versionRepository, $packagistRepository, self::createStub(TerExtensionMetaRepository::class)));
         new SitePackageTerEvaluator($versionRepository, $resolver, self::createStub(SecurityNotifier::class))->evaluateAll([$package]);
 
         return $package;

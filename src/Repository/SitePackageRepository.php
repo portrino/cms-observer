@@ -87,7 +87,7 @@ class SitePackageRepository extends ServiceEntityRepository
 
     /**
      * Per site: installed packages, those with an update for the site's core (the stored
-     * "outdated", the same rule as the badges, see PackageUpdateResolver) and insecure ones.
+     * "outdated", the same rule as the badges, see PackageUpdate) and insecure ones.
      *
      * @param iterable<Site> $sites
      *

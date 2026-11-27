@@ -2,18 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Wordpress;
 
 use App\Entity\Wordpress\PluginInfo;
 use App\Entity\Wordpress\PluginVersion;
 use App\Entity\Wordpress\ThemeInfo;
-use App\Repository\Craft\PluginVersionRepository as CraftPluginVersionRepository;
 use App\Repository\Wordpress\PluginInfoRepository;
 use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\ThemeInfoRepository;
 use App\Service\PackageUpdate;
-use App\Service\PackageUpdateResolver;
-use App\Service\Typo3\ExtensionVersionCatalog;
+use App\Service\Wordpress\PackageUpdateResolver;
 use PHPUnit\Framework\TestCase;
 
 class PackageUpdateResolverTest extends TestCase
@@ -71,8 +69,8 @@ class PackageUpdateResolverTest extends TestCase
         $themeInfoRepository = self::createStub(ThemeInfoRepository::class);
         $themeInfoRepository->method('findOneBySlug')->willReturn($info);
 
-        return new PackageUpdateResolver(self::createStub(ExtensionVersionCatalog::class), self::createStub(PluginVersionRepository::class), self::createStub(PluginInfoRepository::class), $themeInfoRepository, self::createStub(CraftPluginVersionRepository::class))
-            ->forWordpressTheme('example-theme', '1.0.0', $coreVersion);
+        return new PackageUpdateResolver(self::createStub(PluginVersionRepository::class), self::createStub(PluginInfoRepository::class), $themeInfoRepository)
+            ->forTheme('example-theme', '1.0.0', $coreVersion);
     }
 
     /**
@@ -88,7 +86,7 @@ class PackageUpdateResolverTest extends TestCase
         $infoRepository = self::createStub(PluginInfoRepository::class);
         $infoRepository->method('findOneBySlug')->willReturn($info);
 
-        return new PackageUpdateResolver(self::createStub(ExtensionVersionCatalog::class), $versionRepository, $infoRepository, self::createStub(ThemeInfoRepository::class), self::createStub(CraftPluginVersionRepository::class))
-            ->forWordpressPlugin('example-plugin', '1.0.0', $coreVersion);
+        return new PackageUpdateResolver($versionRepository, $infoRepository, self::createStub(ThemeInfoRepository::class))
+            ->forPlugin('example-plugin', '1.0.0', $coreVersion);
     }
 }

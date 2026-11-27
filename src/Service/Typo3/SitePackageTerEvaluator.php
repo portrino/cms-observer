@@ -6,7 +6,6 @@ namespace App\Service\Typo3;
 
 use App\Entity\SitePackage;
 use App\Repository\Typo3\TerExtensionVersionRepository;
-use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -40,7 +39,7 @@ class SitePackageTerEvaluator
             $insecure = $cached?->isInsecure();
 
             $package->setVersionStatus($insecure, null, null);
-            $package->applyUpdate($this->updateResolver->forTypo3Extension($package->getName(), $package->getComposerName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
+            $package->applyUpdate($this->updateResolver->forExtension($package->getName(), $package->getComposerName(), $package->getVersion(), $package->getSite()->getCurrentCoreVersion()));
 
             if (true === $insecure && true !== $wasInsecure) {
                 $this->securityNotifier->addFinding(

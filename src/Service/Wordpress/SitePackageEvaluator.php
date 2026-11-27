@@ -8,7 +8,6 @@ use App\Entity\PackageType;
 use App\Entity\SitePackage;
 use App\Entity\Wordpress\PluginVulnerability;
 use App\Repository\Wordpress\PluginVulnerabilityRepository;
-use App\Service\PackageUpdateResolver;
 use App\Service\SecurityNotifier;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -50,8 +49,8 @@ class SitePackageEvaluator
         $package->setVersionStatus($insecure, null, null);
         $coreVersion = $package->getSite()->getCurrentCoreVersion();
         $package->applyUpdate($isTheme
-            ? $this->updateResolver->forWordpressTheme($package->getName(), $package->getVersion(), $coreVersion)
-            : $this->updateResolver->forWordpressPlugin($package->getName(), $package->getVersion(), $coreVersion));
+            ? $this->updateResolver->forTheme($package->getName(), $package->getVersion(), $coreVersion)
+            : $this->updateResolver->forPlugin($package->getName(), $package->getVersion(), $coreVersion));
         $package->setMatchedWordpressVulnerability($vulnerability);
 
         if (null !== $vulnerability && true !== $wasInsecure) {

@@ -19,6 +19,7 @@ use App\Repository\Wordpress\PluginVersionRepository;
 use App\Repository\Wordpress\PluginVulnerabilityRepository;
 use App\Service\Typo3\ExtensionVersionCatalog;
 use App\Utility\Craft\AdvisoryUtility;
+use App\Utility\Craft\PluginVersionUtility;
 
 /**
  * The per-package details of a project's detail page: newer versions with
@@ -105,7 +106,7 @@ class SitePackageDetailsProvider
         foreach ($newerVersions as $version) {
             $versionStates[$version->getVersion()] = [
                 'insecure' => null !== AdvisoryUtility::mostSevere($advisories, $version->getVersion()),
-                'compatible' => null !== $coreVersion && null !== $version->getCraftConstraint() ? PackageUpdateResolver::installsOnCraft($version, $coreVersion) : null,
+                'compatible' => null !== $coreVersion && null !== $version->getCraftConstraint() ? PluginVersionUtility::installsOnCraft($version, $coreVersion) : null,
             ];
         }
 

@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Service;
 
 /**
- * Update situation of an installed package, see PackageUpdateResolver.
+ * Update situation of an installed package, by the PackageUpdateResolver of its CMS. The one
+ * rule for "is there an update?": a package is outdated only when a newer version runs on the
+ * site's core. Newer versions that need a newer core are reported separately, so a site on the
+ * newest installable version isn't flagged.
  */
 final readonly class PackageUpdate
 {
