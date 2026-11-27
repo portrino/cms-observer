@@ -33,6 +33,7 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
     {
         $site = $this->site(CmsType::Typo3, '13.4.20', [
             'compatible' => '2.0.0',
+            'compatible_outdated' => '1.0.0',
             'update_first' => '1.0.0',
             'update' => '1.0.0',
             'blocker' => '1.0.0',
@@ -41,6 +42,10 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
             'site_package' => '1.0.0',
         ]);
         $this->terVersions('compatible', ['2.0.0' => '13, 14']);
+        $this->terVersions('compatible_outdated', ['1.0.0' => '13, 14', '1.1.0' => '13, 14', '1.2.0' => '14', '2.0.0' => '15'], [
+            '1.1.0' => "[!!!][TASK] Drop the\nlegacy plugin",
+            '1.2.0' => '[BUGFIX] Fix the list view',
+        ]);
         $this->terVersions('update_first', ['1.0.0' => '12, 13', '1.1.0' => '13, 14', '1.2.0' => '13, 14', '2.0.0' => '14']);
         $this->terVersions('update', ['1.0.0' => '13', '2.0.0' => '14', '2.1.0' => '14']);
         $this->terVersions('blocker', ['1.0.0' => '12, 13', '1.1.0' => '13']);
@@ -70,6 +75,8 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         self::assertSame([
             'blocker' => [UpgradeSection::Packages, UpgradeItemStatus::Blocker, null],
             'compatible' => [UpgradeSection::Packages, UpgradeItemStatus::Compatible, '2.0.0'],
+            // the newest version for TYPO3 14, not the one for 15
+            'compatible_outdated' => [UpgradeSection::Packages, UpgradeItemStatus::Compatible, '1.2.0'],
             'dev_branch' => [UpgradeSection::Packages, UpgradeItemStatus::Manual, null],
             'no_data' => [UpgradeSection::Packages, UpgradeItemStatus::Manual, null],
             'site_package' => [UpgradeSection::OwnPackages, UpgradeItemStatus::Manual, null],
@@ -79,15 +86,23 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         self::assertSame('vendor/compatible', $labels['compatible'], 'composer name from TER without one in the report');
         self::assertSame('blocker', $labels['blocker'], 'the key without any composer name');
 
-        $levels = [];
+        $notes = [];
         foreach ($items as $item) {
             if (null !== $item->package) {
-                $levels[$item->package] = $item->noteLevel;
+                $notes[$item->package] = [$item->noteLevel, $item->notes, $item->minHours, $item->maxHours];
             }
         }
-        self::assertSame(UpgradeNoteLevel::Success, $levels['compatible']);
-        self::assertSame(UpgradeNoteLevel::Danger, $levels['blocker']);
-        self::assertNull($levels['update_first'], 'whether migrations are needed only the developer knows');
+        self::assertSame([UpgradeNoteLevel::Success, 'Latest compatible version already in use', 0.0, 0.0], $notes['compatible']);
+        self::assertSame([UpgradeNoteLevel::Danger, 'No TYPO3 14 compatible version yet!', null, null], $notes['blocker']);
+        self::assertSame([UpgradeNoteLevel::Success, 'Update 1.0.0 → 1.1.0, no breaking changes in the TER changelog', null, null], $notes['update_first'], 'a minor update');
+        self::assertSame([UpgradeNoteLevel::Warning, 'Major update 1.0.0 → 2.0.0: check the upgrade notes', null, null], $notes['update']);
+        self::assertSame([
+            UpgradeNoteLevel::Warning,
+            "Update 1.0.0 → 1.2.0, breaking changes in the TER changelog:\n\n- **1.1.0**: [!!!][TASK] Drop the legacy plugin",
+            null,
+            null,
+        ], $notes['compatible_outdated'], 'only the comments that mention breaking changes, on one line');
+        self::assertSame([null, null, null, null], $notes['no_data'], 'nothing to judge by');
     }
 
     public function testTargetsAreTheKnownMajorsAboveTheCurrentOne(): void
@@ -142,8 +157,9 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
 
     /**
      * @param array<string, ?string> $versions version => TYPO3 majors
+     * @param array<string, string>  $comments version => upload comment
      */
-    private function terVersions(string $key, array $versions): void
+    private function terVersions(string $key, array $versions, array $comments = []): void
     {
         foreach ($versions as $version => $majors) {
             $this->entityManager->persist(new TerExtensionVersion(
@@ -152,7 +168,7 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
                 title: $key,
                 insecure: false,
                 description: null,
-                uploadComment: null,
+                uploadComment: $comments[$version] ?? null,
                 state: 'stable',
                 typo3Versions: $majors,
                 uploadDate: null,

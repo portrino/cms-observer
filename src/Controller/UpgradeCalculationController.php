@@ -143,14 +143,15 @@ class UpgradeCalculationController extends AbstractController
         // saved with the version, so in the language of whoever refreshes
         $data['note'] = null !== $reportedAt ? $translator->trans('calculation.refreshed_of', ['date' => $reportedAt]) : $translator->trans('calculation.refreshed');
 
-        return $this->versionForm($calculation, $base, $data, $request, 'calculation.title.refresh', $refreshed['changes']);
+        return $this->versionForm($calculation, $base, $data, $request, 'calculation.title.refresh', $refreshed['changes'], $refreshed['changedPackages']);
     }
 
     /**
      * @param array<string, mixed> $data
-     * @param list<string>|null    $changes of a refresh, null when editing
+     * @param list<string>|null    $changes         of a refresh, null when editing
+     * @param list<string>         $changedPackages of a refresh: their rows are highlighted
      */
-    private function versionForm(UpgradeCalculation $calculation, UpgradeCalculationVersion $base, array $data, Request $request, string $action, ?array $changes = null): Response
+    private function versionForm(UpgradeCalculation $calculation, UpgradeCalculationVersion $base, array $data, Request $request, string $action, ?array $changes = null, array $changedPackages = []): Response
     {
         $form = $this->createForm(UpgradeCalculationVersionType::class, $data);
         $form->handleRequest($request);
@@ -163,6 +164,7 @@ class UpgradeCalculationController extends AbstractController
             'title' => new TranslatableMessage($action, ['upgrade' => sprintf('%s %d → %d', $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor())]),
             'based_on' => $base,
             'changes' => $changes,
+            'changedPackages' => $changedPackages,
             'form' => $form,
             'cancelUrl' => $this->generateUrl('upgrade_calculation_show', ['id' => $calculation->getId(), 'version' => $base->getId()]),
         ]);

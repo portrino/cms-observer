@@ -1212,7 +1212,7 @@
       </trans-unit>
       <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
         <source>calculation.refresh_changes</source>
-        <target>Changed by the latest report, hours, notes and "Replace" or "Remove" decisions are kept:</target>
+        <target>Changed by the latest report and highlighted yellow in the table. Changed rows get fresh notes and colors, "Replace" or "Remove" decisions are kept:</target>
       </trans-unit>
       <trans-unit id="calculation.pricing" resname="calculation.pricing">
         <source>calculation.pricing</source>
@@ -1481,6 +1481,26 @@
       <trans-unit id="calculation.change.gone" resname="calculation.change.gone">
         <source>calculation.change.gone</source>
         <target>{label}: not installed anymore, left out</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.latest" resname="calculation.note.latest">
+        <source>calculation.note.latest</source>
+        <target>Latest compatible version already in use</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.no_compatible" resname="calculation.note.no_compatible">
+        <source>calculation.note.no_compatible</source>
+        <target>No TYPO3 {major} compatible version yet!</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.update" resname="calculation.note.update">
+        <source>calculation.note.update</source>
+        <target>Update {installed} → {target}, no breaking changes in the TER changelog</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.major_update" resname="calculation.note.major_update">
+        <source>calculation.note.major_update</source>
+        <target>Major update {installed} → {target}: check the upgrade notes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
+        <source>calculation.note.breaking</source>
+        <target>Update {installed} → {target}, breaking changes in the TER changelog:</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

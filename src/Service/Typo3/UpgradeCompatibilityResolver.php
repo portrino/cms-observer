@@ -11,7 +11,6 @@ use App\Entity\SitePackage;
 use App\Entity\Typo3\CoreRelease;
 use App\Entity\Typo3\TerExtensionVersion;
 use App\Entity\UpgradeItemStatus;
-use App\Entity\UpgradeNoteLevel;
 use App\Entity\UpgradeSection;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\CoreReleaseRepository;
@@ -32,6 +31,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
         private CoreReleaseRepository $coreReleaseRepository,
         private TerExtensionVersionRepository $terVersionRepository,
         private TerExtensionMetaRepository $terMetaRepository,
+        private UpgradeNoteDrafter $noteDrafter,
     ) {
     }
 
@@ -88,6 +88,8 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
             default => [UpgradeSection::Packages, ...$this->judgeRelease($key, $installed, $terVersions, $currentMajor, $targetMajor)],
         };
 
+        $note = $this->noteDrafter->draft($status, $installed, $target, $terVersions, $targetMajor);
+
         return new UpgradeItem(
             $section,
             $package->getComposerName() ?? $this->composerNameFromTer($key) ?? $key,
@@ -96,7 +98,10 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
             $installed,
             $target,
             $status,
-            noteLevel: UpgradeNoteLevel::forStatus($status),
+            minHours: $note['hours'],
+            maxHours: $note['hours'],
+            notes: $note['notes'],
+            noteLevel: $note['noteLevel'],
         );
     }
 
@@ -109,13 +114,14 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
      */
     private function judgeRelease(string $key, string $installed, array $terVersions, int $currentMajor, int $targetMajor): array
     {
-        $installedMajors = $this->terVersionRepository->findOneByExtensionKeyAndVersion($key, $installed)?->getTypo3MajorVersions() ?? [];
-        if (in_array($targetMajor, $installedMajors, true)) {
-            return [UpgradeItemStatus::Compatible, $installed];
-        }
-
         // newest first, so the last one is the lowest version to update to
         $forTarget = $this->terVersionRepository->findNewerCompatibleWith($key, $installed, $targetMajor);
+        $installedMajors = $this->terVersionRepository->findOneByExtensionKeyAndVersion($key, $installed)?->getTypo3MajorVersions() ?? [];
+        if (in_array($targetMajor, $installedMajors, true)) {
+            // already compatible: the newest version for the target major, if there's a newer one
+            return [UpgradeItemStatus::Compatible, ($forTarget[0] ?? null)?->getVersion() ?? $installed];
+        }
+
         $forBoth = array_filter($forTarget, static fn (TerExtensionVersion $v): bool => in_array($currentMajor, $v->getTypo3MajorVersions(), true));
         if ([] !== $forBoth) {
             return [UpgradeItemStatus::UpdateFirst, end($forBoth)->getVersion()];

@@ -78,7 +78,11 @@ test('rows of a calculation can be added and removed before saving', async ({ pa
     const dialog = page.getByRole('dialog', { name: 'Notes' });
     // a Markdown editor: typed like a user, with the bold button of its toolbar
     const editor = dialog.locator('.CodeMirror');
+    // a package row starts with notes and a color from its TER versions; start from scratch
+    await dialog.getByLabel('Color').selectOption('');
     await editor.click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('Delete');
     await page.keyboard.type('Breaking changes');
     await editor.press('Enter');
     await dialog.getByRole('button', { name: 'Bold' }).click();

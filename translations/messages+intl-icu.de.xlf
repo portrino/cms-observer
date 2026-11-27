@@ -1212,7 +1212,7 @@
       </trans-unit>
       <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
         <source>calculation.refresh_changes</source>
-        <target>Durch den neuesten Report geändert, Stunden, Notizen und die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten:</target>
+        <target>Durch den neuesten Report geändert und in der Tabelle gelb hinterlegt. Geänderte Zeilen bekommen neue Notizen und Farben, die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten:</target>
       </trans-unit>
       <trans-unit id="calculation.pricing" resname="calculation.pricing">
         <source>calculation.pricing</source>
@@ -1481,6 +1481,26 @@
       <trans-unit id="calculation.change.gone" resname="calculation.change.gone">
         <source>calculation.change.gone</source>
         <target>{label}: nicht mehr installiert, weggelassen</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.latest" resname="calculation.note.latest">
+        <source>calculation.note.latest</source>
+        <target>Bereits aktuellste &amp; kompatible Version in Benutzung</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.no_compatible" resname="calculation.note.no_compatible">
+        <source>calculation.note.no_compatible</source>
+        <target>Noch keine TYPO3 {major} kompatible Version vorhanden!</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.update" resname="calculation.note.update">
+        <source>calculation.note.update</source>
+        <target>Update {installed} → {target}, laut TER-Changelog ohne Breaking Changes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.major_update" resname="calculation.note.major_update">
+        <source>calculation.note.major_update</source>
+        <target>Major-Update {installed} → {target}: Upgrade-Hinweise prüfen</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
+        <source>calculation.note.breaking</source>
+        <target>Update {installed} → {target}, Breaking Changes laut TER-Changelog:</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

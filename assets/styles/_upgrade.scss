@@ -59,6 +59,8 @@
     .upgrade-note {
         display: block;
         width: 100%;
+        // a long first line is cut with an ellipsis instead of widening the table
+        max-width: 16rem;
         text-align: left;
         border: var(--bs-border-width) solid var(--bs-border-color);
         background-color: $white;
@@ -92,6 +94,11 @@
     // positions standing for a package section's hours
     .upgrade-sum-row > td {
         background-color: var(--bs-tertiary-bg);
+    }
+
+    // added or changed by a refresh
+    .upgrade-changed-row > td {
+        background-color: var(--bs-warning-bg-subtle);
     }
 
     // their fixed label and hours line up with the text of the inputs in other rows

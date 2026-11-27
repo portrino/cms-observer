@@ -30,11 +30,13 @@
 {% endmacro %}
 
 {# One editable row of a calculation form; also renders the prototype for new rows #}
-{% macro form_row(entry, package) %}
+{% macro form_row(entry, package, changedPackages = []) %}
     {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
     {# a position standing for a package section: label and hours come from that section, it can't be removed #}
     {% set sumOf = entry.sumOf is defined ? entry.sumOf.vars.value : null %}
-    <tr data-form-collection-row {% if sumOf %}class="upgrade-sum-row"{% endif %}>
+    {# a row the refresh added or changed, so it's checked before saving #}
+    {% set changed = entry.package is defined and entry.package.vars.value in changedPackages %}
+    <tr data-form-collection-row class="{{ [sumOf ? 'upgrade-sum-row', changed ? 'upgrade-changed-row']|filter(c => c)|join(' ') }}">
         <td class="upgrade-col-handle">
             <button type="button" class="btn btn-sm upgrade-handle" aria-label="{{ 'calculation.move_row'|trans }}"
                     data-action="pointerdown->form-collection#grab keydown->form-collection#key">{{ icon('grip-vertical') }}</button>

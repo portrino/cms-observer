@@ -19,6 +19,7 @@ use App\Tests\Functional\CreatesUserTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class UpgradeCalculationTest extends WebTestCase
 {
@@ -296,6 +297,7 @@ class UpgradeCalculationTest extends WebTestCase
         $site = $this->typo3Site();
         $this->entityManager->persist(new SitePackage($site, 'powermail', 'Powermail', '10.0.0', true, 'in2code/powermail'));
         $this->entityManager->persist(new SitePackage($site, 'gone_ext', 'Gone', '1.0.0', true));
+        $this->entityManager->persist(new SitePackage($site, 'stays_ext', 'Stays', '1.0.0', true));
         $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/projects/'.$site->getId().'/calculations/new?target=14');
@@ -303,6 +305,8 @@ class UpgradeCalculationTest extends WebTestCase
             'upgrade_calculation_version[packages][0][maxHours]' => '3',
             'upgrade_calculation_version[packages][0][notes]' => 'See changelog',
             'upgrade_calculation_version[own-packages][1][status]' => 'replace', // powermail, after gone_ext; not in TER here
+            'upgrade_calculation_version[own-packages][2][maxHours]' => '5', // stays_ext
+            'upgrade_calculation_version[own-packages][2][notes]' => 'Own fork',
             'upgrade_calculation_version[hourlyRate]' => '100',
             'upgrade_calculation_version[managementPercent]' => '10',
             'upgrade_calculation_version[author]' => 'JD',
@@ -326,6 +330,8 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertStringContainsString('gone_ext: not installed anymore, left out', $changes);
         self::assertStringContainsString('new_ext: newly installed, added', $changes);
         self::assertStringNotContainsString('powermail', $changes, 'the "Replace" decision is kept');
+        $highlighted = $crawler->filter('tr.upgrade-changed-row input[name$="[label]"]')->each(static fn (Crawler $input): string => (string) $input->attr('value'));
+        self::assertSame(['georgringer/news', 'new_ext'], $highlighted, 'the changed and the added row');
 
         $this->client->submit($crawler->selectButton('Save as new version')->form(['upgrade_calculation_version[author]' => 'PM']));
         self::assertResponseRedirects();
@@ -339,8 +345,9 @@ class UpgradeCalculationTest extends WebTestCase
                 $packages[$item->package] = [$item->installedVersion, $item->status, $item->maxHours, $item->notes];
             }
         }
-        self::assertSame(['14.0.0', UpgradeItemStatus::Compatible, 3.0, 'See changelog'], $packages['news'], 'hours and notes kept');
+        self::assertSame(['14.0.0', UpgradeItemStatus::Compatible, 0.0, 'Latest compatible version already in use'], $packages['news'], 'judged anew: updated to the latest compatible version');
         self::assertSame(UpgradeItemStatus::Replace, $packages['powermail'][1]);
+        self::assertSame(['1.0.0', UpgradeItemStatus::Manual, 5.0, 'Own fork'], $packages['stays_ext'], 'an unchanged row keeps what was entered');
         self::assertArrayNotHasKey('gone_ext', $packages);
         self::assertSame(UpgradeItemStatus::Manual, $packages['new_ext'][1]);
     }

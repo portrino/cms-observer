@@ -25,16 +25,6 @@ enum UpgradeNoteLevel: string implements TranslatableInterface
         };
     }
 
-    /** The color a new row's notes start with, as far as the status tells it */
-    public static function forStatus(?UpgradeItemStatus $status): ?self
-    {
-        return match ($status) {
-            UpgradeItemStatus::Compatible => self::Success,
-            UpgradeItemStatus::Blocker => self::Danger,
-            default => null,
-        };
-    }
-
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
         return $translator->trans('calculation.note_level.'.$this->value, locale: $locale);
