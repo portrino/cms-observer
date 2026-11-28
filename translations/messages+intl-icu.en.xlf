@@ -1228,7 +1228,7 @@
       </trans-unit>
       <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
         <source>calculation.refresh_changes</source>
-        <target>Changed by the latest report and highlighted yellow in the table. Changed rows get fresh notes and colors, "Replace" or "Remove" decisions are kept:</target>
+        <target>Changed by the latest report and highlighted yellow in the table: changed rows get fresh notes and colors, "Replace" or "Remove" decisions are kept. Mark each changed row as checked before saving; the notes of the previous version are in the notes dialog.</target>
       </trans-unit>
       <trans-unit id="calculation.pricing" resname="calculation.pricing">
         <source>calculation.pricing</source>
@@ -1525,6 +1525,26 @@
       <trans-unit id="calculation.note.no_compatible" resname="calculation.note.no_compatible">
         <source>calculation.note.no_compatible</source>
         <target>No TYPO3 {major} compatible version yet!</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.notes" resname="calculation.change.notes">
+        <source>calculation.change.notes</source>
+        <target>new notes</target>
+      </trans-unit>
+      <trans-unit id="calculation.reviewed" resname="calculation.reviewed">
+        <source>calculation.reviewed</source>
+        <target>Checked</target>
+      </trans-unit>
+      <trans-unit id="calculation.previous_hours" resname="calculation.previous_hours">
+        <source>calculation.previous_hours</source>
+        <target>before: {hours}</target>
+      </trans-unit>
+      <trans-unit id="calculation.previous_notes" resname="calculation.previous_notes">
+        <source>calculation.previous_notes</source>
+        <target>Notes of the previous version</target>
+      </trans-unit>
+      <trans-unit id="calculation.take_previous" resname="calculation.take_previous">
+        <source>calculation.take_previous</source>
+        <target>Add to the editor</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

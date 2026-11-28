@@ -30,7 +30,18 @@ final readonly class UpgradeItem
         public ?UpgradeNoteLevel $noteLevel = null,
         // a position that stands for the hours of a package section, placed among the positions
         public ?UpgradeSection $sumOf = null,
+        // fingerprint of what the resolver preset for the row: a refresh tells by it whether that changed
+        public ?string $preset = null,
     ) {
+    }
+
+    /** The row with the fingerprint of its own values, as a resolver presets them */
+    public function withPreset(): self
+    {
+        $preset = substr(hash('sha256', json_encode([$this->section->value, $this->status?->value, $this->targetVersion, $this->minHours, $this->maxHours, $this->notes, $this->noteLevel?->value], JSON_THROW_ON_ERROR)), 0, 16);
+
+        return new self($this->section, $this->label, $this->package, $this->packageType, $this->installedVersion, $this->targetVersion, $this->status,
+            $this->minHours, $this->maxHours, $this->notes, $this->assignee, $this->noteLevel, $this->sumOf, $preset);
     }
 
     public static function sumOf(UpgradeSection $section): self
@@ -87,6 +98,7 @@ final readonly class UpgradeItem
             self::stringOf($data, 'notes'),
             self::stringOf($data, 'assignee'),
             UpgradeNoteLevel::tryFrom((string) ($data['noteLevel'] ?? '')),
+            preset: self::stringOf($data, 'preset'),
         );
     }
 
@@ -109,6 +121,7 @@ final readonly class UpgradeItem
             'assignee' => $this->assignee,
             'noteLevel' => $this->noteLevel?->value,
             'sumOf' => $this->sumOf?->value,
+            'preset' => $this->preset,
         ];
     }
 

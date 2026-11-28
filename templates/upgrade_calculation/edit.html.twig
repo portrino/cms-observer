@@ -84,7 +84,7 @@
                         </thead>
                         <tbody data-form-collection-target="rows" data-action="dragstart->form-collection#dragStart dragover->form-collection#dragOver drop->form-collection#drop dragend->form-collection#dragEnd">
                             {% for entry in collection %}
-                                {{ u.form_row(entry, package, changedPackages ?? []) }}
+                                {{ u.form_row(entry, package, previous ?? []) }}
                             {% endfor %}
                         </tbody>
                     </table>
@@ -124,6 +124,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'common.close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
+                    <details class="upgrade-previous mb-3" data-note-editor-target="previous" hidden>
+                        <summary>{{ 'calculation.previous_notes'|trans }}</summary>
+                        <div class="mt-2" data-note-editor-target="previousBody"></div>
+                        <button type="button" class="btn btn-sm btn-outline-neutral mt-2" data-action="note-editor#takePrevious">{{ 'calculation.take_previous'|trans }}</button>
+                    </details>
                     <label class="form-label" for="noteDialogText">{{ 'calculation.notes'|trans }}</label>
                     <textarea id="noteDialogText" class="form-control" rows="10" data-note-editor-target="text" data-controller="markdown-editor"></textarea>
                     <label class="form-label mt-3" for="noteDialogLevel">{{ 'calculation.color'|trans }}</label>

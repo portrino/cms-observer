@@ -56,7 +56,7 @@ final readonly class UpgradeCalculationDrafter
             ...array_map(fn (string|UpgradeSection $position): UpgradeItem => $position instanceof UpgradeSection
                 ? UpgradeItem::sumOf($position)
                 : new UpgradeItem(UpgradeSection::Positions, $this->translator->trans($position)), self::POSITIONS),
-            ...$this->resolver($site)->packageItems($site, $targetMajor),
+            ...$this->packageItems($site, $targetMajor),
         ];
     }
 
@@ -75,7 +75,7 @@ final readonly class UpgradeCalculationDrafter
      */
     public function packageItems(Site $site, int $targetMajor): array
     {
-        return $this->resolver($site)->packageItems($site, $targetMajor);
+        return array_map(static fn (UpgradeItem $item): UpgradeItem => $item->withPreset(), $this->resolver($site)->packageItems($site, $targetMajor));
     }
 
     /** Whether the site's CMS has a resolver, i.e. calculations can be drafted for it */

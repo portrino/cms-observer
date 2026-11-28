@@ -29,7 +29,9 @@ final readonly class UpgradeCalculationRefresher
     }
 
     /**
-     * @return array{items: list<UpgradeItem>, changes: list<string>, changedPackages: list<string>} changedPackages: the packages of added or changed rows
+     * @return array{items: list<UpgradeItem>, changes: list<string>, review: array<string, ?UpgradeItem>}
+     *                                                                                                     review: the rows to check before saving, by key() ("packageType|package"), with their
+     *                                                                                                     previous version (null for an added one)
      */
     public function refresh(UpgradeCalculation $calculation, UpgradeCalculationVersion $base): array
     {
@@ -40,7 +42,7 @@ final readonly class UpgradeCalculationRefresher
 
         $items = [];
         $changes = [];
-        $changedPackages = [];
+        $review = [];
         foreach ($base->getItems() as $item) {
             if (!self::isPackageRow($item)) {
                 $items[] = $item;
@@ -59,26 +61,36 @@ final readonly class UpgradeCalculationRefresher
             $change = $this->rowChange($item, $refreshed);
             if (null !== $change) {
                 $changes[] = $change;
-                $changedPackages[] = (string) $item->package;
+                $review[$key] = $item;
             }
         }
 
-        foreach ($fresh as $item) {
+        foreach ($fresh as $key => $item) {
             $items[] = $item;
             $changes[] = $this->translator->trans('calculation.change.added', ['label' => $item->label]);
-            $changedPackages[] = (string) $item->package;
+            $review[$key] = null;
         }
 
-        return ['items' => UpgradeItem::withSectionSums($items), 'changes' => $changes, 'changedPackages' => $changedPackages];
+        return ['items' => UpgradeItem::withSectionSums($items), 'changes' => $changes, 'review' => $review];
+    }
+
+    public static function key(UpgradeItem $item): string
+    {
+        return ($item->packageType->value ?? '').'|'.$item->package;
     }
 
     /**
-     * The fresh versions, to-do and section with what people entered on the old row.
+     * The fresh versions, to-do and section with what people entered on the old row; a row
+     * whose preset changed since, e.g. the package was updated or GitHub found breaking commits,
+     * takes the fresh notes, their color and preset hours too (checked before saving).
      */
     private function refreshed(UpgradeItem $item, UpgradeItem $now): UpgradeItem
     {
         $decided = in_array($item->status, self::DECISIONS, true);
-        $judgedAnew = !$decided && ($item->installedVersion !== $now->installedVersion || $item->targetVersion !== $now->targetVersion || $item->status !== $now->status);
+        $judgedAnew = !$decided && (null !== $item->preset
+            ? $item->preset !== $now->preset
+            // a row from before presets were remembered: judged anew when its versions or to-do changed
+            : $item->installedVersion !== $now->installedVersion || $item->targetVersion !== $now->targetVersion || $item->status !== $now->status);
 
         return new UpgradeItem(
             $now->section, $item->label, $item->package, $item->packageType, $now->installedVersion, $now->targetVersion,
@@ -87,6 +99,7 @@ final readonly class UpgradeCalculationRefresher
             notes: $judgedAnew ? $now->notes : $item->notes,
             assignee: $item->assignee,
             noteLevel: $judgedAnew ? $now->noteLevel : $item->noteLevel,
+            preset: $now->preset,
         );
     }
 
@@ -112,6 +125,7 @@ final readonly class UpgradeCalculationRefresher
             $old->targetVersion !== $new->targetVersion ? $this->translator->trans('calculation.change.target', ['old' => $old->targetVersion ?? '–', 'new' => $new->targetVersion ?? '–']) : null,
             $old->status !== $new->status ? $this->translator->trans('calculation.change.status', ['old' => $old->status?->trans($this->translator) ?? '–', 'new' => $new->status?->trans($this->translator) ?? '–']) : null,
             $old->section !== $new->section ? $this->translator->trans('calculation.change.moved', ['section' => $new->section->trans($this->translator)]) : null,
+            $old->notes !== $new->notes || $old->noteLevel !== $new->noteLevel ? $this->translator->trans('calculation.change.notes') : null,
         ], static fn (?string $change): bool => null !== $change);
 
         return [] === $changed ? null : $this->translator->trans('calculation.change.row', ['label' => $old->label, 'changes' => implode(', ', $changed)]);
@@ -123,10 +137,5 @@ final readonly class UpgradeCalculationRefresher
     private static function isPackageRow(UpgradeItem $item): bool
     {
         return null !== $item->package && null === $item->sumOf;
-    }
-
-    private static function key(UpgradeItem $item): string
-    {
-        return ($item->packageType->value ?? '').'|'.$item->package;
     }
 }

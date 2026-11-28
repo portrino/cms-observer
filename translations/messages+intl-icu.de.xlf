@@ -1228,7 +1228,7 @@
       </trans-unit>
       <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
         <source>calculation.refresh_changes</source>
-        <target>Durch den neuesten Report geändert und in der Tabelle gelb hinterlegt. Geänderte Zeilen bekommen neue Notizen und Farben, die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten:</target>
+        <target>Durch den neuesten Report geändert und in der Tabelle gelb hinterlegt: Geänderte Zeilen bekommen neue Notizen und Farben, die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten. Jede geänderte Zeile vor dem Speichern als geprüft markieren; die Notiz der vorigen Version steht im Notiz-Dialog.</target>
       </trans-unit>
       <trans-unit id="calculation.pricing" resname="calculation.pricing">
         <source>calculation.pricing</source>
@@ -1525,6 +1525,26 @@
       <trans-unit id="calculation.note.no_compatible" resname="calculation.note.no_compatible">
         <source>calculation.note.no_compatible</source>
         <target>Noch keine TYPO3 {major} kompatible Version vorhanden!</target>
+      </trans-unit>
+      <trans-unit id="calculation.change.notes" resname="calculation.change.notes">
+        <source>calculation.change.notes</source>
+        <target>neue Notiz</target>
+      </trans-unit>
+      <trans-unit id="calculation.reviewed" resname="calculation.reviewed">
+        <source>calculation.reviewed</source>
+        <target>Geprüft</target>
+      </trans-unit>
+      <trans-unit id="calculation.previous_hours" resname="calculation.previous_hours">
+        <source>calculation.previous_hours</source>
+        <target>vorher: {hours}</target>
+      </trans-unit>
+      <trans-unit id="calculation.previous_notes" resname="calculation.previous_notes">
+        <source>calculation.previous_notes</source>
+        <target>Notiz der vorigen Version</target>
+      </trans-unit>
+      <trans-unit id="calculation.take_previous" resname="calculation.take_previous">
+        <source>calculation.take_previous</source>
+        <target>In den Editor übernehmen</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

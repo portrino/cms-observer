@@ -41,7 +41,12 @@ target major and **Start**.
   changelog is the TER upload comments of the versions crossed and, with
   `GITHUB_API_TOKEN` set, their commits on GitHub marked "!!!" (ADR-0007);
   a new major of the package is yellow too. Refreshing a calculation
-  judges the rows anew whose versions or to-do changed.
+  judges a row anew when its preset changed since, e.g. the package was
+  updated or GitHub found breaking commits; what was entered on the other
+  rows stays. A row judged anew is highlighted and has to be marked
+  **Checked** before the version can be saved; the notes dialog shows its
+  notes of the previous version, to merge them, and the hours column what
+  it was before.
 
 Efforts are entered as minimum and maximum hours. Prices are calculated with
 the maximum; the range is only shown on screen as a hint that a row was hard

@@ -22,6 +22,10 @@
         <source>Enter Composer vendor names like "portrino", separated by commas.</source>
         <target>Enter Composer vendor names like "portrino", separated by commas.</target>
       </trans-unit>
+      <trans-unit id="Check the changed row before saving." resname="Check the changed row before saving.">
+        <source>Check the changed row before saving.</source>
+        <target>Check the changed row before saving.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

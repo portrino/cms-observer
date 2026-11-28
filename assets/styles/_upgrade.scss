@@ -96,8 +96,8 @@
         background-color: var(--bs-tertiary-bg);
     }
 
-    // added or changed by a refresh
-    .upgrade-changed-row > td {
+    // added or changed by a refresh, until someone checks it
+    .upgrade-changed-row:not(:has(.upgrade-reviewed input:checked)) > td {
         background-color: var(--bs-warning-bg-subtle);
     }
 
