@@ -108,6 +108,13 @@ only), not the dev one. `ddev e2e-reset` recreates it with the demo projects
 of `app:demo:seed --offline`, their fixed release data and the E2E logins;
 run it again whenever a run left something behind or the snapshot changed.
 
+It creates these logins, which also open the E2E site in the browser:
+
+| Email | Password | Used by |
+|---|---|---|
+| `e2e@example.test` | `e2e-password` | all specs (`tests/E2E/fixtures.ts`, overridable with `E2E_EMAIL` / `E2E_PASSWORD`) |
+| `e2e-2fa@example.test` | `e2e-password` | `two-factor.spec.ts` only, which sets up two-factor login on it |
+
 ## Translations
 
 Texts of the interface and the mails are translation keys, e.g.
