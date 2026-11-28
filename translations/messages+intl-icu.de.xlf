@@ -1498,6 +1498,26 @@
         <source>calculation.change.gone</source>
         <target>{label}: nicht mehr installiert, weggelassen</target>
       </trans-unit>
+      <trans-unit id="calculation.note.big_jump" resname="calculation.note.big_jump">
+        <source>calculation.note.big_jump</source>
+        <target>Achtung! Großer Versionssprung</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
+        <source>calculation.note.breaking</source>
+        <target>Laut Changelog Breaking Changes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.maybe_breaking" resname="calculation.note.maybe_breaking">
+        <source>calculation.note.maybe_breaking</source>
+        <target>Eventuell Breaking Changes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.no_steps" resname="calculation.note.no_steps">
+        <source>calculation.note.no_steps</source>
+        <target>Laut Changelog keine besonderen Upgrade-Schritte nötig</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.install_test" resname="calculation.note.install_test">
+        <source>calculation.note.install_test</source>
+        <target>Installieren/Upgraden und Testen</target>
+      </trans-unit>
       <trans-unit id="calculation.note.latest" resname="calculation.note.latest">
         <source>calculation.note.latest</source>
         <target>Bereits aktuellste &amp; kompatible Version in Benutzung</target>
@@ -1505,22 +1525,6 @@
       <trans-unit id="calculation.note.no_compatible" resname="calculation.note.no_compatible">
         <source>calculation.note.no_compatible</source>
         <target>Noch keine TYPO3 {major} kompatible Version vorhanden!</target>
-      </trans-unit>
-      <trans-unit id="calculation.note.update" resname="calculation.note.update">
-        <source>calculation.note.update</source>
-        <target>Update {installed} → {target}, laut Changelog ohne Breaking Changes</target>
-      </trans-unit>
-      <trans-unit id="calculation.note.update_unchecked" resname="calculation.note.update_unchecked">
-        <source>calculation.note.update_unchecked</source>
-        <target>Update {installed} → {target}, nicht für jede Version ist ein Changelog bekannt</target>
-      </trans-unit>
-      <trans-unit id="calculation.note.major_update" resname="calculation.note.major_update">
-        <source>calculation.note.major_update</source>
-        <target>Major-Update {installed} → {target}: Upgrade-Hinweise prüfen</target>
-      </trans-unit>
-      <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
-        <source>calculation.note.breaking</source>
-        <target>Update {installed} → {target}, Breaking Changes laut Changelog:</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

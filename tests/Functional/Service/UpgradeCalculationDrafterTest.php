@@ -95,11 +95,11 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         }
         self::assertSame([UpgradeNoteLevel::Success, 'Latest compatible version already in use', 0.0, 0.0], $notes['compatible']);
         self::assertSame([UpgradeNoteLevel::Danger, 'No TYPO3 14 compatible version yet!', null, null], $notes['blocker']);
-        self::assertSame([UpgradeNoteLevel::Success, 'Update 1.0.0 → 1.1.0, not every version\'s changelog is known', null, null], $notes['update_first'], 'a minor update, 1.1.0 without an upload comment');
-        self::assertSame([UpgradeNoteLevel::Warning, 'Major update 1.0.0 → 2.0.0: check the upgrade notes', null, null], $notes['update']);
+        self::assertSame([UpgradeNoteLevel::Success, '- Install/upgrade and test', null, null], $notes['update_first'], 'a minor update, 1.1.0 without an upload comment');
+        self::assertSame([UpgradeNoteLevel::Warning, "Attention! Big version jump\n\n- Possibly breaking changes\n- Install/upgrade and test", null, null], $notes['update'], 'a new major, 2.0.0 without an upload comment');
         self::assertSame([
             UpgradeNoteLevel::Warning,
-            "Update 1.0.0 → 1.2.0, breaking changes in the changelog:\n\n- **1.1.0**: [!!!][TASK] Drop the legacy plugin",
+            "- Breaking changes according to the changelog\n  - **1.1.0**: [!!!][TASK] Drop the legacy plugin\n- Install/upgrade and test",
             null,
             null,
         ], $notes['compatible_outdated'], 'only the comments that mention breaking changes, on one line');
@@ -122,11 +122,13 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
                 $packagistVersion->recordBreakingCommits([['sha' => 'aaa', 'subject' => '!!![TASK] change requirements', 'url' => 'https://github.com/b13/http2/commit/aaa']]);
             }
         }
-        // only on Packagist, its commits checked: nothing breaking
-        $this->entityManager->persist(new SitePackage($site, 'minor_update', 'Minor update', '1.0.0', true, 'vendor/minor-update'));
-        foreach (['1.0.0', '1.0.1'] as $version) {
-            $this->entityManager->persist($packagistVersion = new PackagistVersion('vendor/minor-update', $version, null, [13, 14]));
-            $packagistVersion->recordBreakingCommits([]);
+        // only on Packagist, their commits checked: nothing breaking, also across a major
+        foreach (['minor_update' => ['1.0.0', '1.0.1'], 'major_checked' => ['1.0.0', '2.0.0']] as $key => $packageVersions) {
+            $this->entityManager->persist(new SitePackage($site, $key, $key, $packageVersions[0], true, 'vendor/'.$key));
+            foreach ($packageVersions as $version) {
+                $this->entityManager->persist($packagistVersion = new PackagistVersion('vendor/'.$key, $version, null, [13, 14]));
+                $packagistVersion->recordBreakingCommits([]);
+            }
         }
         $this->entityManager->flush();
 
@@ -139,9 +141,11 @@ class UpgradeCalculationDrafterTest extends KernelTestCase
         }
 
         self::assertSame([UpgradeSection::Packages, UpgradeItemStatus::Update, '4.0.0', UpgradeNoteLevel::Warning], $items['http2'], 'with the core, a new major of the package');
-        self::assertSame("Update 3.0.0 → 4.0.0, breaking changes in the changelog:\n\n- **4.0.0**: [!!!\\[TASK\\] change requirements](https://github.com/b13/http2/commit/aaa)", $notes['http2'] ?? null, 'the breaking commit from GitHub, linked');
+        self::assertSame("Attention! Big version jump\n\n- Breaking changes according to the changelog\n  - **4.0.0**: [!!!\\[TASK\\] change requirements](https://github.com/b13/http2/commit/aaa)\n- Install/upgrade and test", $notes['http2'] ?? null, 'the breaking commit from GitHub, linked');
         self::assertSame([UpgradeSection::Packages, UpgradeItemStatus::Compatible, '1.0.0', UpgradeNoteLevel::Success], $items['packagist_only'], 'a third-party package, though not in the TER');
-        self::assertSame('Update 1.0.0 → 1.0.1, no breaking changes in the changelog', $notes['minor_update'] ?? null, 'every version crossed checked on GitHub');
+        self::assertSame("According to the changelog no special upgrade steps needed\n\n- Install/upgrade and test", $notes['minor_update'] ?? null, 'every version crossed checked on GitHub');
+        self::assertSame([UpgradeSection::Packages, UpgradeItemStatus::Compatible, '2.0.0', UpgradeNoteLevel::Success], $items['major_checked'], 'a new major without breaking changes, as every version tells');
+        self::assertSame("According to the changelog no special upgrade steps needed\n\n- Install/upgrade and test", $notes['major_checked'] ?? null);
     }
 
     public function testTargetsAreTheKnownMajorsAboveTheCurrentOne(): void

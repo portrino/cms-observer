@@ -12,8 +12,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The notes, their color and hours a TYPO3 package row starts with: done for the latest
- * compatible version, a hint at breaking changes from the TER upload comments and the GitHub
- * commits of the versions to update across (ADR-0007), red without a version for the target major.
+ * compatible version, red without a version for the target major, else the update as the
+ * agency notes it, by what the TER upload comments and GitHub commits of the versions crossed
+ * say (ADR-0007): yellow with the breaking changes they name, or for a new major of the package
+ * when not every version tells; green when they name none, or for a smaller update.
  */
 final readonly class UpgradeNoteDrafter
 {
@@ -50,19 +52,20 @@ final readonly class UpgradeNoteDrafter
         $crossed = array_values(array_filter($versions, static fn (ExtensionVersion $v): bool => version_compare($v->version, $installed, '>') && version_compare($v->version, $target, '<=')));
         usort($crossed, static fn (ExtensionVersion $a, ExtensionVersion $b): int => version_compare($a->version, $b->version));
         $breaking = array_merge(...array_map(self::breakingChanges(...), $crossed));
-        $range = ['installed' => $installed, 'target' => $target];
+        // a new major of the package: a big jump, which may break things without saying so
+        $bigJump = (int) $target > (int) $installed;
+        // only claim "no special steps" when every version crossed tells
+        $known = [] === array_filter($crossed, static fn (ExtensionVersion $v): bool => !$v->hasChangelog());
 
-        if ([] !== $breaking) {
-            return self::note(UpgradeNoteLevel::Warning, $this->translator->trans('calculation.note.breaking', $range)."\n\n".implode("\n", $breaking));
-        }
-        // a new major of the extension may break things without saying so
-        if ((int) $target > (int) $installed) {
-            return self::note(UpgradeNoteLevel::Warning, $this->translator->trans('calculation.note.major_update', $range));
-        }
-        // only claim "no breaking changes" when every version crossed tells
-        $unknown = array_filter($crossed, static fn (ExtensionVersion $v): bool => !$v->hasChangelog());
+        [$level, $lines] = match (true) {
+            [] !== $breaking => [UpgradeNoteLevel::Warning, ['- '.$this->translator->trans('calculation.note.breaking'), ...array_map(static fn (string $change): string => '  '.$change, $breaking)]],
+            $known => [UpgradeNoteLevel::Success, [$this->translator->trans('calculation.note.no_steps'), '']],
+            $bigJump => [UpgradeNoteLevel::Warning, ['- '.$this->translator->trans('calculation.note.maybe_breaking')]],
+            default => [UpgradeNoteLevel::Success, []],
+        };
+        $header = $bigJump && UpgradeNoteLevel::Warning === $level ? [$this->translator->trans('calculation.note.big_jump'), ''] : [];
 
-        return self::note(UpgradeNoteLevel::Success, $this->translator->trans([] === $unknown ? 'calculation.note.update' : 'calculation.note.update_unchecked', $range));
+        return self::note($level, implode("\n", [...$header, ...$lines, '- '.$this->translator->trans('calculation.note.install_test')]));
     }
 
     /**
