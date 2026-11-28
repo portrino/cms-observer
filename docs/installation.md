@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- PHP 8.4 or newer with the extensions `ctype`, `iconv`, `pdo_mysql` and
+- PHP 8.4.1 or newer (as Symfony 8 needs) with the extensions `ctype`, `iconv`, `pdo_mysql` and
   `sodium`, and [Composer](https://getcomposer.org)
 - MariaDB 10.11 or newer, or MySQL 8.4 or newer (older ones are past their
   end of life, and Doctrine drops them with DBAL 5)

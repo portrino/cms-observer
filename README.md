@@ -37,7 +37,7 @@ pull request, see [supporting another CMS](docs/clients.md#supporting-another-cm
 ## 🔥 Installation
 
 > [!IMPORTANT]
-> Requires PHP 8.4+, MariaDB 10.11+ or MySQL 8.4+, a web server with `public/` as
+> Requires PHP 8.4.1+, MariaDB 10.11+ or MySQL 8.4+, a web server with `public/` as
 > document root and a cron job for the scheduled syncs. How you deploy is up to
 > you; the repository doesn't prescribe a tool.
 

@@ -24,8 +24,8 @@ fail() {
     exit 1
 }
 
-command -v php >/dev/null 2>&1 || fail "PHP is missing, the CMS Observer needs PHP 8.4 or newer."
-php -r 'exit(PHP_VERSION_ID >= 80400 ? 0 : 1);' || fail "PHP $(php -r 'echo PHP_VERSION;') is too old, the CMS Observer needs PHP 8.4 or newer."
+command -v php >/dev/null 2>&1 || fail "PHP is missing, the CMS Observer needs PHP 8.4.1 or newer."
+php -r 'exit(PHP_VERSION_ID >= 80401 ? 0 : 1);' || fail "PHP $(php -r 'echo PHP_VERSION;') is too old, the CMS Observer needs PHP 8.4.1 or newer."
 composer=${COMPOSER_BINARY:-composer}
 command -v "$composer" >/dev/null 2>&1 || fail "Composer is missing (https://getcomposer.org), or set COMPOSER_BINARY to its path."
 [ ! -f .env.local.php ] || fail ".env.local.php (from \"composer dump-env\") overrides .env.local; delete it or keep using dump-env instead of bin/setup."
