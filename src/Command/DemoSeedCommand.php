@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Service\Demo\DemoReleaseData;
 use App\Service\Demo\DemoSeeder;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Demo projects to try the Observer without any site pushing reports, e.g. right after a local
  * installation. Never in production: the projects and their tokens are made up.
  */
-#[AsCommand(name: 'app:demo:seed', description: 'Fill the Observer with demo projects; --sync also fetches the release data to rate them')]
+#[AsCommand(name: 'app:demo:seed', description: 'Fill the Observer with demo projects; --sync or --offline also adds the release data to rate them')]
 class DemoSeedCommand extends Command
 {
     /** what rates the demo projects, in the order they depend on each other */
@@ -40,6 +41,7 @@ class DemoSeedCommand extends Command
 
     public function __construct(
         private readonly DemoSeeder $seeder,
+        private readonly DemoReleaseData $releaseData,
         #[Autowire(param: 'kernel.environment')]
         private readonly string $environment,
     ) {
@@ -50,36 +52,58 @@ class DemoSeedCommand extends Command
     {
         $this
             ->addOption('sync', null, InputOption::VALUE_NONE, 'Fetch the release data from TER, Packagist, wordpress.org & co. afterwards, and draft an upgrade calculation')
-            ->addOption('force', null, InputOption::VALUE_NONE, 'Add the demo projects although there are projects already');
+            ->addOption('offline', null, InputOption::VALUE_NONE, 'Write a fixed snapshot of the release data instead, without any request; only on an Observer without release data')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Add the demo projects although there are projects already')
+            ->addOption('write-snapshot', null, InputOption::VALUE_NONE, 'Write the release data of this Observer as the --offline snapshot (after --sync on an empty database), instead of seeding');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        if ('prod' === $this->environment) {
-            $io->error('No demo projects in production (APP_ENV=prod).');
+        if (true === $input->getOption('write-snapshot')) {
+            $io->success(sprintf('Wrote %d rows of release data to the snapshot.', $this->releaseData->export()));
+
+            return Command::SUCCESS;
+        }
+        $offline = true === $input->getOption('offline');
+        $refusal = $this->refusal($offline, true === $input->getOption('sync'), true === $input->getOption('force'));
+        if (null !== $refusal) {
+            $io->error($refusal);
 
             return Command::FAILURE;
         }
-        if ($this->seeder->hasProjects() && true !== $input->getOption('force')) {
-            $io->error('The Observer has projects already. Add the demo projects anyway with --force.');
 
-            return Command::FAILURE;
+        // before the reports, which are rated as they come in
+        if ($offline) {
+            $io->success(sprintf('Wrote %d rows of release data from the snapshot.', $this->releaseData->import()));
         }
-
         $io->success(sprintf('Created %d demo projects with their reports.', $this->seeder->seedProjects()));
-        if (true !== $input->getOption('sync')) {
-            $io->note('Rated once the release data is synced: run this with --sync, or let the scheduled syncs come round.');
+        if (!$offline && true !== $input->getOption('sync')) {
+            $io->note('Rated once the release data is synced: run this with --sync or --offline, or let the scheduled syncs come round.');
 
             return Command::SUCCESS;
         }
 
-        $this->sync($io, $output);
+        if (!$offline) {
+            $this->sync($io, $output);
+        }
         $this->seeder->seedCalculation()
             ? $io->success('Drafted an upgrade calculation for "Bergblick Tourismus – Website"; refresh it to check the rows a later report changed.')
             : $io->warning('No newer TYPO3 major known, so no upgrade calculation.');
 
         return Command::SUCCESS;
+    }
+
+    /** why the seed doesn't run, if it doesn't */
+    private function refusal(bool $offline, bool $sync, bool $force): ?string
+    {
+        return match (true) {
+            'prod' === $this->environment => 'No demo projects in production (APP_ENV=prod).',
+            $offline && $sync => 'Either --sync or --offline.',
+            $offline && $this->releaseData->hasReleaseData() => 'The Observer has synced release data, which the fixed snapshot would clash with. Use --sync instead.',
+            !$force && $this->seeder->hasProjects() => 'The Observer has projects already. Add the demo projects anyway with --force.',
+            default => null,
+        };
     }
 
     private function sync(SymfonyStyle $io, OutputInterface $output): void

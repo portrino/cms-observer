@@ -52,10 +52,10 @@ final class DemoProjects
             'webp' => ['WebP for TYPO3', '14.8.3', '14.8.3', 'plan2net/webp', 'extension'],
             'staticfilecache' => ['StaticFileCache', '14.0.0', '14.0.0', 'lochmueller/staticfilecache', 'extension'],
         ]],
-        'Nordlicht Verlag – Magazin' => ['Nordlicht Verlag', CmsType::Typo3, false, ['13.4.18', '13.4.20'], '8.4.5', '11.4.4-MariaDB', 'mariadb', [
+        'Nordlicht Verlag – Magazin' => ['Nordlicht Verlag', CmsType::Typo3, false, ['13.4.39', '13.4.40'], '8.4.28', '11.4.14-MariaDB', 'mariadb', [
             'news' => ['News', '14.1.1', '14.1.2', 'georgringer/news', 'extension'],
             'container' => ['Container', '4.1.2', '4.1.2', 'b13/container', 'extension'],
-            'content_blocks' => ['Content Blocks', '1.3.0', '1.3.0', 'friendsoftypo3/content-blocks', 'extension'],
+            'content_blocks' => ['Content Blocks', '1.6.4', '1.6.5', 'friendsoftypo3/content-blocks', 'extension'],
             'bootstrap_package' => ['Bootstrap Package', '16.0.1', '16.0.1', 'bk2k/bootstrap-package', 'extension'],
             'staticfilecache' => ['StaticFileCache', '15.2.3', '15.2.3', 'lochmueller/staticfilecache', 'extension'],
             'ke_search' => ['Faceted Search', '7.5.0', '7.5.0', 'tpwd/ke_search', 'extension'],
@@ -73,7 +73,7 @@ final class DemoProjects
             'classic-editor' => ['Classic Editor', '1.7.0', '1.7.0', null, 'plugin'],
             'astra' => ['Astra', '4.8.0', '4.8.0', null, 'theme'],
         ]],
-        'Nordlicht Verlag – Blog' => ['Nordlicht Verlag', CmsType::WordPress, false, ['6.8.2', '6.8.3'], '8.3.14', '8.4.3', 'mysql', [
+        'Nordlicht Verlag – Blog' => ['Nordlicht Verlag', CmsType::WordPress, false, ['7.1.4', '7.1.5'], '8.3.37', '8.4.13', 'mysql', [
             'wordpress-seo' => ['Yoast SEO', '28.9', '28.9', null, 'plugin'],
             'akismet' => ['Akismet Anti-spam', '5.7.2', '5.7.2', null, 'plugin'],
             'contact-form-7' => ['Contact Form 7', '6.2.6', '6.2.6', null, 'plugin'],
@@ -81,7 +81,7 @@ final class DemoProjects
             'litespeed-cache' => ['LiteSpeed Cache', '7.9.4', '7.9.4', null, 'plugin'],
             'classic-editor' => ['Classic Editor', '1.7.0', '1.7.0', null, 'plugin'],
             'wpforms-lite' => ['WPForms Lite', '2.0.5.2', '2.0.5.2', null, 'plugin'],
-            'twentytwentyfive' => ['Twenty Twenty-Five', '1.0', '1.0', null, 'theme'],
+            'twentytwentyfive' => ['Twenty Twenty-Five', '1.4', '1.5', null, 'theme'],
         ]],
         'Stadtwerke Musterstadt – Karriere' => ['Stadtwerke Musterstadt', CmsType::Craft, false, ['5.5.8', '5.5.10'], '8.3.14', '8.0.36', 'mysql', [
             'seomatic' => ['SEOmatic', '5.1.10', '5.1.10', 'nystudio107/craft-seomatic', 'plugin'],

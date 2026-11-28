@@ -7,13 +7,17 @@ namespace App\Service\Demo;
 use App\Dto\PackageReport;
 use App\Dto\SiteReportRequest;
 use App\Entity\Organization;
+use App\Entity\PackageType;
 use App\Entity\Site;
 use App\Entity\UpgradeCalculation;
 use App\Entity\UpgradeCalculationVersion;
 use App\Repository\AgencySettingsRepository;
+use App\Repository\SitePackageRepository;
 use App\Repository\SiteRepository;
 use App\Security\SiteTokenFactory;
+use App\Service\SecurityNotifier;
 use App\Service\SiteReportIngestor;
+use App\Service\Typo3\SitePackageTerEvaluator;
 use App\Service\UpgradeCalculationDrafter;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -30,6 +34,9 @@ class DemoSeeder
         private readonly UpgradeCalculationDrafter $drafter,
         private readonly SiteRepository $siteRepository,
         private readonly AgencySettingsRepository $settingsRepository,
+        private readonly SitePackageTerEvaluator $terEvaluator,
+        private readonly SitePackageRepository $packageRepository,
+        private readonly SecurityNotifier $securityNotifier,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -59,6 +66,7 @@ class DemoSeeder
                 $this->report($site, $core[$state], $php, $db, $platform, self::versionsOf($packages, 1 + $state), $packages);
             }
         }
+        $this->rateTerVersions();
 
         return count(DemoProjects::PROJECTS);
     }
@@ -94,8 +102,17 @@ class DemoSeeder
 
         [, , , $core, $php, $db, $platform, $packages] = DemoProjects::PROJECTS[DemoProjects::CALCULATION_PROJECT];
         $this->report($site, $core[1], $php, $db, $platform, DemoProjects::CALCULATION_UPDATE + self::versionsOf($packages, 2), $packages);
+        $this->rateTerVersions();
 
         return true;
+    }
+
+    /** reports don't rate TYPO3 extensions against their TER versions, only the sync does */
+    private function rateTerVersions(): void
+    {
+        $this->terEvaluator->evaluateAll($this->packageRepository->findByPackageType(PackageType::Typo3CmsExtension));
+        $this->entityManager->flush();
+        $this->securityNotifier->flush();
     }
 
     /** "bergblick-tourismus-shop.example.test" for "Bergblick Tourismus – Shop" */

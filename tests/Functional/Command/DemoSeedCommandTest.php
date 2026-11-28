@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpClient\MockHttpClient;
 
 class DemoSeedCommandTest extends KernelTestCase
 {
@@ -72,5 +73,38 @@ class DemoSeedCommandTest extends KernelTestCase
         self::assertSame('Demo', $calculation?->getLatestVersion()?->getAuthor());
         $news = $entityManager->getRepository(SitePackage::class)->findOneBy(['site' => $site, 'name' => 'news']);
         self::assertSame('14.0.0', $news?->getVersion(), 'updated after the calculation, for its refresh');
+    }
+
+    public function testOfflineRatesTheDemoProjectsFromTheSnapshotWithoutAnyRequest(): void
+    {
+        $kernel = self::bootKernel();
+        static::getContainer()->set('http_client', new MockHttpClient(static fn (string $method, string $url): never => throw new \LogicException('Requested '.$url)));
+        $tester = new CommandTester(new Application($kernel)->find('app:demo:seed'));
+
+        self::assertSame(Command::SUCCESS, $tester->execute(['--offline' => true, '--force' => true]), $tester->getDisplay());
+
+        $sites = static::getContainer()->get(EntityManagerInterface::class)->getRepository(Site::class);
+        $magazine = $sites->findOneBy(['name' => 'Nordlicht Verlag – Magazin']);
+        self::assertSame([false, false], [$magazine?->isCoreInsecure(), $magazine?->isPhpInsecure()], 'the up-to-date project');
+        $portal = $sites->findOneBy(['name' => 'Stadtwerke Musterstadt – Kundenportal']);
+        self::assertSame([true, true], [$portal?->isCoreInsecure(), $portal?->isPhpInsecure()], 'TYPO3 12.4.20 on PHP 8.1.31');
+        $packages = static::getContainer()->get(EntityManagerInterface::class)->getRepository(SitePackage::class);
+        self::assertTrue($packages->findOneBy(['site' => $portal, 'name' => 'news'])?->isInsecure(), 'news 11.4.2, rated against its TER versions');
+        self::assertTrue($packages->findOneBy(['site' => $sites->findOneBy(['name' => 'Bergblick Tourismus – Shop']), 'name' => 'woocommerce'])?->isInsecure(), 'a Wordfence vulnerability');
+        self::assertStringContainsString('Drafted an upgrade calculation', $tester->getDisplay());
+    }
+
+    public function testOfflineRefusesAnObserverWithSyncedReleaseData(): void
+    {
+        $kernel = self::bootKernel();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist(new CoreRelease('13.4.10', new \DateTimeImmutable(), ReleaseType::Regular, '13.4.10', true, false, null));
+        $entityManager->flush();
+        $tester = new CommandTester(new Application($kernel)->find('app:demo:seed'));
+
+        self::assertSame(Command::FAILURE, $tester->execute(['--offline' => true, '--force' => true]));
+        self::assertStringContainsString('--sync instead', $tester->getDisplay());
+        self::assertSame(Command::FAILURE, $tester->execute(['--offline' => true, '--sync' => true, '--force' => true]), 'one or the other');
+        self::assertNull($entityManager->getRepository(Site::class)->findOneBy(['name' => DemoProjects::CALCULATION_PROJECT]));
     }
 }

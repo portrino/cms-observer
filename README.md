@@ -76,6 +76,11 @@ with popular extensions and plugins in real, partly outdated or insecure version
 the release data to rate them and drafts an upgrade calculation. Not for production: the
 command refuses on `APP_ENV=prod` and on an Observer with projects (unless `--force`).
 
+`--offline` instead of `--sync` writes a fixed snapshot of the release data
+(`resources/demo/release-data.json`) without any request, so the projects are rated the same
+way every time, as the E2E tests need. To renew it, run `app:demo:seed --sync` on an empty
+database, then `app:demo:seed --write-snapshot`.
+
 ## 📚 Documentation
 
 | Topic | What's inside |
