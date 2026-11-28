@@ -16,3 +16,15 @@ php bin/console app:demo:seed --offline
 php bin/console app:user:create e2e@example.test E2E e2e-password
 # two-factor.spec.ts, on a login of its own
 php bin/console app:user:create e2e-2fa@example.test "E2E 2FA" e2e-password
+
+# a project per instance of the client repositories' DDEV setups, with a fixed token
+# (CONTRIBUTING.md), so their push lands here without copying a token; local only
+mysql -uroot -proot -hdb e2e <<'SQL'
+INSERT INTO site (name, type, url, token_hash, created_at, sla_active) VALUES
+  ('Client test – TYPO3 12', 'typo3', 'https://12.cms-observer-client-typo3.ddev.site', SHA2('e2e-typo3-12', 256), NOW(), 0),
+  ('Client test – TYPO3 13', 'typo3', 'https://13.cms-observer-client-typo3.ddev.site', SHA2('e2e-typo3-13', 256), NOW(), 0),
+  ('Client test – TYPO3 14', 'typo3', 'https://14.cms-observer-client-typo3.ddev.site', SHA2('e2e-typo3-14', 256), NOW(), 0),
+  ('Client test – WordPress 6.4', 'wordpress', 'https://64.cms-observer-client-wordpress.ddev.site', SHA2('e2e-wordpress-64', 256), NOW(), 0),
+  ('Client test – WordPress 7.1', 'wordpress', 'https://71.cms-observer-client-wordpress.ddev.site', SHA2('e2e-wordpress-71', 256), NOW(), 0),
+  ('Client test – Craft CMS', 'craft', 'https://cms-observer-client-craftcms.ddev.site', SHA2('e2e-craft', 256), NOW(), 0);
+SQL

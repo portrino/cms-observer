@@ -115,6 +115,17 @@ It creates these logins, which also open the E2E site in the browser:
 | `e2e@example.test` | `e2e-password` | all specs (`tests/E2E/fixtures.ts`, overridable with `E2E_EMAIL` / `E2E_PASSWORD`) |
 | `e2e-2fa@example.test` | `e2e-password` | `two-factor.spec.ts` only, which sets up two-factor login on it |
 
+It also creates a project for each instance of the clients' DDEV setups, with
+a fixed token, so a push from there lands in the E2E Observer without copying
+a token. The clients' DDEV setups use them: API URL
+`https://e2e.cms-observer.ddev.site`.
+
+| Project URL | Token |
+|---|---|
+| `https://12.cms-observer-client-typo3.ddev.site` (and `13.`, `14.`) | `e2e-typo3-12` (`-13`, `-14`) |
+| `https://64.cms-observer-client-wordpress.ddev.site` (and `71.`) | `e2e-wordpress-64` (`-71`) |
+| `https://cms-observer-client-craftcms.ddev.site` | `e2e-craft` |
+
 ## Translations
 
 Texts of the interface and the mails are translation keys, e.g.
