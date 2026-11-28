@@ -1,7 +1,7 @@
 # ADR-0007: Breaking changes from the commits on GitHub, GitLab and Codeberg
 
-- Status: Proposed
-- Date: 2026-11-27
+- Status: Accepted
+- Date: 2026-11-28
 - Deciders: Maintainers
 
 ## Context
