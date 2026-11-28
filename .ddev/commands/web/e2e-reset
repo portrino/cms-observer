@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+## Description: Recreate the database of the E2E tests (e2e.cms-observer.ddev.site) with the offline demo seed and the E2E logins
+## Usage: e2e-reset
+## Example: ddev e2e-reset && ddev playwright test
+
+set -euo pipefail
+
+# the same database public/index.php uses for the e2e. hostname
+export DATABASE_URL='mysql://db:db@db:3306/e2e?charset=utf8mb4'
+
+# DDEV's db user may not create databases, root may
+mysql -uroot -proot -hdb -e "DROP DATABASE IF EXISTS e2e; CREATE DATABASE e2e; GRANT ALL ON e2e.* TO 'db'@'%';"
+php bin/console doctrine:migrations:migrate --no-interaction --quiet
+php bin/console app:demo:seed --offline
+php bin/console app:user:create e2e@example.test E2E e2e-password
+# two-factor.spec.ts, on a login of its own
+php bin/console app:user:create e2e-2fa@example.test "E2E 2FA" e2e-password

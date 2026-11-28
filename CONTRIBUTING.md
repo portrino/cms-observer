@@ -96,10 +96,17 @@ ddev composer ci:test
 ddev composer ci:test:unit
 ddev composer ci:test:functional
 
-# Run the end-to-end tests in tests/E2E (needs the logins listed in tests/E2E/fixtures.ts)
+# Run the end-to-end tests in tests/E2E
 ddev npm install --prefix tests/E2E
+ddev e2e-reset
 ddev playwright test
 ```
+
+The end-to-end tests run against https://e2e.cms-observer.ddev.site, which
+uses a database of its own (`e2e`, switched in `public/index.php` inside DDEV
+only), not the dev one. `ddev e2e-reset` recreates it with the demo projects
+of `app:demo:seed --offline`, their fixed release data and the E2E logins;
+run it again whenever a run left something behind or the snapshot changed.
 
 ## Translations
 

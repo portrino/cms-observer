@@ -5,7 +5,8 @@ export default defineConfig({
     testDir: './tests',
     reporter: [['list'], ['html', { open: 'never' }]],
     use: {
-        baseURL: 'https://cms-observer.ddev.site',
+        // the E2E database seeded by `ddev e2e-reset`, not the dev one
+        baseURL: 'https://e2e.cms-observer.ddev.site',
         ignoreHTTPSErrors: true,
         trace: 'retain-on-failure',
         screenshot: 'only-on-failure',

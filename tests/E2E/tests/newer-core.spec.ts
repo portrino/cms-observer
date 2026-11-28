@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures';
 
-// relies on the TYPO3 core releases in the dev DB: TYPO3 14 releases exist
+// relies on the TYPO3 core releases of the demo snapshot: TYPO3 14 releases exist
 test('the core section shows the releases of newer majors only behind its switch, remembered', async ({ page, createProject }) => {
     await page.setViewportSize({ width: 1600, height: 900 });
     const project = await createProject('e2e-newer-core', 'TYPO3');

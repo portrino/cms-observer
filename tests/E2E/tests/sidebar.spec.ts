@@ -59,7 +59,7 @@ test('the brand opens the system information, also when collapsed', async ({ pag
 
 test('the filters stay in view while scrolling', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 400 });
-    // the longest list in the dev DB, so there is something to scroll
+    // the longest list, the demo seed's packages, so there is something to scroll
     await page.goto('/packages');
     const filters = page.locator('.page-filters');
     const lineOpacity = () => filters.evaluate((el) => getComputedStyle(el, '::after').opacity);

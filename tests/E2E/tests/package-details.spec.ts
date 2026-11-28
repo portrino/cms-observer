@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures';
 
-// relies on the WordPress.org sync in the dev DB: wordpress-seo has a description of several thousand characters
+// relies on the WordPress.org data of the demo snapshot: wordpress-seo has a description of several thousand characters
 test('package details cut a long description and show every source link with an icon', async ({ page, createProject }) => {
     await page.setViewportSize({ width: 1600, height: 900 });
     const project = await createProject('e2e-package-details', 'WordPress');
@@ -36,7 +36,7 @@ test('package details cut a long description and show every source link with an 
     }
 });
 
-// relies on the Wordfence sync in the dev DB: wordpress-seo 1.0 is affected by several known vulnerabilities
+// relies on the Wordfence data of the demo snapshot: wordpress-seo 1.0 is affected by several known vulnerabilities
 test('package details show a known vulnerability as an alert above the version table', async ({ page, createProject }) => {
     await page.setViewportSize({ width: 1600, height: 900 });
     const project = await createProject('e2e-package-vulnerability', 'WordPress');
@@ -61,7 +61,7 @@ test('package details show a known vulnerability as an alert above the version t
     expect(alertBottom).toBeLessThanOrEqual((await details.locator('table').boundingBox())!.y);
 });
 
-// relies on the Packagist sync in the dev DB: verbb/formie 3.1.25 has a critical advisory and newer versions for Craft 5
+// relies on the Packagist data of the demo snapshot: verbb/formie 3.1.25 has a critical advisory and newer versions for Craft 5
 test('Craft CMS package details show the required Craft as a badge', async ({ page, createProject }) => {
     await page.setViewportSize({ width: 1600, height: 900 });
     const project = await createProject('e2e-package-craft', 'Craft CMS');

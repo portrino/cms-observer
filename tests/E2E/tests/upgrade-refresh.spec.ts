@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures';
 
-// relies on the TER versions of news in the dev DB
+// relies on the TER versions of news in the demo snapshot
 test('a refresh shows the previous notes of a changed row and needs it checked', async ({ page, createProject }) => {
     await page.setViewportSize({ width: 1600, height: 1000 });
     const project = await createProject('e2e-upgrade-refresh');
@@ -14,7 +14,7 @@ test('a refresh shows the previous notes of a changed row and needs it checked',
     expect((await report('12.3.1')).status()).toBe(202);
 
     await page.goto(`${project.url}/calculations/new?target=14`);
-    // the rate comes from the settings of the dev DB
+    // the rate comes from the settings, which the demo seed fills
     await page.getByLabel('Your name or initials').fill('JD');
     await page.getByRole('button', { name: 'Save as new version' }).click();
     await expect(page).toHaveURL(/calculations\/\d+/);

@@ -3,9 +3,7 @@ import { test as base } from '@playwright/test';
 export { expect } from '@playwright/test';
 
 /**
- * Dev-DB logins, create them once:
- *   ddev console app:user:create e2e@example.test E2E e2e-password
- *   ddev console app:user:create e2e-2fa@example.test "E2E 2FA" e2e-password   (two-factor.spec.ts)
+ * Logins of the E2E database, created by `ddev e2e-reset` (.ddev/commands/web/e2e-reset).
  */
 export const credentials = {
     email: process.env.E2E_EMAIL ?? 'e2e@example.test',
@@ -25,7 +23,7 @@ export const test = base.extend<{ loggedIn: void; createProject: (prefix: string
         await use();
     }, { auto: true }],
 
-    // creates a project in the dev DB and deletes it again after the test, also when the test failed
+    // creates a project in the E2E database and deletes it again after the test, also when the test failed
     createProject: async ({ page }, use) => {
         const created: Project[] = [];
 

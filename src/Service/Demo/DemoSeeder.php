@@ -28,6 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class DemoSeeder
 {
     private const string AUTHOR = 'Demo';
+    private const float HOURLY_RATE = 100.0;
+    private const float MANAGEMENT_PERCENT = 10.0;
 
     public function __construct(
         private readonly SiteReportIngestor $ingestor,
@@ -52,6 +54,13 @@ class DemoSeeder
      */
     public function seedProjects(): int
     {
+        // rates for the upgrade calculations, unless the agency saved settings of its own
+        $settings = $this->settingsRepository->get();
+        if (null === $settings->getId()) {
+            $settings->setUpgradeCalculationDefaults(self::HOURLY_RATE, self::MANAGEMENT_PERCENT);
+            $this->entityManager->persist($settings);
+        }
+
         $organizations = [];
         foreach (DemoProjects::ORGANIZATIONS as $name => $description) {
             $this->entityManager->persist($organizations[$name] = new Organization($name, $description));
@@ -91,8 +100,8 @@ class DemoSeeder
         $this->entityManager->persist(new UpgradeCalculationVersion(
             calculation: $calculation,
             author: self::AUTHOR,
-            hourlyRate: $settings->getDefaultHourlyRate() ?? 100.0,
-            managementPercent: $settings->getDefaultManagementPercent() ?? 10.0,
+            hourlyRate: $settings->getDefaultHourlyRate() ?? self::HOURLY_RATE,
+            managementPercent: $settings->getDefaultManagementPercent() ?? self::MANAGEMENT_PERCENT,
             final: false,
             items: $this->drafter->draft($site, $targets[0]),
             note: 'Demo',

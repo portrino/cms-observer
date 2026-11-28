@@ -11,6 +11,7 @@ use App\Entity\SitePackage;
 use App\Entity\Typo3\CoreRelease;
 use App\Entity\Typo3\ReleaseType;
 use App\Entity\UpgradeCalculation;
+use App\Repository\AgencySettingsRepository;
 use App\Service\Demo\DemoProjects;
 use App\Service\Demo\DemoSeeder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,6 +41,7 @@ class DemoSeedCommandTest extends KernelTestCase
         $events = array_map(static fn (SiteEvent $event): string => $event->getType()->value, $entityManager->getRepository(SiteEvent::class)->findBy(['site' => $site]));
         self::assertContains('package-updated', $events, 'WooCommerce 9.6.1 → 9.6.2 between the reports');
         self::assertStringContainsString('--sync', $tester->getDisplay(), 'rated once synced');
+        self::assertSame(100.0, static::getContainer()->get(AgencySettingsRepository::class)->get()->getDefaultHourlyRate(), 'rates for the calculations');
     }
 
     public function testDoesNothingOnAnObserverWithProjectsUnlessForced(): void

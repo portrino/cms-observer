@@ -44,8 +44,8 @@ test('the filters fold away behind a button on phones', async ({ page }) => {
 });
 
 test('the project page fits the phone width', async ({ page }) => {
-    // a reported project has version badges, the widest content of the page
-    await page.goto('/?q=demo');
+    // a reported project has version badges, the widest content of the page; the demo seed's
+    await page.goto('/?q=Bergblick');
     await page.locator('#projects-results tbody a').first().click();
     await page.waitForURL(/\/projects\/\d+$/);
 
