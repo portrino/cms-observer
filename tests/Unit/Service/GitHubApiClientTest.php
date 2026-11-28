@@ -47,8 +47,8 @@ class GitHubApiClientTest extends TestCase
 
         self::assertTrue($client->isConfigured());
         self::assertSame([
-            ['sha' => '3668a8c0', 'subject' => '!!![TASK] change requirements', 'url' => 'https://github.com/b13/http2/commit/3668a8c0'],
-            ['sha' => '78be3c0d', 'subject' => '[RELEASE] 4.0.0', 'url' => 'https://github.com/b13/http2/commit/78be3c0d'],
+            ['sha' => '3668a8c0', 'subject' => '!!![TASK] change requirements', 'message' => "!!![TASK] change requirements\n\nTYPO3 14 only", 'url' => 'https://github.com/b13/http2/commit/3668a8c0'],
+            ['sha' => '78be3c0d', 'subject' => '[RELEASE] 4.0.0', 'message' => '[RELEASE] 4.0.0', 'url' => 'https://github.com/b13/http2/commit/78be3c0d'],
         ], $client->commitsBetween('b13/http2', '84692787', '78be3c0d'));
         self::assertStringStartsWith('https://api.github.com/repos/b13/http2/compare/84692787...78be3c0d', $requests[0]['url']);
         self::assertContains('Authorization: Bearer secret-token', $requests[0]['headers']);

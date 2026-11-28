@@ -37,13 +37,13 @@ class GitHubApiClient
     }
 
     /**
-     * The commits after $base up to $head, oldest first, with their first line.
+     * The commits after $base up to $head, oldest first, with their first line and whole message.
      *
      * shortcut: GitHub lists up to 250 commits without paging, which is plenty between two
      * releases; page through "Link" headers if a package releases more than that at once.
      *
-     * @return list<array{sha: string, subject: string, url: string}>|null null when GitHub can't
-     *                                                                     compare them, e.g. a deleted repository or a moved tag
+     * @return list<array{sha: string, subject: string, message: string, url: string}>|null null when GitHub can't
+     *                                                                                      compare them, e.g. a deleted repository or a moved tag
      *
      * @throws GitHubRateLimitException when GitHub declines further requests for now
      */
@@ -73,7 +73,7 @@ class GitHubApiClient
     }
 
     /**
-     * @return array{sha: string, subject: string, url: string}|null null for an entry without a hash or message
+     * @return array{sha: string, subject: string, message: string, url: string}|null null for an entry without a hash or message
      */
     private static function commitOf(mixed $commit, string $repository): ?array
     {
@@ -84,6 +84,7 @@ class GitHubApiClient
         return [
             'sha' => $commit['sha'],
             'subject' => trim(explode("\n", $commit['commit']['message'])[0]),
+            'message' => $commit['commit']['message'],
             'url' => is_string($commit['html_url'] ?? null) ? $commit['html_url'] : 'https://github.com/'.$repository.'/commit/'.$commit['sha'],
         ];
     }

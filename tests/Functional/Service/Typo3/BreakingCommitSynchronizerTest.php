@@ -46,6 +46,8 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
                 ['sha' => 'aaa', 'html_url' => 'https://github.com/b13/http2/commit/aaa', 'commit' => ['message' => '!!![TASK] change requirements']],
                 ['sha' => 'bbb', 'html_url' => 'https://github.com/b13/http2/commit/bbb', 'commit' => ['message' => "Merge pull request #35 from b13/task/v14\n\n!!![TASK] change requirements"]],
                 ['sha' => 'ccc', 'html_url' => 'https://github.com/b13/http2/commit/ccc', 'commit' => ['message' => '[BUGFIX] rm foo header']],
+                ['sha' => 'ddd', 'html_url' => 'https://github.com/b13/http2/commit/ddd', 'commit' => ['message' => "feat: new cache layer\n\nBREAKING CHANGE: the cache table is renamed"]],
+                ['sha' => 'eee', 'html_url' => 'https://github.com/b13/http2/commit/eee', 'commit' => ['message' => "docs: explain the setup\n\nMentions a BREAKING CHANGE: of the core in passing"]],
             ] : []]);
         }, 'https://api.github.com/'));
 
@@ -54,7 +56,10 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
         self::assertSame(0, $synchronizer->sync(), 'checked once');
 
         $byVersion = $this->breakingCommits();
-        self::assertSame([['sha' => 'aaa', 'subject' => '!!![TASK] change requirements', 'url' => 'https://github.com/b13/http2/commit/aaa']], $byVersion['4.0.0'], 'no merge commit');
+        self::assertSame([
+            ['sha' => 'aaa', 'subject' => '!!![TASK] change requirements', 'url' => 'https://github.com/b13/http2/commit/aaa'],
+            ['sha' => 'ddd', 'subject' => 'feat: new cache layer', 'url' => 'https://github.com/b13/http2/commit/ddd', 'footer' => true],
+        ], $byVersion['4.0.0'], 'no merge commit; the footer only on a line of its own');
         self::assertSame([], $byVersion['v4.1.0']);
         self::assertNull($byVersion['3.0.0'], 'not newer than the installed version');
     }

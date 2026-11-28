@@ -66,17 +66,27 @@ class BreakingCommitSynchronizer
     }
 
     /**
-     * @return list<array{sha: string, subject: string, url: string}>|null null when GitHub can't compare them
+     * @return list<array{sha: string, subject: string, url: string, footer?: bool}>|null null when GitHub can't compare them
      */
     private function breakingCommits(string $repository, PackagistVersion $previous, PackagistVersion $version): ?array
     {
         $commits = $this->gitHub->commitsBetween($repository, (string) $previous->getSourceReference(), (string) $version->getSourceReference());
 
-        return null === $commits ? null : array_values(array_filter(
-            $commits,
+        if (null === $commits) {
+            return null;
+        }
+
+        $breaking = [];
+        foreach ($commits as $commit) {
+            $footer = ExtensionUtility::hasBreakingFooter($commit['message']);
             // a merge commit repeats the subject of the commit it merges
-            static fn (array $commit): bool => !str_starts_with($commit['subject'], 'Merge ') && ExtensionUtility::marksBreakingCommit($commit['subject']),
-        ));
+            if (!str_starts_with($commit['subject'], 'Merge ') && ($footer || ExtensionUtility::marksBreakingCommit($commit['subject']))) {
+                // the subject is shown; the footer is remembered, as the message isn't stored
+                $breaking[] = ['sha' => $commit['sha'], 'subject' => $commit['subject'], 'url' => $commit['url']] + ($footer ? ['footer' => true] : []);
+            }
+        }
+
+        return $breaking;
     }
 
     /**

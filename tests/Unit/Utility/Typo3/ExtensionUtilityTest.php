@@ -93,4 +93,12 @@ class ExtensionUtilityTest extends TestCase
     {
         self::assertSame($breaking, ExtensionUtility::marksBreakingCommit($subject));
     }
+
+    public function testFindsTheConventionalCommitsFooterOnALineOfItsOwn(): void
+    {
+        self::assertTrue(ExtensionUtility::hasBreakingFooter("feat: new cache layer\n\nBREAKING CHANGE: the cache table is renamed"));
+        self::assertTrue(ExtensionUtility::hasBreakingFooter("refactor: drop PHP 8.1\n\nBREAKING-CHANGE: needs PHP 8.2"));
+        self::assertFalse(ExtensionUtility::hasBreakingFooter("docs: explain the setup\n\nMentions a BREAKING CHANGE: of the core in passing"));
+        self::assertFalse(ExtensionUtility::hasBreakingFooter('[BUGFIX] rm foo header'));
+    }
 }

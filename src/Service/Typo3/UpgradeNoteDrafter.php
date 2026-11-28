@@ -83,7 +83,7 @@ final readonly class UpgradeNoteDrafter
             $changes[] = sprintf('- **%s**: %s', $version->version, mb_strlen($comment) > self::COMMENT_LENGTH ? mb_substr($comment, 0, self::COMMENT_LENGTH - 1).'…' : $comment);
         }
         // the rule again: commits stored by an earlier, wider one
-        foreach (array_filter($version->breakingCommits ?? [], static fn (array $commit): bool => ExtensionUtility::marksBreakingCommit($commit['subject'])) as $commit) {
+        foreach (array_filter($version->breakingCommits ?? [], static fn (array $commit): bool => ($commit['footer'] ?? false) || ExtensionUtility::marksBreakingCommit($commit['subject'])) as $commit) {
             // a subject is a single line; brackets would end the link text early
             $changes[] = sprintf('- **%s**: [%s](%s)', $version->version, str_replace(['[', ']'], ['\\[', '\\]'], $commit['subject']), $commit['url']);
         }

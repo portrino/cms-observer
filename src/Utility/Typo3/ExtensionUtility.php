@@ -23,6 +23,9 @@ final class ExtensionUtility
      */
     private const string BREAKING_COMMIT = '/!!!|BREAKING[ -]CHANGE|^\w+(\([^)]*\))?!:/';
 
+    /** The footer of a Conventional Commit, on a line of its own in the message */
+    private const string BREAKING_FOOTER = '/^BREAKING[ -]CHANGE:/m';
+
     /** the core of TYPO3 8 and older as one package */
     private const string LEGACY_CORE = 'typo3/cms';
 
@@ -71,6 +74,12 @@ final class ExtensionUtility
     public static function marksBreakingCommit(string $subject): bool
     {
         return 1 === preg_match(self::BREAKING_COMMIT, $subject);
+    }
+
+    /** Whether a commit message has a "BREAKING CHANGE:" footer, as Conventional Commits write it */
+    public static function hasBreakingFooter(string $message): bool
+    {
+        return 1 === preg_match(self::BREAKING_FOOTER, $message);
     }
 
     /**

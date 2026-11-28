@@ -22,7 +22,7 @@ class PackagistVersion extends AbstractPackagistVersion
      * The commits since the previous version that mention breaking changes, from GitHub
      * (CommitSynchronizer); null until checked, empty when checked and nothing was found.
      *
-     * @var list<array{sha: string, subject: string, url: string}>|null
+     * @var list<array{sha: string, subject: string, url: string, footer?: bool}>|null
      */
     #[ORM\Column(nullable: true)]
     private ?array $breakingCommits = null;
@@ -66,7 +66,7 @@ class PackagistVersion extends AbstractPackagistVersion
     }
 
     /**
-     * @param list<array{sha: string, subject: string, url: string}> $commits
+     * @param list<array{sha: string, subject: string, url: string, footer?: bool}> $commits
      */
     public function recordBreakingCommits(array $commits): void
     {
@@ -86,7 +86,7 @@ class PackagistVersion extends AbstractPackagistVersion
     }
 
     /**
-     * @return list<array{sha: string, subject: string, url: string}>|null null until checked, and when unreadable
+     * @return list<array{sha: string, subject: string, url: string, footer?: bool}>|null null until checked, and when unreadable
      */
     public function getBreakingCommits(): ?array
     {

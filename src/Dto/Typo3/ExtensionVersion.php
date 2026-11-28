@@ -10,9 +10,9 @@ namespace App\Dto\Typo3;
 final readonly class ExtensionVersion
 {
     /**
-     * @param list<int>                                                   $typo3MajorVersions empty when nothing says
-     * @param list<array{sha: string, subject: string, url: string}>|null $breakingCommits    since the previous
-     *                                                                                        version, from GitHub; null when not checked
+     * @param list<int>                                                                  $typo3MajorVersions empty when nothing says
+     * @param list<array{sha: string, subject: string, url: string, footer?: bool}>|null $breakingCommits    since the previous
+     *                                                                                                       version, from GitHub; null when not checked
      */
     public function __construct(
         public string $version,

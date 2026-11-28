@@ -27,8 +27,10 @@ The commits between two versions are read from GitHub, optionally:
   previous version, for the versions newer than the oldest installed
   one, and stores the commits whose subject marks a breaking change:
   "!!!" (TYPO3's convention, also "[!!!]"), "BREAKING CHANGE" and
-  "feat!:" (Conventional Commits). The word "breaking" alone doesn't
-  count in a commit, it also stands in "non-breaking". Commits between
+  "feat!:" (Conventional Commits), or whose message has a
+  "BREAKING CHANGE:" footer on a line of its own (Conventional Commits).
+  The word "breaking" alone doesn't count in a commit, it also stands in
+  "non-breaking". Only the subject and link are stored. Commits between
   two versions never change, so each version is checked once; one GitHub
   can't compare stays unknown and isn't asked for again.
 - It needs `GITHUB_API_TOKEN`: a token without any permissions
