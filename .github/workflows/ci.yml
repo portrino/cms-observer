@@ -75,3 +75,63 @@ jobs:
         include:
           - php: '8.6'
             experimental: true
+
+  # the oldest databases the installation docs name; the tests job runs the one DDEV uses
+  databases:
+    name: tests - ${{ matrix.name }}
+    # on main only: a pull request rarely touches what tells databases apart
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      db:
+        image: ${{ matrix.image }}
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="${{ matrix.health-cmd }}"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      DATABASE_URL: mysql://root:root@127.0.0.1:3306/app?serverVersion=${{ matrix.server-version }}&charset=utf8mb4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          coverage: none
+          extensions: gd
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-scripts --no-progress
+
+      - name: Build assets
+        run: composer assets:build
+
+      - name: Set up the test database
+        run: |
+          php bin/console doctrine:database:create --env=test
+          php bin/console doctrine:migrations:migrate --env=test -n
+
+      - name: Run tests
+        run: composer ci:test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: MariaDB 10.11
+            image: mariadb:10.11
+            server-version: 10.11.0-MariaDB
+            health-cmd: healthcheck.sh --connect --innodb_initialized
+          - name: MySQL 8.4
+            image: mysql:8.4
+            server-version: 8.4.0
+            health-cmd: mysqladmin ping -h 127.0.0.1 -uroot -proot --silent

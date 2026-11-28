@@ -57,10 +57,15 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
         self::assertSame(0, $synchronizer->sync(), 'checked once');
 
         $byVersion = $this->breakingCommits();
+        // keys sorted: MySQL's JSON type keeps an object's keys in an order of its own
         self::assertSame([
             ['sha' => 'aaa', 'subject' => '!!![TASK] change requirements', 'url' => 'https://github.com/b13/http2/commit/aaa'],
-            ['sha' => 'ddd', 'subject' => 'feat: new cache layer', 'url' => 'https://github.com/b13/http2/commit/ddd', 'footer' => true],
-        ], $byVersion['4.0.0'], 'no merge commit; the footer only on a line of its own');
+            ['footer' => true, 'sha' => 'ddd', 'subject' => 'feat: new cache layer', 'url' => 'https://github.com/b13/http2/commit/ddd'],
+        ], array_map(static function (array $commit): array {
+            ksort($commit);
+
+            return $commit;
+        }, $byVersion['4.0.0'] ?? []), 'no merge commit; the footer only on a line of its own');
         self::assertSame([], $byVersion['v4.1.0']);
         self::assertNull($byVersion['3.0.0'], 'not newer than the installed version');
     }

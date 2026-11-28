@@ -4,7 +4,8 @@
 
 - PHP 8.4 or newer with the extensions `ctype`, `iconv`, `pdo_mysql` and
   `sodium`, and [Composer](https://getcomposer.org)
-- MariaDB or MySQL 8
+- MariaDB 10.11 or newer, or MySQL 8.4 or newer (older ones are past their
+  end of life, and Doctrine drops them with DBAL 5)
 - a web server with `public/` as document root
 - a cron job (or another way to run a command every minute) for the
   scheduled syncs and security mails
