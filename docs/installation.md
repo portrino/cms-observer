@@ -66,6 +66,10 @@ bin/setup --no-interaction \
 php bin/console app:user:create <email> <name>   # asks for the password
 ```
 
+To try a local installation without sites of your own,
+`php bin/console app:demo:seed --sync` adds demo projects and rates them
+(not in production).
+
 If the settings come from real environment variables (e.g. in a container)
 instead of `.env.local`, `bin/setup` skips the questions and only updates;
 `bin/setup --setup` forces them.

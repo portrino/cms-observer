@@ -63,6 +63,19 @@ The first report arrives with the client's next run; the release and
 vulnerability data fills in over the next hours, or right away with the
 [sync commands](docs/configuration.md#scheduled-syncs).
 
+### Just trying it out?
+
+Without sites of your own, fill a local Observer with demo projects:
+
+```bash
+php bin/console app:demo:seed --sync
+```
+
+It creates seven made-up projects of three agencies' customers (TYPO3, WordPress, Craft CMS)
+with popular extensions and plugins in real, partly outdated or insecure versions, fetches
+the release data to rate them and drafts an upgrade calculation. Not for production: the
+command refuses on `APP_ENV=prod` and on an Observer with projects (unless `--force`).
+
 ## 📚 Documentation
 
 | Topic | What's inside |
