@@ -66,8 +66,14 @@ stuck in the limit shows up as overdue on the status page.
 
 ```bash
 php bin/console app:user:create <email> <name> <password>   # a new login
+php bin/console app:user:list                               # the logins, with 2FA and language
+php bin/console app:user:delete <email>                     # asks first; not the last login
 php bin/console app:user:reset-2fa <email>                  # e.g. after a lost phone
 ```
+
+Every login has the same rights and gets the security mails: there are no
+roles, it's one agency's Observer. Deleting a login also ends its "Remember
+me" logins.
 
 Users set up two-factor authentication (TOTP, with backup codes) in their
 profile. The TOTP secrets are encrypted with `TOTP_ENCRYPTION_KEY`; without a
