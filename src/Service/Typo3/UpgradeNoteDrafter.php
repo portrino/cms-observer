@@ -28,14 +28,14 @@ final readonly class UpgradeNoteDrafter
     /**
      * @param list<ExtensionVersion> $versions all versions of the extension
      *
-     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float}
+     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float, meaning: string}
      */
     public function draft(UpgradeItemStatus $status, string $installed, ?string $target, array $versions, int $targetMajor): array
     {
         return match ($status) {
-            UpgradeItemStatus::Blocker => self::note(UpgradeNoteLevel::Danger, $this->translator->trans('calculation.note.no_compatible', ['major' => $targetMajor])),
+            UpgradeItemStatus::Blocker => self::note(UpgradeNoteLevel::Danger, $this->translator->trans('calculation.note.no_compatible', ['major' => $targetMajor]), meaning: 'no_compatible'),
             UpgradeItemStatus::Compatible, UpgradeItemStatus::UpdateFirst, UpgradeItemStatus::Update => null === $target || $target === $installed
-                ? self::note(UpgradeNoteLevel::Success, $this->translator->trans('calculation.note.latest'), 0.0)
+                ? self::note(UpgradeNoteLevel::Success, $this->translator->trans('calculation.note.latest'), 0.0, 'latest')
                 : $this->updateNote($installed, $target, $versions),
             default => self::note(null, null),
         };
@@ -44,7 +44,7 @@ final readonly class UpgradeNoteDrafter
     /**
      * @param list<ExtensionVersion> $versions
      *
-     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float}
+     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float, meaning: string}
      */
     private function updateNote(string $installed, string $target, array $versions): array
     {
@@ -64,8 +64,10 @@ final readonly class UpgradeNoteDrafter
             default => [UpgradeNoteLevel::Success, []],
         };
         $header = $bigJump && UpgradeNoteLevel::Warning === $level ? [$this->translator->trans('calculation.note.big_jump'), ''] : [];
+        // what the note says, whatever language it's written in: a refresh compares this
+        $meaning = json_encode(['update', $bigJump, $known, $breaking], JSON_THROW_ON_ERROR);
 
-        return self::note($level, implode("\n", [...$header, ...$lines, '- '.$this->translator->trans('calculation.note.install_test')]));
+        return self::note($level, implode("\n", [...$header, ...$lines, '- '.$this->translator->trans('calculation.note.install_test')]), meaning: $meaning);
     }
 
     /**
@@ -90,10 +92,15 @@ final readonly class UpgradeNoteDrafter
     }
 
     /**
-     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float}
+     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float, meaning: string}
      */
-    private static function note(?UpgradeNoteLevel $level, ?string $notes, ?float $hours = null): array
+    /**
+     * @param string $meaning what the notes say, language-independent, for the row's preset
+     *
+     * @return array{noteLevel: ?UpgradeNoteLevel, notes: ?string, hours: ?float, meaning: string}
+     */
+    private static function note(?UpgradeNoteLevel $level, ?string $notes, ?float $hours = null, string $meaning = ''): array
     {
-        return ['noteLevel' => $level, 'notes' => $notes, 'hours' => $hours];
+        return ['noteLevel' => $level, 'notes' => $notes, 'hours' => $hours, 'meaning' => $meaning];
     }
 }

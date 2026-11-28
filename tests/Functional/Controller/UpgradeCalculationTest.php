@@ -542,6 +542,28 @@ class UpgradeCalculationTest extends WebTestCase
         self::assertResponseRedirects();
     }
 
+    /**
+     * Notes are saved in the language of whoever drafts them: another language alone is nothing new.
+     */
+    public function testARefreshInAnotherLanguageChangesNothing(): void
+    {
+        $site = $this->typo3Site();
+        $this->entityManager->persist(new SitePackage($site, 'http2', 'HTTP/2', '3.0.0', true, 'b13/http2'));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '3.0.0', null, [13]));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '4.0.0', null, [13, 14]));
+        $this->entityManager->flush();
+        $this->createCalculation($site, 'JD');
+        $calculation = $this->calculationOf($site) ?? throw new \LogicException('No calculation saved');
+
+        $crawler = $this->client->request('GET', '/profile');
+        $this->client->submit($crawler->filter('#language-form')->form(['language[locale]' => 'de']));
+        $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/refresh');
+
+        self::assertSelectorExists('html[lang="de"]');
+        self::assertSelectorNotExists('tr.upgrade-changed-row');
+        self::assertStringContainsString('Install/upgrade and test', (string) $crawler->filter('input[value="b13/http2"]')->closest('tr')?->filter('input[name$="[notes]"]')->attr('value'), 'the notes as they were written');
+    }
+
     private function tickReviewed(Form $form): void
     {
         foreach ($this->client->getCrawler()->filter('tr.upgrade-changed-row input[type="checkbox"][name$="[reviewed]"]')->each(static fn (Crawler $checkbox): string => (string) $checkbox->attr('name')) as $name) {
