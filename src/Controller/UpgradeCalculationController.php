@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\UpgradeItem;
 use App\Dto\UpgradeSupportChart;
 use App\Entity\Site;
 use App\Entity\UpgradeCalculation;
@@ -138,20 +139,20 @@ class UpgradeCalculationController extends AbstractController
     {
         $base = $this->findVersion($calculation, $version);
         $refreshed = $refresher->refresh($calculation, $base);
-        $data = UpgradeCalculationVersionType::dataFrom($refreshed['items'], $base);
+        $data = UpgradeCalculationVersionType::dataFrom($refreshed['items'], $base, review: array_keys($refreshed['review']));
         $reportedAt = $calculation->getSite()->getLastSeenAt();
         // saved with the version, so in the language of whoever refreshes
         $data['note'] = null !== $reportedAt ? $translator->trans('calculation.refreshed_of', ['date' => $reportedAt]) : $translator->trans('calculation.refreshed');
 
-        return $this->versionForm($calculation, $base, $data, $request, 'calculation.title.refresh', $refreshed['changes'], $refreshed['changedPackages']);
+        return $this->versionForm($calculation, $base, $data, $request, 'calculation.title.refresh', $refreshed['changes'], array_filter($refreshed['review']));
     }
 
     /**
-     * @param array<string, mixed> $data
-     * @param list<string>|null    $changes         of a refresh, null when editing
-     * @param list<string>         $changedPackages of a refresh: their rows are highlighted
+     * @param array<string, mixed>       $data
+     * @param list<string>|null          $changes  of a refresh, null when editing
+     * @param array<string, UpgradeItem> $previous of a refresh: the previous version of the rows to check, by package
      */
-    private function versionForm(UpgradeCalculation $calculation, UpgradeCalculationVersion $base, array $data, Request $request, string $action, ?array $changes = null, array $changedPackages = []): Response
+    private function versionForm(UpgradeCalculation $calculation, UpgradeCalculationVersion $base, array $data, Request $request, string $action, ?array $changes = null, array $previous = []): Response
     {
         $form = $this->createForm(UpgradeCalculationVersionType::class, $data);
         $form->handleRequest($request);
@@ -164,7 +165,7 @@ class UpgradeCalculationController extends AbstractController
             'title' => new TranslatableMessage($action, ['upgrade' => sprintf('%s %d → %d', $calculation->getSite()->getType()->label(), $calculation->getFromMajor(), $calculation->getTargetMajor())]),
             'based_on' => $base,
             'changes' => $changes,
-            'changedPackages' => $changedPackages,
+            'previous' => $previous,
             'form' => $form,
             'cancelUrl' => $this->generateUrl('upgrade_calculation_show', ['id' => $calculation->getId(), 'version' => $base->getId()]),
         ]);

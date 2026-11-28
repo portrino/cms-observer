@@ -1228,7 +1228,7 @@
       </trans-unit>
       <trans-unit id="calculation.refresh_changes" resname="calculation.refresh_changes">
         <source>calculation.refresh_changes</source>
-        <target>Durch den neuesten Report geändert und in der Tabelle gelb hinterlegt. Geänderte Zeilen bekommen neue Notizen und Farben, die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten:</target>
+        <target>Durch den neuesten Report geändert und in der Tabelle gelb hinterlegt: Geänderte Zeilen bekommen neue Notizen und Farben, die Entscheidungen „Ersetzen“ oder „Entfernen“ bleiben erhalten. Jede geänderte Zeile vor dem Speichern als geprüft markieren; die Notiz der vorigen Version steht im Notiz-Dialog.</target>
       </trans-unit>
       <trans-unit id="calculation.pricing" resname="calculation.pricing">
         <source>calculation.pricing</source>
@@ -1498,6 +1498,26 @@
         <source>calculation.change.gone</source>
         <target>{label}: nicht mehr installiert, weggelassen</target>
       </trans-unit>
+      <trans-unit id="calculation.note.big_jump" resname="calculation.note.big_jump">
+        <source>calculation.note.big_jump</source>
+        <target>Achtung! Großer Versionssprung</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
+        <source>calculation.note.breaking</source>
+        <target>Laut Changelog Breaking Changes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.maybe_breaking" resname="calculation.note.maybe_breaking">
+        <source>calculation.note.maybe_breaking</source>
+        <target>Eventuell Breaking Changes</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.no_steps" resname="calculation.note.no_steps">
+        <source>calculation.note.no_steps</source>
+        <target>Laut Changelog keine besonderen Upgrade-Schritte nötig</target>
+      </trans-unit>
+      <trans-unit id="calculation.note.install_test" resname="calculation.note.install_test">
+        <source>calculation.note.install_test</source>
+        <target>Installieren/Upgraden und Testen</target>
+      </trans-unit>
       <trans-unit id="calculation.note.latest" resname="calculation.note.latest">
         <source>calculation.note.latest</source>
         <target>Bereits aktuellste &amp; kompatible Version in Benutzung</target>
@@ -1506,17 +1526,25 @@
         <source>calculation.note.no_compatible</source>
         <target>Noch keine TYPO3 {major} kompatible Version vorhanden!</target>
       </trans-unit>
-      <trans-unit id="calculation.note.update" resname="calculation.note.update">
-        <source>calculation.note.update</source>
-        <target>Update {installed} → {target}, laut TER-Changelog ohne Breaking Changes</target>
+      <trans-unit id="calculation.change.notes" resname="calculation.change.notes">
+        <source>calculation.change.notes</source>
+        <target>neue Notiz</target>
       </trans-unit>
-      <trans-unit id="calculation.note.major_update" resname="calculation.note.major_update">
-        <source>calculation.note.major_update</source>
-        <target>Major-Update {installed} → {target}: Upgrade-Hinweise prüfen</target>
+      <trans-unit id="calculation.reviewed" resname="calculation.reviewed">
+        <source>calculation.reviewed</source>
+        <target>Geprüft</target>
       </trans-unit>
-      <trans-unit id="calculation.note.breaking" resname="calculation.note.breaking">
-        <source>calculation.note.breaking</source>
-        <target>Update {installed} → {target}, Breaking Changes laut TER-Changelog:</target>
+      <trans-unit id="calculation.previous_hours" resname="calculation.previous_hours">
+        <source>calculation.previous_hours</source>
+        <target>vorher: {hours}</target>
+      </trans-unit>
+      <trans-unit id="calculation.previous_notes" resname="calculation.previous_notes">
+        <source>calculation.previous_notes</source>
+        <target>Notiz der vorigen Version</target>
+      </trans-unit>
+      <trans-unit id="calculation.take_previous" resname="calculation.take_previous">
+        <source>calculation.take_previous</source>
+        <target>In den Editor übernehmen</target>
       </trans-unit>
       <trans-unit id="calculation.change.added" resname="calculation.change.added">
         <source>calculation.change.added</source>

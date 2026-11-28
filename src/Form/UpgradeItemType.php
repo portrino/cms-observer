@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeNoteLevel;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -45,7 +46,12 @@ class UpgradeItemType extends AbstractType
             // order of the rows after moving them in the browser; not stored, the row order is
             ->add('position', HiddenType::class, ['required' => false])
             // set on the positions that stand for a package section's hours
-            ->add('sumOf', HiddenType::class, ['required' => false]);
+            ->add('sumOf', HiddenType::class, ['required' => false])
+            // what the resolver preset, to tell on a refresh whether that changed (UpgradeItem::withPreset())
+            ->add('preset', HiddenType::class, ['required' => false])
+            // a row a refresh changed: someone checks it before the version is saved; neither is stored
+            ->add('review', HiddenType::class, ['required' => false])
+            ->add('reviewed', CheckboxType::class, ['required' => false, 'label' => 'calculation.reviewed']);
 
         if (true === $options['package']) {
             $builder
@@ -72,6 +78,9 @@ class UpgradeItemType extends AbstractType
             'constraints' => [new Assert\Callback(static function (mixed $row, ExecutionContextInterface $context): void {
                 if (is_array($row) && isset($row['minHours'], $row['maxHours']) && $row['maxHours'] < $row['minHours']) {
                     $context->buildViolation('The maximum must not be below the minimum.')->atPath('[maxHours]')->addViolation();
+                }
+                if (is_array($row) && '1' === ($row['review'] ?? null) && true !== ($row['reviewed'] ?? false)) {
+                    $context->buildViolation('Check the changed row before saving.')->atPath('[reviewed]')->addViolation();
                 }
             })],
         ]);

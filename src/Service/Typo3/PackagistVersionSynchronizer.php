@@ -60,11 +60,11 @@ class PackagistVersionSynchronizer extends AbstractPackagistVersionSynchronizer
 
     protected function create(string $packageName, array $data): PackagistVersion
     {
-        return new PackagistVersion($packageName, $data['version'], $data['releaseDate'], ExtensionUtility::supportedCoreMajors($data['require'], $this->majors ?? []));
+        return new PackagistVersion($packageName, $data['version'], $data['releaseDate'], ExtensionUtility::supportedCoreMajors($data['require'], $this->majors ?? []), $data['sourceUrl'], $data['sourceReference']);
     }
 
     protected function update(AbstractPackagistVersion $known, array $data): void
     {
-        $known->update($data['releaseDate'], ExtensionUtility::supportedCoreMajors($data['require'], $this->majors ?? []));
+        $known->update($data['releaseDate'], ExtensionUtility::supportedCoreMajors($data['require'], $this->majors ?? []), $data['sourceUrl'], $data['sourceReference']);
     }
 }

@@ -10,7 +10,9 @@ namespace App\Dto\Typo3;
 final readonly class ExtensionVersion
 {
     /**
-     * @param list<int> $typo3MajorVersions empty when nothing says
+     * @param list<int>                                                                  $typo3MajorVersions empty when nothing says
+     * @param list<array{sha: string, subject: string, url: string, footer?: bool}>|null $breakingCommits    since the previous
+     *                                                                                                       version, from GitHub; null when not checked
      */
     public function __construct(
         public string $version,
@@ -21,7 +23,14 @@ final readonly class ExtensionVersion
         public ?\DateTimeImmutable $uploadDate,
         public bool $inTer,
         public bool $onPackagist,
+        public ?array $breakingCommits = null,
     ) {
+    }
+
+    /** Whether something tells about its breaking changes: a TER comment or the checked commits */
+    public function hasChangelog(): bool
+    {
+        return '' !== trim((string) $this->uploadComment) || null !== $this->breakingCommits;
     }
 
     public function supports(int $major): bool

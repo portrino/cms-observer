@@ -64,20 +64,20 @@ abstract class AbstractPackagistVersionSynchronizer
     }
 
     /**
-     * @param array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>} $data
+     * @param array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>, sourceUrl: ?string, sourceReference: ?string} $data
      *
      * @return T
      */
     abstract protected function create(string $packageName, array $data): AbstractPackagistVersion;
 
     /**
-     * @param T                                                                                        $known
-     * @param array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>} $data
+     * @param T                                                                                                                                      $known
+     * @param array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>, sourceUrl: ?string, sourceReference: ?string} $data
      */
     abstract protected function update(AbstractPackagistVersion $known, array $data): void;
 
     /**
-     * @param list<array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>}> $versions
+     * @param list<array{version: string, releaseDate: ?\DateTimeImmutable, require: array<string, string>, sourceUrl: ?string, sourceReference: ?string}> $versions
      */
     private function store(string $packageName, array $versions): void
     {

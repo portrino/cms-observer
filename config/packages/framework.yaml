@@ -19,6 +19,19 @@ framework:
                 scope: 'https://(repo\.)?packagist\.org/'
                 caching:
                     enabled: true
+            # GitHub (VcsPlatform\GitHub): its own client, so the token never goes to another host
+            github.client:
+                base_uri: 'https://api.github.com/'
+                headers:
+                    Accept: 'application/vnd.github+json'
+                    X-GitHub-Api-Version: '2022-11-28'
+            # GitLab and Codeberg (VcsPlatform\GitLab, \Codeberg): public repositories, no token
+            gitlab.client:
+                base_uri: 'https://gitlab.com/api/v4/'
+            codeberg.client:
+                base_uri: 'https://codeberg.org/api/v1/'
+                headers:
+                    Accept: 'application/json'
 
     #esi: true
     #fragments: true

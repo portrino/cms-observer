@@ -30,18 +30,21 @@
 {% endmacro %}
 
 {# One editable row of a calculation form; also renders the prototype for new rows #}
-{% macro form_row(entry, package, changedPackages = []) %}
+{% macro form_row(entry, package, previousItems = []) %}
     {% set sm = {attr: {class: 'form-control form-control-sm'}} %}
     {# a position standing for a package section: label and hours come from that section, it can't be removed #}
     {% set sumOf = entry.sumOf is defined ? entry.sumOf.vars.value : null %}
-    {# a row the refresh added or changed, so it's checked before saving #}
-    {% set changed = entry.package is defined and entry.package.vars.value in changedPackages %}
+    {# a row a refresh added or changed: someone checks it before saving; its previous version, if it had one #}
+    {% set changed = '1' == entry.review.vars.value %}
+    {% set previous = changed and package ? previousItems[(entry.packageType.vars.value ?? '') ~ '|' ~ entry.package.vars.value] ?? null : null %}
     <tr data-form-collection-row class="{{ [sumOf ? 'upgrade-sum-row', changed ? 'upgrade-changed-row']|filter(c => c)|join(' ') }}">
         <td class="upgrade-col-handle">
             <button type="button" class="btn btn-sm upgrade-handle" aria-label="{{ 'calculation.move_row'|trans }}"
                     data-action="pointerdown->form-collection#grab keydown->form-collection#key">{{ icon('grip-vertical') }}</button>
             {{ form_widget(entry.position, {attr: {'data-form-collection-target': 'position'}}) }}
             {{ form_widget(entry.sumOf) }}
+            {{ form_widget(entry.preset) }}
+            {{ form_widget(entry.review) }}
         </td>
         <td class="upgrade-col-label">
             {% if sumOf %}
@@ -52,6 +55,13 @@
             {% if package %}
                 {{ form_widget(entry.package) }}
                 {{ form_widget(entry.packageType) }}
+            {% endif %}
+            {% if changed %}
+                {# Bootstrap's form theme draws it as a switch with its label #}
+                <div class="upgrade-reviewed small mt-1">{{ form_row(entry.reviewed, {attr: {role: 'switch'}, label_attr: {class: 'checkbox-switch'}, row_attr: {class: 'mb-0'}}) }}</div>
+            {% else %}
+                {# nothing to check: not rendered at all, or form_end() would add it below the form #}
+                {% do entry.reviewed.setRendered %}
             {% endif %}
         </td>
         {% if package %}
@@ -65,12 +75,23 @@
             {% endfor %}
         {% else %}
             <td class="upgrade-col-hours">{{ form_widget(entry.minHours, sm) }}{{ form_errors(entry.minHours) }}</td>
-            <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}</td>
+            <td class="upgrade-col-hours">{{ form_widget(entry.maxHours, sm) }}{{ form_errors(entry.maxHours) }}
+                {%- if previous and (previous.minHours is not same as(entry.minHours.vars.data) or previous.maxHours is not same as(entry.maxHours.vars.data)) %}
+                    <small class="text-muted d-block upgrade-previous-hours">{% set range = [previous.minHours, previous.maxHours]|filter(h => h is not null)|map(h => h|format_number)|reduce((list, h) => h in list ? list : list|merge([h]), []) %}
+                    {{- 'calculation.previous_hours'|trans({hours: range is empty ? '–' : range|join('–')}) }}</small>
+                {%- endif %}</td>
         {% endif %}
         <td class="upgrade-col-notes" data-note-editor-target="cell">
             {{ form_widget(entry.notes, {attr: {'data-note-field': 'text'}}) }}
             {{ form_widget(entry.noteLevel, {attr: {class: 'd-none', 'data-note-field': 'level', 'aria-hidden': 'true', tabindex: '-1'}}) }}
             {{ _self.note_preview(entry.notes.vars.value, entry.noteLevel.vars.value) }}
+            {% if previous and previous.notes %}
+                {# shown in the note dialog, to merge the notes of the previous version #}
+                <template data-note-field="previous" data-level="{{ previous.noteLevel.value ?? '' }}">
+                    <div class="upgrade-previous-note{{ previous.noteLevel ? ' upgrade-note-' ~ previous.noteLevel.value }}">{{ previous.notes|markdown_to_html }}</div>
+                    <textarea>{{ previous.notes }}</textarea>
+                </template>
+            {% endif %}
         </td>
         <td class="upgrade-col-text">{{ form_widget(entry.assignee, sm) }}</td>
         <td class="upgrade-col-actions">

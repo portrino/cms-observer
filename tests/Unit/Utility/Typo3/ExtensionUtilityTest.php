@@ -73,4 +73,32 @@ class ExtensionUtilityTest extends TestCase
         yield 'empty string is undetermined' => ['', '1.0.0', null];
         yield 'blank/whitespace-only segments are ignored, not treated as unrecognized' => [' , 10.9.2 and below , ', '10.9.2', true];
     }
+
+    /**
+     * @return iterable<string, array{string, bool}>
+     */
+    public static function commitSubjects(): iterable
+    {
+        yield 'TYPO3 marker' => ['!!![TASK] change requirements', true];
+        yield 'TYPO3 marker in brackets' => ['[!!!][TASK] Remove deprecated hooks', true];
+        yield 'Conventional Commits' => ['feat(api)!: drop the old endpoint', true];
+        yield 'Conventional Commits footer' => ['BREAKING CHANGE: the config moved', true];
+        yield 'not breaking' => ['[TASK] Add non-breaking type annotations', false];
+        yield 'a breaking change of the core' => ['[TASK] Respect breaking change in PluginPreviewRenderer', false];
+        yield 'plain commit' => ['[BUGFIX] rm foo header', false];
+    }
+
+    #[DataProvider('commitSubjects')]
+    public function testOnlyMarkedCommitsCountAsBreaking(string $subject, bool $breaking): void
+    {
+        self::assertSame($breaking, ExtensionUtility::marksBreakingCommit($subject));
+    }
+
+    public function testFindsTheConventionalCommitsFooterOnALineOfItsOwn(): void
+    {
+        self::assertTrue(ExtensionUtility::hasBreakingFooter("feat: new cache layer\n\nBREAKING CHANGE: the cache table is renamed"));
+        self::assertTrue(ExtensionUtility::hasBreakingFooter("refactor: drop PHP 8.1\n\nBREAKING-CHANGE: needs PHP 8.2"));
+        self::assertFalse(ExtensionUtility::hasBreakingFooter("docs: explain the setup\n\nMentions a BREAKING CHANGE: of the core in passing"));
+        self::assertFalse(ExtensionUtility::hasBreakingFooter('[BUGFIX] rm foo header'));
+    }
 }

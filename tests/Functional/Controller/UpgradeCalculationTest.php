@@ -21,6 +21,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Form;
 
 class UpgradeCalculationTest extends WebTestCase
 {
@@ -358,7 +360,16 @@ class UpgradeCalculationTest extends WebTestCase
         $highlighted = $crawler->filter('tr.upgrade-changed-row input[name$="[label]"]')->each(static fn (Crawler $input): string => (string) $input->attr('value'));
         self::assertSame(['georgringer/news', 'new_ext'], $highlighted, 'the changed and the added row');
 
+        // the changed rows show what they were, and someone checks them before saving
+        self::assertSelectorExists('tr.upgrade-changed-row template[data-note-field="previous"]', 'the notes of news before');
+        self::assertSelectorTextContains('tr.upgrade-changed-row .upgrade-previous-hours', 'before: 3');
         $this->client->submit($crawler->selectButton('Save as new version')->form(['upgrade_calculation_version[author]' => 'PM']));
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('tr.upgrade-changed-row .invalid-feedback', 'Check the changed row before saving.');
+
+        $form = $this->client->getCrawler()->selectButton('Save as new version')->form(['upgrade_calculation_version[author]' => 'PM']);
+        $this->tickReviewed($form);
+        $this->client->submit($form);
         self::assertResponseRedirects();
 
         $this->entityManager->clear();
@@ -498,5 +509,68 @@ class UpgradeCalculationTest extends WebTestCase
     private function calculationOf(Site $site): ?UpgradeCalculation
     {
         return $this->entityManager->getRepository(UpgradeCalculation::class)->findOneBy(['site' => $site]);
+    }
+
+    /**
+     * The package wasn't updated, but GitHub found breaking commits since: the row gets the
+     * fresh notes and is checked before saving.
+     */
+    public function testRefreshTakesNewFindingsForTheSameVersions(): void
+    {
+        $site = $this->typo3Site();
+        $this->entityManager->persist(new SitePackage($site, 'http2', 'HTTP/2', '3.0.0', true, 'b13/http2'));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '3.0.0', null, [13]));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '4.0.0', null, [13, 14]));
+        $this->entityManager->flush();
+        $this->createCalculation($site, 'JD');
+        $calculation = $this->calculationOf($site) ?? throw new \LogicException('No calculation saved');
+
+        $this->entityManager->getRepository(PackagistVersion::class)->findOneBy(['packageName' => 'b13/http2', 'version' => '4.0.0'])
+            ?->recordBreakingCommits([['sha' => 'aaa', 'subject' => '!!![TASK] change requirements', 'url' => 'https://github.com/b13/http2/commit/aaa']]);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/refresh');
+
+        self::assertStringContainsString('b13/http2: new notes', $crawler->filter('#upgradeRefreshChanges')->text());
+        self::assertSelectorExists('tr.upgrade-changed-row input[value="b13/http2"]');
+        self::assertStringContainsString('change requirements', (string) $crawler->filter('tr.upgrade-changed-row input[name$="[notes]"]')->attr('value'));
+        self::assertSelectorNotExists('tr.upgrade-changed-row input[value="georgringer/news"]', 'nothing new for news');
+
+        $form = $crawler->selectButton('Save as new version')->form(['upgrade_calculation_version[author]' => 'PM']);
+        $this->tickReviewed($form);
+        $this->client->submit($form);
+        self::assertResponseRedirects();
+    }
+
+    /**
+     * Notes are saved in the language of whoever drafts them: another language alone is nothing new.
+     */
+    public function testARefreshInAnotherLanguageChangesNothing(): void
+    {
+        $site = $this->typo3Site();
+        $this->entityManager->persist(new SitePackage($site, 'http2', 'HTTP/2', '3.0.0', true, 'b13/http2'));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '3.0.0', null, [13]));
+        $this->entityManager->persist(new PackagistVersion('b13/http2', '4.0.0', null, [13, 14]));
+        $this->entityManager->flush();
+        $this->createCalculation($site, 'JD');
+        $calculation = $this->calculationOf($site) ?? throw new \LogicException('No calculation saved');
+
+        $crawler = $this->client->request('GET', '/profile');
+        $this->client->submit($crawler->filter('#language-form')->form(['language[locale]' => 'de']));
+        $crawler = $this->client->request('GET', '/calculations/'.$calculation->getId().'/refresh');
+
+        self::assertSelectorExists('html[lang="de"]');
+        self::assertSelectorNotExists('tr.upgrade-changed-row');
+        self::assertStringContainsString('Install/upgrade and test', (string) $crawler->filter('input[value="b13/http2"]')->closest('tr')?->filter('input[name$="[notes]"]')->attr('value'), 'the notes as they were written');
+    }
+
+    private function tickReviewed(Form $form): void
+    {
+        foreach ($this->client->getCrawler()->filter('tr.upgrade-changed-row input[type="checkbox"][name$="[reviewed]"]')->each(static fn (Crawler $checkbox): string => (string) $checkbox->attr('name')) as $name) {
+            $field = $form[$name];
+            if ($field instanceof ChoiceFormField) {
+                $field->tick();
+            }
+        }
     }
 }

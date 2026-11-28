@@ -7,12 +7,13 @@ import { Modal } from 'bootstrap';
  * fields and preview are found by their data-note-field within the row's cell.
  */
 export default class extends Controller {
-    static targets = ['dialog', 'text', 'level'];
+    static targets = ['dialog', 'text', 'level', 'previous', 'previousBody'];
 
     open(event) {
         this.cell = event.currentTarget.closest('td');
         this.setText(this.field('text').value);
         this.levelTarget.value = this.field('level').value;
+        this.showPrevious();
         this.modal ??= Modal.getOrCreateInstance(this.dialogTarget);
         this.dialogTarget.addEventListener('shown.bs.modal', () => {
             // the Markdown editor can only measure itself once the dialog is visible
@@ -40,6 +41,20 @@ export default class extends Controller {
         preview.classList.toggle('upgrade-note-empty', !firstLine);
 
         this.modal.hide();
+    }
+
+    // a row a refresh changed: the notes of the previous version, collapsed, to merge them
+    showPrevious() {
+        const previous = this.field('previous');
+        this.previousTarget.hidden = !previous;
+        this.previousTarget.open = false;
+        this.previousBodyTarget.replaceChildren(...(previous ? [previous.content.querySelector('div').cloneNode(true)] : []));
+    }
+
+    takePrevious() {
+        const previous = this.field('previous')?.content.querySelector('textarea').value ?? '';
+        const current = this.getText().trim();
+        this.setText(current ? `${current}\n\n${previous}` : previous);
     }
 
     getText() {

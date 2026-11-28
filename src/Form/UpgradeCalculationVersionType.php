@@ -9,6 +9,7 @@ use App\Entity\AgencySettings;
 use App\Entity\UpgradeCalculationVersion;
 use App\Entity\UpgradeItemStatus;
 use App\Entity\UpgradeSection;
+use App\Service\UpgradeCalculationRefresher;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -93,10 +94,11 @@ class UpgradeCalculationVersionType extends AbstractType
      * e.g. the project's last calculation, else from the agency's defaults (none in code).
      *
      * @param list<UpgradeItem> $items
+     * @param list<string>      $review keys (UpgradeCalculationRefresher::key()) of the rows a refresh changed
      *
      * @return array<string, mixed>
      */
-    public static function dataFrom(array $items, ?UpgradeCalculationVersion $previous = null, ?AgencySettings $defaults = null): array
+    public static function dataFrom(array $items, ?UpgradeCalculationVersion $previous = null, ?AgencySettings $defaults = null, array $review = []): array
     {
         $data = [
             'hourlyRate' => $previous?->getHourlyRate() ?? $defaults?->getDefaultHourlyRate(),
@@ -109,7 +111,11 @@ class UpgradeCalculationVersionType extends AbstractType
             $data[$section->value] = [];
         }
         foreach ($items as $item) {
-            $data[$item->section->value][] = $item->toArray();
+            $row = $item->toArray();
+            if (in_array(UpgradeCalculationRefresher::key($item), $review, true)) {
+                $row['review'] = '1'; // changed by a refresh: checked before saving
+            }
+            $data[$item->section->value][] = $row;
         }
 
         return $data;

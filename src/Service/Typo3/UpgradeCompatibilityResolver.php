@@ -106,7 +106,7 @@ final readonly class UpgradeCompatibilityResolver implements CompatibilityResolv
             maxHours: $note['hours'],
             notes: $note['notes'],
             noteLevel: $note['noteLevel'],
-        );
+        )->withPreset($note['meaning']);
     }
 
     /**
