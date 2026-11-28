@@ -73,8 +73,9 @@ php bin/console app:demo:seed --sync
 
 It creates seven made-up projects of three agencies' customers (TYPO3, WordPress, Craft CMS)
 with popular extensions and plugins in real, partly outdated or insecure versions, fetches
-the release data to rate them and drafts an upgrade calculation. Not for production: the
-command refuses on `APP_ENV=prod` and on an Observer with projects (unless `--force`).
+the release data to rate them and drafts an upgrade calculation. Only on an Observer without
+projects: their made-up projects must not mix with real ones (on a development installation
+`--force` adds them anyway, never with `APP_ENV=prod`).
 
 `--offline` instead of `--sync` writes a fixed snapshot of the release data
 (`resources/demo/release-data.json`) without any request, so the projects are rated the same

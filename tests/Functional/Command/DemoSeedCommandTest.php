@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Command;
 
+use App\Command\DemoSeedCommand;
 use App\Entity\CmsType;
 use App\Entity\Site;
 use App\Entity\SiteEvent;
@@ -13,6 +14,7 @@ use App\Entity\Typo3\ReleaseType;
 use App\Entity\UpgradeCalculation;
 use App\Repository\AgencySettingsRepository;
 use App\Service\Demo\DemoProjects;
+use App\Service\Demo\DemoReleaseData;
 use App\Service\Demo\DemoSeeder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -108,5 +110,23 @@ class DemoSeedCommandTest extends KernelTestCase
         self::assertStringContainsString('--sync instead', $tester->getDisplay());
         self::assertSame(Command::FAILURE, $tester->execute(['--offline' => true, '--sync' => true, '--force' => true]), 'one or the other');
         self::assertNull($entityManager->getRepository(Site::class)->findOneBy(['name' => DemoProjects::CALCULATION_PROJECT]));
+    }
+
+    public function testSeedsAnEmptyObserverInProductionButNeverForced(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        // as bin/setup installs it
+        $tester = new CommandTester(new DemoSeedCommand($container->get(DemoSeeder::class), $container->get(DemoReleaseData::class), 'prod'));
+        $sites = $container->get(EntityManagerInterface::class)->getRepository(Site::class);
+        self::assertSame(0, $sites->count(), 'an Observer right after its setup');
+
+        self::assertSame(Command::SUCCESS, $tester->execute([]), $tester->getDisplay());
+        self::assertCount(count(DemoProjects::PROJECTS), $sites->findAll());
+
+        self::assertSame(Command::FAILURE, $tester->execute(['--force' => true]), 'no demo next to real projects');
+        self::assertStringContainsString('No --force in production', $tester->getDisplay());
+        self::assertSame(Command::FAILURE, $tester->execute([]), 'nor a second time');
+        self::assertCount(count(DemoProjects::PROJECTS), $sites->findAll());
     }
 }

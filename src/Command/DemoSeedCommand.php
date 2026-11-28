@@ -17,7 +17,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Demo projects to try the Observer without any site pushing reports, e.g. right after a local
- * installation. Never in production: the projects and their tokens are made up.
+ * installation or on a demo instance. Only on an Observer without projects, in production even with
+ * --force: the demo's made-up projects must not mix with real ones.
  */
 #[AsCommand(name: 'app:demo:seed', description: 'Fill the Observer with demo projects; --sync or --offline also adds the release data to rate them')]
 class DemoSeedCommand extends Command
@@ -53,7 +54,7 @@ class DemoSeedCommand extends Command
         $this
             ->addOption('sync', null, InputOption::VALUE_NONE, 'Fetch the release data from TER, Packagist, wordpress.org & co. afterwards, and draft an upgrade calculation')
             ->addOption('offline', null, InputOption::VALUE_NONE, 'Write a fixed snapshot of the release data instead, without any request; only on an Observer without release data')
-            ->addOption('force', null, InputOption::VALUE_NONE, 'Add the demo projects although there are projects already')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Add the demo projects although there are projects already; not with APP_ENV=prod')
             ->addOption('write-snapshot', null, InputOption::VALUE_NONE, 'Write the release data of this Observer as the --offline snapshot (after --sync on an empty database), instead of seeding');
     }
 
@@ -98,7 +99,7 @@ class DemoSeedCommand extends Command
     private function refusal(bool $offline, bool $sync, bool $force): ?string
     {
         return match (true) {
-            'prod' === $this->environment => 'No demo projects in production (APP_ENV=prod).',
+            'prod' === $this->environment && $force => 'No --force in production (APP_ENV=prod): demo projects only on an Observer without projects.',
             $offline && $sync => 'Either --sync or --offline.',
             $offline && $this->releaseData->hasReleaseData() => 'The Observer has synced release data, which the fixed snapshot would clash with. Use --sync instead.',
             !$force && $this->seeder->hasProjects() => 'The Observer has projects already. Add the demo projects anyway with --force.',
