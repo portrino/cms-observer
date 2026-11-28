@@ -35,10 +35,18 @@ test('a refresh shows the previous notes of a changed row and needs it checked',
     await previous.locator('summary').click();
     // 12.3.1 → 14.x crossed a major with breaking changes, 14.0.0 has a smaller update left
     await expect(previous).toContainText('Attention! Big version jump');
+    const backgroundOf = (locator) => locator.evaluate((element) => getComputedStyle(element).backgroundColor);
+    // in its color of then, not on white
+    expect(await backgroundOf(previous.locator('.upgrade-previous-note.upgrade-note-warning')), 'the previous notes in their color').not.toMatch(/^rgba?\(255, 255, 255|^rgba\(0, 0, 0, 0\)/);
     await previous.getByRole('button', { name: 'Add to the editor' }).click();
     const editor = dialog.locator('.CodeMirror');
     await expect(editor).toContainText('According to the changelog no special upgrade steps needed');
     await expect(editor).toContainText('Attention! Big version jump', { useInnerText: true });
+    // the preview takes the editor's color too, not a white of its own
+    await dialog.getByRole('button', { name: 'Preview' }).click();
+    await expect(dialog.locator('.editor-preview-active')).toBeVisible();
+    expect(await backgroundOf(dialog.locator('.editor-preview-active'))).toBe(await backgroundOf(editor));
+    await dialog.getByRole('button', { name: 'Preview' }).click();
     await dialog.getByRole('button', { name: 'Cancel' }).click();
 
     // not saved until the changed row is checked

@@ -119,10 +119,24 @@
     }
 }
 
-// The note dialog shows the chosen color on its textarea, like the row's preview
+// The note dialog shows the chosen color on its textarea, like the row's preview, also in
+// EasyMDE's preview (white of its own otherwise); the notes of the previous version in theirs
+.upgrade-previous-note {
+    padding: 0.5rem 0.75rem;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+
+    > :last-child {
+        margin-bottom: 0;
+    }
+}
+
 @each $level in success, warning, danger {
     .upgrade-note-dialog:has(option[value="#{$level}"]:checked) textarea,
-    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) .CodeMirror {
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) .CodeMirror,
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) .editor-preview,
+    .upgrade-note-dialog:has(option[value="#{$level}"]:checked) .editor-preview-side,
+    .upgrade-previous-note.upgrade-note-#{$level} {
         border-color: var(--bs-#{$level}-border-subtle);
         background-color: var(--bs-#{$level}-bg-subtle);
         color: var(--bs-#{$level}-text-emphasis);
