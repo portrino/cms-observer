@@ -8,15 +8,17 @@ use App\Entity\PackageType;
 use App\Entity\Typo3\PackagistVersion;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\PackagistVersionRepository;
-use App\Service\GitHubApiClient;
-use App\Service\GitHubRateLimitException;
+use App\Service\VcsPlatform\RateLimitException;
+use App\Service\VcsPlatform\VcsPlatformInterface;
+use App\Service\VcsPlatform\VcsPlatforms;
 use App\Utility\Typo3\ExtensionUtility;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * Reads the commits of each Packagist version of the reported TYPO3 packages since its
- * previous version on GitHub, and keeps those that mention a breaking change (ADR-0007).
+ * previous version on its VCS platform (GitHub, GitLab, Codeberg), and keeps those that mark a
+ * breaking change (ADR-0007).
  * Commits between two versions never change, so each version is checked once; only versions
  * newer than the oldest installed one matter for an update.
  */
@@ -26,7 +28,7 @@ class BreakingCommitSynchronizer
     private const int MAX_VERSIONS_PER_RUN = 300;
 
     public function __construct(
-        private readonly GitHubApiClient $gitHub,
+        private readonly VcsPlatforms $vcsPlatforms,
         private readonly SitePackageRepository $sitePackageRepository,
         private readonly PackagistVersionRepository $versionRepository,
         private readonly ExtensionVersionCatalog $versionCatalog,
@@ -36,27 +38,31 @@ class BreakingCommitSynchronizer
     }
 
     /**
-     * @return int|null versions checked, null without a GitHub token
+     * @return int versions checked
      */
-    public function sync(): ?int
+    public function sync(): int
     {
-        if (!$this->gitHub->isConfigured()) {
-            return null;
-        }
-
         $checked = 0;
+        // a host that declined more requests is skipped for the rest of this run, the others go on
+        $limited = [];
         try {
-            foreach ($this->uncheckedPairs() as [$previous, $version, $repository]) {
+            foreach ($this->uncheckedPairs() as [$previous, $version, $host, $repository]) {
                 if ($checked >= self::MAX_VERSIONS_PER_RUN) {
                     break; // the next run goes on
                 }
-                $commits = $this->breakingCommits($repository, $previous, $version);
+                if (in_array($host, $limited, true)) {
+                    continue;
+                }
+                try {
+                    $commits = $this->breakingCommits($host, $repository, $previous, $version);
+                } catch (RateLimitException $e) {
+                    $this->logger->warning('Stopped reading commits: {message}', ['message' => $e->getMessage()]);
+                    $limited[] = $host;
+                    continue;
+                }
                 null === $commits ? $version->recordUnreadableCommits() : $version->recordBreakingCommits($commits);
                 ++$checked;
             }
-        } catch (GitHubRateLimitException $e) {
-            // the versions not checked yet stay unchecked, the next run goes on
-            $this->logger->warning('Stopped reading commits from GitHub: {message}', ['message' => $e->getMessage()]);
         } finally {
             // also when e.g. an expired token (401) fails the run: what was read is kept
             $this->entityManager->flush();
@@ -66,11 +72,11 @@ class BreakingCommitSynchronizer
     }
 
     /**
-     * @return list<array{sha: string, subject: string, url: string, footer?: bool}>|null null when GitHub can't compare them
+     * @return list<array{sha: string, subject: string, url: string, footer?: bool}>|null null when the host can't compare them
      */
-    private function breakingCommits(string $repository, PackagistVersion $previous, PackagistVersion $version): ?array
+    private function breakingCommits(VcsPlatformInterface $host, string $repository, PackagistVersion $previous, PackagistVersion $version): ?array
     {
-        $commits = $this->gitHub->commitsBetween($repository, (string) $previous->getSourceReference(), (string) $version->getSourceReference());
+        $commits = $host->commitsBetween($repository, (string) $previous->getSourceReference(), (string) $version->getSourceReference());
 
         if (null === $commits) {
             return null;
@@ -90,7 +96,7 @@ class BreakingCommitSynchronizer
     }
 
     /**
-     * @return iterable<array{PackagistVersion, PackagistVersion, string}> previous, version, repository
+     * @return iterable<array{PackagistVersion, PackagistVersion, VcsPlatformInterface, string}> previous, version, host, repository
      */
     private function uncheckedPairs(): iterable
     {
@@ -119,7 +125,7 @@ class BreakingCommitSynchronizer
      * shortcut: the previous version by number, so commits backported to a maintenance branch
      * may count for the wrong line; good enough to find a "!!!" between two releases.
      *
-     * @return iterable<array{PackagistVersion, PackagistVersion, string}> previous, version, repository
+     * @return iterable<array{PackagistVersion, PackagistVersion, VcsPlatformInterface, string}> previous, version, host, repository
      */
     private function uncheckedPairsOf(string $packageName, string $installed): iterable
     {
@@ -128,11 +134,10 @@ class BreakingCommitSynchronizer
 
         $previous = null;
         foreach ($versions as $version) {
-            $repository = GitHubApiClient::repositoryOf($version->getSourceUrl());
-            if (null !== $previous && !$version->areCommitsRead() && null !== $repository
-                && null !== $previous->getSourceReference() && null !== $version->getSourceReference()
+            $found = null !== $previous && null !== $previous->getSourceReference() && !$version->areCommitsRead() ? $this->vcsPlatforms->find($version->getSourceUrl()) : null;
+            if (null !== $found && null !== $version->getSourceReference()
                 && version_compare(ltrim($version->getVersion(), 'vV'), $installed, '>')) {
-                yield [$previous, $version, $repository];
+                yield [$previous, $version, ...$found];
             }
             $previous = $version;
         }

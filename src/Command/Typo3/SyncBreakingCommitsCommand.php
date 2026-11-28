@@ -13,7 +13,7 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand(
     name: 'app:typo3:sync-breaking-commits',
-    description: 'Read the commits of the TYPO3 packages\' Packagist versions on GitHub for breaking changes (needs GITHUB_API_TOKEN)',
+    description: 'Read the commits of the TYPO3 packages\' Packagist versions on GitHub (with GITHUB_API_TOKEN), GitLab and Codeberg for breaking changes',
 )]
 #[AsCronTask('53 * * * *')] // hourly, a batch per run; each version is checked once
 class SyncBreakingCommitsCommand extends AbstractSyncCommand
@@ -28,11 +28,6 @@ class SyncBreakingCommitsCommand extends AbstractSyncCommand
 
     protected function syncAndEvaluate(): string
     {
-        $checked = $this->synchronizer->sync();
-
-        // without a token this is no failed run, the feature is just off
-        return null === $checked
-            ? 'Skipped: no GITHUB_API_TOKEN set.'
-            : sprintf('Read the commits of %d TYPO3 package versions on GitHub.', $checked);
+        return sprintf('Read the commits of %d TYPO3 package versions on their VCS platforms.', $this->synchronizer->sync());
     }
 }

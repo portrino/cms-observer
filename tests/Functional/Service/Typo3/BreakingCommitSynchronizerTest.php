@@ -10,9 +10,10 @@ use App\Entity\SitePackage;
 use App\Entity\Typo3\PackagistVersion;
 use App\Repository\SitePackageRepository;
 use App\Repository\Typo3\PackagistVersionRepository;
-use App\Service\GitHubApiClient;
 use App\Service\Typo3\BreakingCommitSynchronizer;
 use App\Service\Typo3\ExtensionVersionCatalog;
+use App\Service\VcsPlatform\GitHub;
+use App\Service\VcsPlatform\VcsPlatforms;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -48,7 +49,7 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
                 ['sha' => 'ccc', 'html_url' => 'https://github.com/b13/http2/commit/ccc', 'commit' => ['message' => '[BUGFIX] rm foo header']],
                 ['sha' => 'ddd', 'html_url' => 'https://github.com/b13/http2/commit/ddd', 'commit' => ['message' => "feat: new cache layer\n\nBREAKING CHANGE: the cache table is renamed"]],
                 ['sha' => 'eee', 'html_url' => 'https://github.com/b13/http2/commit/eee', 'commit' => ['message' => "docs: explain the setup\n\nMentions a BREAKING CHANGE: of the core in passing"]],
-            ] : []]);
+            ] : [['sha' => 'fff', 'html_url' => 'https://github.com/b13/http2/commit/fff', 'commit' => ['message' => '[BUGFIX] Keep the cache warm']]]]);
         }, 'https://api.github.com/'));
 
         self::assertSame(2, $synchronizer->sync());
@@ -83,7 +84,7 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
 
     public function testWithoutATokenNothingIsRead(): void
     {
-        self::assertNull($this->synchronizer(new MockHttpClient(), '')->sync());
+        self::assertSame(0, $this->synchronizer(new MockHttpClient(), '')->sync(), 'GitHub can\'t be asked without one');
     }
 
     private function synchronizer(MockHttpClient $http, string $token = 'secret-token'): BreakingCommitSynchronizer
@@ -91,7 +92,7 @@ class BreakingCommitSynchronizerTest extends KernelTestCase
         $container = static::getContainer();
 
         return new BreakingCommitSynchronizer(
-            new GitHubApiClient($http, 'https://observer.test', $token),
+            new VcsPlatforms([new GitHub($http, 'https://observer.test', $token)]),
             $container->get(SitePackageRepository::class),
             $container->get(PackagistVersionRepository::class),
             $container->get(ExtensionVersionCatalog::class),

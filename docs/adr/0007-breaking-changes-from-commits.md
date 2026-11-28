@@ -1,4 +1,4 @@
-# ADR-0007: Breaking changes from GitHub commits
+# ADR-0007: Breaking changes from the commits on GitHub, GitLab and Codeberg
 
 - Status: Proposed
 - Date: 2026-11-27
@@ -17,11 +17,15 @@ public on GitHub.
 
 ## Decision
 
-The commits between two versions are read from GitHub, optionally:
+The commits between two versions are read from their code host:
 
 - Packagist names each version's repository and commit
-  (`source.url`, `source.reference`). Only repositories on github.com
-  are read, other hosts stay unchecked.
+  (`source.url`, `source.reference`), so the repository is the one of
+  that version, also when its vendor differs from the Composer name
+  or the repository moved. Repositories on github.com, gitlab.com
+  (also in nested groups) and codeberg.org are read; other hosts, like
+  Bitbucket, which TYPO3 packages rarely use, stay unchecked. More
+  hosts can follow behind the same interface when they come up.
 - A sync (`app:typo3:sync-breaking-commits`, hourly, a batch per run)
   compares each Packagist version of a reported TYPO3 package with its
   previous version, for the versions newer than the oldest installed
@@ -31,11 +35,13 @@ The commits between two versions are read from GitHub, optionally:
   "BREAKING CHANGE:" footer on a line of its own (Conventional Commits).
   The word "breaking" alone doesn't count in a commit, it also stands in
   "non-breaking". Only the subject and link are stored. Commits between
-  two versions never change, so each version is checked once; one GitHub
+  two versions never change, so each version is checked once; one the host
   can't compare stays unknown and isn't asked for again.
-- It needs `GITHUB_API_TOKEN`: a token without any permissions
-  (public repositories, read-only), as GitHub allows 60 requests an
-  hour without one. Without a token the sync is skipped.
+- GitHub needs `GITHUB_API_TOKEN`: a token without any permissions
+  (public repositories, read-only), as it allows 60 requests an hour
+  without one; without it GitHub is skipped. GitLab (500 requests a
+  minute) and Codeberg need none. A host that declines more requests
+  is skipped for the rest of the run, the others go on.
 - The note presets list these commits next to the TER comments. A note
   only says "no breaking changes" when every version crossed has a TER
   comment or checked commits; otherwise it says that not every
@@ -46,21 +52,27 @@ The commits between two versions are read from GitHub, optionally:
 
 - Positive: Breaking changes of versions the TER lacks are found, not
   only guessed from a new major.
-- Negative: GitHub becomes an optional external dependency with a token
-  that expires and has a rate limit; a run stopped by the limit goes on
-  in the next one.
+- Negative: Three more external dependencies, GitHub with a token
+  that expires; each has a rate limit, a run stopped by one goes on in
+  the next.
 - Neutral: The previous version is taken by number, so commits
   backported to a maintenance branch may count for the wrong line; only
-  the first 250 commits between two versions are read.
+  the first 250 (GitHub) or 100 (GitLab) commits between two versions
+  are read.
 
 ## Alternatives considered
 
 - Reading the commits when a calculation is drafted: dozens of requests
   per calculation, slow and against the rate limit.
-- GitHub releases: many TYPO3 extensions don't write release notes.
+- GitHub releases: many TYPO3 extensions have none, and the generated
+  ones list the pull request titles, which are the commit subjects.
+- Changelog files: neither their name and place nor their format follow a
+  convention, the section of a version is guesswork.
 - A GitHub App instead of a token: more setup for reading public data.
 
 ## Links
 
 - [ADR-0006](0006-typo3-packages-on-packagist.md)
 - [GitHub REST API: Compare two commits](https://docs.github.com/en/rest/commits/commits#compare-two-commits)
+- [GitLab API: List repository commits](https://docs.gitlab.com/api/commits/#list-repository-commits)
+- [Forgejo API (Codeberg)](https://codeberg.org/api/swagger)
